@@ -1,3 +1,4 @@
+# Auxiliary program for target 'remotetest' (see Makefile.PL).
 # This code is executed in the local machine
 
 # Redefine them if needed
