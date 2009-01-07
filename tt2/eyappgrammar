@@ -1,0 +1,169 @@
+=head2 Eyapp Grammar
+
+This section describes the syntax of the Eyapp language using its own notation.
+The grammar extends L<yacc> and L<yapp> grammars.  Semicolons have been omitted
+to save space.  Between C-like comments you can find an (informal) explanation
+of the language associated with each token.
+
+  lusasoft@LusaSoft:~/LEyapp$ PERL5LIB=lib; eyapp -c lib/Parse/Eyapp/Parse.yp
+  %token ASSOC /* is %(left|right|nonassoc) */
+  %token BEGINCODE /* is %begin { Perl code ... } */
+  %token CODE /* is { Perl code ... } */
+  %token DEFAULTACTION /* is %defaultaction */
+  %token EXPECT /* is %expect */
+  %token HEADCODE /* is %{ Perl code ... %} */
+  %token IDENT /* is [A-Za-z_][A-Za-z0-9_]* */
+  %token LITERAL /* is a string literal like 'hello' */
+  %token METATREE /* is %metatree */
+  %token NAME /* is %name */
+  %token NAMINGSCHEME /* is %namingscheme */
+  %token NUMBER /* is \d+ */
+  %token OPTION /* is (%name\s*([A-Za-z_]\w*)\s*)?\? */
+  %token PLUS /* is (%name\s*([A-Za-z_]\w*)\s*)?\+ */
+  %token PREC /* is %prec */
+  %token PREFIX /* is %prefix\s+([A-Za-z_][A-Za-z0-9_:]*::) */
+  %token SEMANTIC /* is %semantic\s+token */
+  %token STAR /* is (%name\s*([A-Za-z_]\w*)\s*)?\* */
+  %token START /* is %start */
+  %token STRICT /* is %strict */
+  %token SYNTACTIC /* is %syntactic\s+token */
+  %token TAILCODE /* is { Perl code ... } */
+  %token TOKEN /* is %token */
+  %token TREE /* is %tree */
+  %token TYPE /* is %type */
+  %token UNION /* is %union */
+  %start eyapp
+
+  %%
+
+  # Main rule
+  eyapp:
+        head body tail
+  ;
+  #Common rules:
+  symbol:
+        LITERAL
+      | ident #default action
+  ;
+  ident:
+        IDENT
+  ;
+  # Head section:
+  head:
+        headsec '%%'
+  ;
+  headsec:
+        #empty  #default action
+      | decls #default action
+  ;
+  decls:
+        decls decl #default action
+      | decl #default action
+  ;
+  decl:
+        '\n' #default action
+      | SEMANTIC typedecl symlist '\n'
+      | SYNTACTIC typedecl symlist '\n'
+      | TOKEN typedecl symlist '\n'
+      | ASSOC typedecl symlist '\n'
+      | START ident '\n'
+      | PREFIX '\n'
+      | NAMINGSCHEME CODE '\n'
+      | HEADCODE '\n'
+      | UNION CODE '\n'  #ignore
+      | DEFAULTACTION CODE '\n'
+      | TREE '\n'
+      | METATREE '\n'
+      | STRICT '\n'
+      | TYPE typedecl identlist '\n'
+      | EXPECT NUMBER '\n'
+      | error '\n'
+  ;
+  typedecl:
+        #empty
+      | '<' IDENT '>'
+  ;
+  symlist:
+        symlist symbol
+      | symbol
+  ;
+  identlist:
+        identlist ident
+      | ident
+  ;
+  # Rule section
+  body:
+        rulesec '%%'
+      | '%%'
+  ;
+  rulesec:
+        rulesec rules #default action
+      | startrules #default action
+  ;
+  startrules:
+        IDENT ':'  rhss ';'
+      | error ';'
+  ;
+  rules:
+        IDENT ':' rhss ';'
+      | error ';'
+  ;
+  rhss:
+        rhss '|' rule
+      | rule
+  ;
+  rule:
+        optname rhs prec epscode
+      | optname rhs
+  ;
+  rhs:
+        #empty      #default action (will return undef)
+      | rhselts #default action
+  ;
+  rhselts:
+        rhselts rhseltwithid
+      | rhseltwithid
+  ;
+  rhseltwithid:
+        rhselt '.' IDENT
+      | '$' rhselt
+      | '$' error
+      | rhselt
+  ;
+  rhselt:
+        symbol
+      | code
+      | '(' optname rhs ')'
+      | rhselt STAR
+      | rhselt '<' STAR symbol '>'
+      | rhselt OPTION
+      | rhselt '<' PLUS symbol '>'
+      | rhselt PLUS
+  ;
+  optname:
+        /* empty */
+      | NAME IDENT
+  ;
+  prec:
+        PREC symbol
+  ;
+  epscode:
+      | code
+  ;
+  code:
+        CODE
+      | BEGINCODE
+  ;
+  # Tail section:
+  tail:
+        /*empty*/
+      | TAILCODE
+  ;
+
+  %%
+
+
+The semantic of C<Eyapp> agrees with the semantic of C<yacc> and C<yapp> for
+all the common constructions. 
+
+

@@ -1,0 +1,465 @@
+=head1 NAME
+ 
+Parse::Eyapp - Extensions for Parse::Yapp
+ 
+=head1 SYNOPSIS
+ 
+  use Parse::Eyapp;
+  use Parse::Eyapp::Treeregexp;
+
+  sub TERMINAL::info {
+    $_[0]{attr}
+  }
+
+  my $grammar = q{
+    %right  '='     # Lowest precedence
+    %left   '-' '+' # + and - have more precedence than = Disambiguate a-b-c as (a-b)-c
+    %left   '*' '/' # * and / have more precedence than + Disambiguate a/b/c as (a/b)/c
+    %left   NEG     # Disambiguate -a-b as (-a)-b and not as -(a-b)
+    %tree           # Let us build an abstract syntax tree ...
+
+    %%
+    line:
+        exp <%name EXPRESION_LIST + ';'>
+          { $_[1] } /* list of expressions separated by ';' */
+    ;
+
+    /* The %name directive defines the name of the class to which the node being built belongs */
+    exp:
+        %name NUM
+        NUM
+      | %name VAR
+        VAR
+      | %name ASSIGN
+        VAR '=' exp
+      | %name PLUS
+        exp '+' exp
+      | %name MINUS
+        exp '-' exp
+      | %name TIMES
+        exp '*' exp
+      | %name DIV
+        exp '/' exp
+      | %name UMINUS
+        '-' exp %prec NEG
+      | '(' exp ')'
+          { $_[2] }  /* Let us simplify a bit the tree */
+    ;
+
+    %%
+    sub _Error { die "Syntax error near ".($_[0]->YYCurval?$_[0]->YYCurval:"end of file")."\n" }
+
+    sub _Lexer {
+      my($parser)=shift; # The parser object
+
+      for ($parser->YYData->{INPUT}) { # Topicalize
+        m{\G\s+}gc;
+        $_ eq '' and return('',undef);
+        m{\G([0-9]+(?:\.[0-9]+)?)}gc and return('NUM',$1);
+        m{\G([A-Za-z][A-Za-z0-9_]*)}gc and return('VAR',$1);
+        m{\G(.)}gcs and return($1,$1);
+      }
+      return('',undef);
+    }
+
+    sub Run {
+        my($self)=shift;
+        $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, );
+    }
+  }; # end grammar
+
+  our (@all, $uminus);
+
+  Parse::Eyapp->new_grammar( # Create the parser package/class
+    input=>$grammar,
+    classname=>'Calc', # The name of the package containing the parser
+    firstline=>7       # String $grammar starts at line 7 (for error diagnostics)
+  );
+  my $parser = Calc->new();                # Create a parser
+  $parser->YYData->{INPUT} = "2*-3+b*0;--2\n"; # Set the input
+  my $t = $parser->Run;                    # Parse it!
+  local $Parse::Eyapp::Node::INDENT=2;
+  print "Syntax Tree:",$t->str;
+
+  # Let us transform the tree. Define the tree-regular expressions ..
+  my $p = Parse::Eyapp::Treeregexp->new( STRING => q{
+      { #  Example of support code
+        my %Op = (PLUS=>'+', MINUS => '-', TIMES=>'*', DIV => '/');
+      }
+      constantfold: /TIMES|PLUS|DIV|MINUS/:bin(NUM($x), NUM($y))
+        => {
+          my $op = $Op{ref($bin)};
+          $x->{attr} = eval  "$x->{attr} $op $y->{attr}";
+          $_[0] = $NUM[0];
+        }
+      uminus: UMINUS(NUM($x)) => { $x->{attr} = -$x->{attr}; $_[0] = $NUM }
+      zero_times_whatever: TIMES(NUM($x), .) and { $x->{attr} == 0 } => { $_[0] = $NUM }
+      whatever_times_zero: TIMES(., NUM($x)) and { $x->{attr} == 0 } => { $_[0] = $NUM }
+    },
+    OUTPUTFILE=> 'main.pm'
+  );
+  $p->generate(); # Create the tranformations
+
+  $t->s($uminus); # Transform UMINUS nodes
+  $t->s(@all);    # constant folding and mult. by zero
+
+  local $Parse::Eyapp::Node::INDENT=0;
+  print "\nSyntax Tree after transformations:\n",$t->str,"\n";
+  
+=head1 INTRODUCTION
+
+[%PROCESS shortintro %]
+
+=head1 THE DOCUMENTATION OF L<Parse::Eyapp>
+
+The documentation is distributed among several files:
+
+=over
+
+=item * To get familiar with  C<eyapp> read L<Parse::Eyapp::eyappintro>
+and  L<Parse::Eyapp::debuggingtut>.
+It assumes a reader familiar with parsing techniques.
+Familiarity with C<yacc> or C<yapp>, C<RecDescent>, C<ANTLR> or
+similar tools will help but it is not indispensable.
+
+=item *  The document L<Parse::Eyapp::defaultactionsintro> describes the use of
+default actions and how to deal with I<grammar reuse> and factorization.
+
+=item *  The document L<Parse::Eyapp::eyapplanguageref> 
+describes the Eyapp language. 
+
+=item *  The document L<Parse::Eyapp::translationschemestut> 
+describes the use of Translation Schemes inside the Eyapp language. 
+
+=item * The Treeregexp language is described in L<Parse::Eyapp::Treeregexp>.
+Treeregexp is a language to describe transformations of abstract syntax trees.
+
+=item * Read L<Parse::Eyapp::Scope> to know
+about the functionalities provided for Scope Analysis.
+
+=item * A set of basic miscellaneous support sunctions 
+are described in L<Parse::Eyapp::Base>. 
+Several of these functions are related to the dynamic use of methods 
+and subroutines. 
+
+=item * Don't forget to read the section L<BUGS AND LIMITATIONS>
+
+=back
+
+The examples used in this document can be found in
+the directory C<examples/Eyapp> accompanying this distribution.
+
+=head1 THE EYAPP LANGUAGE
+
+[% PROCESS eyappgrammar %]
+
+[% PROCESS eyapplanguageref %]
+
+=head1 C<Parse::Eyapp> METHODS
+
+[% PROCESS parseeyappmethods %]
+
+=head1 METHODS AVAILABLE IN THE GENERATED C<CLASS>
+
+See the documentation for L<Parse::Eyapp::Driver>
+
+=head1 C<Parse::Eyapp::Parse> OBJECTS
+
+[% PROCESS Parse %]
+
+=head1 TRANSLATION SCHEMES AND THE C<%metatree> DIRECTIVE
+
+
+See the documentation for L<Parse::Eyapp::translationschemestut>
+
+
+=head1 THE TREEREGEXP LANGUAGE
+
+See the documentation for L<Parse::Eyapp::Treeregexp>
+
+ 
+=head1 MANIPULATING ABSTRACT SYNTAX TREES
+
+See the documentation for L<Parse::Eyapp::Node>
+
+=head1 TREE TRANSFORMATION OBJECTS
+
+See the documentation for L<Parse::Eyapp::YATW>
+
+=head1 COMPILING WITH C<eyapp> AND C<treereg>
+
+A Treeregexp program can be isolated in a file
+an compiled with the program C<treereg>.
+The default extension is C<.trg>.
+See the following example:
+
+  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ cat -n Shift.trg
+     1  # File: Shift.trg
+     2  {
+     3    sub log2 {
+     4      my $n = shift;
+     5      return log($n)/log(2);
+     6    }
+     7
+     8    my $power;
+     9  }
+    10  mult2shift: TIMES($e, NUM($m))
+    11    and { $power = log2($m->{attr}); (1 << $power) == $m->{attr} } => {
+    12      $_[0]->delete(1);
+    13      $_[0]->{shift} = $power;
+    14      $_[0]->type('SHIFTLEFT');
+    15    }
+
+
+Note that auxiliary support code can be inserted at any point
+between transformations (lines 2-9). The code will be inserted (without 
+the defining curly brackets) at that point. Note also
+that the lexical variable C<$power> is visible
+inside the definition of the C<mult2shift> transformation.
+
+A treeregexp like C<$e> matches any node (line 10). A reference to the node
+is saved in the lexical variable C<$e>. The scope of the variable
+C<$e> is the current tree transformation, i.e. C<mult2shift>.
+Such kind of treeregexps are called B<scalar treeregexp>s.
+
+The call to the C<delete> method at line 12 deletes 
+the second child of the node being visited (i.e. C<NUM($m)>).
+
+The call to C<type> at line 14 retypes the node
+as a C<SHIFTLEFT> node.
+
+The program is compiled using the script C<treereg>:
+
+  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ eyapp Rule5
+  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ treereg Shift
+  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ ls -ltr | tail -2
+  -rw-r--r-- 1 pl users 6439 2008-09-02 08:59 Rule5.pm
+  -rw-r--r-- 1 pl users 1424 2008-09-02 08:59 Shift.pm
+
+
+The Grammar C<Rule5.yp> is similar to the one in the L</SYNOPSIS>
+section. Module C<Rule5.pm> contains the parser.
+The module C<Shift.pm> contains the code implementing
+the tree transformations.
+
+The client program follows:
+
+  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ cat -n useruleandshift.pl
+     1  #!/usr/bin/perl -w
+     2  use strict;
+     3  use Rule5;
+     4  use Parse::Eyapp::Base qw(insert_function);
+     5  use Shift;
+     6
+     7  sub SHIFTLEFT::info { $_[0]{shift} }
+     8  insert_function('TERMINAL::info', \&TERMINAL::attr);
+     9
+    10  my $parser = new Rule5();
+    11  my $t = $parser->Run;
+    12  print "***********\n",$t->str,"\n";
+    13  $t->s(@Shift::all);
+    14  print "***********\n",$t->str,"\n";
+
+
+Lines 7 and 8 provide the node classes C<TERMINAL> and C<SHIFTLEFT> of C<info>
+methods to be used during the calls to the C<str> method (lines 12 and 14). 
+
+Multiplications by a power of two are substituted by the corresponding shifts:
+
+  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ useruleandshift.pl
+  a=b*8
+  ***********
+  ASSIGN(TERMINAL[a],TIMES(VAR(TERMINAL[b]),NUM(TERMINAL[8])))
+  ***********
+  ASSIGN(TERMINAL[a],SHIFTLEFT[3](VAR(TERMINAL[b])))
+
+
+=head2 Compiling: More Options
+
+See files C<Rule9.yp>, C<Transform4.trg> and C<foldand0rule9_4.pl> 
+in the examples directory for a more detailed vision of this example. 
+File C<Rule9.yp> is very much like the grammar
+in the L</SYNOPSIS> example.
+To compile the grammar C<Rule9.yp> and the treeregexp
+file C<Transform4.trg> use the commands:
+  
+                eyapp -m 'Calc' Rule9.yp
+
+That will produce a file C<Calc.pm> containing a package C<Calc>
+that implements the LALR parser. 
+Then the command:
+
+                treereg -o T.pm -p 'R::' -m T Transform4
+
+produces a file C<T.pm> containing a package C<T> that implements
+the tree transformation program. The C<-p> option announces that
+node classes are prefixed by C<'R::'>.
+
+With such parameters the client program uses the generated modules as 
+follows:
+
+ nereida:~/src/perl/YappWithDefaultAction/examples> cat -n foldand0rule9_4.pl
+  1  #!/usr/bin/perl -w
+  2  # File: foldand0rule9_4.pl. Compile it with
+  3  #          eyapp -m 'Calc' Rule9.yp; treereg -o T.pm -p 'R::' -m T Transform4
+  4  use strict;
+  5  use Calc;
+  6  use T;
+  7
+  8  sub R::TERMINAL::info { $_[0]{attr} }
+  9  my $parser = new Calc(yyprefix => "R::");
+ 10  my $t = $parser->YYParse( yylex => \&Calc::Lexer, yyerror => \&Calc::Error);
+ 11  print "\n***** Before ******\n";
+ 12  print $t->str."\n";
+ 13  $t->s(@T::all);
+ 14  print "\n***** After ******\n";
+ 15  print $t->str."\n";
+
+running the program produces the following output:
+
+ nereida:~/src/perl/YappWithDefaultAction/examples> foldand0rule9_4.pl
+ 2*3
+
+ ***** Before ******
+ R::TIMES(R::NUM(R::TERMINAL[2]),R::TERMINAL[*],R::NUM(R::TERMINAL[3]))
+
+ ***** After ******
+ R::NUM(R::TERMINAL[6])
+
+=head1 L<Parse::Eyapp::Scope>: SUPPORT FOR SCOPE ANALYSIS
+
+See the documentation for L<Parse::Eyapp::Scope>
+
+=head1 MISCELLANEOUS SUPPORT FUNCTIONS IN L<Parse::Eyapp::Base>
+    
+See the documentation in L<Parse::Eyapp::Base>
+
+
+=head1 ENVIRONMENT
+ 
+Remember to set the environment variable C<PERL5LIB>
+if you decide to install C<Parse::Eyapp> at a location other than the standard.
+For example, on a bash or sh:
+
+  export PERL5LIB=/home/user/wherever_it_is/lib/:$PERL5LIB
+
+on a C<csh> or C<tcsh>
+
+  setenv PERL5LIB /home/user/wherever_it_is/lib/:$PERL5LIB
+
+Be sure the scripts C<eyapp> and C<treereg> are in the execution PATH.
+ 
+=head1 DEPENDENCIES
+ 
+This distribution depends on the following modules:
+
+=over
+
+=item * L<List::Util>
+
+=item * L<Data::Dumper>
+
+=item * L<Pod::Usage>
+
+=back 
+
+It seems that L<List::Util> is in the core of Perl
+distributions since version 5.73:
+
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("List::Util")'
+  5.007003
+
+and L<Data::Dumper> is also in the core since 5.5:
+
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("Data::Dumper")'
+  5.005
+
+and L<Pod::Usage> is also in the core since 5.6:
+
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("Pod::Usage")'
+  5.006
+
+=for none
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("Memoize")'
+  5.007003
+
+I also recommend the following modules:
+
+=over
+
+=item * L<Test::Pod>
+
+=item * L<Test::Warn>
+
+=item * L<Test::Exception>
+
+=back
+
+The dependence on  L<Test::Warn>, L<Test::Pod> and L<Test::Exception> is merely for
+the execution of tests. If the modules aren't installed the tests
+depending on them will be skipped.
+
+=head1 INSTALLATION
+
+To install it, follow the traditional mantra:
+
+                                 perl Makefile.PL
+                                 make
+                                 make test
+                                 make install
+
+Also:
+
+=over
+
+
+=item * Make a local copy of the C<examples/> directory in this distribution
+
+=item * Probably it will be also a good idea to make a copy of the tests in the C<t/> directory.
+  They also illustrate the use of Eyapp
+
+=back
+
+=head1 BUGS AND LIMITATIONS
+ 
+=over
+
+=item *
+The way Parse::Eyapp parses Perl code is verbatim the way it does Parse::Yapp 1.05.
+Quoting Francois Desarmenien L<Parse::Yapp> documentation:
+
+"Be aware that matching braces in Perl is much more difficult than
+in C: inside strings they don't need to match. While in C it is
+very easy to detect the beginning of a string construct, or a
+single character, it is much more difficult in Perl, as there
+are so many ways of writing such literals. So there is no check
+for that today. If you need a brace in a double-quoted string, just
+quote it (C<\{> or C<\}>). For single-quoted strings, you will need
+to make a comment matching it I<in th right order>.
+Sorry for the inconvenience.
+
+    {
+        "{ My string block }".
+        "\{ My other string block \}".
+        qq/ My unmatched brace \} /.
+        # Force the match: {
+        q/ for my closing brace } /
+        q/ My opening brace { /
+        # must be closed: }
+    }
+
+All of these constructs should work."
+
+Alternative I<exact solutions> were tried but resulted in much slower
+code. Therefore, until something faster is found, I rather prefer for
+Parse::Eyapp to live with this limitation.
+
+The same limitation may appear inside header code (code between C<%{> and C<%}>)
+
+=back
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]

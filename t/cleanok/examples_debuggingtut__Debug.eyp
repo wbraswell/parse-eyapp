@@ -1,0 +1,21 @@
+# Debug.eyp
+# compile it eyapp -b Debug.eyp -o Debug.pl to produce an 
+# executable
+%token D S 
+
+%%
+
+p:
+      ds ';' ss
+    | ss 
+;
+ds:
+      D ';' ds
+    | D 
+;
+ss:
+      S ';' ss
+    | S 
+;
+
+%%

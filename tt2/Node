@@ -1,0 +1,992 @@
+=head1 METHODS
+
+The C<Parse::Eyapp::Node> objects represent the nodes of the syntax
+tree. 
+All the node classes build by C<%tree> and C<%metatree> directives
+inherit from C<Parse::Eyapp::Node> and consequently have
+acces to the methods provided in such module. 
+
+The examples used in this document can be found in the directory
+C<examples/Node> accompanying the distribution of L<Parse::Eyapp>.
+
+
+=head2  Parse::Eyapp::Node->new
+
+Nodes are usually created from a Eyapp grammar 
+using the C<%tree> or C<%metatree>
+directives. The C<Parse::Eyapp::Node> constructor C<new>
+offers an alternative way to create forests.
+
+This class method can be used to build multiple nodes on a row.
+It receives a string describing the tree and optionally a
+reference to a subroutine. Such subroutine (called the attribute
+handler) is in charge to initialize
+the attributes of the just created nodes.
+The attribute handler is called with the array of references to the
+nodes as they appear in the string from left to right.
+
+C<Parse::Eyapp::Node-E<gt>new> returns an array of pointers to the nodes created
+as they appear in the input string from left to right.
+In scalar context returns a pointer to the first of these trees.
+
+The following example (see file C<examples/Node/28foldwithnewwithvars.pl>) of
+a treeregexp transformation creates a new C<NUM(TERMINAL)> node
+using C<Parse::Eyapp::Node-E<gt>new>:
+
+ my $p = Parse::Eyapp::Treeregexp->new( STRING => q{
+   {
+     my %Op = (PLUS=>'+', MINUS => '-', TIMES=>'*', DIV => '/');
+   }
+   constantfold: /TIMES|PLUS|MINUS|DIV/(NUM($x), NUM($y))
+      => {
+     my $op = $Op{ref($_[0])};
+
+     my $res = Parse::Eyapp::Node->new(
+       q{NUM(TERMINAL)},
+       sub {
+         my ($NUM, $TERMINAL) = @_;
+         $TERMINAL->{attr} = eval "$x->{attr} $op $y->{attr}";
+         $TERMINAL->{token} = 'NUM';
+       },
+     );
+     $_[0] = $res;
+   }
+   },
+ );
+
+The call to C<Parse::Eyapp::Node-E<gt>new> creates a tree C<NUM(TERMINAL)>
+and decorates the C<TERMINAL> leaf with attributes C<attr>
+and C<token>. The C<constantfold> transformation substitutes
+all the binary operation trees whose children are numbers
+for a C<NUM(TERMINAL)> tree holding as attribute the 
+number resulting of operating the two numbers.
+
+
+The input string can describe more than one tree. Different trees 
+are separated by white spaces. Consider the following example
+(in C<examples/Node/builder.pl>):
+
+  $ cat -n builder.pl
+     1  #!/usr/bin/perl -w
+     2  use strict;
+     3  use Parse::Eyapp::Node;
+     4
+     5  use Data::Dumper;
+     6  $Data::Dumper::Indent = 1;
+     7  $Data::Dumper::Purity = 1;
+     8
+     9  my $string = shift || 'ASSIGN(VAR(TERMINAL), TIMES(NUM(TERMINAL),NUM(TERMINAL)))  ';
+    10  my @t = Parse::Eyapp::Node->new(
+    11             $string,
+    12             sub { my $i = 0; $_->{n} = $i++ for @_ }
+    13          );
+    14
+    15  print "****************\n";
+    16  print Dumper(\@t);
+
+When feed with input C<'A(C,D) E(F)'> 
+the following forest is built:
+
+  $ builder.pl 'A(C,D) E(F)'
+  ****************
+  $VAR1 = [
+    bless( {
+      'n' => 0,
+      'children' => [
+        bless( { 'n' => 1, 'children' => [] }, 'C' ),
+        bless( { 'n' => 2, 'children' => [] }, 'D' )
+      ]
+    }, 'A' ),
+    {},
+    {},
+    bless( {
+      'n' => 3,
+      'children' => [
+        bless( { 'n' => 4, 'children' => [] }, 'F' )
+      ]
+    }, 'E' ),
+    {}
+  ];
+  $VAR1->[1] = $VAR1->[0]{'children'}[0];
+  $VAR1->[2] = $VAR1->[0]{'children'}[1];
+  $VAR1->[4] = $VAR1->[3]{'children'}[0];
+
+
+Thusm, the forest C<@t> contains 5 subtrees 
+C<A(C,D), C, D, E(F)> and C<F>.
+
+=head2 Directed Acyclic Graphs with C<Parse::Eyapp::Node-E<gt>hnew>
+
+C<Parse::Eyapp> provides the method C<Parse::Eyapp::Node-E<gt>hnew>
+to build I<Directed Acyclic Graphs> (DAGs) instead of trees. They are built using 
+I<hashed consing>, i.e. I<memoizing> the creation of nodes. 
+
+The method C<Parse::Eyapp::Node-E<gt>hnew> works very much like C<Parse::Eyapp::Node-E<gt>new>
+but if one of the implied trees was previously built, C<hnew> 
+returns a reference to the existing one.
+
+See the following debugger session where several DAGs describing
+I<type expressions> are built:
+
+  DB<2> x $a = Parse::Eyapp::Node->hnew('F(X_3(A_3(A_5(INT)), CHAR, A_5(INT)),CHAR)')
+ 0  F=HASH(0x85f6a20)
+    'children' => ARRAY(0x85e92e4)
+    |- 0  X_3=HASH(0x83f55fc)
+    |     'children' => ARRAY(0x83f5608)
+    |     |- 0  A_3=HASH(0x85a0488)
+    |     |     'children' => ARRAY(0x859fad4)
+    |     |        0  A_5=HASH(0x85e5d3c)
+    |     |           'children' => ARRAY(0x83f4120)
+    |     |              0  INT=HASH(0x83f5200)
+    |     |                 'children' => ARRAY(0x852ccb4)
+    |     |                      empty array
+    |     |- 1  CHAR=HASH(0x8513564)
+    |     |     'children' => ARRAY(0x852cad4)
+    |     |          empty array
+    |     `- 2  A_5=HASH(0x85e5d3c)
+    |           -> REUSED_ADDRESS
+    `- 1  CHAR=HASH(0x8513564)
+          -> REUSED_ADDRESS
+  DB<3> x $a->str
+ 0  'F(X_3(A_3(A_5(INT)),CHAR,A_5(INT)),CHAR)'
+
+The second occurrence of C<A_5(INT)> is labelled C<REUSED_ADDRESS>. The
+same occurs with the second instance  of C<CHAR>. 
+
+C<Parse::Eyapp::Node-E<gt>hnew>
+can be more convenient than C<new> 
+in some compiler phases and tasks like 
+detecting I<common subexpressions>
+or during I<type checking>. 
+See file C<Types.eyp> in C<examples/typechecking/Simple-Types-XXX.tar.gz>
+for a more comprehensive example.
+
+=head2 Expanding Directed Acyclic Graphs with C<Parse::Eyapp::Node-E<gt>hexpand>
+
+Calls to C<Parse::Eyapp::Node-E<gt>hexpand> have the syntax
+
+    $z = Parse::Eyapp::Node->hexpand('CLASS', @children, \&handler)
+
+Creates a dag of type C<'CLASS'> with children C<@children> in a way compatible with
+C<hnew>. The last 
+optional argument can be a reference to a sub.  Such sub will be called after the
+creation of the DAG with a reference to the root of the DAG as single argument.
+The following session with the debugger illustrates the use of
+ C<Parse::Eyapp::Node-E<gt>hexpand>. First we create a DAG using C<hnew>:
+
+  pl@nereida:~/Lbook/code/Simple-Types/script$ perl -MParse::Eyapp::Node -wde 0
+  main::(-e:1):   0
+    DB<1> $x = Parse::Eyapp::Node->hnew('A(C(B),C(B))')
+    DB<2> x $x
+  0  A=HASH(0x850c850)
+     'children' => ARRAY(0x850ca30)
+        0  C=HASH(0x850c928)
+           'children' => ARRAY(0x850c9e8)
+              0  B=HASH(0x850c9a0)
+                 'children' => ARRAY(0x83268c8)
+                      empty array
+        1  C=HASH(0x850c928)
+           -> REUSED_ADDRESS
+
+We obtain the C<REUSED_ADDRESS> for the second child since
+the C<C(B)> subtree appears twice.
+Now, suppose we want to expand the exsting tree/DAG C<C(B)> to C<A(C(B))>. We can do
+that using C<hexpand>:
+
+    DB<3> $y = Parse::Eyapp::Node->hexpand('A', $x->child(0))
+    DB<4> x $y
+  0  A=HASH(0x8592558)
+     'children' => ARRAY(0x832613c)
+        0  C=HASH(0x850c928)
+           'children' => ARRAY(0x850c9e8)
+              0  B=HASH(0x850c9a0)
+                 'children' => ARRAY(0x83268c8)
+                      empty array
+We get new memory for C<$y>: C<HASH(0x8592558)> is anew address.
+Assume we want to expand the tree/DAG C<C(B)> to C<A(C(B),C(B))>.
+We can do it this way:
+
+    DB<5> $z = Parse::Eyapp::Node->hexpand('A', $x->children)
+    DB<6> x $z
+  0  A=HASH(0x850c850)
+     'children' => ARRAY(0x850ca30)
+        0  C=HASH(0x850c928)
+           'children' => ARRAY(0x850c9e8)
+              0  B=HASH(0x850c9a0)
+                 'children' => ARRAY(0x83268c8)
+                      empty array
+        1  C=HASH(0x850c928)
+           -> REUSED_ADDRESS
+
+Notice that the address c<0x850c850> for C<$z> is the same than the address for C<$x>.
+No new memory has been allocated for C<$z>.
+
+The following command illustrates the use of C<hexpand>
+with a handler:
+
+    DB<7> $z = Parse::Eyapp::Node->hexpand('A', $x->children, sub { $_[0]->{t} = "X" })
+    DB<8> x $z
+  0  A=HASH(0x850c850)
+     'children' => ARRAY(0x850ca30)
+        0  C=HASH(0x850c928)
+           'children' => ARRAY(0x850c9e8)
+              0  B=HASH(0x850c9a0)
+                 'children' => ARRAY(0x83268c8)
+                      empty array
+        1  C=HASH(0x850c928)
+           -> REUSED_ADDRESS
+     't' => 'X'
+
+=head2  $node->type 
+
+Returns (or sets) the type (class) of the node.
+It can be called as a subroutine when C<$node> is not
+a C<Parse::Eyapp::Node> like this:
+
+                     Parse::Eyapp::Node::type($scalar)
+
+This is the case when visiting C<CODE> nodes.
+
+The following session with the debugger illustrates how it works:
+
+  > perl -MParse::Eyapp::Node -de0
+  DB<1> @t = Parse::Eyapp::Node->new("A(B,C)") # Creates a tree
+  DB<2> x map { $_->type } @t # Get the types of the three nodes
+  0  'A'
+  1  'B'
+  2  'C'
+  DB<3> x Parse::Eyapp::Node::type(sub {})
+  0  'CODE'
+  DB<4> x Parse::Eyapp::Node::type("hola")
+  0  'Parse::Eyapp::Node::STRING'
+  DB<5> x Parse::Eyapp::Node::type({ a=> 1})
+  0  'HASH'
+  DB<6> x Parse::Eyapp::Node::type([ a, 1 ])
+  0  'ARRAY'
+
+As it is shown in the example it can be called as a subroutine with 
+a (CODE/HASH/ARRAY) reference or an ordinary scalar.
+
+The words HASH, CODE, ARRAY and STRING are reserved for 
+ordinary Perl references. Avoid naming a AST node with one of those words.
+
+To be used as a setter, be sure L<Parse::Eyapp::Driver>
+is loaded:
+
+  $ perl -MParse::Eyapp::Driver -MParse::Eyapp::Node -wde0
+  main::(-e:1):   0
+    DB<1> x $t = Parse::Eyapp::Node->new("A(B,C)") # Creates a tree
+  0  A=HASH(0x8557bdc)
+     'children' => ARRAY(0x8557c90)
+        0  B=HASH(0x8557cf0)
+           'children' => ARRAY(0x8325804)
+                empty array
+        1  C=HASH(0x8557c6c)
+           'children' => ARRAY(0x8557d5c)
+                empty array
+    DB<2> x $t->type('FUN') # Change the type of $t to 'FUN'
+  0  'FUN'
+    DB<3> x $t
+  0  FUN=HASH(0x8557bdc)
+     'children' => ARRAY(0x8557c90)
+        0  B=HASH(0x8557cf0)
+           'children' => ARRAY(0x8325804)
+                empty array
+        1  C=HASH(0x8557c6c)
+           'children' => ARRAY(0x8557d5c)
+                empty array
+    DB<4> x $t->isa('Parse::Eyapp::Node')
+  0  1
+
+
+
+=head2  $node->child
+
+Setter-getter to modify a specific child of a node.
+It is called like:
+
+                   $node->child($i)
+
+Returns the child with index $i. Returns C<undef> if the child does not exists.
+It has two obligatory parameters: the node (since it is a method)
+and the index of the child. Sets the new value if called
+
+                    $node->child($i, $tree)
+
+The method will croak if the obligatory parameters are not provided.
+
+In the files C<examples/Node/TSwithtreetransformations2.eyp> and 
+C<examples/node/usetswithtreetransformations2.pl>) you can find a 
+somewhat complicated example of call to C<child> as a setter. It is inside a transformation
+that swaps the children of a C<PLUS> node (remember that the tree
+is a concrete tree including code since it is a translation scheme
+built under the directive C<%metatree>):
+
+  my $transform = Parse::Eyapp::Treeregexp->new( STRING => q{
+     ........................................................
+
+     commutative_add: PLUS($x, ., $y, .) # 1st dot correspond to '+' 2nd dot to CODE
+       => { my $t = $x; $_[0]->child(0, $y); $_[0]->child(2, $t)}
+
+     ........................................................
+  }
+
+=head2 Child Access Through C<%tree alias> 
+
+Remember that when the C<Eyapp> program runs 
+under the C<%tree alias> directive 
+The I<dot and dollar notations> can be used 
+to generate named getter-setters to access the children:
+
+  examples/Node$ cat -n alias_and_yyprefix.pl
+     1  #!/usr/local/bin/perl
+     2  use warnings;
+     3  use strict;
+     4  use Parse::Eyapp;
+     5
+     6  my $grammar = q{
+     7    %prefix R::S::
+     8
+     9    %right  '='
+    10    %left   '-' '+'
+    11    %left   '*' '/'
+    12    %left   NEG
+    13    %tree bypass alias
+    14
+    15    %%
+    16    line: $exp  { $_[1] }
+    17    ;
+    18
+    19    exp:
+    20        %name NUM
+    21              $NUM
+    22      | %name VAR
+    23              $VAR
+    24      | %name ASSIGN
+    25              $VAR '=' $exp
+    26      | %name PLUS
+    27              exp.left '+' exp.right
+    28      | %name MINUS
+    29              exp.left '-' exp.right
+    30      | %name TIMES
+    31              exp.left '*' exp.right
+    32      | %name DIV
+    33              exp.left '/' exp.right
+    34      | %no bypass UMINUS
+    35              '-' $exp %prec NEG
+    36      |   '(' exp ')'  { $_[2] } /* Let us simplify a bit the tree */
+    37    ;
+    38
+    39    %%
+    40
+    .............................
+    76  }; # end grammar
+    77
+    78
+    79  Parse::Eyapp->new_grammar(
+    80    input=>$grammar,
+    81    classname=>'Alias',
+    82    firstline =>7,
+    83    outputfile => 'main',
+    84  );
+    85  my $parser = Alias->new();
+    86  $parser->YYData->{INPUT} = "a = -(2*3+5-1)\n";
+    87  my $t = $parser->Run;
+    88  $Parse::Eyapp::Node::INDENT=0;
+    89  print $t->VAR->str."\n";             # a
+    90  print "***************\n";
+    91  print $t->exp->exp->left->str."\n";  # 2*3+5
+    92  print "***************\n";
+    93  print $t->exp->exp->right->str."\n"; # 1
+
+
+Here methods with names C<left> and C<right> will be created
+inside the class C<R::S> (see the use of the C<%prefix> directive
+in line 7) to access the corresponding children associated with the 
+two instances of C<exp> in the right hand side of
+the production rule. when executed, teh former program produces this
+output:
+
+  examples/Node$ alias_and_yyprefix.pl
+  R::S::TERMINAL
+  ***************
+  R::S::PLUS(R::S::TIMES(R::S::NUM,R::S::NUM),R::S::NUM)
+  ***************
+  R::S::NUM
+
+
+=head2  $node->children
+
+Returns the array of children of the node. When the tree is a
+translation scheme the CODE references are also included.
+See C<examples/Node/TSPostfix3.eyp> for an example of use
+inside a Translation Scheme:
+
+  examples/Node$ cat TSPostfix3.eyp
+  ...................... # precedence declarations
+
+  %metatree
+
+  %defaultaction {
+    if (@_==2) {  # NUM and VAR
+      $lhs->{t} = $_[1]->{attr};
+      return
+    }
+    if (@_==4) { # binary operations
+      $lhs->{t} = "$_[1]->{t} $_[3]->{t} $_[2]->{attr}";
+      return
+    }
+    die "Fatal Error. Unexpected input. Numargs = ".scalar(@_)."\n".Parse::Eyapp::Node->str(@_);
+  }
+
+  %%
+  line: %name PROG
+         exp <%name EXP + ';'>
+           { @{$lhs->{t}} = map { $_->{t}} ($_[1]->children()); }
+
+  ;
+
+  exp:        %name NUM NUM
+          |   %name VAR VAR
+          |   %name ASSIGN VAR '=' exp  {  $lhs->{t} = "$_[1]->{attr} $_[3]->{t} ="; }
+          |   %name PLUS   exp '+' exp
+          |   %name MINUS  exp '-' exp
+          |   %name TIMES  exp '*' exp
+          |   %name DIV    exp '/' exp
+          |   %name NEG    '-' exp %prec NEG { $_[0]->{t} = "$_[2]->{t} NEG" }
+          |   '(' exp ')' %begin { $_[2] }
+  ;
+
+  %%
+
+  ........................
+
+
+The tree in a Translation Scheme contains the references to
+the C<CODE> implementing the semantic actions.
+For example,  the syntax tree built by 
+the parser for the input C<a=-b*3> in C<TSPostfix3.eyp> is:
+
+ PROG(EXP(
+     ASSIGN(
+       TERMINAL[a],
+       TERMINAL[=],
+       TIMES(
+         NEG(TERMINAL[-], VAR(TERMINAL[b], CODE), CODE),
+         TERMINAL[*],
+         NUM(TERMINAL[3], CODE),
+         CODE
+       ) # TIMES,
+       CODE
+     ) # ASSIGN
+   ) # EXP,
+   CODE
+ ) # PROG
+
+C<$node-E<gt>children> can also be used as a setter.
+
+=head2  $node->Children
+
+Returns the array of children of the node.
+When dealing with a translation scheme,
+the  C<$node-E<gt>Children> method 
+(Notice the case difference with C<$node-E<gt>children>, first in uppercase) 
+returns the non C<CODE> children of the node.
+The following execution with the debugger
+of the example in C<examples/Node/ts_with_ast.pl>
+illustrates the difference:
+
+  examples/Node$ perl -wd ts_with_ast.pl
+  main::(ts_with_ast.pl:6):       my $translationscheme = q{
+  main::(ts_with_ast.pl:7):       %{
+
+The C<$translationscheme> variable contains the code
+of a small calculator:
+
+
+  %metatree
+
+  %left   '-' '+'
+  %left   '*'
+  %left   NEG
+
+  %%
+  line:       %name EXP
+                $exp  { $lhs->{n} = $exp->{n} }
+  ;
+
+  exp:
+              %name PLUS
+                exp.left '+'  exp.right
+                  { $lhs->{n} .= $left->{n} + $right->{n} }
+          |   %name TIMES
+                exp.left '*' exp.right
+                  { $lhs->{n} = $left->{n} * $right->{n} }
+          |   %name NUM   $NUM
+                  { $lhs->{n} = $NUM->{attr} }
+          |   '(' $exp ')'  %begin { $exp }
+          |   exp.left '-' exp.right
+                  { $lhs->{n} = $left->{n} - $right->{n} }
+
+          |   '-' $exp %prec NEG
+                  { $lhs->{n} = -$exp->{n} }
+  ;
+
+
+We run the program with input C<2+(3)> and stop
+it at line 88, just after the augmented AST (C<CODE> node included)
+has been built:
+
+    DB<1> c 88
+  main::(ts_with_ast.pl:88):      $t->translation_scheme;
+
+Now, let us see the difference between the methods C<children>
+and C<Children>:
+
+    DB<2> @a = $t->children; @b = $t->Children
+    DB<3> print Parse::Eyapp::Node::str($_)."\n" for @a
+  PLUS(NUM(TERMINAL,CODE),TERMINAL,NUM(TERMINAL,CODE),CODE)
+  CODE
+    DB<4> print $_->str."\n" for @b
+  PLUS(NUM(TERMINAL,CODE),TERMINAL,NUM(TERMINAL,CODE),CODE)
+    DB<5>             
+
+
+=head2  $node->last_child
+
+Return the last child of the node. When dealing with translation
+schemes, the last can be a C<CODE> node.
+
+=head2  $node->Last_child
+
+The C<$node-E<gt>Last_child> method returns the last non CODE child of the node.
+See an example:
+
+  examples/Node$ cat -n trans_scheme_default_action.pl
+     1  #!/usr/bin/perl -w
+     2  use strict;
+     3  use Data::Dumper;
+     4  use Parse::Eyapp;
+     5  use IO::Interactive qw(is_interactive);
+     6
+     7  my $translationscheme = q{
+     8  %{
+     9  # head code is available at tree construction time
+    10  use Data::Dumper;
+    11  our %sym; # symbol table
+    12  %}
+    13
+    14  %prefix Calc::
+    15
+    16  %defaultaction {
+    17     $lhs->{n} = eval " $left->{n} $_[2]->{attr} $right->{n} "
+    18  }
+    19
+    20  %metatree
+    21
+    22  %right   '='
+    23  %left   '-' '+'
+    24  %left   '*' '/'
+    25
+    26  %%
+    27  line:       %name EXP
+    28                exp <+ ';'> /* Expressions separated by semicolons */
+    29                  { $lhs->{n} = $_[1]->Last_child->{n} }
+    30  ;
+    31
+    32  exp:
+    33              %name PLUS
+    34                exp.left '+' exp.right
+    35          |   %name MINUS
+    36                exp.left '-' exp.right
+    37          |   %name TIMES
+    38                exp.left '*' exp.right
+    39          |   %name DIV
+    40                exp.left '/' exp.right
+    41          |   %name NUM
+    42                $NUM
+    43                  { $lhs->{n} = $NUM->{attr} }
+    44          |   '(' $exp ')'  %begin { $exp }
+    45          |   %name VAR
+    46                $VAR
+    47                  { $lhs->{n} = $sym{$VAR->{attr}}->{n} }
+    48          |   %name ASSIGN
+    49                $VAR '=' $exp
+    50                  { $lhs->{n} = $sym{$VAR->{attr}}->{n} = $exp->{n} }
+    51
+    52  ;
+    53
+    54  %%
+    55  # tail code is available at tree construction time
+    ......................................................
+    77  }; # end translation scheme
+    78
+    ......................................................
+
+The node associated with C<$_[1]> in
+
+    27  line:       %name EXP
+    28                exp <+ ';'> /* Expressions separated by semicolons */
+    29                  { $lhs->{n} = $_[1]->Last_child->{n} }
+
+is associated with the whole expression 
+
+                               exp <+ ';'>
+
+and is a C<Calc::_PLUS_LIST> node. 
+When feed with input C<a=3;b=4> the children are
+the two C<Calc::ASSIGN> subtrees associated with
+C<a=3> and C<b=4> and the C<CODE> associated with the
+semantic action:
+
+            { $lhs->{n} = $_[1]->Last_child->{n} }
+
+Using C<Last_child> we are avoiding the last C<CODE>
+child and setting the C<n>(umeric) attribute
+of the C<EXP> node to the one associated with C<b=4> (i.e. C<4>).
+
+  examples/Node$ trans_scheme_default_action.pl
+  Write a sequence of arithmetic expressions: a=3;b=4
+  ***********Tree*************
+
+  Calc::EXP(
+    Calc::_PLUS_LIST(
+      Calc::ASSIGN(
+        Calc::TERMINAL,
+        Calc::TERMINAL,
+        Calc::NUM(
+          Calc::TERMINAL,
+          CODE
+        ),
+        CODE
+      ) # Calc::ASSIGN,
+      Calc::ASSIGN(
+        Calc::TERMINAL,
+        Calc::TERMINAL,
+        Calc::NUM(
+          Calc::TERMINAL,
+          CODE
+        ),
+        CODE
+      ) # Calc::ASSIGN
+    ) # Calc::_PLUS_LIST,
+    CODE
+  ) # Calc::EXP
+  ******Symbol table**********
+  {
+    'a' => { 'n' => '3' },
+    'b' => { 'n' => '4' }
+  }
+
+  ************Result**********
+  4
+
+
+=head2 $node->descendant
+
+The C< descendant> method 
+returns the descendant of a node given its I<coordinates>. 
+The coordinates of a node C<$s> relative to a tree C<$t>
+to which it belongs is a string of numbers
+separated by dots like  C<".1.3.2"> which
+denotes the I<child path> from C<$t> to C<$s>, i.e.
+C<$s == $t-E<gt>child(1)-E<gt>child(3)-E<gt>child(2)>.
+
+See a session
+with the debugger:
+
+   DB<7> x $t->child(0)->child(0)->child(1)->child(0)->child(2)->child(1)->str
+ 0  '
+ BLOCK[8:4:test]^{0}(
+   CONTINUE[10,10]
+ )
+   DB<8> x $t->descendant('.0.0.1.0.2.1')->str
+ 0  '
+ BLOCK[8:4:test]^{0}(
+   CONTINUE[10,10]
+
+=head2 $node->str
+
+The C<str> method returns a string representation of the tree. 
+The I<str> method traverses the syntax tree dumping the type
+of the node being visited in a string. To be specific
+the value returned by the function referenced by C<$CLASS_HANDLER> 
+will be dumped. The default value fo such function is to return the type
+of the node.
+If the node being visited
+has a method C<info> it will
+be executed and its result inserted between C<$DELIMITER>s
+into the string. Thus, in the L</SYNOPSIS>
+example, by adding the C<info> method to the class C<TERMINAL>:
+
+ sub TERMINAL::info {
+   $_[0]{attr}
+ }
+
+we achieve the insertion of attributes in the string being built 
+by C<str>.
+
+The existence of some methods (like C<footnote>) and
+the values of some package variables
+influence the behavior of C<str>. Among the most
+important are:
+
+  @PREFIXES = qw(Parse::Eyapp::Node::);                                 # Prefixes to supress 
+  $INDENT = 0; # -1 compact, no info, no footnotes 
+               # 0 = compact, 1 = indent, 2 = indent and include Types in closing parenthesis
+  $STRSEP = ',';                                # Separator between nodes, by default a comma
+  $DELIMITER = '[';                         # The string returned by C<info> will be enclosed 
+  $FOOTNOTE_HEADER = "\n---------------------------\n"; 
+  $FOOTNOTE_SEP = ")\n"; 
+  $FOOTNOTE_LEFT = '^{';                               # Left delimiter for a footnote number
+  $FOOTNOTE_RIGHT = '}';                              # Right delimiter for a footnote number
+  $LINESEP = 4;                             # When indent=2 the enclosing parenthesis will be
+                                            # commented if more than $LINESEP apart
+  $CLASS_HANDLER = sub { type($_[0]) }; # What to print to identify the node
+
+Footnotes and attribute info will not be inserted when C<$INDENT> 
+is -1. A compact representation will be obtained. Such representation 
+can be feed to C<new> or C<hnew> to obtain a copy of the tree. 
+See the following session with the debugger:
+
+  pl@nereida:~/LEyapp$ perl -MParse::Eyapp::Node -wde 0
+  main::(-e:1):   0
+    DB<1> $x = Parse::Eyapp::Node->new('A(B(C,D),D)', sub { $_->{order} = $i++ for @_; })
+    DB<2> *A::info = *B::info = *C::info = *D::info = sub { shift()->{order} }
+    DB<3> p $x->str
+  A[0](B[1](C[2],D[3]),D[4])
+    DB<4> $Parse::Eyapp::Node::INDENT=-1
+    DB<5> p $x->str
+  A(B(C,D),D)
+    DB<6> x Parse::Eyapp::Node->hnew($x->str)
+  0  A=HASH(0x8574704)
+     'children' => ARRAY(0x85745d8)
+        0  B=HASH(0x857468c)
+           'children' => ARRAY(0x8574608)
+              0  C=HASH(0x85745b4)
+                 'children' => ARRAY(0x8509670)
+                      empty array
+              1  D=HASH(0x8574638)
+                 'children' => ARRAY(0x857450c)
+                      empty array
+        1  D=HASH(0x8574638)
+           -> REUSED_ADDRESS
+  1  B=HASH(0x857468c)
+     -> REUSED_ADDRESS
+  2  C=HASH(0x85745b4)
+     -> REUSED_ADDRESS
+  3  D=HASH(0x8574638)
+     -> REUSED_ADDRESS
+  4  D=HASH(0x8574638)
+     -> REUSED_ADDRESS
+
+
+The following list defines the C<$DELIMITER>s you can choose for 
+attribute representation:
+
+          '[' => ']', '{' => '}', '(' => ')', '<' => '>'
+
+If the node being visited has a method  C<footnote>, the string
+returned by the method will be concatenated at the end of the 
+string as a footnote. The variables C<$FOOTNOTE_LEFT> and
+C<$FOOTNOTE_RIGHT> govern the displaying of footnote numbers.
+
+Follows an example of output using C<footnotes>. 
+
+ nereida:~/doc/casiano/PLBOOK/PLBOOK/code/Simple-Types/script> \
+                                          usetypes.pl prueba24.c
+ PROGRAM^{0}(FUNCTION[f]^{1}(RETURNINT(TIMES(INUM(TERMINAL[2:2]),VAR(TERMINAL[a:2])))))
+ ---------------------------
+ 0)
+ Types:
+ $VAR1 = {
+   'CHAR' => bless( {
+     'children' => []
+   }, 'CHAR' ),
+   'VOID' => bless( {
+     'children' => []
+   }, 'VOID' ),
+   'INT' => bless( {
+     'children' => []
+   }, 'INT' ),
+   'F(X_1(INT),INT)' => bless( {
+     'children' => [
+       bless( {
+         'children' => [
+           $VAR1->{'INT'}
+         ]
+       }, 'X_1' ),
+       $VAR1->{'INT'}
+     ]
+   }, 'F' )
+ };
+ Symbol Table:
+ $VAR1 = {
+   'f' => {
+     'type' => 'F(X_1(INT),INT)',
+     'line' => 1
+   }
+ };
+
+ ---------------------------
+ 1)
+ $VAR1 = {
+   'a' => {
+     'type' => 'INT',
+     'param' => 1,
+     'line' => 1
+   }
+ };
+
+The first footnote was due to a call to C<PROGRAM:footnote>.
+The C<footnote> method for the C<PROGRAM> node was defined as:
+
+ nereida:~/doc/casiano/PLBOOK/PLBOOK/code/Simple-Types/lib/Simple> \
+                             sed -n -e '691,696p' Types.eyp | cat -n
+     1  sub PROGRAM::footnote {
+     2    return "Types:\n"
+     3           .Dumper($_[0]->{types}).
+     4           "Symbol Table:\n"
+     5           .Dumper($_[0]->{symboltable})
+     6  }
+
+The second footnote was produced by the existence of a
+C<FUNCTION::footnote> method:
+
+ nereida:~/doc/casiano/PLBOOK/PLBOOK/code/Simple-Types/lib/Simple> \
+                            sed -n -e '702,704p' Types.eyp | cat -n
+ 1  sub FUNCTION::footnote {
+ 2    return Dumper($_[0]->{symboltable})
+ 3  }
+
+
+The source program for the example was:
+
+     1  int f(int a) {
+     2    return 2*a;
+     3  }
+
+[% PROCESS equaltrees %]
+
+=head2  $node->delete
+
+The C<$node-E<gt>delete($child)> method is used to delete the specified child of C<$node>.
+The child to delete can be specified using the index or a
+reference. It returns the deleted child.
+
+Throws an exception if the object can't do C<children> or has no C<children>.
+See also the L<delete|/$yatw-E<gt>delete> method of treeregexes 
+(C<Parse::Eyapp:YATW> objects)
+to delete the node being visited.
+
+The following example moves out of a loop an assignment statement
+assuming is an invariant of the loop. To do it, it uses
+the C<delete> and C<insert_before> methods:
+
+  nereida:~/src/perl/YappWithDefaultAction/examples> \
+              sed -ne '98,113p' moveinvariantoutofloopcomplexformula.pl
+  my $p = Parse::Eyapp::Treeregexp->new( STRING => q{
+    moveinvariant: BLOCK(
+                     @prests,
+                     WHILE(VAR($b), BLOCK(@a, ASSIGN($x, NUM($e)), @c)),
+                     @possts
+                   )
+      => {
+           my $assign = $ASSIGN;
+           $BLOCK[1]->delete($ASSIGN);
+           $BLOCK[0]->insert_before($WHILE, $assign);
+         }
+    },
+    FIRSTLINE => 99,
+  );
+  $p->generate();
+  $moveinvariant->s($t);
+
+The example below deletes CODE nodes
+from the tree build for a translation scheme:
+
+  my $transform = Parse::Eyapp::Treeregexp->new( 
+    STRING=>q{
+      delete_code: CODE => { Parse::Eyapp::Node::delete($CODE) }
+    },
+  )
+
+Observe how delete is called as a subroutine.
+
+=head2  $node->unshift($newchild)
+
+Inserts C<$newchild> at the beginning of the list of children of C<$node>.
+See also the L<unshift|/$yatw-E<gt>unshift> method 
+for C<Parse::Eyapp:YATW> treeregexp transformation objects
+
+=head2  $node->push($newchild)
+
+Inserts C<$newchild> at the end of the list of children of C<$node>.
+
+=head2  $node->insert_before($position, $new_child)
+
+Inserts C<$newchild> before C<$position> in the list of children of C<$node>.
+Variable C<$position> can be an index or a reference.
+
+The method throws an exception if C<$position> is an index
+and is not in range. Also if C<$node> has no children.
+
+The method throws a warning if C<$position> is a reference and does not define
+an actual child. In such case C<$new_child> is not inserted.
+
+See also the L<insert_before|/$yatw-E<gt>insert_before> 
+method for C<Parse::Eyapp:YATW> treeregexp transformation objects
+
+
+=head2  $node->insert_after($position, $new_child)
+
+Inserts C<$newchild> after C<$position> in the list of children of C<$node>.
+Variable C<$position> can be an index or a reference.
+
+The method throws an exception if C<$position> is an index and is not
+in the range of C<$node->children>.
+
+The method throws a warning if C<$position> is a reference and does not exists
+in the list of children. In such case C<$new_child> is not inserted.
+
+=head2  $node->translation_scheme
+
+Traverses C<$node>. Each time a CODE node is visited the subroutine referenced
+is called with arguments the node and its children. Usually the code will decorate
+the nodes with new attributes or will update existing ones. Obviously this method
+does nothing for an ordinary AST. It is used after compiling
+an Eyapp program that makes use of the C<%metatree> directive. (See
+C<examples/Node/TSPostfix3.eyp> for an example).
+
+=head2 $node->bud(@transformations)
+
+Bottom-up decorator. The tree is traversed bottom-up. The set of
+transformations in C<@transformations>
+is applied to each node in the tree referenced by C<$node>
+in the order
+supplied by the user. I<As soon as one succeeds
+no more transformations are applied>.
+
+For an example  see the files C<lib/Simple/Types.eyp> 
+and C<lib/Simple/Trans.trg> in C<examples/typechecking/Simple-Types-XXX.tar.gz>
+shows an extract of the type-checking phase of a toy-example compiler: 
+
+  examples/typechecking/Simple-Types-0.4/lib/Simple$  sed -ne '600,613p' Types.eyp
+   my @typecheck = (     # Check typing transformations for
+     our $inum,          # - Numerical constantss
+     our $charconstant,  # - Character constants
+     our $bin,           # - Binary Operations
+     our $arrays,        # - Arrays
+     our $assign,        # - Assignments
+     our $control,       # - Flow control sentences
+     our $functioncall,  # - Function calls
+     our $statements,    # - Those nodes with void type
+                         #   (STATEMENTS, PROGRAM, etc.)
+     our $returntype,    # - Return
+   );
+
+   $t->bud(@typecheck);
+
+
+You can find another example of use of C<bud>
+in the file C<examples/ParsingStringsAndTrees/infix2pir.pl>

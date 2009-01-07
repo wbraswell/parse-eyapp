@@ -1,0 +1,52 @@
+# Flat lists: optional example
+%semantic token 'c' 
+
+%{
+use Data::Dumper;
+%}
+
+%%
+S: 'c' 'c'? 
+     { 
+       print "1st attribute: $_[1]\n";
+       print "2nd attribute:\n", Dumper($_[2]);
+    }
+;
+
+%%
+
+sub _Error {
+        exists $_[0]->YYData->{ERRMSG}
+    and do {
+        print $_[0]->YYData->{ERRMSG};
+        delete $_[0]->YYData->{ERRMSG};
+        return;
+    };
+    print "Syntax error.\n";
+}
+
+sub _Lexer {
+    my($parser)=shift;
+
+        $parser->YYData->{INPUT}
+    or  $parser->YYData->{INPUT} = <STDIN>
+    or  return('',undef);
+
+    $parser->YYData->{INPUT}=~s/^[ \t\n]//;
+
+    for ($parser->YYData->{INPUT}) {
+        s/^(.)//s and return($1,$1);
+    }
+}
+
+sub Run {
+    my($self)=shift;
+    
+    $self->YYBuildingTree(0);
+    $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error 
+      #, yydebug => 0x1F 
+    );
+}
+
+#my($calc)=new Calc;
+#$calc->Run;

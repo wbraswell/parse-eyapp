@@ -1,0 +1,20 @@
+# file setperl5lib
+# Execute:
+# source setperl5lib
+# Change the values for whatever is more convenient in your platform
+
+
+# To find Math::Calc 
+CP=`pwd`
+export PERL5LIB=${CP}/lib:${PERL5LIB}
+#
+# To find eyapp and remotetest.pl
+export PATH=${CP}/scripts:${PATH}
+
+# Used by some SKIP tests
+export DEVELOPER=casiano
+
+# To simplify some svn commands
+export SVNR=svn+ssh://casiano@orion.pcg.ull.es/var/svn/casiano/PL/YappWithDefaultAction/trunk/examples/Calculator
+
+

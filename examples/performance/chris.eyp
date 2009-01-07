@@ -1,0 +1,83 @@
+%%
+log: fw | tcplog;
+fw: syslogdate 'S' hostname 'S' process ':' fwdatas;
+tcplog:
+       syslogdate 'S' hostname 'S' tcplogid tcplogopen |
+       syslogdate 'S' hostname 'S' tcplogid tcplogclose;
+
+fwdatas: fwdata +;
+fwdata: 'S' 'KEYPAIR' | 'S' 'ALPHA' | 'S';
+
+tcplogid: 'TCPLOG' 'OPENPAREN' 'HEXID8' 'CLOSEPAREN' ':' 'S' { print
+'Process:'.$_[1].' '.$_[2].' '.$_[3]."\n"; 'Process:'.$_[1].' '.$_[2].'
+'.$_[3] };
+tcplogopen: 'ALPHA' 'S' 'ALPHA' ',' 'S'  ip ':' port 'S' '-' '>' 'S' ip ':'
+port;
+tcplogclose: 'ALPHA' 'S' 'ALPHA' ',' 'S' 'ALPHA' 'S' 'INT' ',' 'S' 'ALPHA'
+'S' 'INT';
+
+syslogdate: year 'S' month 'S' day 'S' time { $_[1].' '.$_[2].' '.$_[3].'
+'.$_[4] };
+year: 'INT';
+month: 'ALPHA';
+day: 'INT';
+time: 'INT' ':' 'INT' ':' 'INT';
+
+hostname: 'ALPHA' '-' 'ALPHA' '-' 'INT' { print
+'hostname:'.$_[1].'-'.$_[2].'-'.$_[3];
+'hostname:'.$_[1].'-'.$_[2].'-'.$_[3]; };
+
+process: 'ALPHA' 'S' 'ALPHA' 'S' 'ALPHA' { print 'Process:'.$_[1].'
+'.$_[2].' '.$_[3]."\n"; 'Process:'.$_[1].' '.$_[2].' '.$_[3] };
+
+
+port: 'INT' { 'Port:'.$_[1]} ;
+ip: 'INT' '.' 'INT' '.' 'INT' '.' 'INT' {
+'IP:'.$_[1].'.'.$_[3].'.'.$_[5].'.'.$_[7] };
+
+%%
+sub _Error{
+       and do {
+               print $_[0]->YYData->{ERRMSG};
+               delete $_[0]->YYData->{ERRMSG};
+               return;
+       };
+       print "Syntax error.\n";
+}
+
+sub _Lexer{
+       my($parser) = shift;
+
+       $parser->YYData->{INPUT}
+               or $parser->YYData->{INPUT} = <STDIN>
+               or return ('', undef);
+
+       for( $parser->YYData->{INPUT} ){
+               m{\G(tcplog)}gc &&              return ( 'TCPLOG', $1 );
+               m{\G([0-9a-f]{8})}gc && return ( 'HEXID8', $1 );
+
+               m{\G([\[\(])}gc &&              return( 'OPENPAREN', $1);
+               m{\G([\]\)])}gc &&              return( 'CLOSEPAREN', $1 );
+
+               m{\G([0-9]+)}gc &&              return( 'INT', $1 );
+               m{\G([^\s]+\=[^\s]*)}gc &&              return( 'KEYPAIR',
+$1 );
+               m{\G([A-za-z]+)}gc &&   return( 'ALPHA', $1 );
+               m{\G(\s+)+}gc &&                return( 'S', ' ');
+               m{\G(:)}gc &&                   return ( ':', $1 );
+               m{\G(-)}gc &&                   return ( '-', $1 );
+               m{\G(>)}gc &&                   return ( '>', $1 );
+               m{\G(,)}gc &&                   return ( ',', $1 );
+               m{\G(\.)}gc &&                  return ( '.', $1 );
+       }
+       return( '', undef );
+}
+
+sub Run{
+       my ($self) = shift;
+       return $self->YYParse(
+               yylex =>        \&_Lexer,
+               yyerror =>      \&_Error,
+       );
+}
+

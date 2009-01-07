@@ -1,0 +1,10 @@
+# List3.yp
+%semantic token 'c' 
+
+%%
+
+S:
+      'c' + 'd' +  
+;
+
+%%
