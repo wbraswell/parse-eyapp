@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# This program builds the files in t/cleanok/ and t/cleanvok/
+# used to test the behavior of eyapp when executed with option '-c'
 use warnings;
 use strict;
 use File::Basename;
