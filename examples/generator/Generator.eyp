@@ -1,6 +1,8 @@
-# Generator.eyp
+# file: Generator.eyp
+# compile with: eyapp -b '' Generator.eyp
+# then run: ./Generator.pm
 %strict
-%token NUM VAR
+%token NUM VARDEF VAR
 
 %right  '='
 %left   '-' '+'
@@ -8,64 +10,62 @@
 %left   NEG
 %right  '^'
 
-# YYExpect returns the full set of expected tokens
-%nocompact
+%defaultaction {
+  my $parser = shift;
 
-%namingscheme { 
-  #Receives a Parse::Eyapp object describing the grammar
-  my $self = shift;
-
-  $self->tokennames(
-    '=' => 'ASSIGN',
-    '+' => 'PLUS',
-    '*' => 'TIMES',
-    '-' => 'MINUS',
-    '/' => 'DIV',
-    '^' => 'POWER',
-  );
-
-  # returns the handler that will give names 
-  # to the right hand sides
-  \&give_token_name; 
+  return join '', @_;
 }
-
-%tree  bypass
 
 %{
 use base q{TokenGen};
-
-sub exp_is_NUM::info {
-  my $self = shift;
-
-  $self->{attr};
-}
-
-*exp_is_VAR::info = *var_is_VAR::info = \&exp_is_NUM::info;
+use base q{GenSupport};
 %}
 
 %%
 
+stmts:
+    stmt
+      {
+        $_[0]->deltaweight(VAR => +1); # At least one variable is defined now
+        $_[1];
+      }
+  | stmts ';' { "\n" } stmt 
+;
+
+stmt:
+    VARDEF '=' exp  
+      {
+        my $parser = shift;
+        $parser->defined_variable($_[0]); 
+        "$_[0]=$_[2]";
+      }
+;
 exp:
     NUM                
-  | VAR                
-  | var '=' exp        
+  | VAR
   | exp '+' exp        
   | exp '-' exp        
   | exp '*' exp        
   | exp '/' exp        
-  | %no bypass exp_is_NEG
-     '-' exp %prec NEG  
+  | '-' { $_[0]->pushdeltaweight('-' => -1) } exp %prec NEG  
+      {
+        $_[0]->popweight(); 
+        "-$_[3]"
+      }
   | exp '^' exp        
-;
-
-var: 
-     VAR
+  | '('   { $_[0]->pushdeltaweight('(' => -1, ')' => +1, '+' => +1, ); } 
+      exp 
+    ')'
+      {
+         $_[0]->popweight; 
+         "($_[3])"
+      }
 ;
 
 %%
 
 unless (caller) {
-  my $t = __PACKAGE__->main(@ARGV);
-  print $t->str."\n";
+  my $exp;
+  __PACKAGE__->main(@ARGV);
 }
 
