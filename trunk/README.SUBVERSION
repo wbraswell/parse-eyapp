@@ -1,3 +1,22 @@
+The subversion project for Eyapp was started in orion. See instructions below.
+But now (January 2009) is in google-code and intend to be there for long.
+
+This is the result of 'svn info':
+
+/home/lusasoft/src/perl/Parse-Eyapp$ svn info
+Ruta: .
+URL: https://parse-eyapp.googlecode.com/svn/trunk
+Raíz del repositorio: https://parse-eyapp.googlecode.com/svn
+UUID del repositorio: a75ea6fe-dcac-11dd-8561-ef618b9164eb
+Revisión: 6
+Tipo de nodo: directorio
+Agendado: normal
+Autor del último cambio: casiano.rodriguez.leon
+Revisión del último cambio: 5
+Fecha de último cambio: 2009-01-07 12:35:02 +0000 (mié, 07 ene 2009)
+
+
+************************ ORION SVN INFO ************************+
 - SVN version info set in files with:
 
   nereida:~/src/perl/YappWithDefaultAction/lib/Parse/Eyapp> svn propset svn:keywords "LastChangedDate LastChangedRevision" Driver.pm
