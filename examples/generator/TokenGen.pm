@@ -1,8 +1,8 @@
 package TokenGen;
 use strict;
 use warnings;
-use Test::LectroTest::Generator qw(Frequency Unit);
 
+use Test::LectroTest::Generator qw(Frequency Unit);
 use Scalar::Util qw{looks_like_number};
 
 sub set_tokengens {

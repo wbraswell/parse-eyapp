@@ -11,7 +11,7 @@ sub _Error {
 
   my $t = $parser->YYCurval;
   my @e = $parser->YYExpect();
-  my $attr = $parser->{STACK}[-1][1];
+  my $attr = $parser->YYSemval(0);
   local $" = " ";
   warn "Error:\nCurrent attribute: <$attr>\nCurrent token: <$t>\nExpected: <@e>\n";
 }
