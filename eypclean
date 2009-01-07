@@ -1,7 +1,0 @@
-#!/usr/bin/perl -w
-use warnings;
-use strict;
-use Parse::Eyapp::Cleaner;
-
-Parse::Eyapp::Cleaner::controller();
-
