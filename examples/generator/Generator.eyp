@@ -1,0 +1,71 @@
+# Generator.eyp
+%strict
+%token NUM VAR
+
+%right  '='
+%left   '-' '+'
+%left   '*' '/'
+%left   NEG
+%right  '^'
+
+# YYExpect returns the full set of expected tokens
+%nocompact
+
+%namingscheme { 
+  #Receives a Parse::Eyapp object describing the grammar
+  my $self = shift;
+
+  $self->tokennames(
+    '=' => 'ASSIGN',
+    '+' => 'PLUS',
+    '*' => 'TIMES',
+    '-' => 'MINUS',
+    '/' => 'DIV',
+    '^' => 'POWER',
+  );
+
+  # returns the handler that will give names 
+  # to the right hand sides
+  \&give_token_name; 
+}
+
+%tree  bypass
+
+%{
+use base q{TokenGen};
+
+sub exp_is_NUM::info {
+  my $self = shift;
+
+  $self->{attr};
+}
+
+*exp_is_VAR::info = *var_is_VAR::info = \&exp_is_NUM::info;
+%}
+
+%%
+
+exp:
+    NUM                
+  | VAR                
+  | var '=' exp        
+  | exp '+' exp        
+  | exp '-' exp        
+  | exp '*' exp        
+  | exp '/' exp        
+  | %no bypass exp_is_NEG
+     '-' exp %prec NEG  
+  | exp '^' exp        
+;
+
+var: 
+     VAR
+;
+
+%%
+
+unless (caller) {
+  my $t = __PACKAGE__->main(@ARGV);
+  print $t->str."\n";
+}
+

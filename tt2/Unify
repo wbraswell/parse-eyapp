@@ -1,0 +1,24 @@
+=head1 Unification with C<Parse::Eyapp::Unify>
+
+When we include I<variables> in trees we have I<tree patterns>.
+Unification is the problem of determining when two tree patterns C<e> and C<f>
+can be made identical by substituting expressions for the I<variables> in C<e> and C<f>.
+
+
+=head2 Function C<set>
+
+=head2  Function C<unify>
+
+
+=head2 Function C<representative>
+
+
+=head2 Function C<strunifiedtree>
+
+
+=head2 Function C<hnewunifiedtree> 
+
+
+=head2 Function C<newunifiedtree>
+
+

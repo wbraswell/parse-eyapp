@@ -1,0 +1,277 @@
+
+=head1 The Treeregexp Language
+
+A Treeregexp program is made of the repetition of three kind of 
+primitives: The treeregexp transformations, auxiliar Perl code 
+and Transformation Families.
+
+  treeregexplist:  treeregexp* 
+
+  treeregexp: 
+      IDENT ':' treereg ('=>' CODE)?  # Treeregexp 
+    | CODE                            # Auxiliar code
+    | IDENT '=' IDENT + ';'           # Transformation families
+
+Treeregexp themselves follow the rule:
+
+                  IDENT ':' treereg ('=>' CODE)?
+
+Several instances of this rule can be seen in the example in
+the L</SYNOPSIS> section.
+The identifier C<IDENT> gives the name to the rule.
+At the time of this writing (2006) there are the following kinds
+of treeregexes:
+
+  treereg: 
+        /* tree patterns with children */
+      IDENT '(' childlist ')' ('and' CODE)? 
+    | REGEXP (':' IDENT)? '(' childlist ')' ('and' CODE)? 
+    | SCALAR '(' childlist ')' ('and' CODE)?  
+    | '.' '(' childlist ')' ('and' CODE)? 
+          /* leaf tree patterns */
+    | IDENT ('and' CODE)? 
+    | REGEXP (':' IDENT)? ('and' CODE)? 
+    | '.' ('and' CODE)? 
+    | SCALAR ('and' CODE)? 
+    | ARRAY 
+    | '*' 
+
+=head2 Treeregexp rules
+
+When seen a rule like
+
+    zero_times: TIMES(NUM($x), ., .) and { $x->{attr} == 0 } => { $_[0] = $NUM }
+
+The Treeregexp translator creates a C<Parse::Eyapp:YATW> object
+that can be later referenced in the user code by the package variable
+C<$zero_times>.
+
+=head3 The treeregexp
+
+The first part of the rule C<TIMES(NUM($x), ., .)>
+indicates that for a matching to succeed the node being
+visited must be of C<type> C<TIMES>, have a left child
+of  C<type> C<NUM> and two more children.
+
+If the first part succeeded then the following part 
+takes the control to see if the I<semantic conditions>
+are satisfied.
+
+=head3 Semantic condition
+
+The second part is optional and must be prefixed by the reserved word C<and>
+followed by a Perl code manifesting the semantic conditions that must be hold
+by the node to succeed. Thus, in the example:
+
+  zero_times: TIMES(NUM($x), ., .) and { $x->{attr} == 0 } => { $_[0] = $NUM }
+
+the semantic condition C<$x-E<gt>{attr} == 0> states that the
+value of the number stored in the C<TERMINAL> node referenced
+by C<$x> must be zero.
+
+=head3 Referencing the matching nodes
+
+The node  being visited can be referenced/modified
+inside the semantic actions using C<$_[0]>. 
+
+The Treeregexp
+translator automatically creates a set of lexical variables
+for us. The scope of these variables is limited to the
+semantic condition and the transformation code. 
+
+Thus, in the example
+
+  zero_times: TIMES(NUM($x), ., .) and { $x->{attr} == 0 } => { $_[0] = $NUM }
+
+the node being visited C<$_[0]>
+can be also referenced using the lexical variable
+C<$TIMES> which is created by he Treeregexp compiler.
+In the same way a reference to the left child C<NUM> will be stored
+in the lexical variable C<$NUM> and a
+reference to the child of C<$NUM> will be stored in C<$x>.
+The semantic condition states that the attribute
+of the node associated with C<$x> must be zero.
+
+When the same type of node appears several times inside 
+the treeregexp part the associated lexical variable is 
+declared by the Treeregexp compiler as an array.
+This is the case in the C<constantfold> transformation
+in the L</SYNOPSIS> example, where there are two nodes of type C<NUM>:
+
+  constantfold: /TIMES|PLUS|DIV|MINUS/(NUM($x), ., NUM($y))
+     => {
+    $x->{attr} = eval  "$x->{attr} $W->{attr} $y->{attr}";
+    $_[0] = $NUM[0];
+  }
+
+Thus variable  C<$NUM[0]> references the node that matches the 
+first C<NUM> term in the formula and C<$NUM[1]> the one
+that matches the second.
+
+=head3 Transformation code
+
+The third part of the rule is also optional and comes prefixed by
+the big arrow C<=E<gt>>. The Perl code in this section usually 
+transforms the matching tree.
+To achieve the modification of the tree, the Treeregexp programmer
+B<must use C<$_[0]>> and not the lexical variables provided by the translator.
+Remember that in Perl C<$_[0]> is an alias of the actual parameter.
+The C<constantfold> example above B<will not work> if we rewrite the code C<$_[0] = $NUM[0]> as
+
+                            { $TIMES = $NUM }
+
+=head2 Regexp Treeregexes
+
+The previous C<constantfold> example used a classic Perl linear regexp
+to explicit that the root node of the matching subtree must match the Perl regexp.
+The general syntax for C<REGEXP> treeregexes patterns is:
+
+      treereg: REGEXP (':' IDENT)? '(' childlist ')' ('and' CODE)? 
+
+The C<REGEXP> must be specified between slashes (other delimiters
+as C<{}> are not accepted).
+It is legal to specify options after the second slash (like C<e>, C<i>, etc.).
+
+The operation of string oriented regexps is slightly modified
+when they are used inside a treeregexp:
+B<by default the option> 
+C<x> 
+B<will be assumed>.
+The treeregexp compiler will automatically insert it.
+Use the new option C<X> (upper case X) if you want to supress such behavior.
+B<There is no need also to insert> C<\b> 
+B<word anchors> to delimit identifiers:
+all the identifiers in a regexp treeregexp are automatically
+surrounded by C<\b>. Use the option C<B> (upper case B)
+to supress this behavior.
+
+The optional identifier after the C<REGEXP> indicates the name of the lexical variable
+that will be held a reference to the node whose type matches C<REGEXP>.
+Variable C<$W> (or C<@W> if there are more than one REGEXP and or dot treeregexes)
+will be used instead if no identifier is specified.
+
+
+=head2 Scalar Treeregexes
+
+A scalar treeregxp is defined writing a Perl scalar inside the treeregexp, like C<$x>
+in C<NUM($x)>. A scalar treeregxp immediately matches any node that exists
+and stores a reference to such node inside the Perl lexical scalar variable.
+The scope of the variable is limited to the semantic parts of the Treeregexp.
+Is illegal to use C<$W> or C<$W_#num> as variable names for scalar treeregexes.
+
+
+=head2 Dot Treeregexes
+
+A dot matches any node. It can be seen as an abbreviation for
+scalar treeregexes. The reference to the matching node
+is stored in the lexical variable C<$W>. 
+The variable C<@W> will be used instead
+if there are more than one REGEXP and or dot treeregexes
+
+=head2 Array Treeregexp Expressions
+
+The Treeregexp language permits expressions like:
+
+                   A(@a,B($x),@c)
+
+After the matching variable C<@A> contains the shortest prefix
+of C<$A-E<gt>children> that does not match C<B($x)>.
+The variable C<@c> contains the remaining sufix of
+ C<$A-E<gt>children>. 
+
+The following example uses 
+array treereg expressions to move the assignment C<b = 5>
+out of the C<while> loop:
+
+  ..  ......................................................................
+  93  my $program = "a =1000; c = 1; while (a) { c = c*a; b = 5; a = a-1 }\n";
+  94  $parser->YYData->{INPUT} = $program;
+  95  my $t = $parser->Run;
+  96  my @output = split /\n/, $t->str;
+  97
+  98  my $p = Parse::Eyapp::Treeregexp->new( STRING => q{
+  99    moveinvariant: BLOCK(
+ 100                     @prests,
+ 101                     WHILE(VAR($b), BLOCK(@a, ASSIGN($x, NUM($e)), @c)),
+ 102                     @possts
+ 103                   )
+ 104      => {
+ 105           my $assign = $ASSIGN;
+ 106           $BLOCK[1]->delete($ASSIGN);
+ 107           $BLOCK[0]->insert_before($WHILE, $assign);
+ 108         }
+ 109    },
+ 110    FIRSTLINE => 99,
+ 111  );
+ 112  $p->generate();
+
+=head2 Star Treeregexp 
+
+Deprecated. Don't use it. Is still there but not to endure.
+
+=head2 Transformation Families
+
+Transformations created by C<Parse::Eyapp::Treeregexp> can be grouped in 
+families. That is the function of the rule:
+
+                    treeregexp: IDENT '=' IDENT + ';' 
+
+
+The next example (file C<examples/TSwithtreetransformations3.eyp>)
+defines the family 
+
+     algebraic_transformations = constantfold zero_times times_zero comasocfold;
+
+Follows the code:
+
+     my $transform = Parse::Eyapp::Treeregexp->new( STRING => q{
+
+      uminus: UMINUS(., NUM($x), .) => { $x->{attr} = -$x->{attr}; $_[0] = $NUM }
+      constantfold: /TIMES|PLUS|DIV|MINUS/:bin(NUM($z), ., NUM($y))
+         => {
+        $z->{attr} = eval  "$z->{attr} $W->{attr} $y->{attr}";
+        $_[0] = $NUM[0];
+      }
+      commutative_add: PLUS($x, ., $y, .)
+        => { my $t = $x; $_[0]->child(0, $y); $_[0]->child(2, $t)}
+      comasocfold: TIMES(DIV(NUM($x), ., $b), ., NUM($y))
+         => {
+        $x->{attr} = $x->{attr} * $y->{attr};
+        $_[0] = $DIV;
+      }
+      zero_times: TIMES(NUM($x), ., .) and { $x->{attr} == 0 } => { $_[0] = $NUM }
+      times_zero: TIMES(., ., NUM($x)) and { $x->{attr} == 0 } => { $_[0] = $NUM }
+      algebraic_transformations = constantfold zero_times times_zero comasocfold;
+    },
+    );
+
+    $transform->generate();
+    our ($uminus);
+    $uminus->s($tree);
+ 
+
+The transformations belonging to a family are usually applied 
+toghether:
+
+                $tree->s(@algebraic_transformations);
+
+
+=head2 Code Support
+
+In between Treeregexp rules and family assignments the programmer can insert 
+Perl code between curly brackets. That code usually gives support to
+the semantic conditions and transformations inside the rules.
+See for example test 14 in the C<t/> directory of the Parse::Eyapp distribution.
+
+  {
+    sub not_semantic {
+      my $self = shift;
+      return  1 if $self->{token} eq $self->{attr};
+      return 0;
+    }
+  }
+
+  delete_tokens : TERMINAL and { not_semantic($TERMINAL) } 
+                           => { $delete_tokens->delete() }
+
+

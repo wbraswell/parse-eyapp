@@ -1,0 +1,11 @@
+# List3_tree.yp
+%semantic token 'c' 
+%tree
+
+%%
+
+S:
+      'c' + 'd' +  
+;
+
+%%

@@ -1,0 +1,19 @@
+=head1 NAME
+ 
+Parse::Eyapp::Driver - The LALR parser
+ 
+=head1 INTRODUCTION
+
+This class has the method C<YYParse> implementing the LR generic
+parsing algorithm plus the methods that give support to the generated
+parser.
+
+=head1 THE C<YYParse> METHOD
+
+[% PROCESS yyparse %]
+
+=head1 METHODS IN THE GENERATED CLASS: C<Parse::Eyapp::Driver> METHODS
+
+[% PROCESS Driver %]
+
+[% PROCESS authorandcopyright %]

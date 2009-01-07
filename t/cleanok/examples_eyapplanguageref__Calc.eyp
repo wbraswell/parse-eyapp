@@ -1,0 +1,34 @@
+# examples/Calc.eyp
+%right '=' 
+%left '-' '+' 
+%left '*' '/' 
+%left NEG 
+%right '^' 
+
+%%
+
+start:
+      input 
+;
+input:
+      line * 
+;
+line:
+      '\n'
+    | exp '\n'
+    | error '\n' 
+;
+exp:
+      NUM
+    | VAR
+    | VAR '=' exp
+    | exp '+' exp
+    | exp '-' exp
+    | exp '*' exp
+    | exp '/' exp
+    | '-' exp %prec NEG
+    | exp '^' exp
+    | '(' exp ')' 
+;
+
+%%

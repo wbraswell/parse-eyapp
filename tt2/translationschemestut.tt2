@@ -1,0 +1,12 @@
+=head1 NAME
+ 
+Parse::Eyapp::translationschemestut - Introduction to Translation Schemes in Eyapp
+ 
+[% PROCESS translationschemestut %]
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]
+

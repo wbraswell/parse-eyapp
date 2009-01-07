@@ -1,0 +1,13 @@
+# ListWithRefs1.eyp
+%semantic token 'c' 'd' 
+
+%%
+
+S:
+      'c' + D +  
+;
+D:
+      'd' 
+;
+
+%%
