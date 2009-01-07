@@ -1,0 +1,23 @@
+The examples used in the corresponding Parse::Eyapp
+'pod' tutorials can be found in this directories:
+
+DOCUMENTATION MODULE                | DIRECTORY
+
+                                    | Calculator/
+Parse::Eyapp::debuggintut           | debuggingtut/
+Parse::Eyapp::Driver                | Driver/
+Parse::Eyapp                        | Eyapp/
+Parse::Eyapp::eyappintro/           | eyappintro/
+Parse::Eyapp::eyapplanguageref      | eyapplanguageref/
+                                    | generator/
+                                    | languages/
+Parse::Eyapp::treematchingtut       | MatchingTrees/
+Parse::Eyapp::eyapplanguageref      | naming/ (section NAMING SCHEMES)
+Parse::Eyapp::Node                  | Node/
+                                    | ParsingStringsAndTrees/
+                                    | performance/
+Parse::Eyapp::eyapplanguageref      | recycle/ (section GRAMMAR REUSE )
+Parse::Eyapp::defaultactionsintro   | recycle/ (section GRAMMAR REUSE )
+Parse::Eyapp::translationschemestut | translationschemestut/
+                                    | typechecking/
+Parse::Eyapp::YATW                  | YATW/
