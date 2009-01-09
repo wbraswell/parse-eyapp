@@ -1,3 +1,4 @@
+  * TERMINAL::save_attributes apply to any class that is bypassed?
   * is 'error' a syntactic or a semantic token?
   * Language generation example examples/generator
      -- %compact as a compiler option (eyapp)
