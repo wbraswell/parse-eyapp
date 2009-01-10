@@ -4,7 +4,7 @@ use warnings;
 
 use Getopt::Long;
 use Test::LectroTest::Generator qw(:all);
-use TokenGen;
+use Parse::Eyapp::TokenGen;
 
 sub _Error {
   my $parser = shift;
@@ -21,6 +21,26 @@ sub defined_variable {
   my ($parser, $var) = @_;
 
   $st{$var} = 1;
+}
+
+sub generate_token {
+  my $parser = shift;
+
+  my @token = $parser->YYExpect;
+
+  my $term = $parser->{TERMS};
+  my $tokengen = Frequency( map { [$term->{$_}{WEIGHT}, Unit($_)] } @token);
+
+  return $tokengen->generate;
+}
+
+sub generate_attribute {
+  my $parser = shift;
+  my $token = shift;
+
+  my $gen = $parser->{TERMS}{$token}{GENERATOR};
+  return $gen->generate  if defined($gen);
+  return $token;
 }
 
 #my $WHITESPACES = String( length=>[0,1], charset=>" \t\n", size => 100 );

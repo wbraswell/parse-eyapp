@@ -2,7 +2,6 @@ package TokenGen;
 use strict;
 use warnings;
 
-use Test::LectroTest::Generator qw(Frequency Unit);
 use Scalar::Util qw{looks_like_number};
 
 sub set_tokengens {
@@ -25,26 +24,6 @@ sub set_weights {
     # Check if $_is a token?
     $terms->{$_}{WEIGHT} = $weight{$_};
   }
-}
-
-sub generate_token {
-  my $parser = shift;
-
-  my @token = $parser->YYExpect;
-
-  my $term = $parser->{TERMS};
-  my $tokengen = Frequency( map { [$term->{$_}{WEIGHT}, Unit($_)] } @token);
-
-  return $tokengen->generate;
-}
-
-sub generate_attribute {
-  my $parser = shift;
-  my $token = shift;
-
-  my $gen = $parser->{TERMS}{$token}{GENERATOR};
-  return $gen->generate  if defined($gen);
-  return $token;
 }
 
 sub weight {
