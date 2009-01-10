@@ -17,7 +17,7 @@
 }
 
 %{
-use base q{TokenGen};
+use base q{Parse::Eyapp::TokenGen};
 use base q{GenSupport};
 %}
 
