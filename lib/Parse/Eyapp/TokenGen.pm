@@ -1,4 +1,4 @@
-package TokenGen;
+package Parse::Eyapp::TokenGen;
 use strict;
 use warnings;
 
