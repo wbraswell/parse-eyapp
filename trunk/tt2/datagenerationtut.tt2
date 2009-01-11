@@ -44,6 +44,7 @@ of the randomly generated program:
 
 The examples for this tutorial can be found in the directory 
 C<examples/generator> in the distribution of C<Parse::Eyapp>.
+The tutorial assumes some familiarity with L<Test::LectroTest::Generator>.
 
 =head2 File C<GenSupport.pm>
 
