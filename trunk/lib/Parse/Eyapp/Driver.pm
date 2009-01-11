@@ -323,6 +323,13 @@ sub YYRightside {
   return @{$self->{GRAMMAR}->[$self->{CURRENT_RULE}]->[2]};
 }
 
+sub YYTerms {
+  my $self = shift;
+
+  return $self->{TERMS};
+}
+
+
 sub YYIsterm {
   my $self = shift;
   my $symbol = shift;

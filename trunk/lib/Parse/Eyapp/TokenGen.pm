@@ -2,7 +2,7 @@ package Parse::Eyapp::TokenGen;
 use strict;
 use warnings;
 
-use Scalar::Util qw{looks_like_number};
+use Scalar::Util qw{reftype looks_like_number};
 
 sub set_tokengens {
   my $parser = shift;
@@ -26,6 +26,31 @@ sub set_weights {
   }
 }
 
+sub set_weights_and_generators {
+  my $parser = shift;
+  my %par = @_;
+
+  my $terms = $parser->{TERMS};
+  for (keys %par) {
+    my $t = $terms->{$_};
+
+    if (reftype($par{$_}) && (reftype($par{$_}) eq 'ARRAY')) {
+      ($t->{WEIGHT}, $t->{GENERATOR}) = @{$par{$_}};
+      next;
+    }
+
+    if (looks_like_number($par{$_})) {
+      if ($par{$_} < 0) {
+        warn "Warning: set_weights_and_generators: negative weight ($par{$_}) for token <$_>\n"; 
+      }
+      $terms->{$_}{WEIGHT} = $par{$_};
+      next;
+    }
+
+    warn "Warning: set_weights_and_generators: unexpected param <$par{$_}> for token <$_>\n";
+  }
+}
+
 sub weight {
   my $parser = shift;
   my $token = shift;
@@ -33,6 +58,15 @@ sub weight {
 
   $parser->{TERMS}{$token}{WEIGHT} = $weight if $weight && looks_like_number($weight);
   $parser->{TERMS}{$token}{WEIGHT};
+}
+
+sub generator {
+  my $parser = shift;
+  my $token = shift;
+  my $generator = shift;
+
+  $parser->{TERMS}{$token}{GENERATOR} = $generator if $generator;
+  $parser->{TERMS}{$token}{GENERATOR};
 }
 
 sub deltaweight {
