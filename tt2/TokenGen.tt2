@@ -1,0 +1,28 @@
+=head1 NAME
+ 
+Parse::Eyapp::TokenGen - Support for Using Parse::Eyapp as a Data Generator 
+ 
+=head1 METHODS
+
+=head2 set_tokengens
+
+=head2 set_weights
+
+=head2 set_weights_and_generators
+
+=head2 weight
+
+=head2 generator
+
+=head2 deltaweight
+
+=head2 pushdeltaweight
+
+=head2 popweight
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]
+

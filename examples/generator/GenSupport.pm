@@ -28,8 +28,7 @@ sub generate_token {
 
   my @token = $parser->YYExpect;
 
-  my $term = $parser->{TERMS};
-  my $tokengen = Frequency( map { [$term->{$_}{WEIGHT}, Unit($_)] } @token);
+  my $tokengen = Frequency( map { [$parser->weight($_), Unit($_)] } @token);
 
   return $tokengen->generate;
 }
@@ -38,7 +37,7 @@ sub generate_attribute {
   my $parser = shift;
   my $token = shift;
 
-  my $gen = $parser->{TERMS}{$token}{GENERATOR};
+  my $gen = $parser->generator($token);
   return $gen->generate  if defined($gen);
   return $token;
 }
@@ -97,19 +96,46 @@ sub main {
   $debug = 0x1F if $debug;
 
   my $parser = $package->new();
-  $parser->set_tokengens(
-     NUM         => Int(range=>[0, 9], sized=>0),
-     VARDEF      => String( length=>[1,2], charset=>"A-NP-Z", size => 100 ),
-     VAR         => Gen {
-                      return  Elements(keys %st)->generate if keys %st;
-                      return Int(range=>[0, 9], sized=>0)->generate;
-                    },
-  );
 
-  $parser->set_weights(
-    NUM => 2,
-    VAR => 0, # At the beginning, no variables are defined
-    VARDEF => 2,
+#  $parser->set_tokengens(
+#     NUM         => Int(range=>[0, 9], sized=>0),
+#     VARDEF      => String( length=>[1,2], charset=>"A-NP-Z", size => 100 ),
+#     VAR         => Gen {
+#                      return  Elements(keys %st)->generate if keys %st;
+#                      return Int(range=>[0, 9], sized=>0)->generate;
+#                    },
+#  );
+#
+#  $parser->set_weights(
+#    NUM => 2,
+#    VAR => 0, # At the beginning, no variables are defined
+#    VARDEF => 2,
+#    '=' => 2,
+#    '-' => 1,
+#    '+' => 2,
+#    '*' => 4,
+#    '/' => 2,
+#    '^' => 0.5,
+#    ';' => 1,
+#    '(' => 1,
+#    ')' => 2,
+#    ''  => 2,
+#    'error' => 0,
+#  );
+
+  $parser->set_weights_and_generators(
+    NUM => [ 2, Int(range=>[0, 9], sized=>0)],
+    VAR => [
+              0,  # At the beginning, no variables are defined
+              Gen {
+                return  Elements(keys %st)->generate if keys %st;
+                return Int(range=>[0, 9], sized=>0)->generate;
+              },
+            ],
+    VARDEF => [ 
+                2,  
+                String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
+              ],
     '=' => 2,
     '-' => 1,
     '+' => 2,

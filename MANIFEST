@@ -190,6 +190,7 @@ examples/YATW/Tail2.pm
 lib/Parse/Eyapp/Base.pm
 lib/Parse/Eyapp/Base.pod
 lib/Parse/Eyapp/Cleaner.pm
+lib/Parse/Eyapp/datagenerationtut.pod
 lib/Parse/Eyapp/debuggingtut.pod
 lib/Parse/Eyapp/defaultactionsintro.pod
 lib/Parse/Eyapp/Driver.pm
@@ -211,6 +212,8 @@ lib/Parse/Eyapp.pm
 lib/Parse/Eyapp.pod
 lib/Parse/Eyapp/Scope.pm
 lib/Parse/Eyapp/Scope.pod
+lib/Parse/Eyapp/TokenGen.pm
+lib/Parse/Eyapp/TokenGen.pod
 lib/Parse/Eyapp/translationschemestut.pod
 lib/Parse/Eyapp/Treeregexp.pm
 lib/Parse/Eyapp/Treeregexp.pod
