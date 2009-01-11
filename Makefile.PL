@@ -213,6 +213,19 @@ Makefile.PL - Makefile generator for Parse::Eyapp. Developer notes
 
 =over 2
 
+=item * When working as a developer run
+
+           source etc/myscript
+
+to set the appropriate environment variables. Some variables to set are:
+
+  PATH                  to execute eyapp, treereg, etc.
+  PERL5LIB              to find any modules required
+  DEVELOPER             used by many skip tests
+  MACHINES              a white space string containing the machines
+                        for the 'remotetest' target
+  PUBLIC_PLACE          A dir to save the pdf files
+
 =item * To build a 'public release'
 
   make release

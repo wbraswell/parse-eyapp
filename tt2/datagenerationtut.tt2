@@ -2,7 +2,18 @@
  
 Parse::Eyapp::datagenerationtut - Tutorial on Using Parse::Eyapp as a Data Generator 
  
-=head2 Executions
+=head1 Tutorial
+
+Where parsing is the process of determination of a string's membership in a language, 
+the process can also be reversed. Using a context free grammar it is possible to generate 
+strings in the language described by that grammar.
+
+This tutorial shows how to use Parse::Eyapp to generate phrases belonging to the language
+defined by a given grammar. The example used is -once more - a simple calculator:
+Here you have the results of several executions. Each run produces
+a set of assignments. The first output line reports the result 
+of the randomly generated program:
+
 
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ eyapp -b '' Generator.eyp
 
@@ -27,9 +38,12 @@ Parse::Eyapp::datagenerationtut - Tutorial on Using Parse::Eyapp as a Data Gener
 
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
 
-  # result: Calculator syntax differs from Perl. Can't compute the result: Can't modify constant item in postdecrement (--) at (eval 5) line 1, near "2--"
+  # result: Calculator syntax differs from Perl... 
   RY=2--2+(3+6)+(7*7*4^1+2*0/8*5/3)
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
+
+The examples for this tutorial can be found in the directory 
+C<examples/generator> in the distribution of C<Parse::Eyapp>.
 
 =head2 File C<GenSupport.pm>
 
@@ -271,7 +285,40 @@ Parse::Eyapp::datagenerationtut - Tutorial on Using Parse::Eyapp as a Data Gener
 
 =head1 SEE ALSO
 
-[% PROCESS seealso %]
+=over
+
+=item *  The Design and Implementation of a Grammar-based Data Generator (1992) 
+by Peter M. Maurer, Software Practice and Experience 
+http://www.cs.ubc.ca/local/reading/proceedings/spe91-95/spe/./vol22/issue3/spe756pm.pdf 
+
+=item * yagg: an easy-to-use generator for structured test inputs
+by David Coppit and Jiexin Lian.
+ASE '05: Proceedings of the 20th IEEE/ACM international Conference on Automated software engineering.
+2005, pages 356-359. http://search.cpan.org/perldoc?yagg::Tutorial
+
+=item * 
+Writing Randomly by Randall Schwartz. 
+Linux Magazine Column 04 (Sep 1999). 
+http://www.stonehenge.com/merlyn/LinuxMag/col04.html
+
+=back
+
+=head1 REFERENCES
+
+=over
+
+=item *
+The classic Dragon's book I<Compilers: Principles, Techniques, and Tools> 
+by Alfred V. Aho, Ravi Sethi and
+Jeffrey D. Ullman (Addison-Wesley 1986)
+
+=item *
+I<CS2121: The Implementation and Power of Programming Languages>
+(See L<http://www.cs.man.ac.uk/~pjj>, L<http://www.cs.man.ac.uk/~pjj/complang/g2lr.html> 
+and L<http://www.cs.man.ac.uk/~pjj/cs2121/ho/ho.html>) by 
+Pete Jinks
+
+=back
 
 [% PROCESS authorandcopyright %]
 
