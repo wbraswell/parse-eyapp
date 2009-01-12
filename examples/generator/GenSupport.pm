@@ -28,7 +28,7 @@ sub generate_token {
 
   my @token = $parser->YYExpect;
 
-  my $tokengen = Frequency( map { [$parser->weight($_), Unit($_)] } @token);
+  my $tokengen = Frequency( map { [$parser->token_weight($_), Unit($_)] } @token);
 
   return $tokengen->generate;
 }
@@ -37,7 +37,7 @@ sub generate_attribute {
   my $parser = shift;
   my $token = shift;
 
-  my $gen = $parser->generator($token);
+  my $gen = $parser->token_generator($token);
   return $gen->generate  if defined($gen);
   return $token;
 }
@@ -106,7 +106,7 @@ sub main {
 #                    },
 #  );
 #
-#  $parser->set_weights(
+#  $parser->set_tokenweights(
 #    NUM => 2,
 #    VAR => 0, # At the beginning, no variables are defined
 #    VARDEF => 2,
@@ -123,7 +123,7 @@ sub main {
 #    'error' => 0,
 #  );
 
-  $parser->set_weights_and_generators(
+  $parser->set_tokenweightsandgenerators(
     NUM => [ 2, Int(range=>[0, 9], sized=>0)],
     VAR => [
               0,  # At the beginning, no variables are defined

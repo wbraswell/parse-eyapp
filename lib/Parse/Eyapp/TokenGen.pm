@@ -15,7 +15,7 @@ sub set_tokengens {
   }
 }
 
-sub set_weights {
+sub set_tokenweights {
   my $parser = shift;
 
   my %weight = @_;
@@ -26,7 +26,7 @@ sub set_weights {
   }
 }
 
-sub set_weights_and_generators {
+sub set_tokenweightsandgenerators {
   my $parser = shift;
   my %par = @_;
 
@@ -51,7 +51,7 @@ sub set_weights_and_generators {
   }
 }
 
-sub weight {
+sub token_weight {
   my $parser = shift;
   my $token = shift;
   my $weight = shift;
@@ -60,7 +60,7 @@ sub weight {
   $parser->{TERMS}{$token}{WEIGHT};
 }
 
-sub generator {
+sub token_generator {
   my $parser = shift;
   my $token = shift;
   my $generator = shift;
