@@ -295,7 +295,7 @@ even elements:
   DB<31> p "@r"
     VC UC K UC VC VC K EJ P P
 
-=head2 Generating Attributes
+=head2 Holding Semantic Constraints
 
 Once the token was generated through the call to C<generate_token>
 at line 50:
@@ -313,14 +313,14 @@ at line 50:
     55  }
 
 the associated attributed is generated via the C<generate_attribute>
-method.  If needed, random combination of
+method in C<GenSupport.pm>.  If needed, random combination of
 white spaces can be added to the generated attribute
 via an appropriate generator (line 52).
 
 The C<generate_attribute> method uses the method C<generate>
 of the generator associated with such token.
 If no  generator object was set, the 
-the attribute returned is the token itself (line 42):
+attribute returned is the token itself (line 42):
 
     36  sub generate_attribute {
     37    my $parser = shift;
@@ -359,8 +359,13 @@ than the others. It was defined in the call to C<set_tokenweightsandgenerators>:
 The C<Gen> function of L<Test::LectroTest::Generator> creates a new generator 
 from a given code. Since a variable can't be used unless it is defined,
 we use a symbol table C<%st> to keep record of the variables that were defined 
-in previous assignments. Each time a new assignment to a variable occurs, such 
-variable is added to the symbol table:
+in previous assignments. If no defined variables exists, the defined generator 
+returns a digit between 0 and 9. 
+
+Each time a new assignment to a variable occurs, such 
+variable is added to the symbol table. This is achieved
+through the semantic action associated with the assignment
+production rule:
 
   pl@europa:~/LEyapp/examples/generator$ sed -ne '35,41p' Generator.eyp | cat -n
      1  stmt:
@@ -382,6 +387,50 @@ entry in the symbol table:
      5    $st{$var} = 1;
      6  }
 
+The semantic action associated with C<VARDEF '=' exp> returns the string 
+C< "$_[0]=$_[2]"> containing the actual phrase. Since this  
+is the semantic action required for most productions we make it
+our default action:
+
+  pl@europa:~/LEyapp/examples/generator$ sed -ne '13,17p' Generator.eyp | cat -n
+     1  %defaultaction {
+     2    my $parser = shift;
+     3
+     4    return join '', @_;
+     5  }
+
+The syntactic variable C<stmts> generates sequences of C<stmt> separated by 
+semicolons:
+
+  pl@europa:~/LEyapp/examples/generator$ sed -ne '26,33p' Generator.eyp | cat -n
+     1  stmts:
+     2      stmt
+     3        {
+     4          $_[0]->deltaweight(VAR => +1); # At least one variable is defined now
+     5          $_[1];
+     6        }
+     7    | stmts ';' { "\n" } stmt
+     8  ;
+
+The second production is left recursive. As a consequence, the C<stmt> in the first
+production (line 2) is the first statement of the sequence. A small derivation can convince
+you of this property:
+
+                                               stmts-> stmt
+   stmts => stmts';' stmt => stmts';' stmt ';' stmt => stmt ';' stmt ';' stmt 
+                                                       ----
+     
+Thus, when the reduction by the production C<stmts -E<gt> stmt> occurs, we are sure 
+that the first statment has been processed. In such case we increase the weight
+of token C<VAR> one unit (which was initially zero, see the call 
+to C<set_tokenweightsandgenerators>), 
+
+           $_[0]->deltaweight(VAR => +1); 
+
+The weight of C<VAR> is now 1, giving chances for variables to appear
+in the right hand side of an assignment. 
+The L<Parse::Eyapp::Tokengen> method C<deltaweight> increases (decreases
+if negative) the weight of the given tokens using the associated values.
 
 =head1 APPENDIX: FILES
 
@@ -610,27 +659,13 @@ Writing Randomly by Randall Schwartz.
 Linux Magazine Column 04 (Sep 1999). 
 http://www.stonehenge.com/merlyn/LinuxMag/col04.html
 
-=back
-
-=head1 REFERENCES
-
-=over
-
-=item *
-The classic Dragon's book I<Compilers: Principles, Techniques, and Tools> 
-by Alfred V. Aho, Ravi Sethi and
-Jeffrey D. Ullman (Addison-Wesley 1986)
-
-=item *
-I<CS2121: The Implementation and Power of Programming Languages>
-(See L<http://www.cs.man.ac.uk/~pjj>, L<http://www.cs.man.ac.uk/~pjj/complang/g2lr.html> 
-and L<http://www.cs.man.ac.uk/~pjj/cs2121/ho/ho.html>) by 
-Pete Jinks
+=item * Generating Test Data with Enhanced Context Free Grammars by Peter M. Maurer
+L<http://cs.baylor.edu/~maurer/aida/dgl-source/documentation/gen_tst.pdf>
 
 =item * Modules as Programs by Brian d Foy 
-http://www252.pair.com/comdog/mastering_perl/Chapters/18.modulinos.html
+L<http://www252.pair.com/comdog/mastering_perl/Chapters/18.modulinos.html>
 
-=item * How a Script Becomes a Module on Perlmonks: http://www.perlmonks.org/index.pl?node_id=396759.
+=item * How a Script Becomes a Module by Brian d Foy. On Perlmonks: L<http://www.perlmonks.org/index.pl?node_id=396759>.
 
 =back
 
