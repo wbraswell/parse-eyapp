@@ -65,7 +65,5 @@ exp:
 %%
 
 unless (caller) {
-  my $exp;
   __PACKAGE__->main(@ARGV);
 }
-
