@@ -1,6 +1,6 @@
 =head1 NAME
  
-Parse::Eyapp::datagenerationtut - Tutorial on Using Parse::Eyapp as a Data Generator 
+Parse::Eyapp::datagenerationtut - Tutorial on Using Parse::Eyapp as a Data Generator for Testing
  
 =head1 Tutorial
 
@@ -8,28 +8,73 @@ Where parsing is the process of determination of a string's membership in a lang
 the process can also be reversed. Using a context free grammar it is possible to generate 
 strings in the language described by that grammar.
 
-This tutorial shows how to use Parse::Eyapp to generate phrases belonging to the language
-defined by a given grammar. The example used is -once more - a simple calculator:
-Here you have the results of several executions. Each run produces
-a set of assignments. The first output line reports the result 
-of the randomly generated program:
+Context free grammars can be used to generate tests. The programmer designs a grammar that
+defines a set of inputs that will be able to find some set of bugs.
 
+This tutorial shows how to use Parse::Eyapp to generate phrases belonging to the language
+defined by a given grammar. We will generate inputs to test a simple calculator.
+The pure grammar of the generator is:
+
+  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ eyapp -c Generator.eyp
+  # file: Generator.eyp
+  # compile with: eyapp -b '' Generator.eyp
+  # then run: ./Generator.pm
+  %strict
+  %token NUM VARDEF VAR
+  %right '='
+  %left '-' '+'
+  %left '*' '/'
+  %left NEG
+  %right '^'
+
+  %%
+
+  stmts:
+        stmt
+      | stmts ';'  stmt
+  ;
+  stmt:
+        VARDEF '=' exp
+  ;
+  exp:
+        NUM
+      | VAR
+      | exp '+' exp
+      | exp '-' exp
+      | exp '*' exp
+      | exp '/' exp
+      | '-'  exp %prec NEG
+      | exp '^' exp
+      | '('  exp ')'
+  ;
+
+  %%
+
+First we compile the grammar with option C<-b ''> to produce a modulino:
 
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ eyapp -b '' Generator.eyp
+  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ls -ltr | tail -1
+  -rwxr-xr-x 1 lusasoft lusasoft 7844 2009-01-12 08:30 Generator.pm
 
+Here follows the results of several executions. Each run produces
+a set of assignments. The first output line reports the result 
+of the randomly generated program. 
+
+  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
   # result: -3
   SC=-3
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
 
   # result: error. Division by zero.
   M=(-4/6+4)+9+2*8*9+4;
   XQ=8/3;
   EI=XQ*2/0/0;
   BL=5+EI+4/5/XQ
+
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
 
   # result: 6
   CF=(6)
+
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
 
   # result: -710.2
@@ -40,11 +85,11 @@ of the randomly generated program:
 
   # result: Calculator syntax differs from Perl... 
   RY=2--2+(3+6)+(7*7*4^1+2*0/8*5/3)
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
 
 The examples for this tutorial can be found in the directory 
 C<examples/generator> in the distribution of C<Parse::Eyapp>.
-The tutorial assumes some familiarity with L<Test::LectroTest::Generator>.
+
+To understaund the code you will need some familiarity with L<Test::LectroTest::Generator>.
 
 =head2 File C<GenSupport.pm>
 
