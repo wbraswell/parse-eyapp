@@ -97,32 +97,6 @@ sub main {
 
   my $parser = $package->new();
 
-#  $parser->set_tokengens(
-#     NUM         => Int(range=>[0, 9], sized=>0),
-#     VARDEF      => String( length=>[1,2], charset=>"A-NP-Z", size => 100 ),
-#     VAR         => Gen {
-#                      return  Elements(keys %st)->generate if keys %st;
-#                      return Int(range=>[0, 9], sized=>0)->generate;
-#                    },
-#  );
-#
-#  $parser->set_tokenweights(
-#    NUM => 2,
-#    VAR => 0, # At the beginning, no variables are defined
-#    VARDEF => 2,
-#    '=' => 2,
-#    '-' => 1,
-#    '+' => 2,
-#    '*' => 4,
-#    '/' => 2,
-#    '^' => 0.5,
-#    ';' => 1,
-#    '(' => 1,
-#    ')' => 2,
-#    ''  => 2,
-#    'error' => 0,
-#  );
-
   $parser->set_tokenweightsandgenerators(
     NUM => [ 2, Int(range=>[0, 9], sized=>0)],
     VAR => [
@@ -136,17 +110,10 @@ sub main {
                 2,  
                 String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
               ],
-    '=' => 2,
-    '-' => 1,
-    '+' => 2,
-    '*' => 4,
-    '/' => 2,
-    '^' => 0.5,
-    ';' => 1,
-    '(' => 1,
-    ')' => 2,
-    ''  => 2,
-    'error' => 0,
+    '=' => 2, '-' => 1, '+' => 2, 
+    '*' => 4, '/' => 2, '^' => 0.5, 
+    ';' => 1, '(' => 1, ')' => 2, 
+    ''  => 2, 'error' => 0,
   );
 
   my $exp = $parser->Run( $debug );
