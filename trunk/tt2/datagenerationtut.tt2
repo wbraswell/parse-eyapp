@@ -2,7 +2,14 @@
  
 Parse::Eyapp::datagenerationtut - Tutorial on Using Parse::Eyapp as a Data Generator for Testing
  
-=head1 Introduction
+=head1 INTRODUCTION
+
+The examples for this tutorial can be found in the directory 
+C<examples/generator> in the distribution of C<Parse::Eyapp>.
+
+To understand the code you will need some familiarity with L<Test::LectroTest::Generator>,
+however, we will make an attempt to introduce the basics of L<Test::LectroTest::Generator>
+needed.
 
 Where parsing is the process of determination of a string's membership in a language, 
 the process can also be reversed. Using a context free grammar it is possible to generate 
@@ -13,6 +20,9 @@ defines a set of inputs that will be able to find some set of bugs.
 
 This tutorial shows how to use Parse::Eyapp to generate phrases belonging to the language
 defined by a given grammar. We will generate inputs to test a simple calculator.
+
+=head2 Compiling and Running the Example
+
 The pure grammar of the generator is:
 
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ eyapp -c Generator.eyp
@@ -50,6 +60,10 @@ The pure grammar of the generator is:
 
   %%
 
+This grammar defines  a language of sequences of semicolon separated assignments.
+The right hand side of an assignment can be any valid arithmetic
+expression including numbers and variables.
+
 First we compile the grammar with option C<-b ''> to produce a modulino:
 
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ eyapp -b '' Generator.eyp
@@ -85,6 +99,11 @@ of the randomly generated program.
   EI=XQ*2/0/0;
   BL=5+EI+4/5/XQ
 
+As you can see in the former run, only variables that were defined
+in previous assignments are used in later assignments. However, the 
+generated source may produce run-time errors and exceptions (which
+is good thing when testing a calculator).
+
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
 
   # result: 6
@@ -101,21 +120,22 @@ of the randomly generated program.
   # result: Calculator syntax differs from Perl... 
   RY=2--2+(3+6)+(7*7*4^1+2*0/8*5/3)
 
-The examples for this tutorial can be found in the directory 
-C<examples/generator> in the distribution of C<Parse::Eyapp>.
 
-To understand the code you will need some familiarity with L<Test::LectroTest::Generator>.
+=head1 GENERATING PHRASES FROM A CONTEXT FREE GRAMMAR
 
-=head1 Generating Phrases from a Context Free Grammar
+=head2 Using C<YYExpect> and L<Test::LectroTest::Generator> to generate tokens
 
 The basic idea of using Parse::Eyapp to generate phrases for the language
-defined by a given context free grammar is simple: change the lexer. Instead of 
-reading from some input, randomlñy generate one of the valid tokens. 
+defined by a given context free grammar is simple: I<change the lexer by a generator>. Instead of 
+reading from some input, randomly I<generate one of the valid tokens>. 
+
 We can use the method C<YYExpect> to know what tokens are valid. 
 For versions 1.137 and later of Parse::Eyapp The method C<YYExpect> returns
 the set of valid tokens at the time it is called.
 For previous versions (and this is true for L<Parse::Yapp>), C<YYExpect> only returns
-a subset of the whole set of valid tokens). In this example, the token
+a subset of the whole set of valid tokens. 
+
+In this example, the token
 generator has been isolated in the sub C<gen_lexer> in the file C<GenSupport.pm>:
 
     47  sub gen_lexer {
@@ -132,7 +152,7 @@ The token and its attribute are generated in lines 50 and 51.
 The methods C<generate_token> and C<generate_attribute> are also
 in the module C<GenSupport.pm>. They are methods of the 
 parser object since the grammar C<Generator.eyp> not only uses but inherits
-this module. See line 3 below:
+this module. See line 3 of C<Generator.eyp>:
 
   lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ sed -ne '19,24p' Generator.eyp | cat -n
      1  %{
@@ -159,12 +179,148 @@ is used to generate the actual token (line 33).
     34  }
 
 The L<Parse::Eyapp::TokenGen> method C<token_weight> returns the weight 
-associated with such token, that was previously set using one of
-the L<Parse::Eyapp::TokenGen> methods C<set_tokenweightsandgenerators>
-or C<set_tokenweights>.
+associated with a token, assuming it was previously set using one of
+the L<Parse::Eyapp::TokenGen> methods like C<set_tokenweightsandgenerators>
+or C<set_tokenweights>. See the code of method C<main> in C<GenSupport.pm>:
 
-Once the token is fixed, tha associated attribute is generated using
-the generator associated with such token:
+  pl@europa:~/LEyapp/examples/generator$ sed -ne '98,/^ *)/p' GenSupport.pm | cat -n
+     1    my $parser = $package->new();
+     2
+     3    $parser->set_tokenweightsandgenerators(
+     4      NUM => [ 2, Int(range=>[0, 9], sized=>0)],
+     5      VAR => [
+     6                0,  # At the beginning, no variables are defined
+     7                Gen {
+     8                  return  Elements(keys %st)->generate if keys %st;
+     9                  return Int(range=>[0, 9], sized=>0)->generate;
+    10                },
+    11              ],
+    12      VARDEF => [
+    13                  2,
+    14                  String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
+    15                ],
+    16      '=' => 2, '-' => 1, '+' => 2,
+    17      '*' => 4, '/' => 2, '^' => 0.5,
+    18      ';' => 1, '(' => 1, ')' => 2,
+    19      ''  => 2, 'error' => 0,
+    20    );
+
+=head2 A Brief Introduction to L<Test::LectroTest::Generator>
+
+The module C<GenSupport.pm> uses L<Test::LectroTest::Generator> to build generators
+for the required tokens. Thus the call to
+
+                   Int(range=>[0, 9], sized=>0)
+
+builds a L<Test::LectroTest::Generator> object that produces integers in the range 
+[0,9]. Such objects have a method C<generate> that produces the 
+actual item. The following debugger session illustrates the way to use L<Test::LectroTest::Generator>:
+
+  pl@europa:~/LEyapp$ perl -wde 0
+  main::(-e:1):   0
+    DB<1> use Test::LectroTest::Generator qw{:all}
+    DB<2> $i = Int(range=>[0, 9], sized=>0)
+    DB<3> p $i->generate
+  6
+    DB<4> p $i->generate
+  9
+
+The C<String> method builds a L<Test::LectroTest::Generator> object that produces
+strings:
+
+    DB<5> $v = String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
+    DB<6> p $v->generate
+  HM
+    DB<7> p $v->generate
+  Y
+    DB<8> p $v->generate
+  KE
+
+
+The C<Elements> method builds a L<Test::LectroTest::Generator> object that produces
+one of a given list of elements:
+
+    DB<9> @a = map { $v->generate } 1..10
+    DB<10> x @a
+  0  'UC'
+  1  'P'
+  2  'IF'
+  3  'EJ'
+  4  'H'
+  5  'VC'
+  6  'CF'
+  7  'K'
+  8  'T'
+  9  'IG'
+    DB<11> $x = Elements(@a)
+    DB<12> p $x->generate
+  P
+    DB<13> p $x->generate
+  P
+    DB<14> p $x->generate
+  EJ
+    DB<15> p $x->generate
+  VC
+
+More importantly, the C<Frequency> method produces
+one of a given list of elements with a given 
+probability distribution.SZee the following example.
+First we build a weight list where the odd elements
+have double weight:
+
+  DB<16> @w = map { $_ % 2 ? 2 : 1 } 0..9
+  DB<21> @w{@a} = @w
+  DB<24>  x \%w
+    0  HASH(0xd3cc80)
+       'CF' => 1
+       'EJ' => 2
+       'H' => 1
+       'IF' => 1
+       'IG' => 2
+       'K' => 2
+       'P' => 2
+       'T' => 1
+       'UC' => 1
+       'VC' => 2
+
+We now use C<Frequency> to build a  L<Test::LectroTest::Generator> object that produces
+one of the given list of elements C<@a> according to the specified probability:
+
+  DB<29> $f = Frequency( map { [$w{$_}, Unit($_)] } @a)
+
+Now we generate 10 items. We see that odd elements appear more frequently than
+even elements:
+
+  DB<30> @r = map { $f->generate } 1..10
+  DB<31> p "@r"
+    VC UC K UC VC VC K EJ P P
+
+=head2 Holding Semantic Constraints
+
+Once the token was generated through the call to C<generate_token>
+at line 50:
+
+    45  #my $WHITESPACES = String( length=>[0,1], charset=>" \t\n", size => 100 );
+    46
+    47  sub gen_lexer {
+    48    my $parser = shift;
+    49
+    50    my $token = $parser->generate_token;
+    51    my $attr = $parser->generate_attribute($token);
+    52    #$attr = $WHITESPACES->generate.$attr;
+    53
+    54    return ($token, $attr);
+    55  }
+
+the associated attributed is generated via the C<generate_attribute>
+method.  If needed, random combination of
+white spaces can be added to the generated attribute
+via an appropriate generator (line 52).
+
+The C<generate_attribute> method uses the method C<generate>
+of the generator associated with such token.
+If no  generator object was set, the 
+the attribute returned is the token itself (line 42):
 
     36  sub generate_attribute {
     37    my $parser = shift;
@@ -174,10 +330,77 @@ the generator associated with such token:
     41    return $gen->generate  if defined($gen);
     42    return $token;
     43  }
-    44
-    45  #my $WHITESPACES = String( length=>[0,1], charset=>" \t\n", size => 100 );
        
-=head1 Appendix: Files
+The attribute generator associated with the token C<VAR> is more complex
+than the others. It was defined in the call to C<set_tokenweightsandgenerators>:
+
+  pl@europa:~/LEyapp/examples/generator$ sed -ne '98,/^ *)/p' GenSupport.pm | cat -n
+     1    my $parser = $package->new();
+     2
+     3    $parser->set_tokenweightsandgenerators(
+     4      NUM => [ 2, Int(range=>[0, 9], sized=>0)],
+     5      VAR => [
+     6                0,  # At the beginning, no variables are defined
+     7                Gen {
+     8                  return  Elements(keys %st)->generate if keys %st;
+     9                  return Int(range=>[0, 9], sized=>0)->generate;
+    10                },
+    11              ],
+    12      VARDEF => [
+    13                  2,
+    14                  String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
+    15                ],
+    16      '=' => 2, '-' => 1, '+' => 2,
+    17      '*' => 4, '/' => 2, '^' => 0.5,
+    18      ';' => 1, '(' => 1, ')' => 2,
+    19      ''  => 2, 'error' => 0,
+    20    );
+
+The C<Gen> function of L<Test::LectroTest::Generator> creates a new generator 
+from a given code. Since a variable can't be used unless it is defined,
+we use a symbol table C<%st> to keep record of the variables that were defined 
+in previous assignments. If no defined variables exists, the defined generator 
+returns a digit between 0 and 9. 
+
+Each time a new assignment to a variable occurs, such 
+variable is added to the symbol table. This is achieved
+through the semantic action associated with the assignment
+production rule:
+
+  pl@europa:~/LEyapp/examples/generator$ sed -ne '35,41p' Generator.eyp | cat -n
+     1  stmt:
+     2      VARDEF '=' exp
+     3        {
+     4          my $parser = shift;
+     5          $parser->defined_variable($_[0]);
+     6          "$_[0]=$_[2]";
+     7        }
+
+The C<defined_variable> method in C<GenSupport.pm> simply sets the corresponding
+entry in the symbol table:
+
+  pl@europa:~/LEyapp/examples/generator$ sed -ne '19,24p' GenSupport.pm | cat -n
+     1  my %st; # Symbol Table
+     2  sub defined_variable {
+     3    my ($parser, $var) = @_;
+     4
+     5    $st{$var} = 1;
+     6  }
+
+The semantic action associated with C<VARDEF '=' exp> returns the string 
+C< "$_[0]=$_[2]"> containing the actual phrase. Since this  
+is the semantic action required for most productions we make it
+our default action:
+
+  pl@europa:~/LEyapp/examples/generator$ sed -ne '13,17p' Generator.eyp | cat -n
+     1  %defaultaction {
+     2    my $parser = shift;
+     3
+     4    return join '', @_;
+     5  }
+
+
+=head1 APPENDIX: FILES
 
 =head2 File C<GenSupport.pm>
 
@@ -388,6 +611,8 @@ the generator associated with such token:
 
 =over
 
+=item * L<Test::LectroTest::Generator> by Tom Moertel 
+
 =item *  The Design and Implementation of a Grammar-based Data Generator (1992) 
 by Peter M. Maurer, Software Practice and Experience 
 http://www.cs.ubc.ca/local/reading/proceedings/spe91-95/spe/./vol22/issue3/spe756pm.pdf 
@@ -423,6 +648,7 @@ Pete Jinks
 http://www252.pair.com/comdog/mastering_perl/Chapters/18.modulinos.html
 
 =item * How a Script Becomes a Module on Perlmonks: http://www.perlmonks.org/index.pl?node_id=396759.
+
 =back
 
 [% PROCESS authorandcopyright %]
