@@ -717,10 +717,12 @@ way to compute what the expected value is.
     68    __PACKAGE__->main(@ARGV);
     69  }
 
-
 =head1 SEE ALSO
 
 =over
+
+=item * L<Parse::Eyapp::TokenGen>
+
 
 =item * L<Test::LectroTest::Generator> by Tom Moertel 
 
@@ -756,6 +758,8 @@ L<http://www252.pair.com/comdog/mastering_perl/Chapters/18.modulinos.html>
 
 =item * How a Script Becomes a Module by Brian d Foy. On Perlmonks: 
 L<http://www.perlmonks.org/index.pl?node_id=396759>.
+
+
 
 =back
 
