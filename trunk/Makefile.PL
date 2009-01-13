@@ -226,9 +226,29 @@ to set the appropriate environment variables. Some variables to set are:
                         for the 'remotetest' target
   PUBLIC_PLACE          A dir to save the pdf files
 
-=item * To build a 'public release'
+=item * After you checked out from the svn repository this project, and set the environment variables,
+try to produce a C<Makefile>. You will surely get a warning:
 
-  make release
+  pl@nereida:~/src/perl/Parse-Eyapp$ perl Makefile.PL
+  Checking if your kit is complete...
+  Warning: the following files are missing in your kit:
+          lib/Parse/Eyapp/Parse.pm
+          lib/Parse/Eyapp/Treeregexp.pm
+  Please inform the author.
+  Writing Makefile for Parse::Eyapp
+
+This is because the files C<lib/Parse/Eyapp/Parse.pm> and C<lib/Parse/Eyapp/Treeregexp.pm> are derived
+from the respective grammars (C<lib/Parse/Eyapp/Parse.yp> and C<lib/Parse/Eyapp/Treeregexp.yp>). 
+Compile the grammars using the target C<release>:
+
+  pl@nereida:~/src/perl/Parse-Eyapp$ make release
+  yapp -n -m 'Parse::Eyapp::Parse' -o 'lib/Parse/Eyapp/Parse.pm' lib/Parse/Eyapp/Parse.yp
+  PERL5LIB=lib; eyapp -n -m 'Parse::Eyapp::Parse' -o 'lib/Parse/Eyapp/Parse.pm' lib/Parse/Eyapp/Parse.yp
+  PERL5LIB=lib; /usr/bin/perl -I./lib eyapp -v -n -m Parse::Eyapp::Treeregparser -o lib/Parse/Eyapp/Treeregexp.pm lib/Parse/Eyapp/Treeregexp.yp
+  rm -fR Parse-Eyapp-*.tar.gz
+
+This target uses L<Parse::Yapp> to make a first compilation. Then uses bootstrap
+and C<eyapp> compiles itself. Be sure you installed L<Parse::Yapp>.
 
 =item * Before realising a distribution in CPAN via PAUSE do:
 
@@ -265,7 +285,8 @@ and L<Parse::Eyapp>
 
    make remotetest
 
-(Set the environment variable C<MACHINES>)
+(Set the environment variable C<MACHINES>). The module L<GRID::Machine> 
+must be available.
 
 =item * To use L<Devel::Cover> to study test coverage:
 
@@ -291,6 +312,8 @@ To use this C<Makefile.PL> as developer is convenient to have installed:
 
 =item * Parse::Yapp
 
+=item * GRID::Machine
+
 =back
 
 =head1 AUTHOR
@@ -299,7 +322,7 @@ Casiano Rodriguez-Leon (casiano@ull.es)
 
 =head1 LICENCE AND COPYRIGHT
  
-Copyright (c) 2006-2008 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
+Copyright (c) 2006-2009 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
 
 These modules are free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
