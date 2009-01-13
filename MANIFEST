@@ -121,6 +121,8 @@ examples/Eyapp/uselhs1.pl
 examples/Eyapp/usepostfix.pl
 examples/Eyapp/userule3.pl
 examples/Eyapp/useruleandshift.pl
+examples/generator/Generator.eyp
+examples/generator/GenSupport.pm
 examples/MatchingTrees/m2.pl
 examples/MatchingTrees/numchildren.pl
 examples/MatchingTrees/Rule6.yp
