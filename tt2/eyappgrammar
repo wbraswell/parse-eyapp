@@ -5,7 +5,7 @@ The grammar extends L<yacc> and L<yapp> grammars.  Semicolons have been omitted
 to save space.  Between C-like comments you can find an (informal) explanation
 of the language associated with each token.
 
-  lusasoft@LusaSoft:~/LEyapp$ PERL5LIB=lib; eyapp -c lib/Parse/Eyapp/Parse.yp
+  lib/Parse/Eyapp$ eyapp -c Parse.yp
   %token ASSOC /* is %(left|right|nonassoc) */
   %token BEGINCODE /* is %begin { Perl code ... } */
   %token CODE /* is { Perl code ... } */
@@ -17,6 +17,7 @@ of the language associated with each token.
   %token METATREE /* is %metatree */
   %token NAME /* is %name */
   %token NAMINGSCHEME /* is %namingscheme */
+  %token NOCOMPACT /* is %nocompact */
   %token NUMBER /* is \d+ */
   %token OPTION /* is (%name\s*([A-Za-z_]\w*)\s*)?\? */
   %token PLUS /* is (%name\s*([A-Za-z_]\w*)\s*)?\+ */
@@ -75,6 +76,7 @@ of the language associated with each token.
       | TREE '\n'
       | METATREE '\n'
       | STRICT '\n'
+      | NOCOMPACT '\n'
       | TYPE typedecl identlist '\n'
       | EXPECT NUMBER '\n'
       | error '\n'
@@ -161,6 +163,7 @@ of the language associated with each token.
   ;
 
   %%
+
 
 
 The semantic of C<Eyapp> agrees with the semantic of C<yacc> and C<yapp> for

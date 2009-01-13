@@ -128,6 +128,9 @@ default actions and how to deal with I<grammar reuse> and factorization.
 =item *  The document L<Parse::Eyapp::eyapplanguageref> 
 describes the Eyapp language. 
 
+=item * L<Parse::Eyapp> can be used to generate data that conforms with a given grammar.
+The tutorial L<Parse::Eyapp::datagenerationtut> shows how.
+
 =item *  The document L<Parse::Eyapp::translationschemestut> 
 describes the use of Translation Schemes inside the Eyapp language. 
 
