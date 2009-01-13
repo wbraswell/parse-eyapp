@@ -1,0 +1,36 @@
+
+=item * L<Test::LectroTest::Generator> by Tom Moertel 
+
+=item *  The Design and Implementation of a Grammar-based Data Generator (1992) 
+by Peter M. Maurer, Software Practice and Experience 
+L<http://www.cs.ubc.ca/local/reading/proceedings/spe91-95/spe/./vol22/issue3/spe756pm.pdf>
+
+=item * yagg: an easy-to-use generator for structured test inputs
+by David Coppit and Jiexin Lian.
+ASE '05: Proceedings of the 20th IEEE/ACM international Conference on Automated software engineering.
+2005, pages 356-359. 
+
+=over 2
+
+=item * L<http://search.cpan.org/perldoc?yagg::Tutorial>, 
+
+=item * L<http://www.cs.wm.edu/~coppit/wiki/images/4/4e/yagg_short.pdf>,
+
+=item * L<http://www.cs.wm.edu/~coppit/wiki/images/6/69/wm-cs-2005-13.pdf>
+
+=back
+
+=item * 
+Writing Randomly by Randall Schwartz. 
+Linux Magazine Column 04 (Sep 1999). 
+L<http://www.stonehenge.com/merlyn/LinuxMag/col04.html>
+
+=item * Generating Test Data with Enhanced Context Free Grammars by Peter M. Maurer
+L<http://cs.baylor.edu/~maurer/aida/dgl-source/documentation/gen_tst.pdf>
+
+=item * Modules as Programs by Brian d Foy 
+L<http://www252.pair.com/comdog/mastering_perl/Chapters/18.modulinos.html>
+
+=item * How a Script Becomes a Module by Brian d Foy. On Perlmonks: 
+L<http://www.perlmonks.org/index.pl?node_id=396759>.
+
