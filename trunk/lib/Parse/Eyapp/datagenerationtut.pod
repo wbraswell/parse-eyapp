@@ -18,14 +18,14 @@ strings in the language described by that grammar.
 Context free grammars can be used to generate tests. The programmer designs a grammar that
 defines a set of inputs that will be able to find some set of bugs.
 
-This tutorial shows how to use Parse::Eyapp to generate phrases belonging to the language
+This tutorial shows how to use L<Parse::Eyapp> to generate phrases belonging to the language
 defined by a given grammar. We will generate inputs to test a simple calculator.
 
 =head2 Compiling and Running the Example
 
 The pure grammar of the generator is:
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ eyapp -c Generator.eyp
+  Parse-Eyapp/examples/generator$ eyapp -c Generator.eyp
   # file: Generator.eyp
   # compile with: eyapp -b '' Generator.eyp
   # then run: ./Generator.pm
@@ -66,13 +66,13 @@ expression including numbers and variables.
 
 First we compile the grammar with option C<-b ''> to produce a modulino:
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ eyapp -b '' Generator.eyp
+  Parse-Eyapp/examples/generator$ eyapp -b '' Generator.eyp
 
 Now, the module has execution permits and its first line contains the C<#!> header:
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ls -ltr | tail -1
+  Parse-Eyapp/examples/generator$ ls -ltr | tail -1
   -rwxr-xr-x 1 lusasoft lusasoft 7844 2009-01-12 08:30 Generator.pm
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ head -1 Generator.pm
+  Parse-Eyapp/examples/generator$ head -1 Generator.pm
   #!/usr/bin/perl
 
 The use of option C<-b ''> combined with the fact that we have added these lines 
@@ -89,7 +89,7 @@ Here follows the results of several executions. Each run produces
 a set of assignments. The first output line reports the result 
 of the randomly generated program. 
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
+  Parse-Eyapp/examples/generator$ ./Generator.pm
   # result: -3
   SC=-3
 
@@ -104,18 +104,18 @@ in previous assignments are used in later assignments. However, the
 generated source may produce run-time errors and exceptions (which
 is good thing when testing a calculator).
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
+  Parse-Eyapp/examples/generator$ ./Generator.pm
 
   # result: 6
   CF=(6)
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
+  Parse-Eyapp/examples/generator$ ./Generator.pm
 
   # result: -710.2
   I=(3*-8+7/5);
   R=2+8*I*4+5*2+I/I
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ ./Generator.pm
+  Parse-Eyapp/examples/generator$ ./Generator.pm
 
   # result: Calculator syntax differs from Perl... 
   RY=2--2+(3+6)+(7*7*4^1+2*0/8*5/3)
@@ -125,14 +125,14 @@ is good thing when testing a calculator).
 
 =head2 Using C<YYExpect> and L<Test::LectroTest::Generator> to generate tokens
 
-The basic idea of using Parse::Eyapp to generate phrases for the language
-defined by a given context free grammar is simple: I<change the lexer by a generator>. Instead of 
-reading from some input, randomly I<generate one of the valid tokens>. 
+The basic idea of using L<Parse::Eyapp> to generate phrases for the language
+defined by a given context free grammar is simple: I<change the lexer by a token generator>. 
+Instead of reading from some input, randomly generate one of the I<valid tokens>. 
 
 We can use the method C<YYExpect> to know what tokens are valid. 
-For versions 1.137 and later of Parse::Eyapp The method C<YYExpect> returns
+For versions 1.137 and later of L<Parse::Eyapp>, the method C<YYExpect> returns
 the set of valid tokens at the time it is called.
-For previous versions (and this is true for L<Parse::Yapp>), C<YYExpect> only returns
+For previous versions (and this is also true for L<Parse::Yapp>), C<YYExpect> only returns
 a subset of the whole set of valid tokens. 
 
 In this example, the token
@@ -154,7 +154,7 @@ in the module C<GenSupport.pm>. They are methods of the
 parser object since the grammar C<Generator.eyp> not only uses but inherits
 this module. See line 3 of C<Generator.eyp>:
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ sed -ne '19,24p' Generator.eyp | cat -n
+  Parse-Eyapp/examples/generator$ sed -ne '19,24p' Generator.eyp | cat -n
      1  %{
      2  use base q{Parse::Eyapp::TokenGen};
      3  use base q{GenSupport};
@@ -183,7 +183,7 @@ associated with a token, assuming it was previously set using one of
 the L<Parse::Eyapp::TokenGen> methods like C<set_tokenweightsandgenerators>
 or C<set_tokenweights>. See the code of method C<main> in C<GenSupport.pm>:
 
-  pl@europa:~/LEyapp/examples/generator$ sed -ne '98,/^ *)/p' GenSupport.pm | cat -n
+  examples/generator$ sed -ne '98,/^ *)/p' GenSupport.pm | cat -n
      1    my $parser = $package->new();
      2
      3    $parser->set_tokenweightsandgenerators(
@@ -262,11 +262,13 @@ one of a given list of elements:
     DB<15> p $x->generate
   VC
 
-More importantly, the C<Frequency> method produces
-one of a given list of elements with a given 
-probability distribution.SZee the following example.
+Even more intersting for our purpose is the C<Frequency> method, 
+which produces one of a given list of elements with a given 
+probability distribution. 
+
+The following example illustrates its use.
 First we build a weight list where the odd elements
-have double weight:
+have weight 2 and the even elements have weight 1:
 
   DB<16> @w = map { $_ % 2 ? 2 : 1 } 0..9
   DB<21> @w{@a} = @w
@@ -288,14 +290,14 @@ one of the given list of elements C<@a> according to the specified probability:
 
   DB<29> $f = Frequency( map { [$w{$_}, Unit($_)] } @a)
 
-Now we generate 10 items. We see that odd elements appear more frequently than
+Let us generate 10 items. We see that odd elements appear more frequently than
 even elements:
 
   DB<30> @r = map { $f->generate } 1..10
   DB<31> p "@r"
     VC UC K UC VC VC K EJ P P
 
-=head2 Holding Semantic Constraints
+=head2 Generating Token Attributes
 
 Once the token was generated through the call to C<generate_token>
 at line 50:
@@ -330,11 +332,13 @@ attribute returned is the token itself (line 42):
     41    return $gen->generate  if defined($gen);
     42    return $token;
     43  }
+
+=head2 Holding Semantic Constraints
        
 The attribute generator associated with the token C<VAR> is more complex
 than the others. It was defined in the call to C<set_tokenweightsandgenerators>:
 
-  pl@europa:~/LEyapp/examples/generator$ sed -ne '98,/^ *)/p' GenSupport.pm | cat -n
+  examples/generator$ sed -ne '98,/^ *)/p' GenSupport.pm | cat -n
      1    my $parser = $package->new();
      2
      3    $parser->set_tokenweightsandgenerators(
@@ -367,7 +371,7 @@ variable is added to the symbol table. This is achieved
 through the semantic action associated with the assignment
 production rule:
 
-  pl@europa:~/LEyapp/examples/generator$ sed -ne '35,41p' Generator.eyp | cat -n
+  examples/generator$ sed -ne '35,41p' Generator.eyp | cat -n
      1  stmt:
      2      VARDEF '=' exp
      3        {
@@ -379,7 +383,7 @@ production rule:
 The C<defined_variable> method in C<GenSupport.pm> simply sets the corresponding
 entry in the symbol table:
 
-  pl@europa:~/LEyapp/examples/generator$ sed -ne '19,24p' GenSupport.pm | cat -n
+  examples/generator$ sed -ne '19,24p' GenSupport.pm | cat -n
      1  my %st; # Symbol Table
      2  sub defined_variable {
      3    my ($parser, $var) = @_;
@@ -392,7 +396,7 @@ C< "$_[0]=$_[2]"> containing the actual phrase. Since this
 is the semantic action required for most productions we make it
 our default action:
 
-  pl@europa:~/LEyapp/examples/generator$ sed -ne '13,17p' Generator.eyp | cat -n
+  examples/generator$ sed -ne '13,17p' Generator.eyp | cat -n
      1  %defaultaction {
      2    my $parser = shift;
      3
@@ -402,7 +406,7 @@ our default action:
 The syntactic variable C<stmts> generates sequences of C<stmt> separated by 
 semicolons:
 
-  pl@europa:~/LEyapp/examples/generator$ sed -ne '26,33p' Generator.eyp | cat -n
+  examples/generator$ sed -ne '26,33p' Generator.eyp | cat -n
      1  stmts:
      2      stmt
      3        {
@@ -432,11 +436,84 @@ in the right hand side of an assignment.
 The L<Parse::Eyapp::Tokengen> method C<deltaweight> increases (decreases
 if negative) the weight of the given tokens using the associated values.
 
+=head2 Dynamically Changing the Probability Distribution
+
+The semantic actions for the productions
+
+               exp -> '(' exp ')' 
+
+and
+
+               exp -> '-' exp
+
+show a way to modify the weights associated with some tokens:
+
+ 43 exp:
+ 44     NUM
+ 45   | VAR
+ 46   | exp '+' exp
+ 47   | exp '-' exp
+ 48   | exp '*' exp
+ 49   | exp '/' exp
+ 50   | '-' { $_[0]->pushdeltaweight('-' => -1) } exp %prec NEG
+ 51       {
+ 52         $_[0]->popweight();
+ 53         "-$_[3]"
+ 54       }
+ 55   | exp '^' exp
+ 56   | '('   { $_[0]->pushdeltaweight('(' => -1, ')' => +1, '+' => +1, ); }
+ 57       exp
+ 58     ')'
+ 59       {
+ 60          $_[0]->popweight;
+ 61          "($_[3])"
+ 62       }
+ 63 ;
+
+After seeing a C<'('> we decrease by one the weight of C<'('> to avoid
+expressions with nested parenthesis. We also increase the weight of token C<'+'>,
+since parenthesis are often used to give more priority to a sum over a multiplication
+or division. This is achieved via the C<pushdeltaweight> method. The old 
+weight is recovered after the closing parenthesis is seen using the
+C<popweight> method.
+
+=head2 Computing the Expected Result
+
+Function C<evaluate_using_perl> in C<GenSupport.pm>
+finds the expected value for the generated
+expression. The calculator expression is roughly translated
+to a Perl expression and evaluated using the Perl interpreter:
+
+ 57 sub evaluate_using_perl { # if possible
+ 58   my $perlexp = shift;
+ 59
+ 60   $perlexp =~ s/\b([a-zA-Z])/\$$1/g; # substitute A by $A everywhere
+ 61   $perlexp =~ s/\^/**/g;             # substitute power operator: ^ by **
+ 62
+ 63   my $res = eval "no warnings; no strict;$perlexp";
+ 64   if ($@ =~ /Illegal division/) {
+ 65     $res = "error. Division by zero.";
+ 66   }
+ 67   elsif ($@) { # Our calc notation is incompatible with perl in a few gotchas
+ 68     # Perl interprets -- in a different way
+ 69     $@ =~ m{(.*)}; # Show only the first line of error message
+ 70     $res = "Calculator syntax differs from Perl. Can't compute the result: $1";
+ 71   }
+ 72
+ 73   $res;
+ 74 }
+
+The calculator language differs from Perl. In the calculator, two consecutive minus 
+like in C<2--3> are interpreted as C<2+3> while for Perl the former expression is an error.
+This limitation is here to illustrate a limitation of the approach: it gives 
+a way to generate complex structured inputs but the programmer must find a 
+way to compute what the expected value is.
+
 =head1 APPENDIX: FILES
 
 =head2 File C<GenSupport.pm>
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ cat -n GenSupport.pm
+  Parse-Eyapp/examples/generator$ cat -n GenSupport.pm
      1  package GenSupport;
      2  use strict;
      3  use warnings;
@@ -567,7 +644,7 @@ if negative) the weight of the given tokens using the associated values.
 
 =head2 File C<Generator.eyp>
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/generator$ cat -n Generator.eyp
+  Parse-Eyapp/examples/generator$ cat -n Generator.eyp
      1  # file: Generator.eyp
      2  # compile with: eyapp -b '' Generator.eyp
      3  # then run: ./Generator.pm
@@ -647,17 +724,27 @@ if negative) the weight of the given tokens using the associated values.
 
 =item *  The Design and Implementation of a Grammar-based Data Generator (1992) 
 by Peter M. Maurer, Software Practice and Experience 
-http://www.cs.ubc.ca/local/reading/proceedings/spe91-95/spe/./vol22/issue3/spe756pm.pdf 
+L<http://www.cs.ubc.ca/local/reading/proceedings/spe91-95/spe/./vol22/issue3/spe756pm.pdf>
 
 =item * yagg: an easy-to-use generator for structured test inputs
 by David Coppit and Jiexin Lian.
 ASE '05: Proceedings of the 20th IEEE/ACM international Conference on Automated software engineering.
-2005, pages 356-359. http://search.cpan.org/perldoc?yagg::Tutorial
+2005, pages 356-359. 
+
+=over 2
+
+=item * L<http://search.cpan.org/perldoc?yagg::Tutorial>, 
+
+=item * L<http://www.cs.wm.edu/~coppit/wiki/images/4/4e/yagg_short.pdf>,
+
+=item * L<http://www.cs.wm.edu/~coppit/wiki/images/6/69/wm-cs-2005-13.pdf>
+
+=back
 
 =item * 
 Writing Randomly by Randall Schwartz. 
 Linux Magazine Column 04 (Sep 1999). 
-http://www.stonehenge.com/merlyn/LinuxMag/col04.html
+L<http://www.stonehenge.com/merlyn/LinuxMag/col04.html>
 
 =item * Generating Test Data with Enhanced Context Free Grammars by Peter M. Maurer
 L<http://cs.baylor.edu/~maurer/aida/dgl-source/documentation/gen_tst.pdf>
@@ -665,7 +752,8 @@ L<http://cs.baylor.edu/~maurer/aida/dgl-source/documentation/gen_tst.pdf>
 =item * Modules as Programs by Brian d Foy 
 L<http://www252.pair.com/comdog/mastering_perl/Chapters/18.modulinos.html>
 
-=item * How a Script Becomes a Module by Brian d Foy. On Perlmonks: L<http://www.perlmonks.org/index.pl?node_id=396759>.
+=item * How a Script Becomes a Module by Brian d Foy. On Perlmonks: 
+L<http://www.perlmonks.org/index.pl?node_id=396759>.
 
 =back
 
