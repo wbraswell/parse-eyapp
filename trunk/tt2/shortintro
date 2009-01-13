@@ -3,7 +3,8 @@ Parse::Eyapp (Extended yapp) is a collection of modules that extends Francois
 Desarmenien Parse::Yapp 1.05.  Eyapp extends yacc/yapp syntax with
 functionalities like named attributes, EBNF-like expressions, modifiable
 default action, grammar reusability, automatic syntax tree building,
-semi-automatic abstract syntax tree building, translation schemes, tree regular
+semi-automatic abstract syntax tree building, syntax directed data generation,
+translation schemes, tree regular
 expressions, tree transformations, scope analysis support, directed acyclic
 graphs and a few more.
 

@@ -240,6 +240,7 @@ sub symbol {
 %token METATREE      /* is %metatree */
 %token NAME          /* is %name */             
 %token NAMINGSCHEME  /* is %namingscheme */             
+%token NOCOMPACT     /* is %nocompact */
 %token NUMBER        /* is \d+ */
 %token OPTION        /* is (%name\s*([A-Za-z_]\w*)\s*)?\? */
 %token PLUS          /* is (%name\s*([A-Za-z_]\w*)\s*)?\+ */

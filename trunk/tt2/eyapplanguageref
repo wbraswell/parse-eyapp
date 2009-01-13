@@ -185,6 +185,15 @@ The new token declaration directives C<%syntactic token> and
 C<%semantic token> can change the way C<eyapp> builds the abstract syntax tree.
 See section L<Syntactic and Semantic tokens>.
 
+=head2 The C<%nocompact> directive
+
+This directive influences the generation of the LALR tables.
+They will not be compacted and the tokens
+for the C<DEFAULT> reduction will be explictly set.
+It can be used to produce an C<.output> file (option C<-v>)
+with more information.
+
+
 =head1 THE BODY
 
 The body section contains the rules describing the grammar:
