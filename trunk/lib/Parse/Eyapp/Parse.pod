@@ -28,7 +28,7 @@ The grammar extends L<yacc> and L<yapp> grammars.  Semicolons have been omitted
 to save space.  Between C-like comments you can find an (informal) explanation
 of the language associated with each token.
 
-  lusasoft@LusaSoft:~/LEyapp$ PERL5LIB=lib; eyapp -c lib/Parse/Eyapp/Parse.yp
+  lib/Parse/Eyapp$ eyapp -c Parse.yp
   %token ASSOC /* is %(left|right|nonassoc) */
   %token BEGINCODE /* is %begin { Perl code ... } */
   %token CODE /* is { Perl code ... } */
@@ -40,6 +40,7 @@ of the language associated with each token.
   %token METATREE /* is %metatree */
   %token NAME /* is %name */
   %token NAMINGSCHEME /* is %namingscheme */
+  %token NOCOMPACT /* is %nocompact */
   %token NUMBER /* is \d+ */
   %token OPTION /* is (%name\s*([A-Za-z_]\w*)\s*)?\? */
   %token PLUS /* is (%name\s*([A-Za-z_]\w*)\s*)?\+ */
@@ -98,6 +99,7 @@ of the language associated with each token.
       | TREE '\n'
       | METATREE '\n'
       | STRICT '\n'
+      | NOCOMPACT '\n'
       | TYPE typedecl identlist '\n'
       | EXPECT NUMBER '\n'
       | error '\n'
@@ -184,6 +186,7 @@ of the language associated with each token.
   ;
 
   %%
+
 
 
 The semantic of C<Eyapp> agrees with the semantic of C<yacc> and C<yapp> for
@@ -408,6 +411,15 @@ L<Parse::Eyapp::translationschemestut>.
 The new token declaration directives C<%syntactic token> and
 C<%semantic token> can change the way C<eyapp> builds the abstract syntax tree.
 See section L<Syntactic and Semantic tokens>.
+
+=head2 The C<%nocompact> directive
+
+This directive influences the generation of the LALR tables.
+They will not be compacted and the tokens
+for the C<DEFAULT> reduction will be explictly set.
+It can be used to produce an C<.output> file (option C<-v>)
+with more information.
+
 
 =head1 THE BODY
 
