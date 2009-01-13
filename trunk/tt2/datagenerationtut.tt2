@@ -11,9 +11,9 @@ To understand the code you will need some familiarity with L<Test::LectroTest::G
 however, we will make an attempt to introduce the basics of L<Test::LectroTest::Generator>
 needed.
 
-Where parsing is the process of determination of a string's membership in a language, 
-the process can also be reversed. Using a context free grammar it is possible to generate 
-strings in the language described by that grammar.
+While parsing is the process of determining the membership of a string to a language, 
+generation is the reverse problem. Using a context free grammar it is possible to generate 
+strings belonging to the language described by that grammar.
 
 Context free grammars can be used to generate tests. The programmer designs a grammar that
 defines a set of inputs that will be able to find some set of bugs.
@@ -23,7 +23,9 @@ defined by a given grammar. We will generate inputs to test a simple calculator.
 
 =head2 Compiling and Running the Example
 
-The pure grammar of the generator is:
+The grammar describing the language is in the file C<Generator.eyp>.
+Calling L<eyapp> with option C<-c> will show the contents of the file 
+without the semantic actions:
 
   Parse-Eyapp/examples/generator$ eyapp -c Generator.eyp
   # file: Generator.eyp
@@ -64,7 +66,7 @@ This grammar defines  a language of sequences of semicolon separated assignments
 The right hand side of an assignment can be any valid arithmetic
 expression including numbers and variables.
 
-First we compile the grammar with option C<-b ''> to produce a modulino:
+First we compile the grammar with option C<-b ''> to produce a I<modulino>:
 
   Parse-Eyapp/examples/generator$ eyapp -b '' Generator.eyp
 

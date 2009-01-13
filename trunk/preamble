@@ -2,11 +2,6 @@
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
 
-%%  Latex generated from POD in document /home/pl/src/perl/YappWithDefaultAction/lib/Parse/Eyapp.pm
-%%  Using the perl module Pod::LaTeX
-%%  Converted on Sun Jan 21 11:11:37 2007
-
-
 \usepackage{makeidx}
 
 %\topmargin -4 mm
@@ -40,6 +35,6 @@
 %\listoffigures
 %\listoftables
 
-\pagebreak
+%\pagebreak
 
 
