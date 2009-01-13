@@ -150,7 +150,7 @@ Eyapp.tex:lib/Parse/Eyapp.pod
 	pod2latex -full lib/Parse/Eyapp.pod
 
 %.tex:lib/Parse/Eyapp/%.pod
-	pod2latex -full -prefile preamble.tex lib/Parse/Eyapp/$*.pod
+	pod2latex -full -prefile preamble lib/Parse/Eyapp/$*.pod
 
 texs: ${TEXS}
 
