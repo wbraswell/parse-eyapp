@@ -329,6 +329,7 @@ of a symbol table (for instance, the problem of associating
 a C<RETURN> node with the C<FUNCTION> that encloses it). 
 For such kind of problems C<$scopeE<gt>end_scope> provides
 a second form of call.
+
 The second way to call C<$scopeE<gt>end_scope> is
 
                  $declared = $scopemanager->end_scope($definition_node);
@@ -337,6 +338,14 @@ The only argument is the reference to the node that controls/defines
 the scope. The method returns a reference to the declared
 nodes. Any node instanced with C<scope_instance>
 since the last call to C<begin_scope> is considered I<declared>.
+
+The scope node C<$definition_node> is decorated with an attribute with
+name the value of the attribute C<SCOPE_NAME> of the scope manager
+C<$scopemanager> which is an anonymous list of references to the instances. 
+
+The scope instances are decorated with
+an attribute with name the value of the attribute C<SCOPE_NAME> of the scope manager
+which is a reference to the scope node.
 
 =head2 The C<begin_scope> method
 
