@@ -3,7 +3,7 @@
 =item * 
 L<Parse::Eyapp>, 
 L<Parse::Eyapp::eyapplanguageref>, 
-L<Parse::Eyapp::debugingtut>,
+L<Parse::Eyapp::debuggingtut>,
 L<Parse::Eyapp::defaultactionsintro>,
 L<Parse::Eyapp::translationschemestut>,
 L<Parse::Eyapp::Driver>,
