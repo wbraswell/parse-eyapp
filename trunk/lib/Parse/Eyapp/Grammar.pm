@@ -131,6 +131,36 @@ sub give_token_name {
   return $name;
 }
 
+sub give_rhs_name {
+  my ($self, $index, $lhs, $rhs) = @_;
+
+  my @rhs = @$rhs;
+  $rhs = '';
+
+  unless (@rhs) { # Empty RHS
+    return $lhs.'_is_empty';
+  }
+
+  my $names = $self->{GRAMMAR}{TOKENNAMES} || {};
+  for (@rhs) {
+    if ($self->is_token($_)) { 
+      s/^'(.*)'$/$1/;
+      my $name = $names->{$_} || '';
+      unless ($name) {
+        $name = $_ if /^\w+$/;
+      }
+      $rhs .= "_$name" if $name;
+    }
+    else {
+      $rhs .= "_$_";
+    }
+  }
+
+  # check if another production with such name exists?
+  my $name = $lhs.'_is'.$rhs;
+  return $name;
+}
+
 sub classname {
   my ($self, $name, $index, $lhs, $rhs) = @_;
 
