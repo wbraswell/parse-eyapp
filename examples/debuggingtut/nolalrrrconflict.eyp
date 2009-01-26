@@ -1,5 +1,9 @@
+# This grammar is non LALR. It has a reduce-reduce conflict
+# See file 'nolalrrrconflictsolved.eyp' to see a way to solve it
+# that uses zero-width positive lookahead assertion
 %%
 S: 
+Thois g
     '(' A ')'
   | B '.' B
 ;
