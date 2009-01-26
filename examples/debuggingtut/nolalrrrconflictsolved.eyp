@@ -1,0 +1,114 @@
+%namingscheme {
+  #Receives a Parse::Eyapp object describing the grammar
+  my $self = shift;
+
+  $self->tokennames(
+    '(' => 'LP',
+    'x' => 'X',
+    '.' => 'DOT',
+    ',' => 'COMMA',
+    '(.' => 'PL',
+    ')' => 'RP',
+  );
+
+  # returns the handler that will give names
+  # to the right hand sides
+  \&give_rhs_name;
+}
+
+%tree
+%%
+S: 
+    '(' A ')'
+  | B '.' B
+;
+
+A: 
+    'x'
+  | A ',' 'x'
+;
+
+B: 
+    'x'
+  | '(.' B ')'
+;
+
+%%
+
+use Getopt::Long;
+
+sub _Error {
+  die "Error";
+}
+
+
+sub lexer {
+  my $parser = shift;
+
+  for ($parser->{input}) {    # contextualize
+    m{\G\s*(\#.*)?}gc;
+
+    m{\G(
+      \(         # A parenthesis
+      (?=\(*x\)*(\.|$)) # (((x))) followed by a dot or end of input (zero-width positive lookahead assertion) 
+      )          # End capture parenthesis
+    }gxsc                    and return ('(.', '(');
+    m{\G(.)}gsc              and return ($1, $1);
+
+    return('',undef);
+  }
+}
+
+sub Run {
+    my($self)=shift;
+    my $yydebug = shift || 0;
+
+    return $self->YYParse( 
+      yylex => \&lexer, 
+      yyerror => \&_Error,
+      yydebug => $yydebug, # 0x1F
+    );
+}
+
+sub uploadfile {
+  my $file = shift;
+  my $msg = shift;
+
+  my $input = '';
+  eval {
+    $input = Parse::Eyapp::Base::slurp_file($file) 
+  };
+  if ($@) {
+    print $msg;
+    local $/ = undef;
+    $input = <STDIN>;
+  }
+  return $input;
+}
+
+sub main {
+  my $package = shift;
+
+  my $debug = 0;
+  my $file = '';
+  my $result = GetOptions (
+    "debug!" => \$debug,  
+    "file=s" => \$file,
+  );
+
+  $debug = 0x1F if $debug;
+  $file = shift if !$file && @ARGV; 
+
+  my $parser = $package->new();
+  my $prompt = "Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:\n";
+  $parser->{input} = uploadfile($file, $prompt);
+  print $parser->Run( $debug )->str,"\n";
+}
+
+sub TERMINAL::info {
+  $_[0]->{attr}[0]
+}
+
+__PACKAGE__->main unless caller();
+
+1;
