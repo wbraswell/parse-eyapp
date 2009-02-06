@@ -35,6 +35,7 @@ examples/debuggingtut/nolalrrrconflict.eyp
 examples/debuggingtut/nolalrrrconflictsolved.eyp
 examples/debuggingtut/nolr_k_grammar.eyp
 examples/debuggingtut/nonslrgrammar.eyp
+examples/debuggingtut/PL_I_conflict.eyp
 examples/debuggingtut/Precedencia.eyp
 examples/debuggingtut/reducereduceconflict.eyp
 examples/debuggingtut/reducereduceconflict_fix2.eyp
