@@ -1,29 +1,19 @@
-# One way to handle context-dependency is the lexical tie-in: a flag which is set
-# by the semantic actions, whose purpose is to alter the way tokens are parsed.
-# 
-# For example, suppose we have a language vaguely like C, but with a special
-# construct 'hex (hex-expr)'. After the keyword hex comes an expression in
-# parentheses in which all integers are hexadecimal. In particular, the token
-# 'a1b' must be treated as an integer rather than as an identifier if it appears
-# in that context. 
-# 
-# Here we assume that lexer looks at the value of hexflag; when it is nonzero,
-# all integers are parsed in hexadecimal, and tokens starting with letters are
-# parsed as integers if possible.
-# 
-# The declaration of hexflag shown in the declarations section of the parser
-# file is needed to make it accessible to the actions. 
+# See: http://www.gnu.org/software/bison/manual/html_mono/bison.html#Lexical-Tie_002dins
+# for a more detailed explanation.
 
 %strict
 
-%token ID 
+%token ID HEX INTEGER 
 
 %namingscheme {
   #Receives a Parse::Eyapp object describing the grammar
   my $self = shift;
 
   $self->tokennames(
-    '=' => 'EQUAL',
+    '=' => 'ASSIGN',
+    '(' => 'LP',
+    ')' => 'RP',
+    '+' => 'PLUS',
   );
 
   # returns the handler that will give names
@@ -31,8 +21,8 @@
   \&give_rhs_name;
 }
 
-%tree
-%%
+%right '='
+%left '+'
 
 %{
 my $hexflag = 0;
@@ -41,25 +31,15 @@ my $hexflag = 0;
 %%
 expr:
     ID
-  | constant
-  | HEX '('
-      { 
-        hexflag = 1; 
-      }
-    expr ')'
+  | INTEGER
+  | HEX '(' { hexflag = 1; } expr ')'
       { 
         hexflag = 0; 
-        $4; 
+        goto &Parse::Eyapp::Driver::YYBuildAST;
       }
   | ID '=' expr
   | expr '+' expr
 ;
-
-constant:
-    INTEGER
-  | STRING
-;
-
 
 %%
 
@@ -151,7 +131,7 @@ sub TERMINAL::info {
 
 __PACKAGE__->main unless caller();
 
-=head1 INTRODUCTION
+=head1 THE TYPENAME-IDENTIFIER PROBLEM WHEN PARSING THE C<C> LANGUAGE
 
 The C language has a context dependency: the way an identifier is used depends
 on what its current meaning is. For example, consider this:
@@ -166,3 +146,33 @@ The usual method is to have two different token types, ID and TYPENAME.
 When the lexer finds an identifier, it looks up in the symbol table 
 the current declaration of the identifier in order to decide which token type to return: TYPENAME if the
 identifier is declared as a typedef, ID otherwise.
+
+=head1 THIS EXAMPLE
+
+One way to handle context-dependency is the lexical tie-in: a flag which is set
+by the semantic actions, whose purpose is to alter the way tokens are parsed.
+
+For example, suppose we have a language with a special
+construct C<hex (hex-expr)>. After the keyword C<hex> comes an C<expression> in
+parentheses in which all integers are hexadecimal. In particular, the token
+C<a1b> must be treated as an integer rather than as an identifier if it appears
+in that context. 
+
+Here the lexer looks at the value of hexflag; when it is nonzero,
+all integers are parsed in hexadecimal, and tokens starting with letters are
+parsed as integers if possible.
+
+The declaration of hexflag shown in the declarations section of the parser
+file is needed to make it accessible to the actions. 
+
+=head1 SEE ALSO
+
+=over 2
+
+=item * L<http://www.gnu.org/software/bison/manual/html_mono/bison.html#Lexical-Tie_002dins>
+
+=item * L<http://en.wikipedia.org/wiki/The_lexer_hack>
+
+=item * L<http://eli.thegreenplace.net/2007/11/24/the-context-sensitivity-of-cs-grammar/>
+
+=back
