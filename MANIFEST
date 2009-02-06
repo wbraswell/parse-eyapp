@@ -31,8 +31,11 @@ examples/debuggingtut/Debug.eyp
 examples/debuggingtut/DebugLookForward.eyp
 examples/debuggingtut/DynamicallyChangingTheParser.eyp
 examples/debuggingtut/lr_1_grammar.eyp
+examples/debuggingtut/nolalrrrconflict.eyp
+examples/debuggingtut/nolalrrrconflictsolved.eyp
 examples/debuggingtut/nolr_k_grammar.eyp
 examples/debuggingtut/nonslrgrammar.eyp
+examples/debuggingtut/Precedencia.eyp
 examples/debuggingtut/reducereduceconflict.eyp
 examples/debuggingtut/reducereduceconflict_fix2.eyp
 examples/debuggingtut/rrconflictnamefirst.eyp
