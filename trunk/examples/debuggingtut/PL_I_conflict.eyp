@@ -33,7 +33,7 @@ stmt:
 
 # Exercise: change this production 
 #     for 'if' expr 'then' stmt
-# and check with input 'if then=if then if=then'
+# and check with input 'if then=if then if=then'. The problem arises again
 ifstmt: 
     'if' expr 'then' expr 
 ;
