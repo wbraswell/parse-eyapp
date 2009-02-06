@@ -1,5 +1,5 @@
+  * str method can produce GraphViz, latex and/or other formats
   * Treereg EXPORT and EXPORT_OK
-  * is 'error' a syntactic or a semantic token?
   * Language generation example examples/generator
      -- Return a Test::LectroTest::Generator? 
 
