@@ -1,0 +1,168 @@
+# One way to handle context-dependency is the lexical tie-in: a flag which is set
+# by the semantic actions, whose purpose is to alter the way tokens are parsed.
+# 
+# For example, suppose we have a language vaguely like C, but with a special
+# construct 'hex (hex-expr)'. After the keyword hex comes an expression in
+# parentheses in which all integers are hexadecimal. In particular, the token
+# 'a1b' must be treated as an integer rather than as an identifier if it appears
+# in that context. 
+# 
+# Here we assume that lexer looks at the value of hexflag; when it is nonzero,
+# all integers are parsed in hexadecimal, and tokens starting with letters are
+# parsed as integers if possible.
+# 
+# The declaration of hexflag shown in the declarations section of the parser
+# file is needed to make it accessible to the actions. 
+
+%strict
+
+%token ID 
+
+%namingscheme {
+  #Receives a Parse::Eyapp object describing the grammar
+  my $self = shift;
+
+  $self->tokennames(
+    '=' => 'EQUAL',
+  );
+
+  # returns the handler that will give names
+  # to the right hand sides
+  \&give_rhs_name;
+}
+
+%tree
+%%
+
+%{
+my $hexflag = 0;
+%}
+
+%%
+expr:
+    ID
+  | constant
+  | HEX '('
+      { 
+        hexflag = 1; 
+      }
+    expr ')'
+      { 
+        hexflag = 0; 
+        $4; 
+      }
+  | ID '=' expr
+  | expr '+' expr
+;
+
+constant:
+    INTEGER
+  | STRING
+;
+
+
+%%
+
+use Getopt::Long;
+use List::Util qw{first};
+
+sub _Error {
+  die "Error";
+}
+
+# Returns true if $element is in the list
+sub is_in($@) {
+  my $element = shift;
+
+  return first { $_ eq $element } @_;
+}
+
+# Adaptative lexer
+sub lexer {
+  my $parser = shift;
+
+  for ($parser->{input}) {    # contextualize
+    m{\G\s*(\#.*)?}gc;
+
+    m{\G([a-zA-Z_]\w*)}gc and do {
+      my $id = $1;
+
+      return ('if',   'if')   if ($id eq 'if')   && is_in('if', $parser->YYExpect);
+      return ('then', 'then') if ($id eq 'then') && is_in('then', $parser->YYExpect);
+      
+      return ('ID', $id);
+    };
+
+    m{\G(.)}gc         and return ($1, $1);
+
+    return('',undef);
+  }
+}
+
+sub Run {
+    my($self)=shift;
+    my $yydebug = shift || 0;
+
+    return $self->YYParse( 
+      yylex => \&lexer, 
+      yyerror => \&_Error,
+      yydebug => $yydebug, # 0x1F
+    );
+}
+
+sub uploadfile {
+  my $file = shift;
+  my $msg = shift;
+
+  my $input = '';
+  eval {
+    $input = Parse::Eyapp::Base::slurp_file($file) 
+  };
+  if ($@) {
+    print $msg;
+    local $/ = undef;
+    $input = <STDIN>;
+  }
+  return $input;
+}
+
+sub main {
+  my $package = shift;
+
+  my $debug = 0;
+  my $file = '';
+  my $result = GetOptions (
+    "debug!" => \$debug,  
+    "file=s" => \$file,
+  );
+
+  $debug = 0x1F if $debug;
+  $file = shift if !$file && @ARGV; 
+
+  my $parser = $package->new();
+  my $prompt = "Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:\n";
+  $parser->{input} = uploadfile($file, $prompt);
+  print $parser->Run( $debug )->str,"\n";
+}
+
+sub TERMINAL::info {
+  $_[0]->{attr}
+}
+
+__PACKAGE__->main unless caller();
+
+=head1 INTRODUCTION
+
+The C language has a context dependency: the way an identifier is used depends
+on what its current meaning is. For example, consider this:
+
+  T(x);
+
+This looks like a function call statement, but if C<T> is a typedef name, then
+this is actually a declaration of C<x>. How can a parser for C decide how to
+parse this input?
+
+The usual method is to have two different token types, ID and TYPENAME.
+When the lexer finds an identifier, it looks up in the symbol table 
+the current declaration of the identifier in order to decide which token type to return: TYPENAME if the
+identifier is declared as a typedef, ID otherwise.
