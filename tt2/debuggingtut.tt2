@@ -1018,7 +1018,7 @@ we have a language with a special construct
 C<hex (hex-expr)>. After the keyword C<hex> comes an C<expression> in parentheses in
 which all integers are hexadecimal. In particular, strings in C</[A-F0-9]+/>
 like C<A1B> must be treated as an hex integer unless they were previously
-declared:
+declared as variables:
 
   %strict
 
@@ -1076,7 +1076,7 @@ declared:
 
 
 
-Here the lexer looks at the value of hexflag; when it is nonzero,
+Here the lexer looks at the value of the attribute C<HEXFLAG>; when it is nonzero,
 all integers are parsed in hexadecimal, and tokens starting with letters are
 parsed as integers if possible.
 
@@ -1094,7 +1094,7 @@ parsed as integers if possible.
 
       m{\G([a-zA-Z_]\w*)}gc and do {
         my $match = $1;
-        $hexflag and !exists($st{$match}) and $match =~ m{\G([A-F0-9]+)}gc and return ('INTEGER', hex($match));
+        $hexflag and !exists($st{$match}) and $match =~ m{^([A-F0-9]+)$}gc and return ('INTEGER', hex($match));
         return ('ID', $1);
       };
 
@@ -1103,6 +1103,19 @@ parsed as integers if possible.
       return('',undef);
     }
   }
+
+Let us see an example of execution:
+
+  examples/debuggingtut$ cat inputforsemanticinfo2.txt
+  int A2
+  A2 = HEX(A23);
+  A2 = HEX(A2)
+
+  examples/debuggingtut$ ./SemanticInfoInTokens.pm -file inputforsemanticinfo2.txt
+  EXPS(ASSIGN(ID[A2],NUM[2595]),ASSIGN(ID[A2],ID[A2]))
+
+The first hex expression C<A23> is interpreted as the number C<2595>
+while the second refers to previously declared variable C<A2>.
 
 For more about lexical tie-ins see also
 

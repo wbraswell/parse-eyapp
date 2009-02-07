@@ -89,7 +89,7 @@ sub lexer {
 
     m{\G([a-zA-Z_]\w*)}gc and do {
       my $match = $1;
-      $hexflag and !exists($st{$match}) and $match =~ m{\G([A-F0-9]+)}gc and return ('INTEGER', hex($match)); 
+      $hexflag and !exists($st{$match}) and $match =~ m{^([A-F0-9]+$)}gc and return ('INTEGER', hex($match)); 
       return ('ID', $1);
     };
 

@@ -43,6 +43,7 @@ examples/debuggingtut/rrconflictnamefirst.eyp
 examples/debuggingtut/rrconflictnamefirst_fix1.eyp
 examples/debuggingtut/SemanticInfoInTokens.eyp
 examples/debuggingtut/inputforsemanticinfo.txt
+examples/debuggingtut/inputforsemanticinfo2.txt
 examples/debuggingtut/shiftreduceconflict.eyp
 examples/debuggingtut/shiftreduceconflict_fixed.eyp
 examples/debuggingtut/typicalrr.eyp
