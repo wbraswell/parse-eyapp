@@ -152,6 +152,7 @@ sub give_rhs_name {
       $rhs .= "_$name" if $name;
     }
     else {
+      s/\W/_/g;
       $rhs .= "_$_";
     }
   }
