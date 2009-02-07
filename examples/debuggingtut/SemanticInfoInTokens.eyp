@@ -10,17 +10,16 @@
 %left '+'
 
 %{
-use Data::Dumper;
-my $hexflag = 0; # make it an attribute
 my %st;
 %}
 
-%tree bypass
+%tree bypass alias
 
 %%
 stmt:
     decl <* ';'> expr <%name EXPS + ';'>
       {
+        $_[2]->{st} = { %st };
         $_[2];
       }
 ;
@@ -28,9 +27,7 @@ stmt:
 decl:
     INT ID <+ ','>
       {
-        for ($_[2]->children()) {
-          $st{$_->{attr}} = 1;
-        }
+        $st{$_->{attr}} = 1 for $_[2]->children();
       }
 ;
 
@@ -40,20 +37,29 @@ expr:
   | %name NUM
     INTEGER
   | %name HEX
-    HEX '(' { $hexflag = 1; } $expr ')'
+    HEX '(' { $_[0]->{HEXFLAG} = 1; } $expr ')'
       { 
-        $hexflag = 0; 
+        $_[0]->{HEXFLAG} = 0; 
         $expr;
       }
   | %name ASSIGN
-    ID '=' expr
-  | expr '+' expr
+    $ID '=' expr 
+      {
+        my $parser = shift;
+        my $t = $parser->YYBuildAST(@_);
+        # Retype left (TERMINAL) child as ID
+        $t->ID->type('ID');
+        $t;
+      }
+  | %name PLUS
+    expr '+' expr
 ;
 
 %%
 
 use Getopt::Long;
 use List::Util qw{first};
+use Data::Dumper;
 
 sub _Error {
   my($token)=$_[0]->YYCurval;
@@ -71,6 +77,7 @@ sub _Error {
 # Context-dependant lexer
 sub lexer {
   my $parser = shift;
+  my $hexflag = $parser->{HEXFLAG};
 
   for ($parser->{input}) {    # contextualize
     m{\G\s*(\#.*)?}gc;
