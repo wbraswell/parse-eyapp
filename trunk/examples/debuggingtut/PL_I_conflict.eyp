@@ -11,20 +11,7 @@
 
 %token ID 
 
-%namingscheme {
-  #Receives a Parse::Eyapp object describing the grammar
-  my $self = shift;
-
-  $self->tokennames(
-    '=' => 'EQUAL',
-  );
-
-  # returns the handler that will give names
-  # to the right hand sides
-  \&give_rhs_name;
-}
-
-%tree
+%tree bypass
 %%
 stmt: 
     ifstmt 
@@ -35,16 +22,23 @@ stmt:
 #     for 'if' expr 'then' stmt
 # and check with input 'if then=if then if=then'. The problem arises again
 ifstmt: 
+     %name IF
     'if' expr 'then' expr 
 ;
 
 assignstmt: 
-    ID '=' expr
+    id '=' expr
 ;
 
 expr:
-    ID '=' ID
-  | ID
+    %name EQ
+    id '=' id
+  | id
+;
+
+id: 
+    %name ID
+    ID
 ;
 
 %%
