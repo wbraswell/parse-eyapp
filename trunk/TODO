@@ -1,3 +1,8 @@
+  * There is a bug with &give_rhs_name in Parse::Eyapp::Grammar and lists *, +, etc. see the example
+      examples/debuggintut/SemanticInfoInTokens.eyp
+    Not always a syntactic variable is a valid identifier: e.g. PLUS-1
+    Probably, it is better that the method "tokennames" give names to the syntactic variables
+
   * str method can produce GraphViz, latex and/or other formats
   * Treereg EXPORT and EXPORT_OK
   * Language generation example examples/generator
