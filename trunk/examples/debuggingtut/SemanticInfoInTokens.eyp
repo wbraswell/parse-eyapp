@@ -3,23 +3,8 @@
 
 %strict
 
-%token ID HEX INT INTEGER 
-
-%namingscheme {
-  #Receives a Parse::Eyapp object describing the grammar
-  my $self = shift;
-
-  $self->tokennames(
-    '=' => 'ASSIGN',
-    '(' => 'LP',
-    ')' => 'RP',
-    '+' => 'PLUS',
-  );
-
-  # returns the handler that will give names
-  # to the right hand sides
-  \&give_rhs_name;
-}
+%token ID INT INTEGER 
+%syntactic token HEX
 
 %right '='
 %left '+'
@@ -30,11 +15,11 @@ my $hexflag = 0; # make it an attribute
 my %st;
 %}
 
-%tree
+%tree bypass
 
 %%
 stmt:
-    decl <* ';'> expr <+ ';'>
+    decl <* ';'> expr <%name EXPS + ';'>
       {
         $_[2];
       }
@@ -50,14 +35,18 @@ decl:
 ;
 
 expr:
+    %name ID
     ID
-  | INTEGER
-  | HEX '(' { $hexflag = 1; } expr ')'
+  | %name NUM
+    INTEGER
+  | %name HEX
+    HEX '(' { $hexflag = 1; } $expr ')'
       { 
         $hexflag = 0; 
-        goto &Parse::Eyapp::Driver::YYBuildAST;
+        $expr;
       }
-  | ID '=' expr
+  | %name ASSIGN
+    ID '=' expr
   | expr '+' expr
 ;
 
@@ -74,7 +63,8 @@ sub _Error {
   local $" = ', ';
   warn "Syntax error near $what. Expected one of these tokens: <@expected>\n";
   warn "Remaining input:\n". substr($_[0]->{input}, pos($_[0]->{input}));
-  die Dumper($_[0]->{STACK});
+  die # Dumper($_[0]->{STACK}[-1])
+  ;
 }
 
 
@@ -148,9 +138,9 @@ sub main {
   print $parser->Run( $debug )->str,"\n";
 }
 
-sub TERMINAL::info {
+*TERMINAL::info = *NUM::info = *ID::info = sub {
   $_[0]->{attr}
-}
+};
 
 __PACKAGE__->main unless caller();
 
