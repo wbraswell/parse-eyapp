@@ -983,6 +983,95 @@ of the productions writing the C<type: VAR> production first,
 Files C<reducereduceconflict_fix1.eyp> and C<reducereduceconflict_fix2.eyp>
 offer other solutions to the problem.
 
+=head2 Tokens Depending on the Syntactic Context
+
+Usually there is a one-to-one relation between a token and a regexp. Problems arise,
+however when a token's type depends upon contextual information.
+An example of this problem comes from PL/I, where statements like this are
+legal:
+
+         if then=if then if=then
+
+In PL/I this problem arises because keywords like C<if> are not reserved and can be used in
+other contexts. This simplified grammar illustrates the problem:
+
+  examples/debuggingtut$ eyapp -c PL_I_conflict.eyp
+  # This grammar deals with the famous ambiguous PL/I phrase:
+  #                if then=if then if=then
+  # The (partial) solution uses YYExpect in the lexical analyzer to predict the token
+  # that fulfills the parser expectatives.
+  # Compile it with:
+  # eyapp -b '' PL_I_conflict.eyp
+  # Run it with;
+  # ./PL_I_conflict.pm -debug
+  %strict
+  %token ID
+  %tree bypass
+
+  %%
+
+  stmt:
+        ifstmt
+      | assignstmt
+  ;
+  # Exercise: change this production
+  #     for 'if' expr 'then' stmt
+  # and check with input 'if then=if then if=then'. The problem arises again
+  ifstmt:
+        %name IF
+        'if' expr 'then' expr
+  ;
+  assignstmt:
+        id '=' expr
+  ;
+  expr:
+        %name EQ
+        id '=' id
+      | id
+  ;
+  id:
+        %name ID
+        ID
+  ;
+
+  %%
+
+If the token ambiguity depends only in the syntactic context,
+the problem can be alleviated using the C<YYExpect> method. 
+In case of doubt, the lexical analyzer calls the C<YYExpect> method to know
+which of the several feasible tokens is expected by the parser:
+
+  examples/debuggingtut$ sed -ne '/sub lex/,/^}/p' PL_I_conflict.eyp
+  sub lexer {
+    my $parser = shift;
+
+    for ($parser->{input}) {    # contextualize
+      m{\G\s*(\#.*)?}gc;
+
+      m{\G([a-zA-Z_]\w*)}gc and do {
+        my $id = $1;
+
+        return ('if',   'if')   if ($id eq 'if')   && is_in('if', $parser->YYExpect);
+        return ('then', 'then') if ($id eq 'then') && is_in('then', $parser->YYExpect);
+
+        return ('ID', $id);
+      };
+
+      m{\G(.)}gc         and return ($1, $1);
+
+      return('',undef);
+    }
+  }
+
+Here follows an example of execution:
+
+  examples/debuggingtut$ eyapp -b '' PL_I_conflict.eyp
+  examples/debuggingtut$ ./PL_I_conflict.pm
+  Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:
+  if then=if then if=then
+  IF(EQ(ID,ID),EQ(ID,ID))
+
+
 =head2 Lexical Tie-ins
 
 The C language has a context dependency: the way an identifier is used depends
@@ -1114,8 +1203,8 @@ Let us see an example of execution:
   examples/debuggingtut$ ./SemanticInfoInTokens.pm -file inputforsemanticinfo2.txt
   EXPS(ASSIGN(ID[A2],NUM[2595]),ASSIGN(ID[A2],ID[A2]))
 
-The first hex expression C<A23> is interpreted as the number C<2595>
-while the second refers to previously declared variable C<A2>.
+The first hex expression C<HEX(A23)> is interpreted as the number C<2595>
+while the second C<HEX(A2)> refers to previously declared variable C<A2>.
 
 For more about lexical tie-ins see also
 

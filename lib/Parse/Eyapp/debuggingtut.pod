@@ -1146,8 +1146,8 @@ Let us see an example of execution:
   examples/debuggingtut$ ./SemanticInfoInTokens.pm -file inputforsemanticinfo2.txt
   EXPS(ASSIGN(ID[A2],NUM[2595]),ASSIGN(ID[A2],ID[A2]))
 
-The first hex expression C<A23> is interpreted as the number C<2595>
-while the second refers to previously declared variable C<A2>.
+The first hex expression C<HEX(A23)> is interpreted as the number C<2595>
+while the second C<HEX(A2)> refers to previously declared variable C<A2>.
 
 For more about lexical tie-ins see also
 
