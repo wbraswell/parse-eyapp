@@ -1,32 +1,44 @@
 # See http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers
 %strict
-%token ID INT
+%token ID INT NUM
 
 %right '='
 %left '+'
 
+%tree bypass
 %%
 prog:
+    %name EMPTY
     /* empty */
-  | prog stmt
+  | %name PROG
+    prog stmt
 ;
 
 stmt: 
+    %name EXP
     expr ';' 
-  | decl    
+  | %name DECL
+    decl    
 ;
 
 expr:
+    %name ID
     ID
-  | NUM
-  | INT '(' expr ')' /* typecast */ 
-  | expr '+' expr
-  | expr '=' expr
+  | %name NUM 
+    NUM
+  | %name TYPECAST
+    INT '(' expr ')' /* typecast */ 
+  | %name PLUS
+    expr '+' expr
+  | %name ASSIGN
+    expr '=' expr
 ;
 
 decl:
+    %name DECLARATOR
     INT declarator ';'
-  | INT declarator '=' expr ';'
+  | %name DECLARATORINIT
+    INT declarator '=' expr ';'
 ;
 
 declarator:
@@ -58,10 +70,10 @@ sub _Lexer {
     return ('INT', $1) if s{^(int\b)}{};
     if (s{^([a-zA-Z_]\w*)}{}) {
       if (m{^[)\s]*[;=]\s*}) {
-        $self->{STATES}[17]{ACTIONS}{')'} = -11 
+        $self->{STATES}[18]{ACTIONS}{')'} = -12 
       }
       else {
-        $self->{STATES}[17]{ACTIONS}{')'} = -5;
+        $self->{STATES}[18]{ACTIONS}{')'} = -5;
       }
       return ('ID', $1);
     }
@@ -80,9 +92,7 @@ sub Run {
 
   my $self = __PACKAGE__->new();
 
-  return $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error,
-                         yydebug => $debug,
-  );
+  print $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, yydebug => $debug,)->str."\n";
 }
 
 Run(@ARGV) unless caller;
@@ -109,6 +119,11 @@ Eyapp detects this as a reduce/reduce conflict:
 	')'	[reduce using rule 11 (declarator)]
 	$default	reduce using rule 5 (expr)
 
+The C++ rule is: take it as a declaration if it looks as a declaration,
+otherwise is an expression.
+
+This Eyapp parser solves the problem by dynamically changing the parser
+(hacking).
 
 =head1 SEE ALSO
 

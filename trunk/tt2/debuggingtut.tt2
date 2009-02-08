@@ -1409,6 +1409,132 @@ Now the analysis seems to work:
 
 [% PROCESS yyparse %]
 
+=head1  DYNAMICALLY CHANGING THE PARSING TABLES TO SOLVE AMBIGUITIES
+
+The grammar C<glrexpressions.eyp> models a problematic part of 
+the C++ grammar, 
+
+  Parse-Eyapp/examples/debuggingtut$ cat glrexpressions.eyp
+  # See http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers
+  %strict
+  %token ID INT NUM
+
+  %right '='
+  %left '+'
+
+  %tree bypass
+  %%
+  prog:
+      %name EMPTY
+      /* empty */
+    | %name PROG
+      prog stmt
+  ;
+
+  stmt:
+      %name EXP
+      expr ';'
+    | %name DECL
+      decl
+  ;
+
+  expr:
+      %name ID
+      ID
+    | %name NUM
+      NUM
+    | %name TYPECAST
+      INT '(' expr ')' /* typecast */
+    | %name PLUS
+      expr '+' expr
+    | %name ASSIGN
+      expr '=' expr
+  ;
+
+  decl:
+      %name DECLARATOR
+      INT declarator ';'
+    | %name DECLARATORINIT
+      INT declarator '=' expr ';'
+  ;
+
+  declarator:
+      ID
+    | '(' declarator ')'
+  ;
+
+  %%
+
+
+The grammar illustrates the ambiguity between 
+declarations and statements. For example,
+
+     int (x) = y+z;
+
+parses as either an C<expr> or a C<stmt>.
+
+
+Eyapp detects this as a reduce/reduce conflict:
+
+  State 18 contains 1 reduce/reduce conflict
+
+  State 18:
+
+  expr -> ID .  (Rule 5)
+  declarator -> ID .  (Rule 12)
+
+  ')' [reduce using rule 12 (declarator)]
+  $default  reduce using rule 5 (expr)
+
+
+The C++ rule is: take it as a declaration if it looks as a declaration,
+otherwise is an expression.
+
+This Eyapp parser solves the problem by dynamically changing the parser
+(hacking) inside the lexical analizer. If the C<ID> is followed 
+by some sequence of closing parenthesis and a C<;> or an C<=> the action 
+is to reduce by the production C<declarator -E<gt> ID>:
+
+
+  sub _Lexer {
+    my $self = shift;
+
+    for ($input) {
+      s{^(\s*)}{};
+
+      return ('',undef) unless $_;
+
+      # dynamically changing the action tables
+      return ('INT', $1) if s{^(int\b)}{};
+      if (s{^([a-zA-Z_]\w*)}{}) {
+        if (m{^[)\s]*[;=]\s*}) {
+          $self->{STATES}[18]{ACTIONS}{')'} = -12
+        }
+        else {
+          $self->{STATES}[18]{ACTIONS}{')'} = -5;
+        }
+        return ('ID', $1);
+      }
+
+      return ('NUM',$1) if s/^(\d+)//;
+      return ($1,$1) if s/^(.)//;
+    }
+    return ('',undef);
+  }
+
+
+Here are the results of two executions:
+
+  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/debuggingtut$ ./glrexpressions.pm
+  int (x) = y+z;
+  PROG(EMPTY,DECL(TERMINAL,TERMINAL,PLUS(ID,ID)))
+  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/debuggingtut$ ./glrexpressions.pm
+  int (x)+2;
+  PROG(EMPTY,EXP(TYPECAST(TERMINAL,ID),NUM))
+
+
+
+
 =head1 ERRORS INSIDE SEMANTIC ACTIONS
 
 A third type of error occurs when the code inside
