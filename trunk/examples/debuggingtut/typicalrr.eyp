@@ -1,3 +1,5 @@
+# For a solution to the conflicts
+# see  correcttypicalrr.eyp
 %token ID NUM 
 
 %%

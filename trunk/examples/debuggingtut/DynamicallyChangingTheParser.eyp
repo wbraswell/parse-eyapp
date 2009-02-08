@@ -1,6 +1,6 @@
-# DebugWithErrRec.eyp
-# compile it eyapp -b DebugWithErrRec.eyp -o Debug.pl to produce an 
-# executable
+# See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
+# See also: Debug.eyp Debug1.eyp Debug2.eyp  LookForward.eyp
+# DynamicallyChangingTheParser.eyp
 # This example illustrates how to dynamically change the behavior of the parser
 
 %token D S
