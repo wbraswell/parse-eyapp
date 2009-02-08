@@ -82,7 +82,7 @@ developed during this process in a formal test that covers the failure
 
 [%PROCESS strictdirective %]
 
-=head1 CONFLICTS
+=head1 CONFLICTS AND AMBIGUITIES
 
 =head2 Understanding Priorities
 

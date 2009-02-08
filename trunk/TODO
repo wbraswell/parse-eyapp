@@ -1,3 +1,4 @@
+  * There is a bug in eyapp with reduce-reduce conflicts!!
   * There is a bug with &give_rhs_name in Parse::Eyapp::Grammar and lists *, +, etc. see the example
       examples/debuggintut/SemanticInfoInTokens.eyp
     Not always a syntactic variable is a valid identifier: e.g. PLUS-1
@@ -8,7 +9,6 @@
   * Language generation example examples/generator
      -- Return a Test::LectroTest::Generator? 
 
-  * There seems to be a bug in yapp  (and even yacc!!!!, The yapp bug is probably a copy of the yacc one)
     with reduce-reduce conflicts. In at least one case is reducing by the second production rule instead 
     of the first.  It appears in the C++ parser (t/99Cplusplusgrammar.t). Confirm
 
