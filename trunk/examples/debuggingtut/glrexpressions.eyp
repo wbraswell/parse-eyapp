@@ -1,0 +1,31 @@
+%token ID TYPENAME
+
+%%
+prog:
+    /* empty */
+  | prog stmt
+;
+
+stmt: 
+    expr ';' 
+  | decl    
+;
+
+expr:
+    ID
+  | TYPENAME '(' expr ')' /* typecast */ 
+  | expr '+' expr
+  | expr '=' expr
+;
+
+decl:
+    TYPENAME declarator ';'
+  | TYPENAME declarator '=' expr ';'
+;
+
+declarator:
+    ID
+  | '(' declarator ')'
+;
+
+%%
