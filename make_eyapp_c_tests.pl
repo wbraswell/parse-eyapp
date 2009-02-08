@@ -5,8 +5,19 @@ use warnings;
 use strict;
 use File::Basename;
 
+sub get_grammars {
+  open my $f, 'MANIFEST' || exit(0);
+  my @grammar = grep { m{examples/.*yp$} } <$f>;
+  close($f);
+  chomp(@grammar);
+  exit(0) unless @grammar;
+  return @grammar;
+}
+
+
 print "Generating test files for 'eyapp -c'\n";
-my @grammar = glob('examples/*/*.eyp examples/*/*.yp'); 
+
+my @grammar = get_grammars();
 for (@grammar) {
   my ($name,$path,$suffix) = fileparse($_);
   $path =~ s{/}{_}g;
