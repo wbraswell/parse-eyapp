@@ -246,6 +246,29 @@ sub YYIndex {
   return wantarray? %index : \%index;
 }
 
+# to dynamically set syntactic actions
+sub YYLRAction {
+  my ($self, $token, $action, $state) = @_;
+
+  unless (defined($state)) {
+    my $stateno = $self->{STACK}[-1][0];
+    my $actions = $self->{STATES}[$stateno];
+
+    die "YYLRAction: Provide a state " unless (exists($$actions{ACTIONS}));
+
+    my $currenttoken = shift @$token;
+    $state = $$actions{ACTIONS}{$currenttoken};
+
+    die "YYLRAction: Provide a state " unless ($state > 0);
+  }
+
+  $action = -$self->YYIndex($action) unless looks_like_number($action);
+  for (@$token) {
+    $self->{STATES}[$state]{ACTIONS}{$_} = $action;
+  }
+}
+
+# to dynamically set semantic actions
 sub YYAction {
   my $self = shift;
   my $index = shift;
@@ -518,8 +541,17 @@ sub YYBuildAST {
   
   if ($bypass and @children == 1) {
     $node = $children[0]; 
+
+    my $childisterminal = ref($node) =~ /TERMINAL$/;
     # Re-bless unless is "an automatically named node", but the characterization of this is 
     bless $node, $class unless $name =~ /${lhs}_\d+$/; # lazy, weak (and wicked).
+
+    $childisterminal and !$class->isa($PREFIX.'TERMINAL') 
+      and do { 
+        no strict 'refs';
+        push @{ref($node)."::ISA"}, $PREFIX.'TERMINAL' 
+      };
+
     return $node;
   }
   $node->{children} = \@children; 

@@ -21,7 +21,8 @@ p:
 
 ds:
     D ';' ds    
-  | D       
+  | %name LAST_D
+    D       
     {
       print "Reducing by rule:\n";
       print "\tds -> D\n";
@@ -55,8 +56,9 @@ sub _Lexer {
     return ('',undef) unless $_;
 
     # dynamically changing the action tables
-    # Force reduction by rule 4 if it is the last D
-    $self->{STATES}[4]{ACTIONS}{';'} = -4 if $input =~ m{^;\s*S};
+    # Force reduction by rule ds->D if it is the last D
+    # $self->{STATES}[4]{ACTIONS}{';'} = -$self->YYIndex('LAST_D') if $input =~ m{^;\s*S};
+    $self->YYLRAction([ ';' ], 'LAST_D', 4) if $input =~ m{^;\s*S};
 
     return ($1,$1) if s/^(.)//;
   }
