@@ -1,24 +1,12 @@
-# For a solution to the conflicts
-# see  correcttypicalrr.eyp
-%token ID NUM 
-
 %tree
 
 %%
 s:
-      /* empty */
-    | s ws
-    | s ns 
+      'a'
+    | A
 ;
-
-ns:
-      /* empty */
-    | ns NUM 
-;
-
-ws:
-      /* empty */
-    | ws ID 
+A:
+      'a'
 ;
 
 %%
@@ -41,8 +29,7 @@ sub _Lexer {
 
     return ('',undef) unless $_;
 
-    return ('NUM',$1) if s/^(\d+)//;
-    return ('ID',$1) if s/^([a-zA-Z_]\w*)//;
+    return ($1,$1) if s/^(.)//;
   }
   return ('',undef);
 }
@@ -60,11 +47,14 @@ sub Run {
 
 Run(@ARGV) unless caller;
 
-=head1  Typical example of Reduce-Reduce conflict
+=head1  Minimal test for Reduce-Reduce conflicts
+
+I have found a bug in Eyapp for reduce-reduce conflicts. Instead
+of the first rule, the last is selected
 
 Compile it with:
 
-   eyapp -b '' typicalrr.eyp
+   eyapp -b '' minimalrr.eyp
 
 =cut
 
