@@ -42,6 +42,7 @@ decl:
 ;
 
 declarator:
+    %name ID
     ID
   | '(' declarator ')'
 ;
@@ -69,13 +70,15 @@ sub _Lexer {
     # dynamically changing the action tables
     return ('INT', $1) if s{^(int\b)}{};
     if (s{^([a-zA-Z_]\w*)}{}) {
+      my $id = $1;
       if (m{^[)\s]*[;=]\s*}) {
+        #$self->YYSolveConflict
         $self->{STATES}[18]{ACTIONS}{')'} = -12 
       }
       else {
         $self->{STATES}[18]{ACTIONS}{')'} = -5;
       }
-      return ('ID', $1);
+      return ('ID', $id);
     }
 
     return ('NUM',$1) if s/^(\d+)//;
@@ -94,6 +97,8 @@ sub Run {
 
   print $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, yydebug => $debug,)->str."\n";
 }
+
+*TERMINAL::info = *ID::info = *NUM::info = sub { $_[0]->{attr} };
 
 Run(@ARGV) unless caller;
 
