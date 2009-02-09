@@ -1,4 +1,6 @@
-# See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
+# See section 'Hacking the Parsing Tables: ACTION and GOTOs'
+# in http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
+#
 # See also: Debug.eyp Debug1.eyp Debug2.eyp  LookForward.eyp
 # DynamicallyChangingTheParser.eyp
 # This example illustrates how to dynamically change the behavior of the parser
@@ -34,14 +36,12 @@ ss:
 
 %%
 
-my $tokenline = 1;
-
 sub _Error {
   my $parser = shift;
 
   my ($token) = $parser->YYCurval;
   my ($what) = $token ? "input: '$token'" : "end of input";
-  warn "Syntax error near $what line num $tokenline\n";
+  warn "Syntax error near $what\n";
 }
 
 my $input;
@@ -50,7 +50,8 @@ sub _Lexer {
   my $self = shift;
   
   for ($input) {
-    s{^(\s*)}{} and $tokenline += $1 =~ tr{\n}{};
+    s{^(\s*)}{};
+   
     return ('',undef) unless $_;
 
     # dynamically changing the action tables
