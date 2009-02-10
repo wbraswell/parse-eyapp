@@ -8,7 +8,7 @@
 %right LNUM
 %right NUM 
 %right ID 
-%right '' # '' refers to the 'End of Input' token
+%right '' # The string '' refers to the 'End of Input' token
 
 %tree bypass
 
