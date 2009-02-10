@@ -6,7 +6,7 @@
 %right LNUM
 %right NUM 
 %right ID 
-%right ''
+%right '' # This example illustrates how a priority for the 'End of Input' token
 
 %tree bypass
 
