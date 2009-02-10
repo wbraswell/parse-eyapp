@@ -1,4 +1,3 @@
-# There is still 1 sr and 1 rr conflicts here.
 # This example illustrates the need to express EOI in the header section
 # For a solution to the conflicts
 # see  typicalrr.eyp and correcttypicalrr.eyp
