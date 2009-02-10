@@ -1,24 +1,37 @@
+# There is still 1 sr and 1 rr conflicts here.
+# This example illustrates the need to express EOI in the header section
 # For a solution to the conflicts
 # see  correcttypicalrr.eyp
-%right ID NUM 
 
-%tree
+%right LNUM
+%right NUM 
+%right ID 
+%right ''
+
+%tree bypass
 
 %%
 s:
-      /* empty */
-    | s ws
-    | s ns 
+      %name EMPTY
+      /* empty */ %prec ''
+    | %name WORDS
+       s ws
+    | %name NUMS
+      s ns 
 ;
 
 ns:
-      /* empty */ %prec NUM
-    | ns NUM 
+      %name EMPTYNUM
+      /* empty */  %prec NUM
+    | %name NUMS
+      NUM ns 
 ;
 
 ws:
-      /* empty */ %prec ID
-    | ws ID 
+      %name EMPTYID
+      /* empty */ %prec LNUM
+    |  %name IDS
+       ID ws
 ;
 
 %%
@@ -57,6 +70,8 @@ sub Run {
 
   print $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, yydebug => $debug,)->str."\n";
 }
+
+sub TERMINAL::info { $_[0]->{attr} }
 
 Run(@ARGV) unless caller;
 

@@ -2,10 +2,12 @@
 
 %%
 s:
+      %name S_is_a
       'a'
     | A
 ;
 A:
+      %name A_is_a
       'a'
 ;
 
@@ -50,11 +52,11 @@ Run(@ARGV) unless caller;
 =head1  Minimal test for Reduce-Reduce conflicts
 
 I have found a bug in Eyapp for reduce-reduce conflicts. Instead
-of the first rule, the last is selected
+of the first rule, the last is sometimes selected
 
 Compile it with:
 
-   eyapp -b '' minimalrr.eyp
+   eyapp -vb '' minimalrr.eyp
 
 =cut
 
