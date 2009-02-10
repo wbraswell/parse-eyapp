@@ -1,11 +1,14 @@
-# This example illustrates the need to express EOI in the header section
-# For a solution to the conflicts
-# see  typicalrr.eyp and correcttypicalrr.eyp
+# This example illustrates how to express EOI in the header section: use ''
+# For the original grammar
+# see file
+#   typicalrr.eyp 
+# For an alternative solution see file 
+#   correcttypicalrr.eyp
 
 %right LNUM
 %right NUM 
 %right ID 
-%right '' # This example illustrates how a priority for the 'End of Input' token
+%right '' # '' refers to the 'End of Input' token
 
 %tree bypass
 
