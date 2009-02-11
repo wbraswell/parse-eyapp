@@ -77,11 +77,11 @@ sub TERMINAL::info { $_[0]->{attr} }
 
 Run(@ARGV) unless caller;
 
-=head1  Typical example of Reduce-Reduce conflict
+=head1  Solving the typical example of Reduce-Reduce conflict using precedences
 
 Compile it with:
 
-   eyapp -b '' typicalrr.eyp
+   eyapp -b '' typicalrrwithprec.eyp
 
 =cut
 

@@ -49,6 +49,7 @@ examples/debuggingtut/shiftreduceconflict.eyp
 examples/debuggingtut/shiftreduceconflict_fixed.eyp
 examples/debuggingtut/typicalrr.eyp
 examples/debuggingtut/typicalrr_fixed.eyp
+examples/debuggingtut/./typicalrrwithprec.eyp
 examples/debuggingtut/use_aSb.pl
 examples/debuggingtut/usedebug1.pl
 examples/debuggingtut/usedebug2.pl
