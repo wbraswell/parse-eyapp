@@ -1,3 +1,5 @@
+  * There is no way to express the token end-of-input in the header section: i.e. how to give to end of 
+  input some priority in order to solve a conflict?
   * There is a bug in eyapp with reduce-reduce conflicts!!
   * There is a bug with &give_rhs_name in Parse::Eyapp::Grammar and lists *, +, etc. see the example
       examples/debuggintut/SemanticInfoInTokens.eyp
