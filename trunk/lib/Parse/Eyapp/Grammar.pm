@@ -379,6 +379,16 @@ sub RulesTable {
     $text;
 }
 
+###############################################################
+# Method to produce conflict information
+# to be used by dynamic conflict solving, e.g. 
+# YYPriorize([ 'rule_name', 'shift'], [ token list ], 'rule_name')
+# YYPriorize([ 'rule_name', 'shift'], [ token list ], 'shift')
+# YYPriorize([ 'rule_name1', 'rule_name2'], [ token list ], 'rule_name2')
+###############################################################
+sub _Conflicts {
+}
+
 ################################
 # Methods to get HEAD and TAIL #
 ################################
