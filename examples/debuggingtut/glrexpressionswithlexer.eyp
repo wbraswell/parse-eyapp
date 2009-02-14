@@ -5,10 +5,6 @@
 %right '='
 %left '+'
 
-%{
-my $input;
-%}
-
 %tree bypass
 %%
 prog:
@@ -27,7 +23,7 @@ stmt:
 
 expr:
     %name EXPID
-    ID hacktables
+    ID
   | %name NUM 
     NUM
   | %name TYPECAST
@@ -47,25 +43,8 @@ decl:
 
 declarator:
     %name DECID
-    ID hacktables
+    ID
   | '(' declarator ')'
-;
-
-hacktables:
-    /* empty. Just for hacking the LALR tables */
-    {
-      my $self = shift;
-
-      if ($input =~ m{^[)\s]*[;=]\s*}) {
-        # Temptative syntax: It may happen that there are more than two productions involved ...
-        #$self->YYSolveConflict([ qw{EXPID DECID} ], ')') = 'DECID';
-        $self->YYLRAction(['ID', ')'], 'DECID', 27);
-      }
-      else {
-        $self->YYLRAction([ ')' ], 'EXPID', 27); # the next 'state'
-        #$self->YYLRAction([ 'ID', ')' ], 'EXPID');
-      }
-    }
 ;
 
 %%
@@ -78,23 +57,35 @@ sub _Error {
   warn "Syntax error near $what\n";
 }
 
+my $input;
+
 sub _Lexer {
   my $self = shift;
   
   for ($input) {
     s{^(\s*)}{};
 
-    return ('', undef) unless $_;
+    return ('',undef) unless $_;
 
+    # dynamically changing the action tables
     return ('INT', $1) if s{^(int\b)}{};
+    if (s{^([a-zA-Z_]\w*)}{}) {
+      my $id = $1;
+      if (m{^[)\s]*[;=]\s*}) {
+        # Temptative syntax: It may happen that there are more than two productions involved ...
+        #$self->YYSolveConflict([ qw{EXPID DECID} ], ')') = 'DECID';
+        $self->YYLRAction([ ')'], 'DECID', 18);
+      }
+      else {
+        $self->YYLRAction([ ')' ], 'EXPID', 18); # the next 'state'
+        #$self->YYLRAction([ 'ID', ')' ], 'EXPID');
+      }
+      return ('ID', $id);
+    }
 
-    return ('ID',  $1) if (s{^([a-zA-Z_]\w*)}{});
-
-    return ('NUM', $1) if s/^(\d+)//;
-
-    return ($1,    $1) if s/^(.)//;
+    return ('NUM',$1) if s/^(\d+)//;
+    return ($1,$1) if s/^(.)//;
   }
-
   return ('',undef);
 }
 
