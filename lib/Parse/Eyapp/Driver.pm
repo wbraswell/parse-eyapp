@@ -250,17 +250,7 @@ sub YYIndex {
 sub YYLRAction {
   my ($self, $token, $action, $state) = @_;
 
-  unless (defined($state)) {
-    my $stateno = $self->{STACK}[-1][0];
-    my $actions = $self->{STATES}[$stateno];
-
-    die "YYLRAction: Provide a state " unless (exists($$actions{ACTIONS}));
-
-    my $currenttoken = shift @$token;
-    $state = $$actions{ACTIONS}{$currenttoken};
-
-    die "YYLRAction: Provide a state " unless ($state > 0);
-  }
+   die "YYLRAction: Provide a state " unless defined($state);
 
   $action = -$self->YYIndex($action) unless looks_like_number($action);
   for (@$token) {
