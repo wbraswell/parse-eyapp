@@ -246,7 +246,9 @@ sub YYIndex {
   return wantarray? %index : \%index;
 }
 
-# to dynamically set syntactic actions
+# To dynamically set syntactic actions
+# Change it to state, token, action
+# it is more natural
 sub YYLRAction {
   my ($self, $token, $action, $state) = @_;
 
