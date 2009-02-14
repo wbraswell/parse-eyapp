@@ -57,7 +57,6 @@ hacktables:
       my $self = shift;
 
       if ($input =~ m{^[)\s]*[;=]\s*}) {
-        # Temptative syntax: It may happen that there are more than two productions involved ...
         #$self->YYSolveConflict([ qw{EXPID DECID} ], ')') = 'DECID';
         $self->YYLRAction(['ID', ')'], 'DECID', 27);
       }
