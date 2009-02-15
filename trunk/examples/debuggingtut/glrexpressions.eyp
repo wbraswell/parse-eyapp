@@ -58,10 +58,10 @@ hacktables:
 
       my $conflictstate = $self->YYNextState();
       if ($input =~ m{^[)\s]*[;=]\s*}) {
-        $self->YYLRAction([ ')'], 'DECID', $conflictstate );
+        $self->YYSetLRAction($conflictstate, ')', 'DECID' );
       }
       else {
-        $self->YYLRAction([ ')' ], 'EXPID', $conflictstate ); 
+        $self->YYSetLRAction($conflictstate, ')', 'EXPID' ); 
       }
     }
 ;
