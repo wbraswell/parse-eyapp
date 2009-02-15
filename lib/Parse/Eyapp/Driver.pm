@@ -246,6 +246,13 @@ sub YYIndex {
   return wantarray? %index : \%index;
 }
 
+sub YYTopState {
+  my $self = shift;
+
+  $_[1] and $self->{STACK}[-1] = $_[1];
+  $self->{STACK}[-1];
+}
+
 # To dynamically set syntactic actions
 # Change it to state, token, action
 # it is more natural
