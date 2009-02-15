@@ -189,11 +189,32 @@ sub YYState {
   my $index = shift;
 
   if ($index) {
+    # Comes from the stack: a pair [state number, attribute]
+    $index = $index->[0] if 'ARRAY' eq reftype($index);
     die "YYState error. Expecting a number, found <$index>" unless (looks_like_number($index));
     return $self->{STATES}[$index]
   }
 
   return $self->{STATES}
+}
+
+sub YYGoto {
+  my ($self, $state, $symbol) = @_;
+ 
+  my $stateLRactions = $self->YYState($state);
+
+  $stateLRactions->{GOTOS}{hacktables};
+}
+
+# To be used in a semantic action, when reducing ...
+# It gives the next state after reduction
+sub YYNextState {
+  my $self = shift;
+
+  my $lhs = $self->YYLhs;
+  my $state = $self->YYTopState;
+
+  $self->YYGoto($state, $lhs);
 }
 
 # TODO: make it work with a list of indices ...
@@ -248,20 +269,26 @@ sub YYIndex {
 
 sub YYTopState {
   my $self = shift;
+  my $length = shift || 0;
 
-  $_[1] and $self->{STACK}[-1] = $_[1];
-  $self->{STACK}[-1];
+  $length = -$length unless $length <= 0;
+  $length--;
+
+  $_[1] and $self->{STACK}[$length] = $_[1];
+  $self->{STACK}[$length];
 }
 
 # To dynamically set syntactic actions
 # Change it to state, token, action
 # it is more natural
-sub YYLRAction {
-  my ($self, $token, $action, $state) = @_;
+sub YYSetLRAction {
+  my ($self,  $state, $token, $action) = @_;
 
    die "YYLRAction: Provide a state " unless defined($state);
 
+  # Action can be given using the name of the production
   $action = -$self->YYIndex($action) unless looks_like_number($action);
+  $token = [ $token ] unless ref($token);
   for (@$token) {
     $self->{STATES}[$state]{ACTIONS}{$_} = $action;
   }
