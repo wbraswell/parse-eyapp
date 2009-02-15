@@ -586,10 +586,12 @@ sub YYBuildAST {
     # Re-bless unless is "an automatically named node", but the characterization of this is 
     bless $node, $class unless $name =~ /${lhs}_\d+$/; # lazy, weak (and wicked).
 
-    $childisterminal and !$class->isa($PREFIX.'TERMINAL') 
+   
+    my $finalclass =  ref($node);
+    $childisterminal and !$finalclass->isa($PREFIX.'TERMINAL') 
       and do { 
         no strict 'refs';
-        push @{ref($node)."::ISA"}, $PREFIX.'TERMINAL' 
+        push @{$finalclass."::ISA"}, $PREFIX.'TERMINAL' 
       };
 
     return $node;

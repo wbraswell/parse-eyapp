@@ -12,13 +12,14 @@ our $VERSION = '0.01';
 my $input;
 %}
 
-# bug here!
 %tree bypass
 
 %%
 p:
+    %name PROG
     ds ';' ss  
-  | ss
+  | %name SS
+    ss
 ;
 
 ds:
@@ -29,8 +30,10 @@ ds:
 ;
 
 ss:
+    %name SS
     S ';' ss      
-  | S       
+  | %name S
+    S       
 ;
 
 hacktables:
@@ -41,6 +44,8 @@ hacktables:
         my $conflictstate = $self->YYNextState();
 
         $self->YYSetLRAction($conflictstate, ';', 'LAST_D' ) if $input =~ m{^;\s*S};
+
+        undef;
       }
 ;
 
@@ -75,9 +80,12 @@ sub Run {
 
   my $self = __PACKAGE__->new();
 
-  return $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error,
-                         yydebug => $debug,
-  );
+  print 
+    $self->YYParse( 
+      yylex => \&_Lexer, 
+      yyerror => \&_Error, 
+      yydebug => $debug,
+    )->str."\n";
 }
 
 Run(@ARGV) unless caller;
