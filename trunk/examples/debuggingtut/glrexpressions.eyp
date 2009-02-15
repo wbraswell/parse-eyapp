@@ -57,7 +57,7 @@ hacktables:
       my $self = shift;
 
       my $state = $self->YYTopState;
-      my $stateLRactions = $self->{STATES}[$state->[0]];
+      my $stateLRactions = $self->YYState($state);
       my $conflictstate = $stateLRactions->{GOTOS}{hacktables};
       if ($input =~ m{^[)\s]*[;=]\s*}) {
         $self->YYLRAction([ ')'], 'DECID', $conflictstate );
