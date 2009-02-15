@@ -703,90 +703,337 @@ Here is a solution based in this idea:
     63    );
     64  }
 
-=head2 Hacking the Parsing Tables: ACTION and GOTOs
 
-Skip this section unless you are familiar with the inners of LR parsing.
+=head1 ERRORS DURING TREE CONSTRUCTION
 
-The program in C<DynamicallyChangingTheParser.eyp> illustrates how to hack the
-parsing tables. The former grammar is left unchanged and the conflict unsolved:
+Let us write the typical client program for the parser 
+in C<Debug1>:
 
-  pl@europa:~/LEyapp/examples/debuggingtut$ eyapp -c DynamicallyChangingTheParser.eyp | cat -n
-     1  # DebugWithErrRec.eyp
-     2  # compile it eyapp -b DebugWithErrRec.eyp -o Debug.pl to produce an
-     3  # executable
-     4  # This example illustrates how to dynamically change the behavior of the parser
-     5  %token D S
-     6  %expect 1
-     7
-     8  %%
-     9
-    10  p:
-    11        ds ';' ss
-    12      | ss
-    13  ;
-    14  ds:
-    15        D ';' ds
-    16      | D
-    17  ;
-    18  ss:
-    19        S ';' ss
-    20      | S
-    21  ;
-    22
-    23  %%
+  pl@nereida:~/LEyapp/examples$ cat -n usedebug1.pl
+   1  #!/usr/bin/perl -w
+   2  # usetreebypass.pl prueba2.exp
+   3  use strict;
+   4  use Debug1;
+   5
+   6  sub slurp_file {
+   7    my $fn = shift;
+   8    my $f;
+   9
+  10    local $/ = undef;
+  11    if (defined($fn)) {
+  12      open $f, $fn  or die "Can't find file $fn!\n";
+  13    }
+  14    else {
+  15      $f = \*STDIN;
+  16    }
+  17    my $input = <$f>;
+  18    return $input;
+  19  }
+  20
+  21  my $input = slurp_file( shift() );
+  22
+  23  my $parser = Debug1->new();
+  24
+  25  $parser->Run($input);
 
-The C<%expect 1> tells C<eyapp> to keep silent. No warnings are issued:
+When executing the program we observe an abnormal behavior:
 
-  pl@europa:~/LEyapp/examples/debuggingtut$ eyapp -b '' DynamicallyChangingTheParser.eyp
-  pl@europa:~/LEyapp/examples/debuggingtut$  
+  examples/debuggingtut$ usedebug1.pl
+  D
 
-The trick used requires a in-depth knowledge of the way an LR parser works. 
-Since we have seen in the previous sections, the conflict is in state 4.
-The lexer modifies the parsing action when detects the end of the C<D>s
-sequence:
+  ;
 
-  $ sed -ne '/sub _Lexer/,/^}/p' DynamicallyChangingTheParser.eyp | cat -n
-     1  sub _Lexer {
-     2    my $self = shift;
-     3
-     4    for ($input) {
-     5      s{^(\s*)}{} and $tokenline += $1 =~ tr{\n}{};
-     6      return ('',undef) unless $_;
-     7
-     8      # dynamically changing the action tables
-     9      # Force reduction by rule 4 if it is the last D
-    10      $self->{STATES}[4]{ACTIONS}{';'} = -4 if $input =~ m{^;\s*S};
-    11
-    12      return ($1,$1) if s/^(.)//;
-    13    }
-    14    return ('',undef);
-    15  }
+  D
 
-Each state is an anonymous hash. There are three keys: ACTIONS, GOTOS and  DEFAULT.
-The ACTIONS table says when to shift and when to reduce for any given tokens.
-The GOTOS table says where to go, i.e. the next state after a reduction occurs.
+  ;
+  S
+  Reducing by rule:
+          ds -> D
+  Syntax error near end of input line num 2
 
-  pl@europa:~/LEyapp/examples/debuggingtut$ perl -wd ./DynamicallyChangingTheParser.pm
-  DynamicallyChangingTheParser::(./DynamicallyChangingTheParser.pm:16):
-  16:     push @DynamicallyChangingTheParser::ISA, 'Parse::Eyapp::Driver';
-  D;D;S
-  DynamicallyChangingTheParser::_Lexer(DynamicallyChangingTheParser.eyp:50):
-  50:       my $self = shift;
-  DB<3> n
-  DynamicallyChangingTheParser::_Lexer(DynamicallyChangingTheParser.eyp:52):
-  52:       for ($input) {
-  DB<3> x $self->YYState(4)
-  0  HASH(0xa03fb0)
-     'ACTIONS' => HASH(0xa03fe0)
-        ';' => 8
+We activate the option C<yydebug =E<gt> 0xF>
+in the call to a C<YYParser>.
+The integer parameter C<yydebug> of C<new> and C<YYParse>
+controls the level of debugging. Different levels of 
+verbosity can be obtained by setting the bits of this
+argument. It works as follows:
 
-A negative number means reduction using the corresponding (opposite number) production 
-rule number. The line
+     /============================================================\
+     | Bit Value  | Outputs                                       |
+     |------------+-----------------------------------------------|
+     |  0x01      |  Token reading (useful for Lexer debugging)   |
+     |------------+-----------------------------------------------|
+     |  0x02      |  States information                           |
+     |------------+-----------------------------------------------|
+     |  0x04      |  Driver actions (shifts, reduces, accept...)  |
+     |------------+-----------------------------------------------|
+     |  0x08      |  Parse Stack dump                             |
+     |------------+-----------------------------------------------|
+     |  0x10      |  Error Recovery tracing                       |
+     \============================================================/
 
-    10      $self->{STATES}[4]{ACTIONS}{';'} = -4 if $input =~ m{^;\s*S};
+Let us see what happens when the input is C<D;S>. We have introduced
+some white spaces and carriage returns between the terminals:
 
-tells to reduce by rule 4 when in state 4 and seeing a token C<';'> followed
-by a token C<S>. 
+  pl@nereida:~/LEyapp/examples$ usedebug1.pl
+  D
+
+  ;
+
+  S
+
+  ----------------------------------------
+  In state 0:
+  Stack:[0]
+  Need token. Got >D<
+  Shift and go to state 4.
+  ----------------------------------------
+  In state 4:
+  Stack:[0,4]
+  Don't need token.
+  Reduce using rule 4 (ds --> D): Reducing by rule:
+          ds -> D
+  Back to state 0, then go to state 5.
+  ----------------------------------------
+  In state 5:
+  Stack:[0,5]
+  Need token. Got ><
+  Syntax error near end of input line num 1
+
+What's going on?
+After reading the carriage return 
+
+   Need token. Got >D<
+
+the parser receives an end of file. ¿Why?.
+Something is going wrong in the communications between lexer 
+and parser. Let us review the lexical analyzer:
+
+  pl@nereida:~/LEyapp/examples$ sed -ne '/sub.*_Lexer/,/^}/p' Debug1.eyp | cat -n
+   1  sub _Lexer {
+   2
+   3          for ($input) {
+   4             s{^(\s)}{} and $tokenline += $1 =~ tr{\n}{};
+   5             return ('',undef) unless $_;
+   6             return ($1,$1) if s/^(.)//;
+   7          }
+   8          return ('',undef);
+   9  }
+
+The error is at line 4. Only a single white space is eaten!
+The second white in the input does not match lines 5 and 6 and the 
+contextualizing C<for> finishes. Line 8 the returns
+the C<('',undef)> signalling the end of input.
+
+Let us write a new version C<Debug2.eyp> that fixes the problem:
+
+  pl@nereida:~/LEyapp/examples$ sed -ne '/sub.*_Lexer/,/^}/p' Debug2.eyp | cat -n
+   1  sub _Lexer {
+   2
+   3          for ($input) {
+   4             s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
+   5             return ('',undef) unless $_;
+   6             return ($1,$1) if s/^(.)//;
+   7          }
+   8          return ('',undef);
+   9  }
+
+
+Now the analysis seems to work:
+
+  pl@nereida:~/LEyapp/examples$ usedebug2.pl
+  D
+
+  ;
+
+  S
+
+  ----------------------------------------
+  In state 0:
+  Stack:[0]
+  Need token. Got >D<
+  Shift and go to state 4.
+  ----------------------------------------
+  In state 4:
+  Stack:[0,4]
+  Don't need token.
+  Reduce using rule 4 (ds --> D): Reducing by rule:
+          ds -> D
+  Back to state 0, then go to state 5.
+  ----------------------------------------
+  In state 5:
+  Stack:[0,5]
+  Need token. Got >;<
+  Shift and go to state 8.
+  ----------------------------------------
+  In state 8:
+  Stack:[0,5,8]
+  Need token. Got >S<
+  Shift and go to state 1.
+  ----------------------------------------
+  In state 1:
+  Stack:[0,5,8,1]
+  Need token. Got ><
+  Reduce using rule 6 (ss --> S): Back to state 8, then go to state 10.
+  ----------------------------------------
+  In state 10:
+  Stack:[0,5,8,10]
+  Don't need token.
+  Reduce using rule 1 (p --> ds ; ss): Back to state 0, then go to state 2.
+  ----------------------------------------
+  In state 2:
+  Stack:[0,2]
+  Shift and go to state 7.
+  ----------------------------------------
+  In state 7:
+  Stack:[0,2,7]
+  Don't need token.
+  Accept.
+
+=head1 THE LR PARSING ALGORITHM: UNDERSTANDING THE OUTPUT OF C<yydebug> 
+
+[% PROCESS yyparse %]
+
+=head1 ERRORS INSIDE SEMANTIC ACTIONS
+
+A third type of error occurs when the code inside
+a semantic action does'nt behave as expected.
+
+the semantic actions are translated in anonymous
+methods of the parser object. Since they are anonymous
+we ca't use breakpoints as
+
+  b subname # stop when arriving at sub ''name''
+
+or
+
+  c subname  # contine up to reach sub ''name''
+
+Furthermore the file loaded by the client program is the
+generated C<.pm>. The code in 
+C<Debug.pm> is alien to us - Was automatically generated
+by C<Parse::Eyapp> -
+and it can be difficult to find where 
+our inserted semantic actions are.
+
+To watch the execution of
+a semantic action
+is simple: We use the debugger C<f file.eyp > option
+to switch the viewing filename to our grammar file.
+
+  pl@nereida:~/LEyapp/examples$ perl -wd usedebug2.pl
+
+  Loading DB routines from perl5db.pl version 1.28
+  Editor support available.
+
+  Enter h or `h h' for help, or `man perldebug' for more help.
+
+  main::(usedebug2.pl:21):        my $input = slurp_file( shift() );
+    DB<1> f Debug2.eyp
+  1       2       #line 3 "Debug2.eyp"
+  3
+  4:      our $VERSION = '0.01';
+  5
+  6       7       8       9       10
+
+Now we can set a breakpoint at any line of  our grammar file. 
+Thus the C<18> in the command C<b 18> refers to line 18 in
+C<Debug2.eyp>. The command C<l> shows the corresponding lines of
+the C<.eyp> file
+
+    DB<2> b 18
+    DB<3> l
+  11      12      13      14      15      16      #line 17 "Debug2.eyp"
+  17
+  18:b          print "Reducing by rule:\n";
+  19:           print "\tds -> D\n";
+  20:           $_[1];
+
+We issue now the command C<c> (continue). The execution continues up 
+to linea 18 of C<Debug2.eyp>:
+
+    DB<3> c
+  D
+
+  ;
+
+  S
+
+  Debug2::CODE(0x85129d8)(Debug2.eyp:18):
+  18:           print "Reducing by rule:\n";
+    DB<3> n
+  Reducing by rule:
+
+Now we can issue any debugger commands (like C<x>, C<p>, etc.) 
+to investigate the internal state
+of our program and determine what are the reasons for any abnormal 
+behavior.
+
+  Debug2::CODE(0x85129d8)(Debug2.eyp:19):
+  19:           print "\tds -> D\n";
+    DB<3> x $_[0]{GRAMMAR}
+  0  ARRAY(0x8538360)
+     0  ARRAY(0x855aa88)
+        0  '_SUPERSTART'
+        1  '$start'
+        2  ARRAY(0x855ab60)
+           0  'p'
+           1  '$end'
+        3  0
+     1  ARRAY(0x855a890)
+        0  'p_1'
+        1  'p'
+        2  ARRAY(0x855a8fc)
+           0  'ds'
+           1  ';'
+           2  'ss'
+        3  0
+     2  ARRAY(0x855a800)
+        0  'p_2'
+        1  'p'
+        2  ARRAY(0x855a830)
+           0  'ss'
+        3  0
+     3  ARRAY(0x855a764)
+        0  'ds_3'
+        1  'ds'
+        2  ARRAY(0x855a7a0)
+           0  'ds'
+           1  ';'
+           2  'D'
+        3  0
+     4  ARRAY(0x85421d4)
+        0  'ds_4'
+        1  'ds'
+        2  ARRAY(0x855a6e0)
+           0  'D'
+        3  0
+     5  ARRAY(0x8538474)
+        0  'ss_5'
+        1  'ss'
+        2  ARRAY(0x854f9c8)
+           0  'S'
+           1  ';'
+           2  'ss'
+        3  0
+     6  ARRAY(0x85383b4)
+        0  'ss_6'
+        1  'ss'
+        2  ARRAY(0x85383f0)
+           0  'S'
+        3  0
+    DB<4>                   
+
+Using a second C<c> the execution continues until
+reaching the end of the program:
+
+    DB<3> c
+  Debugged program terminated.  Use q to quit or R to restart,
+    use o inhibit_exit to avoid stopping after program termination,
+    h q, h R or h o to get additional info.
+    DB<3>                                   
+
+=head1 SOLVING DIFFICULT CONFLICTS AND AMBIGUITIES
 
 =head2 Reduce-Reduce Conflicts
 
@@ -838,10 +1085,54 @@ The problem is easily solved designing an equivalent non ambiguous grammar:
      9
     10  %%
 
+Of course you can also try to diambiguate using priorities. In the
+file C<examples/debuggingtut/typicalrrwithprec.eyp> there
+is a solution:
+
+  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/debuggingtut$ eyapp -c typicalrrwithprec.eyp
+  # This example illustrates how to express EOI in the header section: use ''
+  # For the original grammar
+  # see file
+  #   typicalrr.eyp
+  # For an alternative solution see file
+  #   correcttypicalrr.eyp
+  %right LNUM
+  %right NUM
+  %right ID
+  %right '' # The string '' refers to the 'End of Input' token
+  %tree bypass
+
+  %%
+
+  s:
+        %name EMPTY
+        /* empty */%prec ''
+      | %name WORDS
+        s ws
+      | %name NUMS
+        s ns
+  ;
+  ns:
+        %name EMPTYNUM
+        /* empty */%prec NUM
+      | %name NUMS
+        NUM ns
+  ;
+  ws:
+        %name EMPTYID
+        /* empty */%prec LNUM
+      | %name IDS
+        ID ws
+  ;
+
+  %%
+
+Observe the use of C<%right ''> in the header section:
+it gives a priority to the end-of-input token.
 
 =head2 Reduce-Reduce Conflicts with Unambiguous Grammars
 
-Though not common, it may occur that a reduce-reduce conflict
+Though not so common, it may occur that a reduce-reduce conflict
 is not due to ambiguity but to the limitations of the LALR(1)
 algorithm. The following example illustrates the point:
 
@@ -1219,197 +1510,9 @@ For more about lexical tie-ins see also
 =back
 
 
-=head1 ERRORS DURING TREE CONSTRUCTION
-
-Let us write the typical client program for the parser 
-in C<Debug1>:
-
-  pl@nereida:~/LEyapp/examples$ cat -n usedebug1.pl
-   1  #!/usr/bin/perl -w
-   2  # usetreebypass.pl prueba2.exp
-   3  use strict;
-   4  use Debug1;
-   5
-   6  sub slurp_file {
-   7    my $fn = shift;
-   8    my $f;
-   9
-  10    local $/ = undef;
-  11    if (defined($fn)) {
-  12      open $f, $fn  or die "Can't find file $fn!\n";
-  13    }
-  14    else {
-  15      $f = \*STDIN;
-  16    }
-  17    my $input = <$f>;
-  18    return $input;
-  19  }
-  20
-  21  my $input = slurp_file( shift() );
-  22
-  23  my $parser = Debug1->new();
-  24
-  25  $parser->Run($input);
-
-When executing the program we observe an abnormal behavior:
-
-  examples/debuggingtut$ usedebug1.pl
-  D
-
-  ;
-
-  D
-
-  ;
-  S
-  Reducing by rule:
-          ds -> D
-  Syntax error near end of input line num 2
-
-We activate the option C<yydebug =E<gt> 0xF>
-in the call to a C<YYParser>.
-The integer parameter C<yydebug> of C<new> and C<YYParse>
-controls the level of debugging. Different levels of 
-verbosity can be obtained by setting the bits of this
-argument. It works as follows:
-
-     /============================================================\
-     | Bit Value  | Outputs                                       |
-     |------------+-----------------------------------------------|
-     |  0x01      |  Token reading (useful for Lexer debugging)   |
-     |------------+-----------------------------------------------|
-     |  0x02      |  States information                           |
-     |------------+-----------------------------------------------|
-     |  0x04      |  Driver actions (shifts, reduces, accept...)  |
-     |------------+-----------------------------------------------|
-     |  0x08      |  Parse Stack dump                             |
-     |------------+-----------------------------------------------|
-     |  0x10      |  Error Recovery tracing                       |
-     \============================================================/
-
-Let us see what happens when the input is C<D;S>. We have introduced
-some white spaces and carriage returns between the terminals:
-
-  pl@nereida:~/LEyapp/examples$ usedebug1.pl
-  D
-
-  ;
-
-  S
-
-  ----------------------------------------
-  In state 0:
-  Stack:[0]
-  Need token. Got >D<
-  Shift and go to state 4.
-  ----------------------------------------
-  In state 4:
-  Stack:[0,4]
-  Don't need token.
-  Reduce using rule 4 (ds --> D): Reducing by rule:
-          ds -> D
-  Back to state 0, then go to state 5.
-  ----------------------------------------
-  In state 5:
-  Stack:[0,5]
-  Need token. Got ><
-  Syntax error near end of input line num 1
-
-What's going on?
-After reading the carriage return 
-
-   Need token. Got >D<
-
-the parser receives an end of file. ¿Why?.
-Something is going wrong in the communications between lexer 
-and parser. Let us review the lexical analyzer:
-
-  pl@nereida:~/LEyapp/examples$ sed -ne '/sub.*_Lexer/,/^}/p' Debug1.eyp | cat -n
-   1  sub _Lexer {
-   2
-   3          for ($input) {
-   4             s{^(\s)}{} and $tokenline += $1 =~ tr{\n}{};
-   5             return ('',undef) unless $_;
-   6             return ($1,$1) if s/^(.)//;
-   7          }
-   8          return ('',undef);
-   9  }
-
-The error is at line 4. Only a single white space is eaten!
-The second white in the input does not match lines 5 and 6 and the 
-contextualizing C<for> finishes. Line 8 the returns
-the C<('',undef)> signalling the end of input.
-
-Let us write a new version C<Debug2.eyp> that fixes the problem:
-
-  pl@nereida:~/LEyapp/examples$ sed -ne '/sub.*_Lexer/,/^}/p' Debug2.eyp | cat -n
-   1  sub _Lexer {
-   2
-   3          for ($input) {
-   4             s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
-   5             return ('',undef) unless $_;
-   6             return ($1,$1) if s/^(.)//;
-   7          }
-   8          return ('',undef);
-   9  }
-
-
-Now the analysis seems to work:
-
-  pl@nereida:~/LEyapp/examples$ usedebug2.pl
-  D
-
-  ;
-
-  S
-
-  ----------------------------------------
-  In state 0:
-  Stack:[0]
-  Need token. Got >D<
-  Shift and go to state 4.
-  ----------------------------------------
-  In state 4:
-  Stack:[0,4]
-  Don't need token.
-  Reduce using rule 4 (ds --> D): Reducing by rule:
-          ds -> D
-  Back to state 0, then go to state 5.
-  ----------------------------------------
-  In state 5:
-  Stack:[0,5]
-  Need token. Got >;<
-  Shift and go to state 8.
-  ----------------------------------------
-  In state 8:
-  Stack:[0,5,8]
-  Need token. Got >S<
-  Shift and go to state 1.
-  ----------------------------------------
-  In state 1:
-  Stack:[0,5,8,1]
-  Need token. Got ><
-  Reduce using rule 6 (ss --> S): Back to state 8, then go to state 10.
-  ----------------------------------------
-  In state 10:
-  Stack:[0,5,8,10]
-  Don't need token.
-  Reduce using rule 1 (p --> ds ; ss): Back to state 0, then go to state 2.
-  ----------------------------------------
-  In state 2:
-  Stack:[0,2]
-  Shift and go to state 7.
-  ----------------------------------------
-  In state 7:
-  Stack:[0,2,7]
-  Don't need token.
-  Accept.
-
-=head1 THE LR PARSING ALGORITHM: UNDERSTANDING THE OUTPUT OF C<yydebug> 
-
-[% PROCESS yyparse %]
-
 =head1  DYNAMICALLY CHANGING THE PARSING TABLES TO SOLVE AMBIGUITIES
+
+=head2 The C++ Ambiguity
 
 The grammar C<glrexpressions.eyp> models a problematic part of 
 the C++ grammar. 
@@ -1542,13 +1645,13 @@ The C++ rule is: take it as a declaration if it looks as a declaration,
 otherwise is an expression.
 
 For this simplified version, we can solve the problem by dynamically changing
-the parser tables (hack). For this purpose we introduce the syntactic variable 
+the parser tables. For this purpose we introduce the syntactic variable 
 C<hacktable>. If the ambiguous expression/declarator is followed by some
 sequence of closing parenthesis and a C<;> or an C<=> the action is to reduce
 by the production C<declarator -E<gt> ID> otherwise we reduce by C<expression -E<gt> ID>:
 
 
-  lusasoft@LusaSoft:~/LEyapp/examples/debuggingtut$ cat -n glrexpressions.eyp
+  Parse-Eyapp/examples/debuggingtut$ cat -n glrexpressions.eyp
      1  # See http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers
      2  %strict
      3  %token ID INT NUM
@@ -1604,51 +1707,63 @@ by the production C<declarator -E<gt> ID> otherwise we reduce by C<expression -E
     53
     54  hacktables:
     55      /* empty. Just for hacking the LALR tables */
-    56      {
-    57        my $self = shift;
+    56        {
+    57          my $self = shift;
     58
-    59        if ($input =~ m{^[)\s]*[;=]\s*}) {
-    60          # Temptative syntax: It may happen that there are more than two productions involved ...
-    61          #$self->YYSolveConflict([ qw{EXPID DECID} ], ')') = 'DECID';
-    62          $self->YYLRAction(['ID', ')'], 'DECID', 27);
-    63        }
-    64        else {
-    65          $self->YYLRAction([ ')' ], 'EXPID', 27); # the next 'state'
-    66          #$self->YYLRAction([ 'ID', ')' ], 'EXPID');
-    67        }
-    68      }
-    69  ;
+    59          my $conflictstate = $self->YYNextState();
+    60          if ($input =~ m{^[)\s]*[;=]\s*}) {
+    61            $self->YYSetLRAction($conflictstate, ')', 'DECID' );
+    62          }
+    63          else {
+    64            $self->YYSetLRAction($conflictstate, ')', 'EXPID' );
+    65          }
+    66        }
+    67  ;
+    68
+    69  %%
     70
-    71  %%
-    72
-    73  sub _Error {
-    74    my $parser = shift;
-    75
-    76    my ($token) = $parser->YYCurval;
-    77    my ($what) = $token ? "input: '$token'" : "end of input";
-    78    warn "Syntax error near $what\n";
-    79  }
-    80
-    81  sub _Lexer {
-    82    my $self = shift;
-    83
-    84    for ($input) {
-    85      s{^(\s*)}{};
+    71  sub _Error {
+    72    my $parser = shift;
+    73
+    74    my ($token) = $parser->YYCurval;
+    75    my ($what) = $token ? "input: '$token'" : "end of input";
+    76    warn "Syntax error near $what\n";
+    77  }
+    78
+    79  sub _Lexer {
+    80    my $self = shift;
+    81
+    82    for ($input) {
+    83      s{^(\s*)}{};
+    84
+    85      return ('', undef) unless $_;
     86
-    87      return ('', undef) unless $_;
+    87      return ('INT', $1) if s{^(int\b)}{};
     88
-    89      return ('INT', $1) if s{^(int\b)}{};
+    89      return ('ID',  $1) if (s{^([a-zA-Z_]\w*)}{});
     90
-    91      return ('ID',  $1) if (s{^([a-zA-Z_]\w*)}{});
+    91      return ('NUM', $1) if s/^(\d+)//;
     92
-    93      return ('NUM', $1) if s/^(\d+)//;
-    94
-    95      return ($1,    $1) if s/^(.)//;
-    96    }
-    97
-    98    return ('',undef);
-    99  }
+    93      return ($1,    $1) if s/^(.)//;
+    94    }
+    95
+    96    return ('',undef);
+    97  }
 
+Line 59 uses the method C<YYNextState> to compute the state after the reduction for
+the production rule 
+
+      hacktables -> /* empty */
+
+this is precisely the conflict state. If the incoming input is a sequence of parenthesis 
+followed by either a semicolon or an equal we call to the method C<YYSetLRAction> to set
+a reduction by the rule
+
+     declarator -> ID
+
+otherwise we indicate a reduction by the rule:
+
+     expr -> ID    
 
 Here are the results of two executions:
 
@@ -1664,145 +1779,85 @@ Certainly, a solution for the ambiguity in the
 full C++ grammar requires a more elaborated
 solution.
 
+=head2 Solving Dynamically a Shift-Reduce Conflict
 
-=head1 ERRORS INSIDE SEMANTIC ACTIONS
+The program in C<DynamicallyChangingTheParser.eyp> illustrates how to hack the
+parsing tables. This is a modification of the grammar in C<Debug.eyp> that was studied in
+the previous sections:
 
-A third type of error occurs when the code inside
-a semantic action does'nt behave as expected.
+  Parse-Eyapp/examples/debuggingtut$ sed -ne '1,52p' DynamicallyChangingTheParser.eyp | cat -n
+     1  # See section 'Hacking the Parsing Tables: ACTION and GOTOs'
+     2  # in http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
+     3  #
+     4  # See also: Debug.eyp Debug1.eyp Debug2.eyp  LookForward.eyp
+     5  # DynamicallyChangingTheParser.eyp
+     6  # This example illustrates how to dynamically change the behavior of the parser
+     7
+     8  %token D S
+     9
+    10  %{
+    11  our $VERSION = '0.01';
+    12  my $input;
+    13  %}
+    14
+    15  %tree bypass
+    16
+    17  %%
+    18  p:
+    19      %name PROG
+    20      ds ';' ss
+    21    | %name SS
+    22      ss
+    23  ;
+    24
+    25  ds:
+    26      %name MORE_Ds
+    27      D hacktables ';' ds
+    28    | %name LAST_D
+    29      D hacktables
+    30  ;
+    31
+    32  ss:
+    33      %name SS
+    34      S ';' ss
+    35    | %name S
+    36      S
+    37  ;
+    38
+    39  hacktables:
+    40      /* empty. Just for hacking the LALR tables */
+    41        {
+    42          my $self = shift;
+    43
+    44          my $conflictstate = $self->YYNextState();
+    45
+    46          $self->YYSetLRAction($conflictstate, ';', 'LAST_D' ) if $input =~ m{^;\s*S};
+    47
+    48          undef;
+    49        }
+    50  ;
+    51
+    52  %%
 
-the semantic actions are translated in anonymous
-methods of the parser object. Since they are anonymous
-we ca't use breakpoints as
+As you remeber there is a shift-reduce conflict:
 
-  b subname # stop when arriving at sub ''name''
+  Parse-Eyapp/examples/debuggingtut$ eyapp -vb '' DynamicallyChangingTheParser.eyp
+    1 shift/reduce conflict
+  Parse-Eyapp/examples/debuggingtut$ sed -ne '/^State 8:/,/State/p' DynamicallyChangingTheParser.output
+  State 8:
 
-or
+          ds -> D hacktables . ';' ds     (Rule 3)
+          ds -> D hacktables .    (Rule 4)
 
-  c subname  # contine up to reach sub ''name''
+          ';'     shift, and go to state 11
 
-Furthermore the file loaded by the client program is the
-generated C<.pm>. The code in 
-C<Debug.pm> is alien to us - Was automatically generated
-by C<Parse::Eyapp> -
-and it can be difficult to find where 
-our inserted semantic actions are.
+          ';'     [reduce using rule 4 (ds)]
 
-To watch the execution of
-a semantic action
-is simple: We use the debugger C<f file.eyp > option
-to switch the viewing filename to our grammar file.
+  State 9:
 
-  pl@nereida:~/LEyapp/examples$ perl -wd usedebug2.pl
+The conflict is dynamically solved modifying the action table in the semantic action associated
+with C<hacktables>
 
-  Loading DB routines from perl5db.pl version 1.28
-  Editor support available.
-
-  Enter h or `h h' for help, or `man perldebug' for more help.
-
-  main::(usedebug2.pl:21):        my $input = slurp_file( shift() );
-    DB<1> f Debug2.eyp
-  1       2       #line 3 "Debug2.eyp"
-  3
-  4:      our $VERSION = '0.01';
-  5
-  6       7       8       9       10
-
-Now we can set a breakpoint at any line of  our grammar file. 
-Thus the C<18> in the command C<b 18> refers to line 18 in
-C<Debug2.eyp>. The command C<l> shows the corresponding lines of
-the C<.eyp> file
-
-    DB<2> b 18
-    DB<3> l
-  11      12      13      14      15      16      #line 17 "Debug2.eyp"
-  17
-  18:b          print "Reducing by rule:\n";
-  19:           print "\tds -> D\n";
-  20:           $_[1];
-
-We issue now the command C<c> (continue). The execution continues up 
-to linea 18 of C<Debug2.eyp>:
-
-    DB<3> c
-  D
-
-  ;
-
-  S
-
-  Debug2::CODE(0x85129d8)(Debug2.eyp:18):
-  18:           print "Reducing by rule:\n";
-    DB<3> n
-  Reducing by rule:
-
-Now we can issue any debugger commands (like C<x>, C<p>, etc.) 
-to investigate the internal state
-of our program and determine what are the reasons for any abnormal 
-behavior.
-
-  Debug2::CODE(0x85129d8)(Debug2.eyp:19):
-  19:           print "\tds -> D\n";
-    DB<3> x $_[0]{GRAMMAR}
-  0  ARRAY(0x8538360)
-     0  ARRAY(0x855aa88)
-        0  '_SUPERSTART'
-        1  '$start'
-        2  ARRAY(0x855ab60)
-           0  'p'
-           1  '$end'
-        3  0
-     1  ARRAY(0x855a890)
-        0  'p_1'
-        1  'p'
-        2  ARRAY(0x855a8fc)
-           0  'ds'
-           1  ';'
-           2  'ss'
-        3  0
-     2  ARRAY(0x855a800)
-        0  'p_2'
-        1  'p'
-        2  ARRAY(0x855a830)
-           0  'ss'
-        3  0
-     3  ARRAY(0x855a764)
-        0  'ds_3'
-        1  'ds'
-        2  ARRAY(0x855a7a0)
-           0  'ds'
-           1  ';'
-           2  'D'
-        3  0
-     4  ARRAY(0x85421d4)
-        0  'ds_4'
-        1  'ds'
-        2  ARRAY(0x855a6e0)
-           0  'D'
-        3  0
-     5  ARRAY(0x8538474)
-        0  'ss_5'
-        1  'ss'
-        2  ARRAY(0x854f9c8)
-           0  'S'
-           1  ';'
-           2  'ss'
-        3  0
-     6  ARRAY(0x85383b4)
-        0  'ss_6'
-        1  'ss'
-        2  ARRAY(0x85383f0)
-           0  'S'
-        3  0
-    DB<4>                   
-
-Using a second C<c> the execution continues until
-reaching the end of the program:
-
-    DB<3> c
-  Debugged program terminated.  Use q to quit or R to restart,
-    use o inhibit_exit to avoid stopping after program termination,
-    h q, h R or h o to get additional info.
-    DB<3>                                   
 
 =head1 TREE EQUALITY
 
