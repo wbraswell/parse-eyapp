@@ -206,12 +206,26 @@ sub YYGoto {
   $stateLRactions->{GOTOS}{hacktables};
 }
 
+sub YYRHSLength {
+  my $self = shift;
+  # If no production index is give, is the production begin used in the current reduction
+  my $index = shift || $self->YYRuleindex;
+
+  # If the production was given by its name, compute its index
+  $index = $self->YYIndex($index) unless looks_like_number($index); 
+  
+  my $currentprod = $self->YYRule($index);
+
+  $currentprod->[1];
+}
+
 # To be used in a semantic action, when reducing ...
 # It gives the next state after reduction
 sub YYNextState {
   my $self = shift;
 
   my $lhs = $self->YYLhs;
+  my $length = $self->YYRHSLength;
   my $state = $self->YYTopState;
 
   $self->YYGoto($state, $lhs);
