@@ -56,13 +56,14 @@ hacktables:
     {
       my $self = shift;
 
+      my $state = $self->YYTopState;
+      my $stateLRactions = $self->{STATES}[$state->[0]];
+      my $conflictstate = $stateLRactions->{GOTOS}{hacktables};
       if ($input =~ m{^[)\s]*[;=]\s*}) {
-        #$self->YYSolveConflict([ qw{EXPID DECID} ], ')') = 'DECID';
-        $self->YYLRAction(['ID', ')'], 'DECID', 27);
+        $self->YYLRAction([ ')'], 'DECID', $conflictstate );
       }
       else {
-        $self->YYLRAction([ ')' ], 'EXPID', 27); # the next 'state'
-        #$self->YYLRAction([ 'ID', ')' ], 'EXPID');
+        $self->YYLRAction([ ')' ], 'EXPID', $conflictstate ); 
       }
     }
 ;
