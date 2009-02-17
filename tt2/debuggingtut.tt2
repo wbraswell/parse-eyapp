@@ -1520,7 +1520,7 @@ the C++ grammar.
 The C++ syntax does not disambiguate between expression
 statements and declaration statements. The ambiguity arises when an expression
 statement has a function-style cast as its left-most subexpression. 
-( since C does not support function-style casts, this ambiguity does not occur
+(Since C does not support function-style casts, this ambiguity does not occur
 in C programs.) 
 
 For example,
