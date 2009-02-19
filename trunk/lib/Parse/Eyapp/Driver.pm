@@ -322,7 +322,7 @@ sub YYRestoreLRAction {
   my @tokens = @_;
 
   for (@tokens) {
-    my ($conflictstate, $action) = $self->{CONFLICT}{$conflictname}{$_};
+    my ($conflictstate, $action) = @{$self->{CONFLICT}{$conflictname}{$_}};
     $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $action;
   }
 }
