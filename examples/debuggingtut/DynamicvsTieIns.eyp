@@ -1,4 +1,4 @@
-# See also: SemanticInfoInTokens.eyp
+# An alternative solution to lexical tie-ins. See also: SemanticInfoInTokens.eyp
 # See: http://www.gnu.org/software/bison/manual/html_mono/bison.html#Lexical-Tie_002dins
 
 %strict
