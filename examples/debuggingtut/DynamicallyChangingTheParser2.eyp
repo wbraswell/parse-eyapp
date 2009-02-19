@@ -15,11 +15,15 @@ my $input;
 %tree bypass
 
 %%
-p:
-    %name PROG
-    ds ';' ss  
+p: %name PROG
+    block +
+;
+
+block:
+    %name BLOCK
+    '{' ds ';' ss '}' 
   | %name SS
-    ss
+    '{' ss '}'
 ;
 
 ds:
