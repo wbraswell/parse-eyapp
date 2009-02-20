@@ -17,7 +17,48 @@
 %left WEAK
 %right ELSE
 
-%tree bypass
+%tree 
+
+%namingscheme {
+  #Receives a Parse::Eyapp object describing the grammar
+  my $self = shift;
+
+  $self->tokennames(
+    ';' => 'SC',
+    "{" => 'OC',
+    "<%" => 'OC',,
+    "}" => 'CC',
+    "%>" => 'CC',
+    ',' => 'COMMA',
+    ':' => 'COLON',
+    '=' => 'ASSIGN',
+    '(' => 'LP',
+    ')' => 'RP',
+    "[" => 'LB',
+    "<:" => 'LB',
+    "]" => 'RB',
+    ":>" => 'RB',
+    '.' => 'DOT',
+    '&' => 'AMP',
+    '!' => 'NOT',
+    '~' => 'BNOT',
+    '-' => 'MINUS',
+    '+' => 'PLUS',
+    '*' => 'STAR',
+    '/' => 'DIV',
+    '%' => 'PERCENT',
+    '<' => 'LT',
+    '>' => 'GT',
+    '^' => 'XOR',
+    '|' => 'OR',
+    '?' => 'QUESTION',
+  );
+
+  # returns the handler that will give names
+  # to the right hand sides
+  \&give_rhs_name;
+}
+
 
 %%
 
@@ -648,6 +689,7 @@ sub main {
   my $parser = $package->new();
   my $prompt = "Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:\n";
   $parser->{INPUT} = uploadfile($file, $prompt);
+  $Parse::Eyapp::Node::INDENT = 2;
   print $parser->Run( $debug )->str,"\n";
 }
 
