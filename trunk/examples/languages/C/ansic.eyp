@@ -424,44 +424,43 @@ function_definition
 
 %%
 
-my %keywords = (
-  auto => 1,
-  break => 1,
-  case => 1,
-  char => 1,
-  const => 1,
-  continue => 1,
-  default => 1,
-  do => 1,
-  double => 1,
-  else => 1,
-  enum => 1,
-  extern => 1,
-  float => 1,
-  for => 1,
-  goto => 1,
-  if => 1,
-  int => 1,
-  long => 1,
-  register => 1,
-  return => 1,
-  short => 1,
-  signed => 1,
-  sizeof => 1,
-  static => 1,
-  struct => 1,
-  switch => 1,
-  typedef => 1,
-  union => 1,
-  unsigned => 1,
-  void => 1,
-  volatile => 1,
-  while => 1,
-);
+use Carp;
+use Getopt::Long;
 
-my $E = qr{[Ee][+-]?\d+};
-my $FS = qr{[fFlL]};
-my $IS = qr{[uUlL]*};
+my %keywords = (
+  auto => 'AUTO',
+  break => 'BREAK',
+  case => 'CASE',
+  char => 'CHAR',
+  const => 'CONST',
+  continue => 'CONTINUE',
+  default => 'DEFAULT',
+  do => 'DO',
+  double => 'DOUBLE',
+  else => 'ELSE',
+  enum => 'ENUM',
+  extern => 'EXTERN',
+  float => 'FLOAT',
+  for => 'FOR',
+  goto => 'GOTO',
+  if => 'IF',
+  int => 'INT',
+  long => 'LONG',
+  register => 'REGISTER',
+  return => 'RETURN',
+  short => 'SHORT',
+  signed => 'SIGNED',
+  sizeof => 'SIZEOF',
+  static => 'STATIC',
+  struct => 'STRUCT',
+  switch => 'SWITCH',
+  typedef => 'TYPEDEF',
+  union => 'UNION',
+  unsigned => 'UNSIGNED',
+  void => 'VOID',
+  volatile => 'VOLATILE',
+  while => 'WHILE',
+);
 
 my %lexeme = (
   '...' => 'ELLIPSIS',
@@ -486,50 +485,177 @@ my %lexeme = (
   '>=' => 'GE_OP',
   '==' => 'EQ_OP',
   '!=' => 'NE_OP',
-  ';' => '';'',
-  ("{"|"<%")              { count(); return('{'); }
-  ("}"|"%>")              { count(); return('}'); }
-  ',' => '','',
-  ':' => '':'',
-  '=' => ''='',
-  '(' => ''('',
-  ')' => '')'',
-  ("["|"<:")              { count(); return('['); }
-  ("]"|":>")              { count(); return(']'); }
-  '.' => ''.'',
-  '&' => ''&'',
-  '!' => ''!'',
-  '~' => ''~'',
-  '-' => ''-'',
-  '+' => ''+'',
-  '*' => ''*'',
-  '/' => ''/'',
-  '%' => ''%'',
-  '<' => ''<'',
-  '>' => ''>'',
-  '^' => ''^'',
-  '|' => ''|'',
-  '?' => ''?'',
+  ';' => ';',
+  "{" => '{',
+  "<%" => '{',
+  "}" => '}',
+  "%>" => '}',
+  ',' => ',',
+  ':' => ':',
+  '=' => '=',
+  '(' => '(',
+  ')' => ')',
+  "[" => '[',
+  "<:" => '[',
+  "]" => ']',
+  ":>" => ']',
+  '.' => '.',
+  '&' => '&',
+  '!' => '!',
+  '~' => '~',
+  '-' => '-',
+  '+' => '+',
+  '*' => '*',
+  '/' => '/',
+  '%' => '%',
+  '<' => '<',
+  '>' => '>',
+  '^' => '^',
+  '|' => '|',
+  '?' => '?',
 );
 
-"/*"                    { comment(); }
+my ($tokenbegin, $tokenend) = (1, 1);
 
+sub _Lexer {
+  my($parser)=shift;
 
-{L}({L}|{D})*           { count(); return(check_type()); }
+  my $token;
+  for ($parser->{INPUT}) {
+      return('',undef) if !defined($_) or $_ eq '';
 
-0[xX]{H}+{IS}?          { count(); return(CONSTANT); }
-0{D}+{IS}?              { count(); return(CONSTANT); }
-{D}+{IS}?               { count(); return(CONSTANT); }
-L?'(\\.|[^\\'])+'       { count(); return(CONSTANT); }
+      #Skip blanks
+      s{\A
+         ((?:
+              \s+       # any white space char
+          |   /\*.*?\*/ # C like comments
+          )+
+         )
+       }
+       {}xs
+      and do {
+            my($blanks)=$1;
 
-{D}+{E}{FS}?            { count(); return(CONSTANT); }
-{D}*"."{D}+({E})?{FS}?  { count(); return(CONSTANT); }
-{D}+"."{D}*({E})?{FS}?  { count(); return(CONSTANT); }
+            #Maybe At EOF
+            return('', undef) if $_ eq '';
+            $tokenend += $blanks =~ tr/\n//;
+        };
 
-L?\"(\\.|[^\\"])*\"     { count(); return(STRING_LITERAL); }
+     $tokenbegin = $tokenend;
 
-[ \t\v\n\f]             { count(); }
-.                       { /* ignore bad characters */ }
+      s{^(L?\"(\\.|[^\\"])*\")}{}    
+              and return('STRING_LITERAL', [$1, $tokenbegin]);
+
+      s{^(
+            0[xX][0-9a-fA-F]+[uUlL]? # hexadecimal
+          | 0\d+[uUlL]?              # octal
+          | \d*\.\d+([Ee][+-]?\d+)?[fFlL]? # float
+          | \d+\.\d*([Ee][+-]?\d+)?[fFlL]? # float
+          | \d+[Ee][+-]?\d+[fFlL]?   # decimal/float with exp
+          | \d+[uUlL]?               # decimal
+          | L?'(\\.|[^\\'])+'        # string
+         )
+       }
+       {}x
+              and return('CONSTANT',[$1, $tokenbegin]);
+
+      s/^([A-Z][A-Za-z0-9_]*)//
+        and do {
+          my $word = $1;
+          return('TYPE_NAME)',[$word, $tokenbegin]);
+      };
+
+      s/^([a-z][A-Za-z0-9_]*)//
+        and do {
+          my $word = $1;
+          my $r;
+          return ($r, [$r, $tokenbegin]) if defined($r = $keywords{$word});
+          return('IDENTIFIER',[$word, $tokenbegin]);
+      };
+
+      m/^(\S\S\S)/ and  defined($token = $1) and exists($lexeme{$token})
+        and do {
+          s/...//;
+          return ($token, [$token, $tokenbegin]);
+        }; # do
+
+      m/^(\S\S)/ and  defined($token = $1) and exists($lexeme{$token})
+        and do {
+          s/..//;
+          return ($token, [$token, $tokenbegin]);
+        }; # do
+
+      m/^(\S)/ and defined($token = $1) and  exists($lexeme{$token})
+        and do {
+          s/.//;
+          return ($token, [$token, $tokenbegin]);
+        }; # do
+      
+
+      die "Unexpected character at $tokenbegin\n";
+  } # for
+}
+
+sub _Error {
+  my($token)=$_[0]->YYCurval;
+  my($what)= $token ? "input: '$token->[0]' in line $token->[1]" : "end of input";
+  my @expected = $_[0]->YYExpect();
+  my $expected = @expected? "Expected one of these tokens: '@expected'":"";
+
+  croak "Syntax error near $what. $expected\n";
+}
+
+sub Run {
+    my($self)=shift;
+    my $yydebug = shift || 0;
+
+    return $self->YYParse( 
+      yylex => \&_Lexer, 
+      yyerror => \&_Error,
+      yydebug => $yydebug, # 0x1F
+    );
+}
+
+sub uploadfile {
+  my $file = shift;
+  my $msg = shift;
+
+  my $input = '';
+  eval {
+    $input = Parse::Eyapp::Base::slurp_file($file) 
+  };
+  if ($@) {
+    print $msg;
+    local $/ = undef;
+    $input = <STDIN>;
+  }
+  return $input;
+}
+
+sub main {
+  my $package = shift;
+
+  my $debug = 0;
+  my $file = '';
+  my $result = GetOptions (
+    "debug!" => \$debug,  
+    "file=s" => \$file,
+  );
+
+  $debug = 0x1F if $debug;
+  $file = shift if !$file && @ARGV; 
+
+  my $parser = $package->new();
+  my $prompt = "Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:\n";
+  $parser->{INPUT} = uploadfile($file, $prompt);
+  print $parser->Run( $debug )->str,"\n";
+}
+
+sub TERMINAL::info {
+  $_[0]->{attr}[0]
+};
+
+__PACKAGE__->main unless caller();
 
 
 
