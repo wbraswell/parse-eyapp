@@ -760,6 +760,19 @@ __PACKAGE__->main unless caller();
 
 =head1 NAME Pascal eyapp grammar
 
+=head1 LIMITATIONS
+
+A parameter declarations must be followed by an identifer.
+A declaration like:
+
+  procedure one (i, j : integer; k : array [1..5] of real);
+
+instead we can do:
+
+  type arrreal5 = array [1..5] of real; 
+
+  procedure one (i, j : integer; k : arrreal5);
+
 =cut
 
 
