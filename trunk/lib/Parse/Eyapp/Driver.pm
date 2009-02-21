@@ -942,28 +942,31 @@ sub _Error {
 }
 
 sub _DBLoad {
-  {
-    no strict 'refs';
 
-      exists(${__PACKAGE__.'::'}{_DBParse})#Already loaded ?
+      __PACKAGE__->can('_DBParse')  #Already loaded ?
     and return;
-  }
+  
   my($fname)=__FILE__;
   my(@drv);
   local $/ = "\n";
-  open(DRV,"<$fname") or die "Report this as a BUG: Cannot open $fname";
-  local $_;
-  while(<DRV>) {
-                  /^\s*sub\s+_Parse\s*{\s*$/ .. /^\s*}\s*#\s*_Parse\s*$/
-          and     do {
-                  s/^#DBG>//;
-                  push(@drv,$_);
-          }
-  }
-  close(DRV);
+  if (open(DRV,"<$fname")) {
+    local $_;
+    while(<DRV>) {
+                    /^\s*sub\s+_Parse\s*{\s*$/ .. /^\s*}\s*#\s*_Parse\s*$/
+            and     do {
+                    s/^#DBG>//;
+                    push(@drv,$_);
+            }
+    }
+    close(DRV);
 
-  $drv[0]=~s/_P/_DBP/;
-  eval join('',@drv);
+    $drv[0]=~s/_P/_DBP/;
+    eval join('',@drv);
+  }
+  else {
+    # TODO: debugging for standalone modules isn't supported yet
+    *Parse::Eyapp::Driver::_DBParse = \&_Parse;
+  }
 }
 
 #Note that for loading debugging version of the driver,

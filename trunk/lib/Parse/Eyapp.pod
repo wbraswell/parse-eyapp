@@ -108,15 +108,24 @@ Parse::Eyapp - Extensions for Parse::Yapp
   
 =head1 INTRODUCTION
 
-
 Parse::Eyapp (Extended yapp) is a collection of modules that extends Francois
 Desarmenien Parse::Yapp 1.05.  Eyapp extends yacc/yapp syntax with
 functionalities like named attributes, EBNF-like expressions, modifiable
-default action, grammar reusability, automatic syntax tree building,
-semi-automatic abstract syntax tree building, syntax directed data generation,
+default action (like L<Parse::RecDescent> autoaction), grammar reusability, 
+automatic abstract syntax tree building,
+syntax directed data generation,
 translation schemes, tree regular
 expressions, tree transformations, scope analysis support, directed acyclic
-graphs and a few more.
+graphs and a few more. 
+
+Parse-Eyapp LALR parsing engine provides mechanisms for the I<dynamic resolution>
+(i.e. at parsing time and not at grammar compilation time) of shift-reduce and 
+reduce-reduce that can be satisfactorily solved
+using static precedences.  Parse-Eyapp also provide means to solve the problem of 
+languages where the token's type depends upon contextual information like in
+the well known PL/I statement:
+
+         if then=if then if=then
 
 
 
@@ -454,6 +463,9 @@ will be interpreted as
 
                          (4 - 5) - 9
 
+You can refer to the token end-of-input in the header section using the string C<''> (for example
+to give it some priority, see the example in C<examples/debuggingtut/typicalrrwithprec.eyp>). 
+
 =head2 Header Code
 
 Perl code surrounded by C<%{> and C<%}>
@@ -530,7 +542,9 @@ with the specified prefix
 
   %prefix Some::Prefix::
 
-See the example in C<examples/eyapplanguageref/alias_and_yyprefix.pl>
+See the example in C<examples/eyapplanguageref/alias_and_yyprefix.pl>.
+See also section L<Parse::Eyapp::defaultactionsintro/Grammar Reuse>
+for an example that does not involve the C<%tree> directive.
 
 =head2 Default Action Directive
 
@@ -549,7 +563,7 @@ L<ABSTRACT SYNTAX TREES: %tree AND %name>
 and
 L<Parse::Eyapp::translationschemestut>. 
 
-=head2 Syntactic and Semantic Tokens
+=head2 Tokens and the Abstract Syntax Tree
 
 The new token declaration directives C<%syntactic token> and
 C<%semantic token> can change the way C<eyapp> builds the abstract syntax tree.
@@ -859,7 +873,7 @@ giving the production the precedence of the C<token>
                           exp:   '-' exp %prec NEG { -$_[1] }
 
 =item * If there is a shift/reduce conflict, and both the grammar production
-and the input character have precedence and associativity associated
+and the input token have precedence and associativity associated
 with them, then the conflict is solved in favor of the action (shift or
 reduce) associated with the higher precedence. If the precedences are the
 same, then the associativity is used; left associative implies reduce,
