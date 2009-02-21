@@ -1,6 +1,6 @@
 %{
 
-#  pascal.yp
+#  pascal.eyp
 # 
 #  Pascal grammar in Eyapp format, based originally on BNF given
 #  in "Standard Pascal -- User Reference Manual", by Doug Cooper.
@@ -24,6 +24,20 @@
 %token NOTEQUAL OF OR OTHERWISE PACKED PBEGIN PFILE PLUS PROCEDURE PROGRAM RBRAC
 %token REALNUMBER RECORD REPEAT RPAREN SEMICOLON SET SLASH STAR STARSTAR THEN
 %token TO TYPE UNTIL UPARROW VAR WHILE WITH
+
+%tree 
+
+%namingscheme {
+  #Receives a Parse::Eyapp object describing the grammar
+  my $self = shift;
+
+  #$self->tokennames();
+
+  # returns the handler that will give names
+  # to the right hand sides
+  \&give_rhs_name;
+}
+
 
 %%
 file : program
@@ -491,58 +505,262 @@ unsigned_constant : unsigned_number
  | NIL
  ;
 
-unsigned_number : unsigned_integer | unsigned_real ;
+  unsigned_number : unsigned_integer | unsigned_real ;
 
-unsigned_integer : DIGSEQ
- ;
+  unsigned_integer : DIGSEQ
+   ;
 
-unsigned_real : REALNUMBER
- ;
+  unsigned_real : REALNUMBER
+   ;
 
-/* functions with no params will be handled by plain identifier */
-function_designator : identifier params
- ;
+  /* functions with no params will be handled by plain identifier */
+  function_designator : identifier params
+   ;
 
-set_constructor : LBRAC member_designator_list RBRAC
- | LBRAC RBRAC
- ;
+  set_constructor : LBRAC member_designator_list RBRAC
+   | LBRAC RBRAC
+   ;
 
-member_designator_list : member_designator_list comma member_designator
- | member_designator
- ;
+  member_designator_list : member_designator_list comma member_designator
+   | member_designator
+   ;
 
-member_designator : member_designator DOTDOT expression
- | expression
- ;
+  member_designator : member_designator DOTDOT expression
+   | expression
+   ;
 
-addop: PLUS
- | MINUS
- | OR
- ;
+  addop: PLUS
+   | MINUS
+   | OR
+   ;
 
-mulop : STAR
- | SLASH
- | DIV
- | MOD
- | AND
- ;
+  mulop : STAR
+   | SLASH
+   | DIV
+   | MOD
+   | AND
+   ;
 
-relop : EQUAL
- | NOTEQUAL
- | LT
- | GT
- | LE
- | GE
- | IN
- ;
+  relop : EQUAL
+   | NOTEQUAL
+   | LT
+   | GT
+   | LE
+   | GE
+   | IN
+   ;
 
-identifier : IDENTIFIER
- ;
+  identifier : IDENTIFIER
+   ;
 
-semicolon : SEMICOLON
- ;
+  semicolon : SEMICOLON
+   ;
 
-comma : COMMA
- ;
+  comma : COMMA
+   ;
 
-%%
+  %%
+
+use Carp;
+use Getopt::Long;
+
+my %keywords = (
+  AND   => 'AND',
+  ARRAY   => 'ARRAY',
+  CASE   => 'CASE',
+  CONST   => 'CONST',
+  DIV   => 'DIV',
+  DO    => 'DO',
+  DOWNTO  => 'DOWNTO',
+  ELSE   => 'ELSE',
+  END   => 'END',
+  EXTERN => 'EXTERNAL',
+  EXTERNAL => 'EXTERNAL',
+  FOR   => 'FOR',
+  FORWARD  => 'FORWARD',
+  FUNCTION => 'FUNCTION',
+  GOTO   => 'GOTO',
+  IF    => 'IF',
+  IN    => 'IN',
+  LABEL   => 'LABEL',
+  MOD   => 'MOD',
+  NIL   => 'NIL',
+  NOT   => 'NOT',
+  OF    => 'OF',
+  OR    => 'OR',
+  OTHERWISE => 'OTHERWISE',
+  PACKED  => 'PACKED',
+  BEGIN   => 'PBEGIN',
+  FILE   => 'PFILE',
+  PROCEDURE => 'PROCEDURE',
+  PROGRAM  => 'PROGRAM',
+  RECORD  => 'RECORD',
+  REPEAT  => 'REPEAT',
+  SET   => 'SET',
+  THEN   => 'THEN',
+  TO    => 'TO',
+  TYPE   => 'TYPE',
+  UNTIL   => 'UNTIL',
+  VAR   => 'VAR',
+  WHILE   => 'WHILE',
+  WITH   => 'WITH',
+);
+
+my %lexeme = (
+  ':=' => 'ASSIGNMENT',
+  ':' => 'COLON',
+  ',' => 'COMMA',
+  '.' => 'DOT',
+  '..' => 'DOTDOT',
+  '=' => 'EQUAL',
+  '>=' => 'GE',
+  '>' => 'GT',
+  '[' => 'LBRAC',
+  '<=' => 'LE',
+  '(' => 'LPAREN',
+  '<' => 'LT',
+  '-' => 'MINUS',
+  '<>' => 'NOTEQUAL',
+  '+' => 'PLUS',
+  ']' => 'RBRAC',
+  ')' => 'RPAREN',
+  ';' => 'SEMICOLON',
+  '/' => 'SLASH',
+  '*' => 'STAR',
+  '**' => 'STARSTAR',
+  '->' => 'UPARROW',
+  '^' => 'UPARROW',
+);
+
+
+my ($tokenbegin, $tokenend) = (1, 1);
+
+sub _Lexer {
+  my($parser)=shift;
+
+  my $token;
+  for ($parser->{INPUT}) {
+      return('',undef) if !defined($_) or $_ eq '';
+
+      #Skip blanks and comments
+      s{\A
+         ((?:
+              \s+         # any white space char
+          |   \(\*.*?\*\) # (*.. *) comments
+          |   \{.*?\}     # { .. }  comments
+          )+
+         )
+       }
+       {}xs
+      and do {
+            my($blanks)=$1;
+
+            #Maybe At EOF
+            return('', undef) if $_ eq '';
+            $tokenend += $blanks =~ tr/\n//;
+        };
+
+     $tokenbegin = $tokenend;
+
+      s{^([0-9]+(\.[0-9]+)?)}{} and do {
+        return ('DIGSEQ', [$1, $tokenbegin]) unless defined($2);
+        return ('REALNUMBER', [$1, $tokenbegin]);
+      };
+
+      s{^(\'(\\.|[^\\'])*\')}{}    
+              and return('CHARACTER_STRING', [$1, $tokenbegin]);
+
+      s/^([a-zA-Z_][A-Za-z0-9_]*)//
+        and do {
+          my $word = uc($1);
+          my $r;
+          return ($r, [$r, $tokenbegin]) if defined($r = $keywords{$word});
+          return('IDENTIFIER',[$word, $tokenbegin]);
+      };
+
+      m/^(\S\S)/ and  defined($token = $1) and exists($lexeme{$token})
+        and do {
+          s/..//;
+          return ($lexeme{$token}, [$token, $tokenbegin]);
+        }; # do
+
+      m/^(\S)/ and defined($token = $1) and  exists($lexeme{$token})
+        and do {
+          s/.//;
+          return ($lexeme{$token}, [$token, $tokenbegin]);
+        }; # do
+      
+
+      die "Unexpected character at $tokenbegin\n";
+  } # for
+}
+
+sub _Error {
+  my($token)=$_[0]->YYCurval;
+  my($what)= $token ? "input: '$token->[0]' in line $token->[1]" : "end of input";
+  my @expected = $_[0]->YYExpect();
+  my $expected = @expected? "Expected one of these tokens: '@expected'":"";
+
+  croak "Syntax error near $what. $expected\n";
+}
+
+sub Run {
+    my($self)=shift;
+    my $yydebug = shift || 0;
+
+    return $self->YYParse( 
+      yylex => \&_Lexer, 
+      yyerror => \&_Error,
+      yydebug => $yydebug, # 0x1F
+    );
+}
+
+sub uploadfile {
+  my $file = shift;
+  my $msg = shift;
+
+  my $input = '';
+  eval {
+    $input = Parse::Eyapp::Base::slurp_file($file) 
+  };
+  if ($@) {
+    print $msg;
+    local $/ = undef;
+    $input = <STDIN>;
+  }
+  return $input;
+}
+
+sub main {
+  my $package = shift;
+
+  my $debug = 0;
+  my $file = '';
+  my $result = GetOptions (
+    "debug!" => \$debug,  
+    "file=s" => \$file,
+  );
+
+  $debug = 0x1F if $debug;
+  $file = shift if !$file && @ARGV; 
+
+  my $parser = $package->new();
+  my $prompt = "Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:\n";
+  $parser->{INPUT} = uploadfile($file, $prompt);
+  $Parse::Eyapp::Node::INDENT = 2;
+  print $parser->Run( $debug )->str,"\n";
+}
+
+sub TERMINAL::info {
+  $_[0]->{attr}[0]
+};
+
+__PACKAGE__->main unless caller();
+
+
+=head1 NAME Pascal eyapp grammar
+
+=cut
+
+
+
