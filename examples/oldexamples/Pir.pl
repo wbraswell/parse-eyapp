@@ -28,7 +28,7 @@ my $grammar = q{
 
   %%
   line: 
-    sts <%name EXPRESION_LIST + ';'>  
+    sts <%name EXPRESSION_LIST + ';'>  
       { $_[1] } 
   ;
   sts: 
@@ -159,11 +159,11 @@ print "$cr"
 EOP
     }
 
-  t_list: EXPRESION_LIST(@S) 
+  t_list: EXPRESSION_LIST(@S) 
     => {
-      $EXPRESION_LIST->{trans} = "";
+      $EXPRESSION_LIST->{trans} = "";
       my @trans = map { translate($_) } @S;
-      $EXPRESION_LIST->{trans} = 
+      $EXPRESSION_LIST->{trans} = 
         reduce { "$a\n$b" } @trans if @trans;
     }
 
