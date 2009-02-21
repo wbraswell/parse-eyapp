@@ -1,3 +1,10 @@
+# Compile it with:
+#          $ eyapp -sb '' ansic.eyp
+# That will produce a stand-alone modulino.
+# Run it with:
+#          $ ./ansic.pm -file prueba.c         
+# or
+#         
 %strict
 
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
@@ -603,7 +610,7 @@ sub _Lexer {
       s/^([A-Z][A-Za-z0-9_]*)//
         and do {
           my $word = $1;
-          return('TYPE_NAME)',[$word, $tokenbegin]);
+          return('TYPE_NAME',[$word, $tokenbegin]);
       };
 
       s/^([a-z][A-Za-z0-9_]*)//
