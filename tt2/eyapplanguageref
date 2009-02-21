@@ -163,7 +163,9 @@ with the specified prefix
 
   %prefix Some::Prefix::
 
-See the example in C<examples/eyapplanguageref/alias_and_yyprefix.pl>
+See the example in C<examples/eyapplanguageref/alias_and_yyprefix.pl>.
+See also section L<Parse::Eyapp::defaultactionsintro/Grammar Reuse>
+for an example that does not involve the C<%tree> directive.
 
 =head2 Default Action Directive
 
@@ -182,7 +184,7 @@ L<ABSTRACT SYNTAX TREES: %tree AND %name>
 and
 L<Parse::Eyapp::translationschemestut>. 
 
-=head2 Syntactic and Semantic Tokens
+=head2 Tokens and the Abstract Syntax Tree
 
 The new token declaration directives C<%syntactic token> and
 C<%semantic token> can change the way C<eyapp> builds the abstract syntax tree.
@@ -492,7 +494,7 @@ giving the production the precedence of the C<token>
                           exp:   '-' exp %prec NEG { -$_[1] }
 
 =item * If there is a shift/reduce conflict, and both the grammar production
-and the input character have precedence and associativity associated
+and the input token have precedence and associativity associated
 with them, then the conflict is solved in favor of the action (shift or
 reduce) associated with the higher precedence. If the precedences are the
 same, then the associativity is used; left associative implies reduce,
@@ -813,7 +815,8 @@ Is equivalent to:
           ];
 
 Observe that, in spite of C<'d'> being a syntactic token
-the action related with the C<d+> element creates 
+the actions related with the C<d+> element (i.e. the actions associated
+with the C<PLUS-2> productions) create 
 the list of C<d>s.
 
 

@@ -1,3 +1,4 @@
+/* first time string in lowercase */
 typedef char *string;
      
 main()

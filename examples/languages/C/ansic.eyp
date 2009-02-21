@@ -624,19 +624,19 @@ sub _Lexer {
       m/^(\S\S\S)/ and  defined($token = $1) and exists($lexeme{$token})
         and do {
           s/...//;
-          return ($token, [$token, $tokenbegin]);
+          return ($lexeme{$token}, [$token, $tokenbegin]);
         }; # do
 
       m/^(\S\S)/ and  defined($token = $1) and exists($lexeme{$token})
         and do {
           s/..//;
-          return ($token, [$token, $tokenbegin]);
+          return ($lexeme{$token}, [$token, $tokenbegin]);
         }; # do
 
       m/^(\S)/ and defined($token = $1) and  exists($lexeme{$token})
         and do {
           s/.//;
-          return ($token, [$token, $tokenbegin]);
+          return ($lexeme{$token}, [$token, $tokenbegin]);
         }; # do
       
 
@@ -705,6 +705,17 @@ sub TERMINAL::info {
 };
 
 __PACKAGE__->main unless caller();
+
+
+=head1 NAME ANSIC eyapp grammar
+
+=head1 DESCRIPTION
+
+Scope analysis not implemented. Use uppercase identifiers for defined 
+type names. The first type a type name appear must be written
+in lower case.
+
+=cut
 
 
 

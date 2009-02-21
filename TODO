@@ -1,3 +1,4 @@
+  * Provide debugging support for standalone modules: currently skipped
   * Provide an argument named 
                                 'end_of_input' => [ token list: '', NUM, etc. ]
 

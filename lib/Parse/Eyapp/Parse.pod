@@ -311,6 +311,9 @@ will be interpreted as
 
                          (4 - 5) - 9
 
+You can refer to the token end-of-input in the header section using the string C<''> (for example
+to give it some priority, see the example in C<examples/debuggingtut/typicalrrwithprec.eyp>). 
+
 =head2 Header Code
 
 Perl code surrounded by C<%{> and C<%}>
@@ -387,7 +390,9 @@ with the specified prefix
 
   %prefix Some::Prefix::
 
-See the example in C<examples/eyapplanguageref/alias_and_yyprefix.pl>
+See the example in C<examples/eyapplanguageref/alias_and_yyprefix.pl>.
+See also the section I<Grammar Reuse> of L<Parse::Eyapp::defaultactionsintro/Grammar Reuse>
+for an example that does not involve the C<%tree> directive.
 
 =head2 Default Action Directive
 
