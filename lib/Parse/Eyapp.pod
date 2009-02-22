@@ -20,7 +20,7 @@ Parse::Eyapp - Extensions for Parse::Yapp
 
     %%
     line:
-        exp <%name EXPRESION_LIST + ';'>
+        exp <%name EXPRESSION_LIST + ';'>
           { $_[1] } /* list of expressions separated by ';' */
     ;
 
@@ -1194,7 +1194,8 @@ Is equivalent to:
           ];
 
 Observe that, in spite of C<'d'> being a syntactic token
-the action related with the C<d+> element creates 
+the actions related with the C<d+> element (i.e. the actions associated
+with the C<PLUS-2> productions) create 
 the list of C<d>s.
 
 
@@ -2834,7 +2835,7 @@ syntactic tree>. Thus, the first print in the section L<Parse::Eyapp> SYNOPSIS e
     16
     17    %%
     18    line:
-    19        exp <%name EXPRESION_LIST + ';'>
+    19        exp <%name EXPRESSION_LIST + ';'>
     20          { $_[1] } /* list of expressions separated by ';' */
     21    ;
     22
@@ -2925,7 +2926,7 @@ gives as result the following output:
 
  nereida:~/src/perl/YappWithDefaultAction/examples> synopsis.pl
  Syntax Tree:
- EXPRESION_LIST(
+ EXPRESSION_LIST(
    PLUS(
      TIMES(
        NUM(
@@ -2953,7 +2954,7 @@ gives as result the following output:
        )
      ) # UMINUS
    ) # UMINUS
- ) # EXPRESION_LIST
+ ) # EXPRESSION_LIST
 
 C<TERMINAL> nodes corresponding to tokens that were defined by strings like
 C<'='>, C<'-'>, C<'+'>, C<'/'>, C<'*'>, C<'('> and C<')'>  do not 
@@ -3099,7 +3100,7 @@ but using the C<bypass> clause instead:
    %tree bypass    # Let us build an abstract syntax tree ...
 
    %%
-   line: exp <%name EXPRESION_LIST + ';'>  { $_[1] } 
+   line: exp <%name EXPRESSION_LIST + ';'>  { $_[1] } 
    ;
 
    exp:
@@ -3158,9 +3159,9 @@ we obtain the following output:
  nereida:~/src/perl/YappWithDefaultAction/examples> bypass.pl
 
  ************
- EXPRESION_LIST(ASSIGN(TERMINAL[a],PLUS(TIMES(NUM[2],UMINUS(NUM[3])),TIMES(VAR[b],NUM[0]))))
+ EXPRESSION_LIST(ASSIGN(TERMINAL[a],PLUS(TIMES(NUM[2],UMINUS(NUM[3])),TIMES(VAR[b],NUM[0]))))
  ************
- EXPRESION_LIST(ASSIGN(TERMINAL[a],NUM[-6]))
+ EXPRESSION_LIST(ASSIGN(TERMINAL[a],NUM[-6]))
 
 As you can see the trees are more compact when using the C<bypass> directive.
 
@@ -3418,7 +3419,10 @@ I<by hand> by inheriting from C<Parse::Eyapp::Node>.
 Explict names can be given to grammar productions
 via the C<%name> directive. An alternative to explictly gave 
 names to rules is to define a I<naming scheme> via the Eyapp directive
-C<%namingscheme>.
+C<%namingscheme>. This can be helpful when you inherit a large grammar
+and want to quickly build a parser. The ASNSI C parser in 
+C<examples/languages/C/ansic.eyp> is a good example. Another
+example is the Pascal parser in C<examples/languages/pascal/pascal.eyp>.
 
 The Eyapp directive C<%namingscheme> is followed by some Perl code. Such Perl
 code must return a reference to a subroutine that will be called each time a new
@@ -4016,11 +4020,8 @@ Also:
 
 =over
 
-
-=item * Make a local copy of the C<examples/> directory in this distribution
-
-=item * Probably it will be also a good idea to make a copy of the tests in the C<t/> directory.
-  They also illustrate the use of Eyapp
+=item * Make a local copy of the C<examples/> directory in this distribution. They contain
+the examples used in the tutorials
 
 =back
 
