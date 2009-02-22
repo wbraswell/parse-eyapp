@@ -138,7 +138,6 @@ examples/languages/C/ansic.eyp
 examples/languages/C/boolean.c
 examples/languages/C/booleanlist.c
 examples/languages/C/charpointer2.c
-examples/languages/C/charpointer3.c
 examples/languages/C/charpointer.c
 examples/languages/C/functypedef.c
 examples/languages/C/linkedlists.c
