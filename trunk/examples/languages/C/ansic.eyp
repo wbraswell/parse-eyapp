@@ -599,6 +599,7 @@ sub _Lexer {
          ((?:
               \s+       # any white space char
           |   /\*.*?\*/ # C like comments
+          |   //[^\n]*  # C++ like comments
           )+
          )
        }
