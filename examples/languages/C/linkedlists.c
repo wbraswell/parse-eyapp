@@ -1,5 +1,3 @@
-/* linklist the first time. Uppercase subsequents */
-/* s/NULL/null/ everywhere */
 typedef struct x {      
   char name[20];
   int age;
@@ -10,8 +8,8 @@ typedef struct x {
 
 main()
 {
-  LINKLIST *start_pointer;  /* Define pointers to the structure */
-  LINKLIST *next_pointer;
+  linklist *start_pointer;  /* Define pointers to the structure */
+  linklist *next_pointer;
 
         /* Create some data to be placed in the
          * Linked list.       */
@@ -36,7 +34,7 @@ main()
         /* Initalise 'start_pointer' by reserving 
          * memory and pointing to it    */
 
-  start_pointer=(LINKLIST *) malloc (sizeof (LINKLIST));
+  start_pointer=(linklist *) malloc (sizeof (linklist));
 
         /* Initalise 'next_pointer' to point
          * to the same location.    */
@@ -55,7 +53,7 @@ main()
   {
         /* Reserve more memory and point to it  */
 
-    next_pointer->next_rec=(LINKLIST *) malloc (sizeof (LINKLIST));
+    next_pointer->next_rec=(linklist *) malloc (sizeof (linklist));
 
     next_pointer=next_pointer->next_rec;
 
@@ -64,7 +62,7 @@ main()
     next_pointer->age = ages[count];
   }
 
-  next_pointer->next_rec=null;
+  next_pointer->next_rec=NULL;
 
    /*===================================================================*
     =                 =
@@ -75,7 +73,7 @@ main()
 
   next_pointer=start_pointer;
 
-  while (next_pointer != null)
+  while (next_pointer != NULL)
   {
     printf("%s   ", next_pointer->name);
     printf("%d \n", next_pointer->age);

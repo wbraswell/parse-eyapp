@@ -217,14 +217,16 @@ declaration
               
               my $storage_class_specifier =  $declaration_specifiers->child(0);
               if ($storage_class_specifier->child(0)->{token} eq 'TYPEDEF') {
-                print "\ntypedef definition of ";
 
                 # Get the identifier
                 my $c;
-                for($c = $init_declarator_list->child(0); $c && !($c->isa('TERMINAL')); $c = $c->child(0))
+                for($c = $init_declarator_list->child(0); 
+                    $c && !($c->isa('TERMINAL')); 
+                    $c = ($c->type eq 'declarator_is_pointer_direct_declarator')? $c->child(1) : $c->child(0))
                   {}
                 my $typeid = $c->{attr}[0];
                 $_[0]->{symboltable}{$typeid} = 1;
+                print "\ntypedef definition of $typeid\n";
               }
 
               goto &Parse::Eyapp::Driver::YYBuildAST;
@@ -627,17 +629,18 @@ sub _Lexer {
        {}x
               and return('CONSTANT',[$1, $tokenbegin]);
 
-      s/^([A-Z][A-Za-z0-9_]*)//
-        and do {
-          my $word = $1;
-          return('TYPE_NAME',[$word, $tokenbegin]);
-      };
+      #s/^([A-Z][A-Za-z0-9_]*)//
+      #  and do {
+      #    my $word = $1;
+      #    return('TYPE_NAME',[$word, $tokenbegin]);
+      #};
 
-      s/^([a-z][A-Za-z0-9_]*)//
+      s/^([a-zA-Z_][A-Za-z0-9_]*)//
         and do {
           my $word = $1;
           my $r;
           return ($r, [$r, $tokenbegin]) if defined($r = $keywords{$word});
+          return('TYPE_NAME',[$word, $tokenbegin]) if $parser->{symboltable}{$word};
           return('IDENTIFIER',[$word, $tokenbegin]);
       };
 
@@ -729,13 +732,36 @@ sub TERMINAL::info {
 __PACKAGE__->main unless caller();
 
 
-=head1 NAME ANSIC eyapp grammar
+=head1 NAME ANSIC eyapp grammar and parser
 
 =head1 DESCRIPTION
 
-Scope analysis not implemented. Use uppercase identifiers for defined 
-type names. The first type a type name appear must be written
-in lower case.
+Scope analysis is not implemented (yet). Typedefs are always 
+processed as globals. A typedef can not be hidden by a later declaration,
+i.e. the following program confuses the parser:
+
+  typedef int A;
+  A A;
+
+since it interprets the Third C<A> as a type name.
+
+=head1 AUTHOR 
+ 
+Casiano Rodriguez-Leon (casiano@ull.es)
+
+=head1 LICENCE AND COPYRIGHT
+ 
+Copyright (c) 2006-2008 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
+
+These modules are free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+
+
+
 
 =cut
 

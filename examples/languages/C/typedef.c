@@ -1,9 +1,8 @@
-/* first time boolean in lowercase */
-typedef enum {false=0, true} boolean;
+typedef enum {FALSE=0, TRUE} boolean;
 
 main ()
 {
-  BOOLEAN flag = true;
+  boolean flag = TRUE;
 }
   
 
