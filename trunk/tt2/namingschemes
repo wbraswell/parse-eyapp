@@ -2,7 +2,10 @@
 Explict names can be given to grammar productions
 via the C<%name> directive. An alternative to explictly gave 
 names to rules is to define a I<naming scheme> via the Eyapp directive
-C<%namingscheme>.
+C<%namingscheme>. This can be helpful when you inherit a large grammar
+and want to quickly build a parser. The ASNSI C parser in 
+C<examples/languages/C/ansic.eyp> is a good example. Another
+example is the Pascal parser in C<examples/languages/pascal/pascal.eyp>.
 
 The Eyapp directive C<%namingscheme> is followed by some Perl code. Such Perl
 code must return a reference to a subroutine that will be called each time a new

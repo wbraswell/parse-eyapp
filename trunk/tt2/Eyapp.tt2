@@ -20,7 +20,7 @@ Parse::Eyapp - Extensions for Parse::Yapp
 
     %%
     line:
-        exp <%name EXPRESION_LIST + ';'>
+        exp <%name EXPRESSION_LIST + ';'>
           { $_[1] } /* list of expressions separated by ';' */
     ;
 
@@ -415,11 +415,8 @@ Also:
 
 =over
 
-
-=item * Make a local copy of the C<examples/> directory in this distribution
-
-=item * Probably it will be also a good idea to make a copy of the tests in the C<t/> directory.
-  They also illustrate the use of Eyapp
+=item * Make a local copy of the C<examples/> directory in this distribution. They contain
+the examples used in the tutorials
 
 =back
 

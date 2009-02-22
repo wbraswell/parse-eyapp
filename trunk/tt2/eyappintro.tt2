@@ -20,7 +20,7 @@ Parse::Eyapp::eyappintro - An introduction to Parse::Eyapp
 
     %%
     line:
-        exp <%name EXPRESION_LIST + ';'>
+        exp <%name EXPRESSION_LIST + ';'>
           { $_[1] } /* list of expressions separated by ';' */
     ;
 
