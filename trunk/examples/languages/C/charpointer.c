@@ -1,9 +1,8 @@
-/* first time string in lowercase */
 typedef char *string;
      
 main()
 {
-   STRING text = "Thunderbird";
+   string text = "Thunderbird";
  
    printf("%s\n", text);
 }
