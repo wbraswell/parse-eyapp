@@ -66,7 +66,6 @@
   \&give_rhs_name;
 }
 
-
 %%
 
 primary_expression
@@ -208,7 +207,28 @@ constant_expression
 
 declaration
         : declaration_specifiers ';'
-        | declaration_specifiers init_declarator_list ';'
+        | $declaration_specifiers $init_declarator_list ';'
+            {
+              #print "\n**********************declaration_specifiers**********************\n";
+              #print $_[1]->str;
+              #print "\n***********************init_declarator_list***********************\n";
+              #print $_[2]->str;
+              #print "\n******************************************************************\n";
+              
+              my $storage_class_specifier =  $declaration_specifiers->child(0);
+              if ($storage_class_specifier->child(0)->{token} eq 'TYPEDEF') {
+                print "\ntypedef definition of ";
+
+                # Get the identifier
+                my $c;
+                for($c = $init_declarator_list->child(0); $c && !($c->isa('TERMINAL')); $c = $c->child(0))
+                  {}
+                my $typeid = $c->{attr}[0];
+                $_[0]->{symboltable}{$typeid} = 1;
+              }
+
+              goto &Parse::Eyapp::Driver::YYBuildAST;
+            }
         ;
 
 declaration_specifiers
@@ -697,6 +717,8 @@ sub main {
   my $prompt = "Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:\n";
   $parser->{INPUT} = uploadfile($file, $prompt);
   $Parse::Eyapp::Node::INDENT = 2;
+
+  print "\n******************************************************************\n";
   print $parser->Run( $debug )->str,"\n";
 }
 
