@@ -1175,7 +1175,7 @@ The conflict is due to the final comma in:
 
       def:    param_spec return_spec ','
 
-If you supress such comma there is no conflict (try it).
+If you suppress such comma there is no conflict (try it).
 When compiling with eyapp we get the warning:
 
   pl@europa:~/LEyapp/examples/debuggingtut$ eyapp rrconflictnamefirst.eyp

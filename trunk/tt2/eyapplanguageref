@@ -1139,7 +1139,7 @@ See an example:
   $VAR1 = bless( {'n' => 4,'children' => []}, 'F' );
 
 See the following example in which the nodes associated with C<'d'> are
-explictly constructed:
+explicitly constructed:
 
   pl@nereida:~/LEyapp/examples$ head -28 ListWithRefs2.eyp| cat -n
    1  # ListWithRefs2.eyp
@@ -1487,7 +1487,7 @@ Notice that line 13 can be rewritten as:
 
                     goto &Parse::Eyapp::Driver::YYBuildAST;
 
-At line 18 the node for the rule is explictly created
+At line 18 the node for the rule is explicitly created
 using C<Parse::Eyapp::Node->new>. The handler passed as second argument
 is responsible for setting the value of the atribute C<attr>
 of the just created C<TERMINAL> node.
