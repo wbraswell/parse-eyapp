@@ -436,7 +436,7 @@ single character, it is much more difficult in Perl, as there
 are so many ways of writing such literals. So there is no check
 for that today. If you need a brace in a double-quoted string, just
 quote it (C<\{> or C<\}>). For single-quoted strings, you will need
-to make a comment matching it I<in th right order>.
+to make a comment matching it I<in the right order>.
 Sorry for the inconvenience.
 
     {

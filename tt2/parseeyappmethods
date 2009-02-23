@@ -69,7 +69,7 @@ Include/not include  C<# line directives> in the generated code
 =item -   outputfile 
 
 If defined the generated code fill be dumped in the specified filename (with extension .pm)
-and the LALR information ambigueties and conflicts) in the specified filename 
+and the LALR information ambiguities and conflicts) in the specified filename 
 with extension .output.
 
 =back

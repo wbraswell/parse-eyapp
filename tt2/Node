@@ -731,7 +731,7 @@ the values of some package variables
 influence the behavior of C<str>. Among the most
 important are:
 
-  @PREFIXES = qw(Parse::Eyapp::Node::);                                 # Prefixes to supress 
+  @PREFIXES = qw(Parse::Eyapp::Node::);                                # Prefixes to suppress 
   $INDENT = 0; # -1 compact, no info, no footnotes 
                # 0 = compact, 1 = indent, 2 = indent and include Types in closing parenthesis
   $STRSEP = ',';                                # Separator between nodes, by default a comma
