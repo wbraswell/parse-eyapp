@@ -24,7 +24,8 @@ Parse::Eyapp - Extensions for Parse::Yapp
           { $_[1] } /* list of expressions separated by ';' */
     ;
 
-    /* The %name directive defines the name of the class to which the node being built belongs */
+    /* The %name directive defines the name of the class to 
+       which the node being built belongs */
     exp:
         %name NUM
         NUM
@@ -140,7 +141,7 @@ Treeregexp is a language to describe transformations of abstract syntax trees.
 =item * Read L<Parse::Eyapp::Scope> to know
 about the functionalities provided for Scope Analysis.
 
-=item * A set of basic miscellaneous support sunctions 
+=item * A set of basic miscellaneous support functions 
 are described in L<Parse::Eyapp::Base>. 
 Several of these functions are related to the dynamic use of methods 
 and subroutines. 

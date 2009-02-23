@@ -95,7 +95,7 @@ The scope analysis start by creating the C<Parse::Eyapp::Scope> objects:
   ;
 
 Before the analysis of the whole program we call C<reset_file_scope_vars>
-which is in chage to create the scope analizers for
+which is in chage to create the scope analyzers for
 I<identifier scope analysis> and I<loop scope analysis>:
 
   sub reset_file_scope_vars {

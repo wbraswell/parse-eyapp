@@ -13,7 +13,7 @@ sub plim {
 
   &tutu(); 
 
-  push_method('tutu'); # Tutu dissapears
+  push_method('tutu'); # Tutu disapears
 }
 
 package main;

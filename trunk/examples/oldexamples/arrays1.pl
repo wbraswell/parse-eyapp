@@ -9,7 +9,7 @@ our @all;
 
 Parse::Eyapp::Treeregexp::generate( STRING => q{
   zero_times_whatever: TIMES(NUM($x), @a) and { $x->{attr} == 0 } 
-    => { $a[0]->{attr} = "It is going to dissapear"  }
+    => { $a[0]->{attr} = "It is going to disapear"  }
 });
 
 $Data::Dumper::Indent = 1;
