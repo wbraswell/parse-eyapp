@@ -114,7 +114,7 @@ for a really simple source:
 
 The first thing is to obtain a description of the tree,
 that can be done executing the compiler under the control of
-the perl debugger, stopping just after the 
+the Perl debugger, stopping just after the 
 tree has been built and dumping the tree
 with L<Data::Dumper>:
 
