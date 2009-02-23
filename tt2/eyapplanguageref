@@ -106,7 +106,7 @@ and not as
 
 The use of the C<%left> indicates that - in case of ambiguity 
 and a match between precedences - the parser must build the tree corresponding
-to a left parenthesization. Thus, the expression
+to a left parenthesizing. Thus, the expression
 
                          4 - 5 - 9
 
@@ -132,7 +132,7 @@ will be visible from almost any point in the file.
 
 =head2 The Start Symbol of the Grammar
 
-C<%start IDENT> declares C<IDENT> as the start symbol of 
+C<%start program> declares C<program> as the start symbol of 
 the grammar. When C<%start> is not
 used, the first rule in the body section will be used.
 
@@ -239,7 +239,19 @@ The operators C<*>, C<+> and C<?> are presented in section
 L</LISTS AND OPTIONALS>.
 
 A I<syntactic variable cannot appear more than once as
-a rule name> (This differs from C<yacc>).
+a rule name> (This differs from C<yacc>).  So you can't 
+write
+
+    thing: foo bar ;
+    thing: foo baz ;
+
+instead, write:
+
+    thing: 
+           foo bar 
+         | foo baz 
+    ;
+
 
 =head2 Semantic Values and Semantic Actions
 
@@ -265,7 +277,7 @@ bottom-up traverse of the syntax tree. Each times
 the Parser visits the node associated with the 
 production C<A -E<gt> X_1 X_2 ... X_n>
 the associated semantic action is called. 
-Asociated with each symbol
+Associated with each symbol
 of a L<Parse::Eyapp> grammar there is a scalar I<Semantic Value>
 or I<Attribute>. The semantic values of terminals are provided
 by the lexical analyzer. In the calculator example
@@ -294,7 +306,7 @@ Just as C<$1> to C<$n> in C<yacc>,
 =item * 
 
 C<$_[0]> is the parser object itself.
-Having C<$_[0]> beeing the parser object itself allows you to call
+Having C<$_[0]> being the parser object itself allows you to call
 parser methods. Most C<yacc> macros have been converted into
 parser methods. See section L<Parse::Eyapp/METHODS AVAILABLE IN THE GENERATED CLASS>.
 
@@ -386,7 +398,7 @@ Following with the calculator example, the body is:
  26      {
  27         $_[3] and return($_[1] / $_[3]);
  28         $_[0]->YYData->{ERRMSG} = "Illegal division by zero.\n";
- 29         $_[0]->YYError; # Pretend that a syntactic error ocurred: _Error will be called
+ 29         $_[0]->YYError; # Pretend that a syntactic error occurred: _Error will be called
  30         undef
  31      }
  32    | '-' $exp %prec NEG     { -$exp }
@@ -406,7 +418,7 @@ on C<yacc> and C<bison> for more information.
 
 =head2 Solving Ambiguities and Conflicts
 
-When Eyapp analizes a grammar like:
+When Eyapp analyzes a grammar like:
 
   examples/eyapplanguageref$ cat -n ambiguities.eyp
      1  %%
@@ -472,7 +484,7 @@ Eyapp solves the conflicts applying the following rules:
 =item * In a reduce/reduce conflict, the default is to reduce by the
 earlier grammar production (in the input sequence).
 
-=item *  The precedences and associativities are associated with tokens in
+=item *  Precedences and associativities can be given to tokens in
 the declarations section. This is made by a sequence of lines beginning
 with one of the directives: C<%left>, C<%right>, or C<%nonassoc>, 
 followed by a list of
@@ -498,7 +510,14 @@ and the input token have precedence and associativity associated
 with them, then the conflict is solved in favor of the action (shift or
 reduce) associated with the higher precedence. If the precedences are the
 same, then the associativity is used; left associative implies reduce,
-right associative implies shift, and nonassociating implies error.
+right associative implies shift, and non associative implies error.
+The last is used to describe operators, like the operator C<.LT.> in FORTRAN, 
+that may not associate with themselves. That is, because
+
+                             A .LT. B .LT. C
+
+is invalid in FORTRAN, C<.LT.> would be described with the keyword C<%nonassoc> in eyapp. 
+
 
 =back
 
@@ -582,7 +601,7 @@ Error management subroutines go there. A better practice however is to isolate
 both subroutines in a module and use them in the grammar. An example of this is in
 files C<examples/eyapplanguageref/CalcUsingTail.eyp> (the grammar), 
 C<examples/eyapplanguageref/usecalcusingtail.pl> (the client program),
-and C<examples/eyapplanguageref/Tail.pm> (the module containing the lexical analizer
+and C<examples/eyapplanguageref/Tail.pm> (the module containing the lexical analyzer
 plus error handling and auxiliary subroutines).
 
 =head2 The Lexical Analyzer
@@ -595,7 +614,7 @@ containing the next token and its associated attribute.
 
 The fact that is a method of the parser object means that 
 the parser
-methods are accesible inside the lexical analyzer.
+methods are accessible inside the lexical analyzer.
 Specially interesting is the C<$_[0]-E<gt>YYData> 
 method which provides access to the user data area.
 
@@ -844,7 +863,7 @@ As it happens when using the C<%tree> directive, I<syntactic tokens>
 are skipped.
 
 When executing the example above but under the C<%tree> directive
-the ouput changes:
+the output changes:
 
   examples/eyapplanguageref$ head -3 List3_tree.yp; eyapp List3_tree.yp
   # List3.yp
@@ -882,7 +901,7 @@ a couple of syntax trees:
 The node associated with the list of C<d>s is empty since
 terminal C<d> wasn't declared semantic.
 
-=head2 When Nodes Dissappear from Lists
+=head2 When Nodes Disappear from Lists
 
 When under the influence of the C<%tree> directive
 the action associated with a list operator
@@ -935,7 +954,7 @@ option of C<YYParse>:
      7  }
 
 
-The execution gives an ouput like this:
+The execution gives an output like this:
 
   examples/eyapplanguageref$ eyapp ListWithRefs1.eyp; use_listwithrefs1.pl
   ccdd
@@ -1038,7 +1057,7 @@ Even worst: though the node built in the former example
 looks like a C<Parse::Eyapp> node actually isn't. C<Parse::Eyapp> 
 nodes always inherit from C<Parse::Eyapp::Node> and 
 consequently have access to the methods in such package.
-Thefollowing execution using the debugger illustrates the point:
+The following execution using the debugger illustrates the point:
 
   pl@nereida:~/LEyapp/examples$ perl -wd use_listwithrefs.pl
 
@@ -1102,7 +1121,7 @@ of the trees the sub is called by C<Parse::Eyapp::Node-E<gt>new>
 with arguments the list of references to the nodes (in the order
 in which they appear in the terms, from left to right).
 C<Parse::Eyapp::Node-E<gt>new> returns a list of references 
-to the jsut created nodes. In a scalar context returns a reference to the first of such trees.
+to the just created nodes. In a scalar context returns a reference to the first of such trees.
 See an example:
 
   pl@nereida:~/LEyapp/examples$ perl -MParse::Eyapp -MData::Dumper -wde 0
@@ -1259,7 +1278,7 @@ in the list. Notice -in the execution of the former
 example  that follows -
 how the node for C<PAREN-3> has been 
 eliminated from the tree. Parenthesis nodes are - generally -
-obivated:
+obviated:
 
   pl@nereida:~/LEyapp/examples$ use_csbetweencommansandd.pl
   c,c,cd
@@ -1274,7 +1293,7 @@ obivated:
   TERMINAL[d]
 
 Notice that the comma (since it is a syntactic token) has 
-also been supressed.
+also been suppressed.
 
 
 =head2 Giving Names to Lists
@@ -1425,7 +1444,7 @@ between the parenthesis:
   ];
 
 when working under a tree directive or when the attribute
-C<buildingtree> is set via theC<YYBuildingtree> method
+C<buildingtree> is set via the C<YYBuildingtree> method
 the semantic action returns a node with children the attributes
 of the symbols between parenthesis. As usual attributes
 which aren't references will be skipped from the list of children.
@@ -1492,7 +1511,7 @@ shows the tree built by the call to
 C<Parse::Eyapp::Node->new>
 at line 18.
 
-The execution continues with the reduction or antiderivation by the rule
+The execution continues with the reduction or reverse derivation by the rule
 C<S -E<gt> ('a' S )'b'>. The action at lines 9-14
 dumps the attribute associated with C<('a' S)>
 - or, in other words,  the attribute associated with the variable 
@@ -1594,7 +1613,7 @@ with the notation C<exp.left> we can later refer inside the actions
 to the associated attribute using the lexical variable
 C<$left>. 
 
-The I<dolar notation> C<$A> can be used as an abbreviation
+The I<dollar notation> C<$A> can be used as an abbreviation
 of C<A.A>. 
 
 =head1 DEFAULT ACTIONS
@@ -1811,7 +1830,7 @@ See the following example:
      9              exp '-' exp
     10                {
     11                  my $self = shift;
-    12                  $self->YYName('SUBSTRACT'); # rename it
+    12                  $self->YYName('SUBTRACT'); # rename it
     13                  $self->YYBuildAST(@_); # build the node
     14                }
     15          |   %name TIMES
@@ -1825,7 +1844,7 @@ See the following example:
 
 
 When the client program is executed we can see the presence
-of the C<SUBSTRACT> nodes:
+of the C<SUBTRACT> nodes:
 
   pl@nereida:~/LEyapp/examples$ useyynamedynamic.pl
   2-b
@@ -1839,7 +1858,7 @@ of the C<SUBSTRACT> nodes:
           'attr' => 'b'
         }, 'VAR' )
       ]
-    }, 'SUBSTRACT' )
+    }, 'SUBTRACT' )
   ];
 
 =head1 GRAMMAR REUSE

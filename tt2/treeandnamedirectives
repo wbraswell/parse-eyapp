@@ -340,7 +340,7 @@ syntactic tree>. Thus, the first print in the section L<Parse::Eyapp> SYNOPSIS e
     20          { $_[1] } /* list of expressions separated by ';' */
     21    ;
     22
-    23    /* The %name directive defines the name of the class to which the node being built belongs */
+    23    /* The %name directive defines the name of the class */
     24    exp:
     25        %name NUM
     26        NUM
@@ -673,7 +673,7 @@ Access to children in L<Parse::Eyapp> is made through the C<child> and C<childre
 methods.
 There are occasions however where access by name to the children may be preferable.
 The use of the C<alias> clause with the C<%tree> directive creates accessors
-to the children with names specified by the programmer. The I<dot and dolar notations>
+to the children with names specified by the programmer. The I<dot and dollar notations>
 are used for this. When dealing with a production like:
   
                        A: 

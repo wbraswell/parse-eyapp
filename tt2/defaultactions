@@ -211,7 +211,7 @@ See the following example:
   37              exp '-' exp
   38                {
   39                  my $self = shift;
-  40                  $self->YYName('SUBSTRACT'); # rename it
+  40                  $self->YYName('SUBTRACT'); # rename it
   41                  $self->YYBuildAST(@_); # build the node
   42                }
   43          |   %name TIMES
@@ -224,7 +224,7 @@ See the following example:
   50  ;
 
 When the client program is executed we can see the presence
-of the C<SUBSTRACT> nodes:
+of the C<SUBTRACT> nodes:
 
   pl@nereida:~/LEyapp/examples$ useyynamedynamic.pl
   2-b
@@ -238,7 +238,7 @@ of the C<SUBSTRACT> nodes:
           'attr' => 'b'
         }, 'VAR' )
       ]
-    }, 'SUBSTRACT' )
+    }, 'SUBTRACT' )
   ];
 
 
