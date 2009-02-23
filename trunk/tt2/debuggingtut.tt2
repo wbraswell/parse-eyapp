@@ -1899,7 +1899,7 @@ The first right hand side is aligned with the rest.
   ;
 
 =item * Only very short semantic actions can go in the same line than the production.
-Semantic actions requiring more than one line must go in its own idented block
+Semantic actions requiring more than one line must go in its own indented block
 like in:
 
 
@@ -1909,7 +1909,7 @@ like in:
        {
 	 my $id = $VAR->[0];
 	 my $val = $s{$id};
-	 $_[0]->semantic_error("Accesing undefined variable $id at line $VAR->[1].\n")
+	 $_[0]->semantic_error("Accessing undefined variable $id at line $VAR->[1].\n")
 	 unless defined($val);
 	 return $val;
        }
