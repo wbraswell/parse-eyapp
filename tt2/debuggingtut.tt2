@@ -1201,7 +1201,7 @@ may occur with a comma as incoming token but only after
 the reduction by C<param_spec> has taken place. The problem
 is that the automata forgets about it. Look the 
 automata transitions in the C<.outputfile>.
-By making explict the difference between the first and second C<type>
+By making explicit the difference between the first and second C<type>
 we solve the conflict:
 
   pl@europa:~/LEyapp/examples/debuggingtut$ cat -n rrconflictnamefirst_fix1.eyp

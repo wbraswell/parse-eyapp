@@ -15,7 +15,7 @@ The hash has an attribute C<children> containing the references
 to the AST trees associated with the symbols in the right hand
 side C<X>, C>Y>, etc.
 
-If no explict name was given to the production rule,
+If no explicit name was given to the production rule,
 C<YYBuildAST> blesses the node in the class name resulting 
 from the concatenation
 of the left hand side and the production number. The production number
@@ -126,7 +126,7 @@ grammar with additional C<%name> directives:
     ;
 
 
-we are explictly naming the productions. Thus, all the node instances 
+we are explicitly naming the productions. Thus, all the node instances 
 corresponding to the production C<exp: VAR '=' exp> will belong to the class C<ASSIGN>. 
 Now the tree for C<a=2*b> becomes:
 
