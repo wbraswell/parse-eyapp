@@ -194,7 +194,7 @@ See section L<Syntactic and Semantic tokens>.
 
 This directive influences the generation of the LALR tables.
 They will not be compacted and the tokens
-for the C<DEFAULT> reduction will be explictly set.
+for the C<DEFAULT> reduction will be explicitly set.
 It can be used to produce an C<.output> file (option C<-v>)
 with more information.
 

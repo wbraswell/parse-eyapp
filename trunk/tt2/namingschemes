@@ -1,6 +1,6 @@
 
-Explict names can be given to grammar productions
-via the C<%name> directive. An alternative to explictly gave 
+Explicit names can be given to grammar productions
+via the C<%name> directive. An alternative to explicitly gave 
 names to rules is to define a I<naming scheme> via the Eyapp directive
 C<%namingscheme>. This can be helpful when you inherit a large grammar
 and want to quickly build a parser. The ASNSI C parser in 
