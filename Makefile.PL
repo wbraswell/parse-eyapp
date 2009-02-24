@@ -240,27 +240,23 @@ try to produce a C<Makefile>. You will surely get a warning:
 
 This is because the files C<lib/Parse/Eyapp/Parse.pm> and C<lib/Parse/Eyapp/Treeregexp.pm> are derived
 from the respective grammars (C<lib/Parse/Eyapp/Parse.yp> and C<lib/Parse/Eyapp/Treeregexp.yp>). 
-Compile the grammars using the target C<release>:
 
-  pl@nereida:~/src/perl/Parse-Eyapp$ make release
-  yapp -n -m 'Parse::Eyapp::Parse' -o 'lib/Parse/Eyapp/Parse.pm' lib/Parse/Eyapp/Parse.yp
-  PERL5LIB=lib; eyapp -n -m 'Parse::Eyapp::Parse' -o 'lib/Parse/Eyapp/Parse.pm' lib/Parse/Eyapp/Parse.yp
-  PERL5LIB=lib; /usr/bin/perl -I./lib eyapp -v -n -m Parse::Eyapp::Treeregparser -o lib/Parse/Eyapp/Treeregexp.pm lib/Parse/Eyapp/Treeregexp.yp
-  rm -fR Parse-Eyapp-*.tar.gz
-
-This target uses L<Parse::Yapp> to make a first compilation. Then uses bootstrap
-and C<eyapp> compiles itself. Be sure you installed L<Parse::Yapp>.
-
-=item * It will also complain about the absence of the pods
+It will also complain about the absence of the pods
 
   Warning: the following files are missing in your kit:
         lib/Parse/Eyapp/MatchingTrees.pod
         lib/Parse/Eyapp/translationschemestut.pod
         lib/Parse/Eyapp/YATW.pod
 
-The pods are built from the templates in C<tt2/>:
+The pods are built from the templates in C<tt2/>.
 
-  pl@europa:~/LEyapp$ make pods
+Compile the grammars and produce the pods using the makefile C<makepods>:
+
+  Parse-Eyapp$ make -f makepods
+  yapp -n -m 'Parse::Eyapp::Parse' -o 'lib/Parse/Eyapp/Parse.pm' lib/Parse/Eyapp/Parse.yp
+  PERL5LIB=lib; eyapp -n -m 'Parse::Eyapp::Parse' -o 'lib/Parse/Eyapp/Parse.pm' lib/Parse/Eyapp/Parse.yp
+  PERL5LIB=lib; perl eyapp -v -n -m Parse::Eyapp::Treeregparser -o lib/Parse/Eyapp/Treeregexp.pm lib/Parse/Eyapp/Treeregexp.yp
+  rm -fR Parse-Eyapp-*.tar.gz
   cd tt2; tpage  Base.tt2 > ../lib/Parse/Eyapp/Base.pod
   cd tt2; tpage  datagenerationtut.tt2 > ../lib/Parse/Eyapp/datagenerationtut.pod
   cd tt2; tpage  debuggingtut.tt2 > ../lib/Parse/Eyapp/debuggingtut.pod
@@ -277,6 +273,9 @@ The pods are built from the templates in C<tt2/>:
   cd tt2; tpage  Treeregexp.tt2 > ../lib/Parse/Eyapp/Treeregexp.pod
   cd tt2; tpage  YATW.tt2 > ../lib/Parse/Eyapp/YATW.pod
 
+
+This target uses L<Parse::Yapp> to make a first compilation. Then it uses bootstrap
+and C<eyapp> compiles itself. Be sure you have installed L<Parse::Yapp>.
 
 =item * Before realising a distribution in CPAN via PAUSE do:
 
