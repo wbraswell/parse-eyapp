@@ -1,23 +1,27 @@
 The examples used in the corresponding Parse::Eyapp
 'pod' tutorials can be found in this directories:
 
-DOCUMENTATION MODULE                | DIRECTORY
+DOCUMENTATION MODULE                | DIRECTORY                 | COMMENTS
+                                    |                           | The classic calculator example
+                                    | Calculator/               | Solving shift-reduce and reduce-reduce conflicts
+Parse::Eyapp::debuggintut           | debuggingtut/             | Examples used in the doc Parse::Eyapp::debuggintut
+Parse::Eyapp::Driver                | Driver/                   | Examples used in the doc of Parse::Eyapp::Driver
+Parse::Eyapp                        | Eyapp/                    | Examples used in Parse::Eyapp
+Parse::Eyapp::eyappintro            | eyappintro/               | Examples used in Parse::Eyapp::eyappintro
+Parse::Eyapp::eyapplanguageref      | eyapplanguageref/         | Examples used in Parse::Eyapp::eyapplanguageref
+                                    | generator/                | Using Eyapp as a language generator
+                                    | languages/C               | ANSI C parser 
+                                    | languages/pascal          | Pascal parser
+Parse::Eyapp::treematchingtut       | MatchingTrees             | Examples used in Parse::Eyapp::treematchingtut
+Parse::Eyapp::eyapplanguageref      | naming/                   | Examples used in Parse::Eyapp::eyapplanguageref (section NAMING SCHEMES)
+Parse::Eyapp::Node                  | Node/                     | Examples used in Parse::Eyapp::Node
+                                    | oldexamples/              | The examples as they were in the first versions
+                                    | ParsingStringsAndTrees/   | Examples in http://nereida.deioc.ull.es/~pl/eyapsimple/
+                                    | performance/              | An example of poor performance
+Parse::Eyapp::eyapplanguageref      | recycle/                  | How to recycle a Eyapp grammar (section GRAMMAR REUSE )
+Parse::Eyapp::defaultactionsintro   | recycle/                  | How to recycle a Eyapp grammar (section GRAMMAR REUSE )
+Parse::Eyapp::translationschemestut | translationschemestut/    | Tutorial on Translation Schemes
+                                    | typechecking/             | Simple C: parser and type checking 
+                                                                | (see http://nereida.deioc.ull.es/~pl/perlexamples/chapter_simplec.html)
+Parse::Eyapp::YATW                  | YATW/                     | Examples used in the doc of Parse::Eyapp::YATW
 
-                                    | Calculator/
-Parse::Eyapp::debuggintut           | debuggingtut/
-Parse::Eyapp::Driver                | Driver/
-Parse::Eyapp                        | Eyapp/
-Parse::Eyapp::eyappintro/           | eyappintro/
-Parse::Eyapp::eyapplanguageref      | eyapplanguageref/
-                                    | generator/
-                                    | languages/
-Parse::Eyapp::treematchingtut       | MatchingTrees/
-Parse::Eyapp::eyapplanguageref      | naming/ (section NAMING SCHEMES)
-Parse::Eyapp::Node                  | Node/
-                                    | ParsingStringsAndTrees/
-                                    | performance/
-Parse::Eyapp::eyapplanguageref      | recycle/ (section GRAMMAR REUSE )
-Parse::Eyapp::defaultactionsintro   | recycle/ (section GRAMMAR REUSE )
-Parse::Eyapp::translationschemestut | translationschemestut/
-                                    | typechecking/
-Parse::Eyapp::YATW                  | YATW/
