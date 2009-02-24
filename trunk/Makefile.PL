@@ -251,6 +251,33 @@ Compile the grammars using the target C<release>:
 This target uses L<Parse::Yapp> to make a first compilation. Then uses bootstrap
 and C<eyapp> compiles itself. Be sure you installed L<Parse::Yapp>.
 
+=item * It will also complain about the absence of the pods
+
+  Warning: the following files are missing in your kit:
+        lib/Parse/Eyapp/MatchingTrees.pod
+        lib/Parse/Eyapp/translationschemestut.pod
+        lib/Parse/Eyapp/YATW.pod
+
+The pods are built from the templates in C<tt2/>:
+
+  pl@europa:~/LEyapp$ make pods
+  cd tt2; tpage  Base.tt2 > ../lib/Parse/Eyapp/Base.pod
+  cd tt2; tpage  datagenerationtut.tt2 > ../lib/Parse/Eyapp/datagenerationtut.pod
+  cd tt2; tpage  debuggingtut.tt2 > ../lib/Parse/Eyapp/debuggingtut.pod
+  cd tt2; tpage  defaultactionsintro.tt2 > ../lib/Parse/Eyapp/defaultactionsintro.pod
+  cd tt2; tpage  Driver.tt2 > ../lib/Parse/Eyapp/Driver.pod
+  cd tt2; tpage  eyappintro.tt2 > ../lib/Parse/Eyapp/eyappintro.pod
+  cd tt2; tpage  eyapplanguageref.tt2 > ../lib/Parse/Eyapp/eyapplanguageref.pod
+  cd tt2; tpage  MatchingTrees.tt2 > ../lib/Parse/Eyapp/MatchingTrees.pod
+  cd tt2; tpage  Node.tt2 > ../lib/Parse/Eyapp/Node.pod
+  cd tt2; tpage  Parse.tt2 > ../lib/Parse/Eyapp/Parse.pod
+  cd tt2; tpage  Scope.tt2 > ../lib/Parse/Eyapp/Scope.pod
+  cd tt2; tpage  TokenGen.tt2 > ../lib/Parse/Eyapp/TokenGen.pod
+  cd tt2; tpage  translationschemestut.tt2 > ../lib/Parse/Eyapp/translationschemestut.pod
+  cd tt2; tpage  Treeregexp.tt2 > ../lib/Parse/Eyapp/Treeregexp.pod
+  cd tt2; tpage  YATW.tt2 > ../lib/Parse/Eyapp/YATW.pod
+
+
 =item * Before realising a distribution in CPAN via PAUSE do:
 
   make publicdist
