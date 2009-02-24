@@ -755,7 +755,7 @@ or, if you don't want debug info:
 
 =head1 DESCRIPTION
 
-Scope nad type analysis is not implemented (yet). Typedefs have global scope
+Scope and type analysis is not implemented (yet). Typedefs have global scope
 and can not be hidden by later declarations.
 I.e. the parser produces an error message for the following program:
 
@@ -763,6 +763,23 @@ I.e. the parser produces an error message for the following program:
   A A;
 
 since it interprets the Third C<A> as a type name.
+
+=head1 SEE ALSO
+
+=over 2
+
+=item * L<http://www.lysator.liu.se/c/ANSI-C-grammar-y.html>
+
+=item * L<http://cs.tu-berlin.de/~jutta/c/ANSI-C-grammar-l.html>
+
+=item * L<http://frama-c.cea.fr/download/acsl_1.2.pdf>
+
+=item * L<http://www.open-std.org/JTC1/SC22/WG14/www/standards>
+
+=item * L<http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1256.pdf>
+
+
+=back
 
 =head1 AUTHOR 
  
