@@ -1,7 +1,9 @@
+.PHONY:all pods release
+
 all: release pods
 
-.PHONY:pods release
 pods:
+	cd tt2; tpage  Eyapp.tt2 > ../lib/Parse/Eyapp.pod
 	cd tt2; tpage  Base.tt2 > ../lib/Parse/Eyapp/Base.pod
 	cd tt2; tpage  datagenerationtut.tt2 > ../lib/Parse/Eyapp/datagenerationtut.pod
 	cd tt2; tpage  debuggingtut.tt2 > ../lib/Parse/Eyapp/debuggingtut.pod
