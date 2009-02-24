@@ -94,6 +94,7 @@ sub targets {
   my %var = @_;
 
   $_ = <<'EOSQT';
+
 PLTAGS=/usr/share/vim/vim71/tools/pltags.pl
 
 PODS=<<PODS>>
@@ -132,7 +133,7 @@ docclean:
 lib/Parse/Eyapp.pod: tt2/Eyapp.tt2
 	cd tt2; tpage  Eyapp.tt2 > ../lib/Parse/Eyapp.pod
 
-lib/Parse/Eyapp/%.pod:tt2/%.tt2
+lib/Parse/Eyapp/%.pod:tt2/%.tt2 tt2/defaultactions tt2/grammarreuseviainheritance tt2/seealso tt2/authorandcopyright
 	cd tt2; tpage  $*.tt2 > ../$@
 
 pods: ${PODS}
