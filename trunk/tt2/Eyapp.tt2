@@ -152,6 +152,13 @@ and subroutines.
 
 The examples used in this document can be found in
 the directory C<examples/Eyapp> accompanying this distribution.
+As a general rule, each pod/tutorial has an associated subdirectory
+of C<examples/Eyapp>. Thus, the examples used in the documentation
+of L<Parse::Eyapp::eyappintro> can be found in C<examples/Eyapp/eyappintro>;
+The examples mentioned in L<Parse::Eyapp::Node> can be found
+in C<examples/Eyapp/Node>. There are a few exceptions however.
+For those exceptions the relative location where the file can be found
+will be mentioned.
 
 =head1 THE EYAPP LANGUAGE
 

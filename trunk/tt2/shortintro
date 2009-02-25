@@ -1,7 +1,7 @@
 Parse::Eyapp (Extended yapp) is a collection of modules that extends Francois
 Desarmenien Parse::Yapp 1.05.  Eyapp extends yacc/yapp syntax with
 functionalities like named attributes, EBNF-like expressions, modifiable
-default action (like L<Parse::RecDescent> autoaction), grammar reusability, 
+default action (like L<Parse::RecDescent> autoaction), grammar reuse, 
 automatic abstract syntax tree building,
 syntax directed data generation,
 translation schemes, tree regular
@@ -10,7 +10,7 @@ graphs and a few more.
 
 Parse-Eyapp LALR parsing engine provides mechanisms for the I<dynamic resolution>
 (i.e. at parsing time and not at grammar compilation time) of shift-reduce and 
-reduce-reduce that can be satisfactorily solved
+reduce-reduce conflicts that can not be satisfactorily solved
 using static precedences.  Parse-Eyapp also provide means to solve the problem of 
 languages where the token's type depends upon contextual information like in
 the well known PL/I statement:

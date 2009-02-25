@@ -2,7 +2,7 @@
 =head1 The Treeregexp Language
 
 A Treeregexp program is made of the repetition of three kind of 
-primitives: The treeregexp transformations, auxiliar Perl code 
+primitives: The treeregexp transformations, supporting Perl code 
 and Transformation Families.
 
   treeregexplist:  treeregexp* 
@@ -176,7 +176,7 @@ The Treeregexp language permits expressions like:
 
 After the matching variable C<@A> contains the shortest prefix
 of C<$A-E<gt>children> that does not match C<B($x)>.
-The variable C<@c> contains the remaining sufix of
+The variable C<@c> contains the remaining suffix of
  C<$A-E<gt>children>. 
 
 The following example uses 
@@ -251,7 +251,7 @@ Follows the code:
  
 
 The transformations belonging to a family are usually applied 
-toghether:
+together:
 
                 $tree->s(@algebraic_transformations);
 
