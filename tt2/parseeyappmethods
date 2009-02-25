@@ -128,7 +128,7 @@ of the grammar. No arguments.
 =head2 $eyapp->Conflicts
 
 Returns a string with summary information about the conflicts
-that arised when compiling the grammar. No arguments.
+that arose when compiling the grammar. No arguments.
 
 =head2 $eyapp->DfaTable
 
