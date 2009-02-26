@@ -1668,7 +1668,17 @@ Let us assume we have a reduce-reduce conflict between to productions
                       A -> alpha .
                       B -> beta .
 
-for some token C<@>. The postponed conflict resolution strategy consists
+for some token C<@>. Let also assume that production 
+
+                      A -> alpha
+
+has name C<ruleA> and production
+
+                      B -> beta 
+
+has name C<ruleB>.
+
+The postponed conflict resolution strategy consists
 in modifying the conflictive grammar by adding at the points of conflict, 
 in this case at then end of the involved productions a new syntactic variable.
 C<IsAorB>:
@@ -1689,6 +1699,14 @@ parsing table like this:
 
                      IsAorB -> /* empty */ 
                        {
+                          my $self = shift;
+
+                          if (some_dynamic_condition($self)) {
+                            $self->YYSetReduce('@', 'ruleA' );
+                          }
+                          else {
+                            $self->YYSetReduce('@', 'ruleB' );
+                          }
                        }
 
 
