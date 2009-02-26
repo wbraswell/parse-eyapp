@@ -1365,6 +1365,11 @@ Here follows an example of execution:
 
 =head1 LEXICAL TIE-INS
 
+A I<lexical tie-in> is a flag which is set to alter the behavior of the 
+lexical analyzer. It is a way to handle context-dependency.
+
+=head2 The Parsing of C<C>
+
 The C language has a context dependency: the way an identifier is used depends
 on what its current meaning is. For example, consider this:
 
@@ -1389,9 +1394,9 @@ When the lexical analyzer finds an identifier, it looks up in the symbol table
 the current declaration of the identifier in order to 
 decide which token type to return: C<TYPENAME> if the
 identifier is declared as a typedef, C<ID> otherwise.
+See the ANSI C parser example in the directory C<examples/languages/C/ansic.eyp>
 
-One way to handle context-dependency is the lexical I<tie-in>: a flag which is set
-by the semantic actions, whose purpose is to alter the way tokens are parsed.
+=head2 A Simple Example
 
 In the "Calc"-like example in C<examples/debuggintut/SemanticInfoInTokens.eyp>
 we have a language with a special construct 
@@ -1474,7 +1479,9 @@ parsed as integers if possible.
 
       m{\G([a-zA-Z_]\w*)}gc and do {
         my $match = $1;
-        $hexflag and !exists($st{$match}) and $match =~ m{^([A-F0-9]+)$}gc and return ('INTEGER', hex($match));
+        $hexflag and !exists($st{$match}) 
+          and $match =~ m{^([A-F0-9]+)$}gc 
+            and return ('INTEGER', hex($match));
         return ('ID', $1);
       };
 
@@ -1497,6 +1504,13 @@ Let us see an example of execution:
 The first hex expression C<HEX(A23)> is interpreted as the number C<2595>
 while the second C<HEX(A2)> refers to previously declared variable C<A2>.
 
+An alternative solution to this problem that does not make use of
+lexical tie-ins - but still uses an attribute C<HEXFLAG> for communication
+between different semantic actions - can be found in the file 
+C<examples/debuggintut/DynamicvsTieIns.eyp>.
+
+=head2 References about Lexical tie-ins
+
 For more about lexical tie-ins see also
 
 =over 2
@@ -1510,12 +1524,9 @@ For more about lexical tie-ins see also
 =back
 
 
-=head1  DYNAMICALLY CHANGING THE PARSING TABLES TO SOLVE AMBIGUITIES
+=head1  THE I<POSTPONED CONFLICT> STRATEGY: DYNAMICALLY CHANGING THE PARSING TABLES
 
-=head2 The C++ Ambiguity
-
-The grammar C<glrexpressions.eyp> models a problematic part of 
-the C++ grammar. 
+=head2 Introduction: The C++ Ambiguity
 
 The C++ syntax does not disambiguate between expression
 statements and declaration statements. The ambiguity arises when an expression
@@ -1553,100 +1564,138 @@ consequently the statements are interpreted as declarations:
     type_spec(d),e,f,g=0;       // declaration
     type_spec(h)(e,3);          // declaration
 
-Follows the contents of C<glrexpressions.eyp>
+=head2 An Ambiguous Grammar 
 
-  lusasoft@LusaSoft:~/LEyapp/examples/debuggingtut$ eyapp -c glrexpressions.eyp
-  # See http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers
+The simple grammar in C<examples/debuggingtut/SimplifiedCplusplusAmbiguity.eyp>
+illustrates the problem of parsing C++:
+
+  examples/debuggingtut$ eyapp -c SimplifiedCplusplusAmbiguity.eyp
   %strict
   %token ID INT NUM
   %right '='
   %left '+'
-  %tree bypass
 
   %%
 
   prog:
-        %name EMPTY
         /* empty */
-      | %name PROG
-        prog stmt
+      | prog stmt
   ;
   stmt:
-        %name EXP
         expr ';'
-      | %name DECL
-        decl
+      | decl
   ;
   expr:
-        %name EXPID
-        ID hacktables
-      | %name NUM
-        NUM
-      | %name TYPECAST
-        INT '(' expr ')' /* typecast */
-      | %name PLUS
-        expr '+' expr
-      | %name ASSIGN
-        expr '=' expr
+        ID
+      | NUM
+      | INT '(' expr ')' /* typecast */
+      | expr '+' expr
+      | expr '=' expr
   ;
   decl:
-        %name DECLARATOR
         INT declarator ';'
-      | %name DECLARATORINIT
-        INT declarator '=' expr ';'
+      | INT declarator '=' expr ';'
   ;
   declarator:
-        %name DECID
-        ID hacktables
+        ID
       | '(' declarator ')'
-  ;
-  hacktables:
-        /* empty. Just for hacking the LALR tables */
   ;
 
   %%
 
+The grammar is ambiguous since an input like:
 
-Eyapp detects the ambiguity as a reduce/reduce conflict:
+               int (x) = 4;
 
-  lusasoft@LusaSoft:~/LEyapp/examples/debuggingtut$ eyapp -vb '' glrexpressions.eyp
+can be interpreted as a C<decl> or an C<expr>.
+
+The C<eyapp> compiler warn us of the presence of reduce/reduce conflict:
+
+  examples/debuggingtut$ eyapp -v SimplifiedCplusplusAmbiguity.eyp
   1 reduce/reduce conflict
 
-namely, the conflict is in state 27:
+when we look at the C<.output> file we see that the reduce-reduce conflict
+is at state 18:
 
-  lusasoft@LusaSoft:~/LEyapp/examples/debuggingtut$ head -12 glrexpressions.output
+  examples/debuggingtut$ head -12 SimplifiedCplusplusAmbiguity.output
   Warnings:
   ---------
   1 reduce/reduce conflict
 
   Conflicts:
   ----------
-  Conflict in state 16 between rule 8 and token '+' resolved as reduce.
-  Conflict in state 16 between rule 8 and token '=' resolved as reduce.
-  Conflict in state 18 between rule 9 and token '+' resolved as shift.
-  Conflict in state 18 between rule 9 and token '=' resolved as shift.
-  State 27 contains 1 reduce/reduce conflict
+  Conflict in state 15 between rule 8 and token '+' resolved as reduce.
+  Conflict in state 15 between rule 8 and token '=' resolved as reduce.
+  Conflict in state 17 between rule 9 and token '+' resolved as shift.
+  Conflict in state 17 between rule 9 and token '=' resolved as shift.
+  State 18 contains 1 reduce/reduce conflict
 
 
 When we look at the description of the involved state, we see the reasons for the conflict:
 
-  $ sed -ne '/^State 27:/,/^State/p' glrexpressions.output
-  State 27:
+  examples/debuggingtut$ sed -ne '/^State 18:/,/^State/p' SimplifiedCplusplusAmbiguity.output
+  State 18:
 
-          expr -> ID hacktables . (Rule 5)
-          declarator -> ID hacktables .   (Rule 12)
+          expr -> ID .    (Rule 5)
+          declarator -> ID .      (Rule 12)
 
           ')'     [reduce using rule 12 (declarator)]
           $default        reduce using rule 5 (expr)
 
-  State 28:
+  State 19:
 
-The C++ rule is: take it as a declaration if it looks as a declaration,
-otherwise is an expression.
+The conflict means that once the parser has seen the C<ID> and is in the presence
+of the closing parenthesis C<')'>, it is incapable to decide whether 
+to reduce by rule 12 or rule 5.
 
-For this simplified version, we can solve the problem by dynamically changing
+As we said, the C++ disambiguation rule is: take it as a declaration if it looks as a declaration,
+otherwise is an expression.  But we see that interpretation as C<decl> 
+will succeed if declarator is followed - after the sequence of closing parenthesis - 
+by one of the two tokens a C<;> or C<=>. That can be traced during
+parsing time. L<Parse::Eyapp> provides the mechanisms to change the parsing
+actions at parsing time.
+
+=head2 The I<Postponed Conflict Resolution> Strategy
+
+The I<postponed conflict strategy> presented here can be used whenever there 
+is a shift-reduce or reduce-reduce conflict that can not be solved using static 
+precedences but that can be solved using information obtained at parsing time.
+
+=head2 I<Postponed Conflict Resolution>: Reduce-Reduce Conflicts
+
+Let us assume we have a reduce-reduce conflict between to productions
+
+                      A -> alpha .
+                      B -> beta .
+
+for some token C<@>. The postponed conflict resolution strategy consists
+in modifying the conflictive grammar by adding at the points of conflict, 
+in this case at then end of the involved productions a new syntactic variable.
+C<IsAorB>:
+
+                      A -> alpha IsAorB .
+                      B -> beta  IsAorB .
+
+The reduce-reduce conflict is now I<postponed> after C<IsAorB> is seen.
+The new variable will be called the I<conflict name>. Thus in this example,
+C<IsAorB> is the name of the conflict. The new introduced syntactic variable
+has only one empty production:
+
+                     IsAorB -> /* empty */
+
+The programmer associates with that production a semantic action
+whose mission is to solve the conflict by dynamically changing the
+parsing table like this:
+
+                     IsAorB -> /* empty */ 
+                       {
+                       }
+
+
+We can solve the problem by dynamically changing
 the parser tables. For this purpose we introduce the syntactic variable 
-C<hacktable>. If the ambiguous expression/declarator is followed by some
+C<hacktable>. 
+If the ambiguous expression/declarator is followed by some
 sequence of closing parenthesis and a C<;> or an C<=> the action is to reduce
 by the production C<declarator -E<gt> ID> otherwise we reduce by C<expression -E<gt> ID>:
 
@@ -1779,7 +1828,7 @@ Certainly, a solution for the ambiguity in the
 full C++ grammar requires a more elaborated
 solution.
 
-=head2 Solving Dynamically a Shift-Reduce Conflict
+=head2 I<Postponed Conflict Resolution>: Shift-Reduce Conflicts
 
 The program in C<DynamicallyChangingTheParser.eyp> illustrates how to hack the
 parsing tables. This is a modification of the grammar in C<Debug.eyp> that was studied in
