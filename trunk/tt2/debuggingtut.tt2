@@ -1687,9 +1687,8 @@ C<IsAorB>:
                       B -> beta  IsAorB .
 
 The reduce-reduce conflict is now I<postponed> after C<IsAorB> is seen.
-The new variable will be called the I<conflict name>. Thus in this example,
-C<IsAorB> is the name of the conflict. The new introduced syntactic variable
-has only one empty production:
+The new syntactic variable C<IsAorB> will be called the I<conflict name>. 
+The new introduced syntactic variable has only one empty production:
 
                      IsAorB -> /* empty */
 
@@ -1701,7 +1700,7 @@ parsing table like this:
                        {
                           my $self = shift;
 
-                          if (some_dynamic_condition($self)) {
+                          if (looks_like_A($self)) {
                             $self->YYSetReduce('@', 'ruleA' );
                           }
                           else {
@@ -1709,6 +1708,76 @@ parsing table like this:
                           }
                        }
 
+=head2 An Example of Dynamic Conflict Resolution
+
+The Eyapp program C<examples/debuggingtut/Cplusplus.eyp> illustrates the technique:
+
+  examples/debuggingtut$ head -65 Cplusplus.eyp | cat -n
+     1  # See http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers
+     2  %strict
+     3  %token ID INT NUM
+     4
+     5  %right '='
+     6  %left '+'
+     7
+     8  %tree bypass
+     9
+    10  %%
+    11  prog:
+    12      %name EMPTY
+    13      /* empty */
+    14    | %name PROG
+    15      prog stmt
+    16  ;
+    17
+    18  stmt:
+    19      %name EXP
+    20      expr ';'
+    21    | %name DECL
+    22      decl
+    23  ;
+    24
+    25  expr:
+    26      %name EXPID
+    27      ID decexpconflict
+    28    | %name NUM
+    29      NUM
+    30    | %name TYPECAST
+    31      INT '(' expr ')' /* typecast */
+    32    | %name PLUS
+    33      expr '+' expr
+    34    | %name ASSIGN
+    35      expr '=' expr
+    36  ;
+    37
+    38  decl:
+    39      %name DECLARATOR
+    40      INT declarator ';'
+    41    | %name DECLARATORINIT
+    42      INT declarator '=' expr ';'
+    43  ;
+    44
+    45  declarator:
+    46      %name DECID
+    47      ID decexpconflict
+    48    | '(' declarator ')'
+    49  ;
+    50
+    51  decexpconflict:
+    52      /* empty. Just to solve the reduce-reduce conflict */
+    53        {
+    54          my $self = shift;
+    55          # If followed by ';' or '=' is a declaration
+    56          if ($self->{INPUT} =~ m{^[)\s]*[;=]\s*}) {
+    57            $self->YYSetReduce(')', 'DECID' );
+    58          }
+    59          else {
+    60            $self->YYSetReduce(')', 'EXPID' );
+    61          }
+    62        }
+    63  ;
+    64
+    65  %%
 
 We can solve the problem by dynamically changing
 the parser tables. For this purpose we introduce the syntactic variable 
