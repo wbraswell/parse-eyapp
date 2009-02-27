@@ -1,6 +1,6 @@
 =head1 NAME
  
-Parse::Eyapp::Driver - The LALR parser
+Parse::Eyapp::Driver - The LR parser
  
 =head1 INTRODUCTION
 
