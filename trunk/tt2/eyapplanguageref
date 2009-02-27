@@ -1875,6 +1875,8 @@ of the C<SUBTRACT> nodes:
 
 [%PROCESS treeandnamedirectives %]
 
+[% PROCESS dynamicconflictresolution %]
+
 =head1 NAMING SCHEMES
 
 [% PROCESS namingschemes %]
