@@ -7,8 +7,6 @@
 
 %tree bypass
 
-%expect 1
-
 %%
 prog:
     %name EMPTY
