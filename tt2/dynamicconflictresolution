@@ -1,5 +1,11 @@
 =head1  SOLVING CONFLICTS WITH THE I<POSTPONED CONFLICT> STRATEGY
 
+Yacc-like parser generators provide ways to solve shift-reduce mechanims
+based on token precedence. No mechanisms are provided for the resolution
+of reduce-reduce conflicts. The solution for such kind of conflicts is to modify
+the grammar. The strategy I present here provides a way to broach conflicts
+that can't be solved using static precedences.
+
 =head2 Introduction: The C++ Ambiguity
 
 The C++ syntax does not disambiguate between expression
