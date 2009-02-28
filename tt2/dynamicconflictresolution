@@ -414,10 +414,10 @@ for that state and token C<')'>, otherwise we indicate a reduction by the rule:
 
 =head2 I<Postponed Conflict Resolution>: Shift-Reduce Conflicts
 
-The program in C<DynamicallyChangingTheParser2.eyp> illustrates how the postponed
+The program in C<examples/debuggingtut/DynamicallyChangingTheParser2.eyp> illustrates how the postponed
 conflict strategy is used for shift-reduce conflicts.
-This is an extension of the grammar in C<Debug.eyp> that was studied in
-the previous sections. The generated language is constituted by sequences like:
+This is an extension of the grammar in C<examples/debuggingtut/Debug.eyp>.
+The generated language is constituted by sequences like:
 
     { D; D; S; S; S; } {D; S} { S }
 
