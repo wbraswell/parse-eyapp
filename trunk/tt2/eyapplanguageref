@@ -140,9 +140,15 @@ used, the first rule in the body section will be used.
 
 The C<%expect #NUMBER> directive works as in C<bison> 
 and  suppress warnings when the number of Shift/Reduce
-conflicts is exactly C<#NUMBER>. See section 
-L</Solving Ambiguities and Conflicts> to know more
-about Shift/Reduce conflicts.
+conflicts is exactly C<#NUMBER>. 
+
+The directive has been extended to be called with two numbers:
+
+  %expect NUMSHIFTRED NUMREDRED
+
+no warnings will be emitted if the number of shift-reduce 
+conflicts is exactly C<NUMSHIFTRED> and the number of reduce-reduce
+conflicts is C<NUMREDRED>.
 
 =head2 Type and Union
 

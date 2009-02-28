@@ -7,7 +7,7 @@
 
 %tree bypass
 
-%expect 0 1
+%expect 0 1  # 0 shift-reduce conflicts, 1 reduce-reduce conflict
 
 %%
 prog:
