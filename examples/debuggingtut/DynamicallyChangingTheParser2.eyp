@@ -13,6 +13,8 @@ our $VERSION = '0.01';
 
 %tree bypass
 
+%expect 1 
+
 %%
 p: %name PROG
     block +
