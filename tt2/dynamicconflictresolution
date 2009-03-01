@@ -160,7 +160,7 @@ has name C<ruleB>.
 
 The postponed conflict resolution strategy consists
 in modifying the conflictive grammar by adding at the points of conflict, 
-in this case at then end of the involved productions a new syntactic variable.
+in this case at then end of the involved productions a new syntactic variable
 C<IsAorB>:
 
                       A -> alpha IsAorB .
@@ -424,7 +424,7 @@ The generated language is constituted by sequences like:
 
     { D; D; S; S; S; } {D; S} { S }
 
-as you remember the conflict was:
+As you remember the conflict was:
 
   examples/debuggingtut$ sed -ne '/^State 13:/,/^State/p' DynamicallyChangingTheParser2.output
   State 13:
@@ -446,7 +446,8 @@ to reduce by the production with name C<LAST_D>
 in the presence of token C<';'> if indeed is the last C<'D'>.
 The semantic action associated with the production C<LAST_D> (lines
 34-37) restores the former shift action and proceeds to call
-C<Parse::Eyapp::Driver::YYBuildAST> in order to build the abstract syntax tree:
+C<Parse::Eyapp::Driver::YYBuildAST> in order to continue
+with the building of the abstract syntax tree:
 
   examples/debuggingtut$ cat -n DynamicallyChangingTheParser2.eyp
      1  # See section 'Hacking the Parsing Tables: ACTION and GOTOs' in
