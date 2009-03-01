@@ -26,3 +26,7 @@ release:
 	   PERL5LIB=lib; perl eyapp -v -n -m Parse::Eyapp::Treeregparser -o lib/Parse/Eyapp/Treeregexp.pm lib/Parse/Eyapp/Treeregexp.yp
 	   rm -fR Parse-Eyapp-*.tar.gz
 
+publicdist: pods
+	make
+	make test
+	make publicdist
