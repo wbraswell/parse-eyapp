@@ -2,8 +2,6 @@ use warnings;
 use strict;
 use ExtUtils::MakeMaker;
 
-#our $Verbose = 10;
-
 my @exe_files = qw{eyapp treereg vgg};
 
 WriteMakefile(
