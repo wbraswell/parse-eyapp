@@ -97,3 +97,7 @@ sub Run {
 }
 
 Run(@ARGV) unless caller;
+
+sub TERMINAL::info {
+  $_[0]->{attr};
+}
