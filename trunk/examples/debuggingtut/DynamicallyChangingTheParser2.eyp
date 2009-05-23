@@ -52,7 +52,7 @@ conflict:
       {
         my $self = shift;
 
-        $self->YYSetReduce(';', 'LAST_D' ) if ($self->{INPUT} =~ m{^;\s*S});
+        $self->YYSetReduce(';', 'LAST_D' ) if ($self->{INPUT} =~ m{^\s*;\s*S});
 
         undef; # skip this node in the AST
       }
