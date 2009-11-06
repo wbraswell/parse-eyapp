@@ -7,8 +7,8 @@ eval {
 
 die "Install GraphViz\n:\$ cpan GraphViz\n" if $@;
 
-my $format = 'png';
 my $tree = undef;
+my $format = '';
 
 GetOptions (
   "format=s"  => \$format,
@@ -16,11 +16,12 @@ GetOptions (
   "tree=s"  => \$tree,
 );
 
-
 if (defined($tree)) {
+  $format = 'text' unless defined($format);
   processTree(@ARGV);
 }
 else {
+  $format = 'png' unless defined($format);
   processGrammar(@ARGV);
 }
 
@@ -61,6 +62,8 @@ sub processGrammar {
 
 sub processTree {
   
+  my $file = shift;
+
   eval {
     require Text::Tree;
   };
@@ -85,7 +88,17 @@ sub processTree {
   }
 
   my $tt = Text::Tree->new(@$t);
-  print $tt->layout('boxed');
+
+  if (defined($file)) {
+    open my $f, "> $file" or die "Can't open $file\n";
+
+    print $f $tt->layout('boxed');
+
+    close($f);
+  }
+  else {
+    print $tt->layout('boxed');
+  }
 
 }
 
@@ -97,7 +110,7 @@ sub error {
 }
 
 sub usage {
-  print "Usage:\n$0 [-f format ] file\n";
+  print "Usage:\n$0 [-f format ] [-t tree] file\n";
   print "Format is one of:\n".<<"EOL";
   png
   ps
@@ -129,11 +142,16 @@ EOL
 
 =head1 NAME
 
-vgg - Builds a graph (png, ps, jpg, etc.) from a Eyapp grammar using GraphViz
+vgg - Produces a graph for a Eyapp grammar or a tree term
 
 
 =head1 SYNOPSYS
 
+  # for tree terms
+  vgg -t 'Operator(LeftBinaryOp(expr,term),RightBinaryOp(power),PreUnaryOp(uneg),PostUnaryOp(factorial))'  # dump to stdout
+  vgg -t 'Operator(LeftBinaryOp(expr,term),RightBinaryOp(power),PreUnaryOp(uneg),PostUnaryOp(factorial))' tree.txt
+
+  # for grammars
   vgg Calc
   vgg Calc.output
   vgg -f ps Calc
@@ -141,13 +159,15 @@ vgg - Builds a graph (png, ps, jpg, etc.) from a Eyapp grammar using GraphViz
 
 =head1 INSTALL
 
-For this script to work, you have to install L<GraphViz> first
+For this script to work, you have to install L<GraphViz> and L<Text::Tree> first
 
 =head1 SEE ALSO
 
 =over
 
 =item * L<GraphViz>
+
+=item * L<Text::Tree>
 
 =item * L<eyapp>,
 
