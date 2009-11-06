@@ -5,7 +5,7 @@ eval {
   require GraphViz::Parse::Yapp;
 };
 
-die "Install GraphViz\n:\$ cpan GraphViz\n" if $@;
+die "Install GraphViz:\n\$ cpan GraphViz\n" if $@;
 
 my $tree = undef;
 my $format = '';
@@ -67,7 +67,7 @@ sub processTree {
   eval {
     require Text::Tree;
   };
-  die "Install Text::Tree\n:\$ cpan Text::Tree\n" if $@;
+  die "Install Text::Tree:\n\$ cpan Text::Tree\n" if $@;
 
   eval {
     require Parse::Eyapp::Node;
