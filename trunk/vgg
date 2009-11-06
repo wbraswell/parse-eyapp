@@ -161,6 +161,23 @@ vgg - Produces a graph for a Eyapp grammar or a tree term
 
 For this script to work, you have to install L<GraphViz> and L<Text::Tree> first
 
+=head1 EXAMPLE
+
+Here is an example of use:
+
+    $ vgg -t 'Operator(LeftBinaryOp(expr,term),RightBinaryOp(power),PreUnaryOp(uneg),PostUnaryOp(factorial))'
+                           +--------+
+                           |Operator|
+                           +--------+
+          .---------------.----^--------.-------------.
+    +------------+ +-------------+ +----------+ +-----------+
+    |LeftBinaryOp| |RightBinaryOp| |PreUnaryOp| |PostUnaryOp|
+    +------------+ +-------------+ +----------+ +-----------+
+      .---^--.        |              |               |
+    +----+ +----+  +-----+         +----+       +---------+
+    |expr| |term|  |power|         |uneg|       |factorial|
+    +----+ +----+  +-----+         +----+       +---------+
+
 =head1 SEE ALSO
 
 =over
