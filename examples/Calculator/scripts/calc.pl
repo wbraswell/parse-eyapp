@@ -1,5 +1,6 @@
-#!/usr/bin/perl -I../lib -I../../../lib -w
+#!/usr/bin/perl -I../lib -I../../../lib 
 use strict;
+use warnings;
 use Math::Calc;
 
 Math::Calc->main();
@@ -10,14 +11,20 @@ calc.pl - Calculator example in Parse::Eyapp
 
 =head1 SYNOPSIS
 
+  $ calc.pl [OPTIONS]
+  where options are:
+          -f file
+          -d 
+          -h
+
   # input from STDIN
-  calc.pl 
+  $ calc.pl 
 
   # input from file expressions1
-  calc.pl -f expressions1
+  $ calc.pl -f expressions1
 
   # debug mode
-  calc.pl -d -f expressions1
+  $ calc.pl -d -f expressions1
 
   # Example of input file
   $ cat expressions1

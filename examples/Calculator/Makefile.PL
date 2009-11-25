@@ -9,7 +9,11 @@ my $MACHINES     = $ENV{REMOTEMACHINES} || 'localhost';
 WriteMakefile(
     NAME              => 'Math::Calc',
     VERSION_FROM      => 'lib/Math/Calc.eyp',
-    PREREQ_PM         => { 'Parse::Eyapp' => '1.124', 'Devel::Cover' => '0.64', 'GRID::Machine' => '0.101', }, 
+    PREREQ_PM         => { 
+                               'Parse::Eyapp' => '1.124', 
+                             # 'Devel::Cover' => '0.64', 
+                             # 'GRID::Machine' => '0.101', 
+                         }, 
     EXE_FILES         => [ 'scripts/calc.pl' ],
     ABSTRACT_FROM     => 'lib/Math/Calc.pod', 
     AUTHOR            => 'Casiano Rodriguez-Leon <casiano@ull.es>',
@@ -20,8 +24,11 @@ sub MY::postamble {
   return '' unless $ENV{DEVELOPER};
 
   $_ = targets();
+
   s/<<PUBLIC_PLACE>>/$PUBLIC_PLACE/ge;
+
   s/<<MACHINES>>/$MACHINES/ge;
+
   return $_;
 }
 
