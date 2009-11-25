@@ -2,6 +2,7 @@ package Math::Tail;
 use warnings;
 use strict;
 use Getopt::Long;
+use Pod::Usage;
 
 sub _Error {
   my $parser = shift;
@@ -78,10 +79,14 @@ sub main {
 
   my $debug = 0;
   my $file = '';
+  my $help;
   my $result = GetOptions (
     "debug!" => \$debug,  
     "file=s" => \$file,
+    "help"   => \$help,
   );
+
+  pod2usage() if $help;
 
   $debug = 0x1F if $debug;
   $file = shift if !$file && @ARGV; 
@@ -102,3 +107,4 @@ sub semantic_error {
 }
 
 1;
+
