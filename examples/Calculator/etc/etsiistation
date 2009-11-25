@@ -1,20 +1,26 @@
-# file setperl5lib
+# file etc/etsiistation
 # Execute:
-# source setperl5lib
-# Change the values for whatever is more convenient in your platform
+# source etc/etsiistation
+# Edit this file and change it 
+# to whatever is more convenient in your platform
 
 
 # To find Math::Calc 
 CP=`pwd`
 export PERL5LIB=${CP}/lib:${PERL5LIB}
 #
-# To find eyapp and remotetest.pl
+# To find scripts
 export PATH=${CP}/scripts:${PATH}
 
 # Used by some SKIP tests
 export DEVELOPER=casiano
 
-# To simplify some svn commands
-export SVNR=svn+ssh://casiano@orion.pcg.ull.es/var/svn/casiano/PL/YappWithDefaultAction/trunk/examples/Calculator
+export SVNR=https://parse-eyapp.googlecode.com/svn/trunk/examples/Calculator
 
+export REMOTEMACHINES=millo
 
+eyapp -m Math::Calc -o lib/Math/Calc.pm lib/Math/Calc.eyp 
+
+# svn 
+# default commit message
+export M='working in ETSII'
