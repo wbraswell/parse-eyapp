@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Math::Calc;
 
+# Called as a method just to keep compatibility with
+# "modulino" call ..
 Math::Calc->main();
 
 =head1 NAME
