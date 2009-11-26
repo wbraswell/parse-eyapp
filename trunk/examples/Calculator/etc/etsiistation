@@ -5,6 +5,8 @@
 # to whatever is more convenient in your platform
 
 
+# Use default Perl for this project
+source $HOME/bin/setperl5lib
 # To find Math::Calc 
 CP=`pwd`
 export PERL5LIB=${CP}/lib:${PERL5LIB}
