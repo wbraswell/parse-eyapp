@@ -78,8 +78,6 @@ tags:
 	${PLTAGS} scripts/*.pl lib/Math/Tail.pm lib/Math/*.eyp Makefile.PL 
 	ctags -a 
 
-# Commit to group repository; 
-# commit to google. The editor may be open twice asking for messages
 google:
 	svn commit -m ${M}
 EOM
