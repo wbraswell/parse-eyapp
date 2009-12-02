@@ -21,14 +21,14 @@ use base q{DebugTail};
 
 %%
 p:
-		ds ';' ss  
-	|	ss
+    ds ';' ss  
+  | ss
 ;
 
 
 ds:
-	  ds ';' D
-	| D				
+    ds ';' D
+  | D       
     {
       print "Reducing by rule:\n";
       print "\tds -> D\n";
@@ -37,18 +37,18 @@ ds:
 ;
 
 ss:
-	  S ';' ss			
-	| S				
+    S ';' ss      
+  | S       
 ;
 
 %%
 
 sub Run {
-	my ($self) = shift;
-	my $input = shift;
+  my ($self) = shift;
+  my $input = shift;
 
   my $_Lexer = sub {
-	
+  
     for ($input) {
         s{^(\s)}{} and $self->tokenline($1 =~ tr{\n}{});
         return ('',undef) unless $_;
@@ -56,8 +56,8 @@ sub Run {
     }
     return ('',undef);
   };
-	
-	return $self->YYParse( yylex => $_Lexer, yyerror => $self->Error(),
+  
+  return $self->YYParse( yylex => $_Lexer, yyerror => $self->Error(),
                          yydebug => 0xF
   );
 }
