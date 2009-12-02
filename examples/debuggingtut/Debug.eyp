@@ -6,6 +6,7 @@
 
 %{
 our $VERSION = '0.01';
+use base q{DebugTail}; 
 %}
 
 %%
@@ -31,39 +32,25 @@ ss:
 
 %%
 
-my $tokenline = 1;
-
-sub _Error {
-  my $parser = shift;
-
-  my ($token) = $parser->YYCurval;
-  my ($what) = $token ? "input: '$token'" : "end of input";
-  die "Syntax error near $what line num $tokenline\n";
-}
-
-my $input;
-
-sub _Lexer {
-  
-  for ($input) {
-    s{^(\s)}{} and $tokenline += $1 =~ tr{\n}{};
-    return ('',undef) unless $_;
-    return ($1,$1) if s/^(.)//;
-  }
-  return ('',undef);
-}
-
 sub Run {
-  my $debug = shift || 0;
-  $debug = 0x1F if $debug;
+  my ($self) = shift;
+  my $input = shift;
 
-  $input = <STDIN>;
-
-  my $self = __PACKAGE__->new();
-
-  return $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error,
-                         yydebug => $debug,
+  my $_Lexer = sub {
+  
+    for ($input) {
+        s{^(\s)}{} and $self->tokenline($1 =~ tr{\n}{});
+        return ('',undef) unless $_;
+        return ($1,$1) if s/^(.)//;
+    }
+    return ('',undef);
+  };
+  
+  return $self->YYParse( yylex => $_Lexer, yyerror => $self->Error(),
+                         yydebug => 0xF
   );
 }
 
-Run(@ARGV) unless caller;
+__PACKAGE__->main unless caller();
+
+

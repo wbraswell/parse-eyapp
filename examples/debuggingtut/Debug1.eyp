@@ -65,4 +65,3 @@ sub Run {
 
 __PACKAGE__->main unless caller();
 
-1;

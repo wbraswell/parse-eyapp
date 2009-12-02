@@ -20,13 +20,13 @@
 
 %%
 p:
-		ds ';' ss  
-	|	ss
+    ds ';' ss  
+  | ss
 ;
 
 ds:
-	  ds ';' D
-	| D				
+    ds ';' D
+  | D       
     {
       print "Reducing by rule:\n";
       print "\tds -> D\n";
@@ -35,8 +35,8 @@ ds:
 ;
 
 ss:
-	  S ';' ss			
-	| S				
+    S ';' ss      
+  | S       
 ;
 
 %%

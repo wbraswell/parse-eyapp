@@ -17,7 +17,8 @@ my $_Error = sub {
 
   my ($token) = $parser->YYCurval;
   my ($what) = $token ? "input: '$token'" : "end of input";
-  die "Syntax error near $what line num $tokenline\n";
+  my @expected = $parser->YYExpect();
+  die "Syntax error near $what line num $tokenline. Expecting '@expected'\n";
 };
 
 sub Error {
