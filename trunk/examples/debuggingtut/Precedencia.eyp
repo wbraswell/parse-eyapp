@@ -13,7 +13,7 @@ use base q{Math::Tail};
 %tree
 %%
 list
-    :
+    : /* empty */
     | list '\n' {}
     | list e { print $_[2]->str."\n" }
     ;
