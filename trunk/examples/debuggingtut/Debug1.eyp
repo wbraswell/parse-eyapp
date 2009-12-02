@@ -43,7 +43,8 @@ ss:
 
 %%
 
-# There is an error somewhere ...
+# There is an error somewhere below ...
+# Can you find it?
 sub Run {
   my ($self) = shift;
   my $input = shift;
@@ -62,7 +63,6 @@ sub Run {
                          yydebug => 0xF
   );
 }
-
 
 __PACKAGE__->main unless caller();
 
