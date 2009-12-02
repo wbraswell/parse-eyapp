@@ -13,11 +13,11 @@ sub tokenline {
 }
 
 my $_Error = sub {
-	my $parser = shift;
+  my $parser = shift;
 
-	my ($token) = $parser->YYCurval;
-	my ($what) = $token ? "input: '$token'" : "end of input";
-	die "Syntax error near $what line num $tokenline\n";
+  my ($token) = $parser->YYCurval;
+  my ($what) = $token ? "input: '$token'" : "end of input";
+  die "Syntax error near $what line num $tokenline\n";
 };
 
 sub Error {
@@ -29,11 +29,11 @@ sub Error {
 }
 
 sub Run {
-	my ($self) = shift;
-	my $input = shift;
+  my ($self) = shift;
+  my $input = shift;
 
   my $_Lexer = sub {
-	
+  
     for ($input) {
         s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
         return ('',undef) unless $_;
@@ -41,8 +41,8 @@ sub Run {
     }
     return ('',undef);
   };
-	
-	return $self->YYParse( yylex => $_Lexer, yyerror => $_Error,
+  
+  return $self->YYParse( yylex => $_Lexer, yyerror => $_Error,
                          yydebug => 0xF
   );
 }
