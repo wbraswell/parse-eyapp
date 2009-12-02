@@ -13,6 +13,7 @@ export PERL5LIB=${CP}/lib:${PERL5LIB}
 #
 # To find scripts
 export PATH=${CP}/scripts:${PATH}
+export MANPATH=${CP}/blib${MANPATH}
 
 # Used by some SKIP tests
 export DEVELOPER=casiano

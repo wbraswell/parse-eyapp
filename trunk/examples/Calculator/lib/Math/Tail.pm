@@ -38,7 +38,8 @@ sub make_lexer {
 
       m{\G([0-9]+(?:\.[0-9]+)?)}gc   and return ('NUM', [$1, $beginline]);
       m{\G([A-Za-z][A-Za-z0-9_]*)}gc and return ('VAR', [$1, $beginline]);
-      m{\G\n}gc                      and do { $lineno++; return ("\n", ["\n", $beginline]) };
+      m{\G\n}gc                      and 
+                      do { $lineno++; return ("\n", ["\n", $beginline]) };
       m{\G(.)}gc                     and return ($1,    [$1, $beginline]);
 
       return('',undef);
