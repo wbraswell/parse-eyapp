@@ -22,7 +22,7 @@ my $_Error = sub {
   die "Syntax error near $what line num $tokenline. Expecting (@expected)\n";
 };
 
-sub Error {
+sub error {
   my $self = shift;
 
   $_Error = shift if @_;
@@ -54,7 +54,7 @@ sub Run {
   
   return $self->YYParse( 
     yylex => $self->lexer(), 
-    yyerror => $_Error,
+    yyerror => $self->error,
     yydebug => 0xF
   );
 }
