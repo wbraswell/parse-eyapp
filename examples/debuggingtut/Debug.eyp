@@ -2,6 +2,12 @@
 # Debug.eyp
 # See also: Debug1.eyp Debug2.eyp LookForward.eyp
 
+# Be sure DebugTail.pm is reachable
+# compile it with 
+#      eyapp -b '' Debug.eyp
+# and execute it with:
+#      ./Debug.pm
+
 %token D S
 
 %{

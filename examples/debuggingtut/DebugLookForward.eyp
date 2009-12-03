@@ -1,6 +1,13 @@
 /*VIM: set ts=2 */
 # See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
 # See also: Debug.eyp Debug1.eyp Debug2.eyp 
+
+# Be sure DebugTail.pm is reachable
+# compile it with 
+#      eyapp -b '' DebugLookForward.eyp
+# and execute it with:
+#      ./DebugLookForward.pm
+
 %token D S
 %token SEMICOLONS SEMICOLOND
 
