@@ -348,6 +348,29 @@ sub YYSetReduce {
   }
 }
 
+sub YYSetShift {
+  my ($self, $token, $action) = @_;
+  # $action is syntactic sugar ...
+
+  # Conflict state
+  my $conflictstate = $self->YYNextState();
+
+  $token = [ $token ] unless ref($token);
+
+  my $conflictname = $self->YYLhs;
+  for (@$token) {
+    if (defined($self->{CONFLICT}{$conflictname}{$_}))  {
+      my ($conflictstate2, $action) = @{$self->{CONFLICT}{$conflictname}{$_}};
+      # assert($conflictstate == $conflictstate2) 
+
+      $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $self->{CONFLICT}{$conflictname}{$_}[1];
+    }
+    else {
+      croak "YYSetShift error";
+    }
+  }
+}
+
 sub YYGetLRAction {
   my ($self,  $state, $token) = @_;
 
