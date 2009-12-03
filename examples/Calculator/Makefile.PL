@@ -11,8 +11,8 @@ WriteMakefile(
     VERSION_FROM      => 'lib/Math/Calc.eyp',
     PREREQ_PM         => { 
                                'Parse::Eyapp' => '1.124', 
-                             # 'Devel::Cover' => '0.64', 
-                             # 'GRID::Machine' => '0.101', 
+                             # 'Devel::Cover' => '0.64',   # Only for the DEVELOPER
+                             # 'GRID::Machine' => '0.101', # Only for the DEVELOPER
                          }, 
     EXE_FILES         => [ 'scripts/calc.pl' ],
     ABSTRACT_FROM     => 'lib/Math/Calc.pod', 
