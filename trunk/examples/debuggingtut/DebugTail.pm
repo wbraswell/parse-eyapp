@@ -18,7 +18,8 @@ my $_Error = sub {
   my ($token) = $parser->YYCurval;
   my ($what) = $token ? "input: '$token'" : "end of input";
   my @expected = $parser->YYExpect();
-  die "Syntax error near $what line num $tokenline. Expecting '@expected'\n";
+  local $" = ', ';
+  die "Syntax error near $what line num $tokenline. Expecting (@expected)\n";
 };
 
 sub Error {
@@ -29,24 +30,37 @@ sub Error {
   $_Error;
 }
 
+# Default lexer
+my $_Lexer = sub {
+
+  for (${input()}) {
+      s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
+      return ('',undef) unless $_;
+      return ($1,$1) if s/^(.)//;
+  }
+  return ('',undef);
+};
+
+sub lexer {
+  my $self = shift;
+
+  $_Lexer = shift if @_;
+
+  $_Lexer;
+}
+
 sub Run {
   my ($self) = shift;
-  my $input = shift;
-
-  my $_Lexer = sub {
   
-    for ($input) {
-        s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
-        return ('',undef) unless $_;
-        return ($1,$1) if s/^(.)//;
-    }
-    return ('',undef);
-  };
-  
-  return $self->YYParse( yylex => $_Lexer, yyerror => $_Error,
-                         yydebug => 0xF
+  return $self->YYParse( 
+    yylex => $self->lexer(), 
+    yyerror => $_Error,
+    yydebug => 0xF
   );
 }
+
+# Reference to the actual input
+my $input;
 
 sub slurp_file {
   my $fn = shift;
@@ -59,18 +73,26 @@ sub slurp_file {
   else {
     $f = \*STDIN;
   }
-  my $input = <$f>;
-  return $input;
+
+  $$input = <$f>;
+}
+
+sub input {
+  my $self = shift;
+
+  $$input = shift if @_;
+
+  $input;
 }
 
 sub main {
   my $class = shift;
 
-  my $input = slurp_file( shift(@ARGV) );
+  slurp_file( shift(@ARGV) );
 
   my $parser = $class->new();
 
-  $parser->Run($input);
+  $parser->Run();
 }
 
 1;
