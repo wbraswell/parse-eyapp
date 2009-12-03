@@ -2,6 +2,7 @@ package DebugTail;
 use strict;
 use warnings;
 
+# attribute to count the lines
 my $tokenline = 1;
 
 sub tokenline {
@@ -12,6 +13,7 @@ sub tokenline {
   $tokenline
 }
 
+# attribute with the error handler
 my $_Error = sub {
   my $parser = shift;
 
@@ -30,7 +32,8 @@ sub error {
   $_Error;
 }
 
-# Default lexer
+# attribute with the lexical analyzer
+# has this value by default
 my $_Lexer = sub {
 
   for (${input()}) {
@@ -59,7 +62,8 @@ sub Run {
   );
 }
 
-# Reference to the actual input
+# attribute with the input
+# is a reference to the actual input
 my $input;
 
 sub slurp_file {

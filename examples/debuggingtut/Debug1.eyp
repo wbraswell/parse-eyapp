@@ -43,6 +43,7 @@ ss:
 
 %%
 
+# This is an exercise:
 # There is an error somewhere below ...
 # Can you find it?
 
@@ -50,7 +51,7 @@ __PACKAGE__->lexer(
   sub {
     my $self = shift;
 
-    for (${$self->input()}) {
+    for (${$self->input()}) {  # contextualize
         s{^(\s)}{} and $self->tokenline($1 =~ tr{\n}{});
 
         return ('', undef) unless $_;
@@ -61,4 +62,3 @@ __PACKAGE__->lexer(
 );
 
 __PACKAGE__->main unless caller();
-
