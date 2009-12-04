@@ -101,10 +101,12 @@ sub main {
 
   my $debug = 0;
   my $file = '';
+  my $showtree = 0;
   my $help;
   my $result = GetOptions (
     "debug!" => \$debug,  
     "file=s" => \$file,
+    "tree!"  => \$showtree,
     "help"   => \$help,
   );
 
@@ -116,7 +118,9 @@ sub main {
   slurp_file( $file, $prompt);
 
   my $parser = $package->new();
-  $parser->Run( $debug );
+  my $tree = $parser->Run( $debug );
+
+  print $tree->str()."\n" if $showtree && $tree;
 }
 
 1;
