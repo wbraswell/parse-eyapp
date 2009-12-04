@@ -36,7 +36,7 @@ use base q{DebugTail};
 
 %%
 p:
-    %name DSSS
+    %name P
     ds SEMICOLONS ss  
   | %name SS
     ss
@@ -77,6 +77,3 @@ __PACKAGE__->lexer(
 
 __PACKAGE__->main unless caller();
 
-sub TERMINAL::info {
-  shift()->{attr}
-}

@@ -123,4 +123,8 @@ sub main {
   print $tree->str()."\n" if $showtree && $tree;
 }
 
+sub TERMINAL::info {
+  $_[0]->{attr};
+}
+
 1;

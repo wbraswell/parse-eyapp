@@ -61,8 +61,4 @@ ss:
 
 __PACKAGE__->main('Provide a statement like "D; D; S" and press <CR><CTRL-D>: ') unless caller;
 
-sub TERMINAL::info {
-  shift()->{attr}
-}
-
 1;
