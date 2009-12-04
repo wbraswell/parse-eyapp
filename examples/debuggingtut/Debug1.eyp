@@ -1,44 +1,68 @@
-# See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-# This files is almost like Debug.eyp
-# It only changes the rules
-# ds:
-#     D ';' ds    
-#   | D       
-# for a left-recursive version
+%{
 
-# Be sure DebugTail.pm is reachable
-# compile it with 
-#      eyapp -b '' Debug1.eyp
-# and execute it with:
-#      ./Debug1.pm
+=head1 SYNOPSIS
+
+See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
+This files is almost like Debug.eyp
+It only changes the rules
+
+             ds:
+                 D ';' ds    
+               | D       
+for a left-recursive version. 
+
+Be sure C<DebugTail.pm> is reachable
+compile it with 
+
+      eyapp -b '' Debug1.eyp
+
+Execute the generated modulino with:
+
+      ./Debug1.pm -t
+
+There is an error in the lexical analyzer.
+Can you find it?
+
+Try first with input "D;S" and then 
+with input "D; S" 
+
+
+=head1 See also
+
+    Debug1.eyp Debug2.eyp LookForward.eyp
+
+=cut
+
+our $VERSION = '0.01';
+use base q{DebugTail}; 
+
+%}
 
 %token D S
 
-%{
-our $VERSION = '0.01';
-use base q{DebugTail}; 
-%}
+%tree 
 
 %%
 p:
-    ds ';' ss  
-  | ss
+    %name P
+      ds ';' ss  
+  | %name SS
+      ss
 ;
 
 
 ds:
-    ds ';' D
-  | D       
-    {
-      print "Reducing by rule:\n";
-      print "\tds -> D\n";
-      $_[1];
-    }
+    %name D2
+      ds ';' D
+  | %name D1
+      D       
 ;
 
 ss:
+    %name S2
     S ';' ss      
-  | S       
+  | %name S1
+    S       
 ;
 
 %%
@@ -61,4 +85,10 @@ __PACKAGE__->lexer(
   }
 );
 
-__PACKAGE__->main('Try first "D;S" and then "D; S" (press <CR><CTRL-D> to finish): ') unless caller();
+my $prompt = 'Try first "D;S" and then "D; S" '.
+             '(press <CR><CTRL-D> to finish): ';
+__PACKAGE__->main($prompt) unless caller();
+
+sub TERMINAL::info {
+  shift()->{attr}
+}
