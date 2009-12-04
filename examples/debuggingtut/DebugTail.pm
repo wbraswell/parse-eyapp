@@ -2,6 +2,9 @@ package DebugTail;
 use strict;
 use warnings;
 
+use Getopt::Long;
+use Pod::Usage;
+
 # attribute to count the lines
 my $tokenline = 1;
 
@@ -61,13 +64,13 @@ sub slurp_file {
   my $f;
 
   local $/ = undef;
-  if (defined($fn)) {
-    open $f, $fn  or die "Can't find file $fn!\n";
+  if (-r $fn) {
+    open $f, $fn  or die "Can't find file '$fn'!\n";
   }
   else {
     $f = \*STDIN;
     my $msg = shift;
-    print($msg;) if $msg;
+    print($msg) if $msg;
   }
 
   $$input = <$f>;
@@ -113,7 +116,7 @@ sub main {
   slurp_file( $file, $prompt);
 
   my $parser = $package->new();
-  $parser->Run( $input, $debug );
+  $parser->Run( $debug );
 }
 
 1;
