@@ -89,6 +89,3 @@ my $prompt = 'Try first "D;S" and then "D; S" '.
              '(press <CR><CTRL-D> to finish): ';
 __PACKAGE__->main($prompt) unless caller();
 
-sub TERMINAL::info {
-  shift()->{attr}
-}
