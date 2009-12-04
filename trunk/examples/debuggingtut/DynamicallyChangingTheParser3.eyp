@@ -1,10 +1,5 @@
-# See section 'Hacking the Parsing Tables: ACTION and GOTOs' in
-# http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-#
-# See also: Debug.eyp Debug1.eyp Debug2.eyp  LookForward.eyp
-# DynamicallyChangingTheParser.eyp This example illustrates how to dynamically
-# change the behavior of the parser
-
+# No conflicts. Is like DynamicallyChangingTheParser.eyp 
+# but in the right order
 %token D S
 
 %{
