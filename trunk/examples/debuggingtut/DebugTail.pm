@@ -52,16 +52,6 @@ sub lexer {
   $_Lexer;
 }
 
-sub Run {
-  my ($self) = shift;
-  
-  return $self->YYParse( 
-    yylex => $self->lexer(), 
-    yyerror => $self->error,
-    yydebug => 0xF
-  );
-}
-
 # attribute with the input
 # is a reference to the actual input
 my $input;
@@ -76,6 +66,8 @@ sub slurp_file {
   }
   else {
     $f = \*STDIN;
+    my $msg = shift;
+    print($msg;) if $msg;
   }
 
   $$input = <$f>;
@@ -89,14 +81,39 @@ sub input {
   $input;
 }
 
+sub Run {
+  my ($self) = shift;
+  my $yydebug = shift;
+  
+  return $self->YYParse( 
+    yylex => $self->lexer(), 
+    yyerror => $self->error,
+    yydebug => $yydebug, # 0xF
+  );
+}
+
 sub main {
-  my $class = shift;
+  my $package = shift;
+  my $prompt = shift;
 
-  slurp_file( shift(@ARGV) );
+  my $debug = 0;
+  my $file = '';
+  my $help;
+  my $result = GetOptions (
+    "debug!" => \$debug,  
+    "file=s" => \$file,
+    "help"   => \$help,
+  );
 
-  my $parser = $class->new();
+  pod2usage() if $help;
 
-  $parser->Run();
+  $debug = 0x1F if $debug;
+  $file = shift if !$file && @ARGV; 
+
+  slurp_file( $file, $prompt);
+
+  my $parser = $package->new();
+  $parser->Run( $input, $debug );
 }
 
 1;

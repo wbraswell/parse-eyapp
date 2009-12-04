@@ -38,6 +38,6 @@ ss:
 
 %%
 
-__PACKAGE__->main unless caller();
+__PACKAGE__->main unless caller('Provide a statement like "D; D; S" ');
 
 

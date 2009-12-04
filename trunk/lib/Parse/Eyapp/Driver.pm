@@ -349,7 +349,9 @@ sub YYSetReduce {
 }
 
 sub YYSetShift {
-  my ($self, $token, $action) = @_;
+  my ($self, $token) = @_;
+
+  # my ($self, $token, $action) = @_;
   # $action is syntactic sugar ...
 
   # Conflict state
@@ -366,7 +368,7 @@ sub YYSetShift {
       $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $self->{CONFLICT}{$conflictname}{$_}[1];
     }
     else {
-      croak "YYSetShift error";
+      croak "YYSetShift error. No shift action found";
     }
   }
 }

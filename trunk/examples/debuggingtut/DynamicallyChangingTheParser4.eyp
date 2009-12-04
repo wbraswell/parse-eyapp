@@ -9,6 +9,7 @@
 
 %{
 our $VERSION = '0.01'; 
+use base q{DebugTail};
 %}
 
 %tree bypass
@@ -42,11 +43,11 @@ ss:
 ;
 
 conflict:
-    /* empty. Just for dynamic precedence */
+      /* empty. This action solves the conflict using dynamic precedence */
       {
         my $self = shift;
 
-        if ($self->{INPUT} =~ m{^\s*;\s*S}) {
+        if (${$self->input()} =~ m{^\s*;\s*S}) {
           $self->YYSetReduce(';', 'LAST_D' )
         }
         else {
@@ -59,44 +60,9 @@ conflict:
 
 %%
 
-sub _Error {
-  my $parser = shift;
-
-  my ($token) = $parser->YYCurval;
-  my ($what) = $token ? "input: '$token'" : "end of input";
-  warn "Syntax error near $what\n";
-}
-
-sub _Lexer {
-  my $self = shift;
-  
-  for ($self->{INPUT}) {
-    s{^(\s*)}{};
-   
-    return ('',undef) unless $_;
-
-    return ($1,$1) if s/^(.)//;
-  }
-  return ('',undef);
-}
-
-sub Run {
-  my $debug = shift || 0;
-  $debug = 0x1F if $debug;
-
-  my $self = __PACKAGE__->new();
-  $self->{INPUT} = <STDIN>;
-
-  print 
-    $self->YYParse( 
-      yylex => \&_Lexer, 
-      yyerror => \&_Error, 
-      yydebug => $debug,
-    )->str."\n";
-}
-
-Run(@ARGV) unless caller;
 
 sub TERMINAL::info {
   $_[0]->{attr};
 }
+
+__PACKAGE__->main unless caller();
