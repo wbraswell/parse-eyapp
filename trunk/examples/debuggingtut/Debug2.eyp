@@ -35,22 +35,34 @@ use base q{DebugTail};
 
 %%
 p:
-    ds ';' ss  
-  | ss
+    %name P
+      ds ';' ss  
+  | %name SS
+      ss
 ;
 
+
 ds:
-    ds ';' D
-  | D       
+    %name D2
+      ds ';' D
+  | %name D1
+      D       
 ;
 
 ss:
+    %name S2
     S ';' ss      
-  | S       
+  | %name S1
+    S       
 ;
+
 
 %%
 
 __PACKAGE__->main('Provide a statement like "D; D; S" and press <CR><CTRL-D>: ') unless caller;
+
+sub TERMINAL::info {
+  shift()->{attr}
+}
 
 1;

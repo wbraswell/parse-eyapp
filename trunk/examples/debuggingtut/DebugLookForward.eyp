@@ -1,40 +1,59 @@
 /*VIM: set ts=2 */
-# See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-# See also: Debug.eyp Debug1.eyp Debug2.eyp 
-
-# Be sure DebugTail.pm is reachable
-# compile it with 
-#      eyapp -b '' DebugLookForward.eyp
-# and execute it with:
-#      ./DebugLookForward.pm
-
-%token D S
-%token SEMICOLONS SEMICOLOND
-
 %{
+=head1 SYNOPSIS
+
+See 
+   
+   http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
+   file DebugLookForward.eyp
+
+This grammar fixes the conflicts an bugs in Debug.eyp and Debug1.eyp
+
+Be sure C<DebugTail.pm> is reachable
+compile it with 
+
+      eyapp -b '' DebugLookForward.eyp
+
+execute the generated modulino with:
+
+      ./DebugLookForward.pm -t
+
+=head1 See also
+
+    Debug.eyp Debug1.eyp Debug2.eyp 
+
+=cut
+
 our $VERSION = '0.01';
 use base q{DebugTail}; 
+
 %}
+
+%token D S
+%syntactic token SEMICOLONS SEMICOLOND
+
+%tree
 
 %%
 p:
+    %name DSSS
     ds SEMICOLONS ss  
-  | ss
+  | %name SS
+    ss
 ;
 
 ds:
-    D SEMICOLOND ds   
-  | D       
-    {
-      print "Reducing by rule:\n";
-      print "\tds -> D\n";
-      $_[1];
-    }
+    %name D2
+      D SEMICOLOND ds   
+  | %name D1
+      D       
 ;
 
 ss:
-    S SEMICOLONS ss     
-  | S       
+    %name S2
+      S SEMICOLONS ss     
+  | %name S1
+      S       
 ;
 
 %%
@@ -57,3 +76,7 @@ __PACKAGE__->lexer(
 );
 
 __PACKAGE__->main unless caller();
+
+sub TERMINAL::info {
+  shift()->{attr}
+}
