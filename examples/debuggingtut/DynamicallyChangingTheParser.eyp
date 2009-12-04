@@ -10,11 +10,11 @@ change the behavior of the parser for a shift-reduce conflict
 Be sure C<DebugTail.pm> is reachable
 compile it with 
 
-      eyapp -b '' DynamicallyChangingTheParser4.eyp
+      eyapp -b '' DynamicallyChangingTheParser.eyp
 
 execute the generated modulino with:
 
-      ./DynamicallyChangingTheParser4.pm -t
+      ./DynamicallyChangingTheParser.pm -t
 
 =head1 See also
 
