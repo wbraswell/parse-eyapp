@@ -61,4 +61,4 @@ __PACKAGE__->lexer(
   }
 );
 
-__PACKAGE__->main unless caller();
+__PACKAGE__->main('Try first "D;S" and then "D; S" (press <CR><CTRL-D> to finish): ') unless caller();
