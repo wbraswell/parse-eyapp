@@ -1,4 +1,3 @@
-# See http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers
 %strict
 %token ID INT NUM
 
@@ -110,6 +109,23 @@ sub TERMINAL::info {
 }
 
 Run(@ARGV) unless caller;
+
+=head1 SYNOPSIS
+
+Compile it with
+ 
+   eyapp -b '' Cplusplus
+
+Run it with:
+
+   ./Cplusplus.pm
+
+try with inputs:
+
+     int (x) = 2;
+     int (x) + 2;
+
+the result will be the generated abstract sytax tree
 
 =head1  C++ Ambiguities
 
