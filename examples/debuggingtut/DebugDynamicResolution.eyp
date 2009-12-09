@@ -1,24 +1,22 @@
 %{
-
 =head1 SYNOPSIS
 
 See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-This file is almost like Debug.eyp
+This file solves the conflict in Debug.eyp using dynamic 
+conflict resolution techniques
+(see section 'SOLVING CONFLICTS WITH THE POSTPONED CONFLICT STRATEGY' in
+http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut)
 
 Be sure C<DebugTail.pm> is reachable
 compile it with 
 
-      eyapp -b '' Debug1.eyp
+      eyapp -b '' DebugDynamicResolution.eyp
 
 Execute the generated modulino with:
 
-      ./Debug1.pm -t
+      ./DebugDynamicResolution.pm -t
 
-There is an error in the lexical analyzer.
-Can you find it?
-
-Try first with input "D;S" and then 
-with input "D; S" 
+Try input "D;D;D; S;S;S".
 
 
 =head1 See also
@@ -76,5 +74,5 @@ hacktables:
 
 %%
 
-my $prompt = 'Provide a statement like "D; D; S" and press <CR><CTRL-D>: ';
+my $prompt = 'Provide a statement like "D;D; S;S" and press <CR><CTRL-D>: ';
 __PACKAGE__->main($prompt) unless caller;
