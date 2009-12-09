@@ -69,7 +69,7 @@ conflict:
           $self->YYSetReduce(';', 'D1' )
         }
         else {
-          $self->YYSetShift(';', 'D2' )
+          $self->YYSetShift(';')
         }
 
         undef; # skip this node in the AST
