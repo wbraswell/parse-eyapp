@@ -18,7 +18,7 @@ execute the generated modulino with:
 
       ./Debug.pm
 
-it will not recognize the input 'D; S' since its shits forever
+it will not recognize the input 'D; S' since its shifts forever
 
 =head1 See also
 
