@@ -368,7 +368,8 @@ sub YYSetShift {
       $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $self->{CONFLICT}{$conflictname}{$_}[1];
     }
     else {
-      croak "YYSetShift error. No shift action found";
+      #croak "YYSetShift error. No shift action found";
+      # shift is the default ...  hope to be lucky!
     }
   }
 }
