@@ -1,3 +1,8 @@
+%{
+our $VERSION = '0.01';
+use base q{DebugTail}; 
+%}
+
 %strict
 %token ID INT NUM
 
@@ -54,7 +59,7 @@ decexpconflict:
       {
         my $self = shift;
 
-        if ($self->{INPUT} =~ m{^[)\s]*[;=]\s*}) {
+        if (${$self->input()} =~ m{^[)\s]*[;=]\s*}) {
           $self->YYSetReduce(')', 'DECID' );
         }
         else {
@@ -65,50 +70,33 @@ decexpconflict:
 
 %%
 
-sub _Error {
-  my $parser = shift;
+__PACKAGE__->lexer( 
+  sub {
+    my $self = shift;
+    
+    for (${$self->input()}) {
+      s{^(\s*)}{};
 
-  my ($token) = $parser->YYCurval;
-  my ($what) = $token ? "input: '$token'" : "end of input";
-  warn "Syntax error near $what\n";
-}
+      return ('', undef) unless $_;
 
-sub _Lexer {
-  my $self = shift;
-  
-  for ($self->{INPUT}) {
-    s{^(\s*)}{};
+      return ('INT', $1) if s{^(int\b)}{};
 
-    return ('', undef) unless $_;
+      return ('ID',  $1) if (s{^([a-zA-Z_]\w*)}{});
 
-    return ('INT', $1) if s{^(int\b)}{};
+      return ('NUM', $1) if s/^(\d+)//;
 
-    return ('ID',  $1) if (s{^([a-zA-Z_]\w*)}{});
+      return ($1,    $1) if s/^(.)//;
+    }
 
-    return ('NUM', $1) if s/^(\d+)//;
-
-    return ($1,    $1) if s/^(.)//;
+    return ('',undef);
   }
+);
 
-  return ('',undef);
-}
+my $prompt = 'Try first "int (x) = 2;" then "int (x) + 2;" '.
+             '(press <CR><CTRL-D> to finish): ';
+__PACKAGE__->main($prompt) unless caller();
 
-sub Run {
-  my $debug = shift || 0;
-  $debug = 0x1F if $debug;
-
-  my $self = __PACKAGE__->new();
-  $self->{INPUT} = <STDIN>;
-
-
-  print $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, yydebug => $debug,)->str."\n";
-}
-
-sub TERMINAL::info { 
-  $_[0]->{attr} 
-}
-
-Run(@ARGV) unless caller;
+####################################################
 
 =head1 SYNOPSIS
 
@@ -118,7 +106,7 @@ Compile it with
 
 Run it with:
 
-   ./Cplusplus.pm
+   ./Cplusplus.pm -t
 
 try with inputs:
 
