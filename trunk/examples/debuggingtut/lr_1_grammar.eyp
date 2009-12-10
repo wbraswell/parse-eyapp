@@ -1,15 +1,14 @@
-%strict
-
 %{
 
 =head1  SYNOPSIS
 
-See the grammar in file C<nolr_k_grammar.eyp>:
+The grammar here generates the same language than the grammar 
+in file C<nolr_k_grammar.eyp>:
 
   A : B C d | E C f ;
   B : x y ;
   E : x y ;
-  C : c | C c ;
+  C : /* empty */ | C c ;
 
 This grammar confuses any LR(n) or LL(n) parser with a fixed amount of look-ahead.
 The simplest solution is to rewrite the grammar as here
@@ -17,7 +16,7 @@ The simplest solution is to rewrite the grammar as here
 
 =head1 SEE ALSO
 
-I have seen this example at Jinks page:
+This example is a variation of one seen at Jinks page:
 L<http://www.cs.man.ac.uk/~pjj>
 
 See the grammar in file C<nolr_k_grammar.eyp>:
@@ -37,7 +36,7 @@ BorE:
 ;
 
 C : 
-     'c' 
+     /* empty */
    | C 'c' 
 ;
 
