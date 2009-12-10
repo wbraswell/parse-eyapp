@@ -642,7 +642,7 @@ sub YYBuildAST {
   my $node = bless {}, $class;
 
   for(my $i = 0; $i < @right; $i++) {
-    $_ = $right[$i]; # The symbol
+    local $_ = $right[$i]; # The symbol
     my $ch = $_[$i]; # The attribute/reference
     if ($self->YYIssemantic($_)) {
       my $class = $PREFIX.'TERMINAL';
