@@ -1,3 +1,21 @@
+%{
+=head1 SYNOPIS
+
+State 4:
+
+	s -> s ns .	(Rule 3)
+	ns -> ns . NUM	(Rule 7)
+
+	NUM	shift, and go to state 7
+
+	NUM	[reduce using rule 3 (s)]
+	$default	reduce using rule 3 (s)
+
+
+
+=cut
+
+%}
 %right ID NUM
 %%
 s: 
