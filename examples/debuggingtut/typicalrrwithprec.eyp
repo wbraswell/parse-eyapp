@@ -9,8 +9,8 @@ conflict resolution has been overlooked.
 
 It attempts to solve the conflict in 
 C<typicalrr.eyp> by giving priority
-only to the  'empty rules'. The result is a bit
-strange. Warning: Don't look too much at it if you 
+only to the  'empty rules'. 
+Warning: Don't look too much at it if you 
 are new to LALR conflict resolution.
 
 Compile it with 
@@ -22,41 +22,6 @@ Execute it with:
    ./typicalrrwithprec.pm -t
 
 Try inputs C<4 5>,  C<a b> and C<4 5 a b>.
-
-Here is an example of execution:
-
-  $ ./typicalrrwithprec.pm -t
-  Try "4 5 a b 2 3" (press <CR><CTRL-D> to finish): 4 5 a b 2 3
-
-  NUMLIST(
-    WORDLIST(
-      NUMLIST(
-        EMPTY,
-        NUMS(
-          TERMINAL[4],
-          NUMS(
-            TERMINAL[5],
-            EMPTYNUM
-          )
-        )
-      ),
-      IDS(
-        TERMINAL[a],
-        IDS(
-          TERMINAL[b],
-          EMPTYID
-        )
-      )
-    ),
-    NUMS(
-      TERMINAL[2],
-      NUMS(
-        TERMINAL[3],
-        EMPTYNUM
-      )
-    )
-  )
-
 
 =head1 SEE ALSO
 
@@ -79,9 +44,9 @@ use base q{RRTail};
 s:
       %name EMPTY
       /* empty */ %prec ''
-    | %name WORDLIST
+    | %name LIST
        s ws
-    | %name NUMLIST
+    | %name LIST
        s ns
 ;
 
