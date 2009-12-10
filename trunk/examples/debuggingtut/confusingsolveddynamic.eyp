@@ -28,6 +28,7 @@ and execute it with:
 use base q{DebugTail}; 
 %}
 
+%semantic token 'c' 'd' 'f' 'x' 'y'
 %expect 0 1
 
 %tree
