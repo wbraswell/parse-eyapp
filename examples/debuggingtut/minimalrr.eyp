@@ -2,7 +2,9 @@
 
 =head1  SYNOPSIS
 
-Minimal example of a Reduce-Reduce conflict
+Minimal example of a Reduce-Reduce conflict.
+It illustrates how in case of a reduce-reduce conflict the first 
+conflicting production is chosen.
 
 Compile it with:
 
@@ -11,6 +13,10 @@ Compile it with:
 Execute it with:
 
    ./minimalrr.pm -t
+
+=head1 SEE ALSO
+
+  File C<minimalrr2.eyp>
 
 =cut
 
