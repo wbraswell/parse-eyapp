@@ -9,10 +9,9 @@ Compile it with
 
 Execute it with:
 
-   ./typicalrr_fixed.pm -d
+   ./typicalrr_fixed.pm -d -t
 
 Try inputs C<4 5>,  C<a b> and C<4 5 a b>.
-
 
 =head1 SEE ALSO
 
@@ -24,26 +23,37 @@ use base q{RRTail};
 
 %}
 %right ID NUM
+
+%tree
+
 %%
 s: 
+     %name EMPTY
      /* empty */
-   | s ws  %prec ID
-   | s ns  %prec NUM
+   | %name LIST
+     s ws  %prec ID
+   | %name LIST
+     s ns  %prec NUM
  ;
 
 ws:
+     %name ID
      ID
-   | ws ID
+   | %name WORDS
+     ws ID
 ;
 
 ns:
+    %name NUM
     NUM
-  | ns NUM
+  | %name NUMS
+    ns NUM
 ;
 
 %%
 
 unless (caller()) {
+  $Parse::Eyapp::Node::INDENT = 1;
   my $prompt = 'Try "4 5 a b 2 3" '.
                '(press <CR><CTRL-D> to finish): ';
   __PACKAGE__->main($prompt) 
