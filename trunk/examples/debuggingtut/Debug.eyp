@@ -1,28 +1,27 @@
 %{
 =head1 SYNOPSIS
 
-See 
-   
-   http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-   file Debug.eyp
+This grammar has an unsolved shift-reduce conflict.
 
- This grammar has an unsolved shift-reduce conflict.
-
-Be sure C<DebugTail.pm> is reachable
-compile it with 
+Be sure C<DebugTail.pm> is reachable.
+Compile it with 
 
       eyapp -b '' Debug.eyp
 
-See the C<.output> file generated
-execute the generated modulino with:
+See the C<Debug.output> file generated.
+Execute the generated modulino with:
 
-      ./Debug.pm
+      ./Debug.pm -d  # to activate debugging
+      ./Debug.pm -h  # for help
 
-it will not recognize the input 'D; S' since its shifts forever
+The generated parser will not recognize any input, since its shifts forever.
+Try input C<'D; D; S'>.
 
 =head1 See also
+   
+    http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
 
-    Debug1.eyp Debug2.eyp LookForward.eyp
+    Debug1.eyp Debug2.eyp DebugLookForward.eyp DebugDynamicResolution.eyp
 
 =cut
 
@@ -41,12 +40,7 @@ p:
 
 ds:
     D ';' ds    
-  | D       
-    {
-      print "Reducing by rule:\n";
-      print "\tds -> D\n";
-      $_[1];
-    }
+  | D          /* this production is never used */ 
 ;
 
 ss:
@@ -55,6 +49,5 @@ ss:
 ;
 
 %%
-
 
 __PACKAGE__->main('Provide a statement like "D; D; S" and press <CR><CTRL-D>: ') unless caller;
