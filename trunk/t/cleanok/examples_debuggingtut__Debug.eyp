@@ -1,6 +1,3 @@
-# See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-# Debug.eyp
-# See also: Debug1.eyp Debug2.eyp LookForward.eyp
 %token D S 
 
 %%

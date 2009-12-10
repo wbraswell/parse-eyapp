@@ -1,24 +1,25 @@
-# See http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-# This files is almost like Debug1.eyp
-# It only changes the lexer line:
-#            s{^(\s)}{} and $tokenline += $1 =~ tr{\n}{};
-# by:
-#            s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
 %token D S 
+%tree
 
 %%
 
 p:
+      %name P
       ds ';' ss
-    | ss 
+    | %name SS
+      ss 
 ;
 ds:
+      %name D2
       ds ';' D
-    | D 
+    | %name D1
+      D 
 ;
 ss:
+      %name S2
       S ';' ss
-    | S 
+    | %name S1
+      S 
 ;
 
 %%

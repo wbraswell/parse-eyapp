@@ -333,11 +333,17 @@ sub YYRestoreLRAction {
 sub YYSetReduce {
   my ($self, $token, $action) = @_;
 
+  croak "YYSetReduce error: specify a production" unless defined($action);
+
   # Conflict state
   my $conflictstate = $self->YYNextState();
 
   # Action can be given using the name of the production
-  $action = -$self->YYIndex($action) unless looks_like_number($action);
+  unless (looks_like_number($action)) {
+    my $actionnum = $self->YYIndex($action);
+    croak "YYSetReduce error: can't find production '$action'. Did you forget to name it?" unless looks_like_number($actionnum);
+    $action = -$actionnum;
+  }
 
   $token = [ $token ] unless ref($token);
 
