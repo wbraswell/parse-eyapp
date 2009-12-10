@@ -24,6 +24,40 @@ Execute it with:
 
 Try inputs C<4 5>,  C<a b> and C<4 5 a b>.
 
+Here is an example of execution:
+
+  $ ./typicalrrwithprec.pm -t
+  Try "4 5 a b 2 3" (press <CR><CTRL-D> to finish): 4 5 a b 2 3
+
+  NUMLIST(
+    WORDLIST(
+      NUMLIST(
+        EMPTY,
+        NUMS(
+          TERMINAL[4],
+          NUMS(
+            TERMINAL[5],
+            EMPTYNUM
+          )
+        )
+      ),
+      IDS(
+        TERMINAL[a],
+        IDS(
+          TERMINAL[b],
+          EMPTYID
+        )
+      )
+    ),
+    NUMS(
+      TERMINAL[2],
+      NUMS(
+        TERMINAL[3],
+        EMPTYNUM
+      )
+    )
+  )
+
 
 =head1 SEE ALSO
 
