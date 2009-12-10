@@ -29,7 +29,7 @@ with input "D; S"
 
 =head1 See also
 
-    Debug1.eyp Debug2.eyp LookForward.eyp
+    Debug1.eyp Debug2.eyp DebugLookForward.eyp DebugDynamicResolution.eyp
 
 =cut
 
@@ -85,7 +85,7 @@ __PACKAGE__->lexer(
   }
 );
 
-my $prompt = 'Try first "D;S" and then "D; S" '.
+my $prompt = 'Try first "D;S" and then "D; D;  S" '.
              '(press <CR><CTRL-D> to finish): ';
 __PACKAGE__->main($prompt) unless caller();
 
