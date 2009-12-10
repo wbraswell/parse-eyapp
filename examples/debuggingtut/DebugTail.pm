@@ -64,7 +64,7 @@ sub slurp_file {
   my $f;
 
   local $/ = undef;
-  if (-r $fn) {
+  if ($fn && -r $fn) {
     open $f, $fn  or die "Can't find file '$fn'!\n";
   }
   else {
