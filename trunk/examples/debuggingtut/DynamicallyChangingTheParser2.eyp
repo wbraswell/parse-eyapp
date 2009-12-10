@@ -2,7 +2,7 @@
 =head1 SYNOPSIS
 
 This example is here only for historical reasons.
-The method C<YYRestoreLRAction> is obsolete.
+The method C<YYRestoreLRAction> is deprecated.
 
 See section 'SOLVING CONFLICTS WITH THE POSTPONED CONFLICT STRATEGY' in
 http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut

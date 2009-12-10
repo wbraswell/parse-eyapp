@@ -92,9 +92,11 @@ __PACKAGE__->lexer(
   }
 );
 
-my $prompt = 'Try first "int (x) = 2;" then "int (x) + 2;" '.
-             '(press <CR><CTRL-D> to finish): ';
-__PACKAGE__->main($prompt) unless caller();
+unless caller() {
+  my $prompt = 'Try first "int (x) = 2;" then "int (x) + 2;" '.
+               '(press <CR><CTRL-D> to finish): ';
+  __PACKAGE__->main($prompt) 
+}
 
 ####################################################
 
