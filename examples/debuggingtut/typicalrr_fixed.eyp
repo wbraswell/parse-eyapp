@@ -1,19 +1,26 @@
 %{
 =head1 SYNOPIS
 
-State 4:
+=head1 SYNOPSIS
 
-	s -> s ns .	(Rule 3)
-	ns -> ns . NUM	(Rule 7)
+Compile it with 
 
-	NUM	shift, and go to state 7
+            eyapp -b '' typicalrr_fixed
 
-	NUM	[reduce using rule 3 (s)]
-	$default	reduce using rule 3 (s)
+Execute it with:
+
+   ./typicalrr_fixed.pm -d
+
+Try inputs C<4 5>,  C<a b> and C<4 5 a b>.
 
 
+=head1 SEE ALSO
+
+see  typicalrr.eyp, typicalrr2.eyp and correcttypicalrr.eyp 
 
 =cut
+
+use base q{RRTail}; 
 
 %}
 %right ID NUM
@@ -35,4 +42,10 @@ ns:
 ;
 
 %%
+
+unless (caller()) {
+  my $prompt = 'Try "4 5 a b 2 3" '.
+               '(press <CR><CTRL-D> to finish): ';
+  __PACKAGE__->main($prompt) 
+}
 
