@@ -28,6 +28,8 @@ and execute it with:
 use base q{DebugTail}; 
 %}
 
+%expect 0 1
+
 %tree
 
 %%

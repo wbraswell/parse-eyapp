@@ -1,3 +1,22 @@
+%{
+
+=head1  SYNOPSIS
+
+Minimal example of a Reduce-Reduce conflict
+
+Compile it with:
+
+   eyapp -b '' minimalrr.eyp
+
+Execute it with:
+
+   ./minimalrr.pm -t
+
+=cut
+
+use base q{DebugTail}; 
+%}
+
 %tree
 
 %%
@@ -13,50 +32,7 @@ A:
 
 %%
 
-sub _Error {
-  my $parser = shift;
-
-  my ($token) = $parser->YYCurval;
-  my ($what) = $token ? "input: '$token'" : "end of input";
-  warn "Syntax error near $what\n";
+unless (caller) {
+  my $prompt = 'Try "a" and press <CR><CTRL-D>: ';
+  __PACKAGE__->main($prompt)
 }
-
-my $input;
-
-sub _Lexer {
-  my $self = shift;
-  
-  for ($input) {
-    s{^(\s*)}{};
-
-    return ('',undef) unless $_;
-
-    return ($1,$1) if s/^(.)//;
-  }
-  return ('',undef);
-}
-
-sub Run {
-  my $debug = shift || 0;
-  $debug = 0x1F if $debug;
-
-  $input = <STDIN>;
-
-  my $self = __PACKAGE__->new();
-
-  print $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, yydebug => $debug,)->str."\n";
-}
-
-Run(@ARGV) unless caller;
-
-=head1  Minimal test for Reduce-Reduce conflicts
-
-I have found a bug in Eyapp for reduce-reduce conflicts. Instead
-of the first rule, the last is sometimes selected
-
-Compile it with:
-
-   eyapp -vb '' minimalrr.eyp
-
-=cut
-
