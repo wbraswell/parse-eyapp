@@ -7,7 +7,8 @@
 See file confusing.eyp
 
 This is a modification of the grammar in C<confusing.eyp>.
-It fixes the conflict by simply unifying the states
+It fixes the conflict by simply factorizing the conflicting
+productions
 
 =cut
 
@@ -15,7 +16,10 @@ It fixes the conflict by simply unifying the states
 
 %%
 A: 
-    'x' 'y' 'c' 'd' 
-  | 'x' 'y' 'c' 'f' 
+    B 'c' 'd' 
+  | B 'c' 'f' 
+;
+B: 
+    'x' 'y' 
 ;
 %%
