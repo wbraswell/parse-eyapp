@@ -8,11 +8,10 @@ I believe the fact that EOI can be involved in a
 conflict resolution has been overlooked.
 
 It attempts to solve the conflict in 
-c<typicalrr.eyp> by given priority
-only to the  'empty rules. The result is a bit
-strange. Warning: Don't look at it if you 
+C<typicalrr.eyp> by giving priority
+only to the  'empty rules'. The result is a bit
+strange. Warning: Don't look too much at it if you 
 are new to LALR conflict resolution.
-
 
 Compile it with 
 
