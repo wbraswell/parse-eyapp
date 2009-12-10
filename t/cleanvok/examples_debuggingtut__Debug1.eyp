@@ -1,18 +1,25 @@
 %token D S 
+%tree
 
 %%
 
 p:
+      %name P
       ds ';' ss
-    | ss 
+    | %name SS
+      ss 
 ;
 ds:
+      %name D2
       ds ';' D
-    | D 
+    | %name D1
+      D 
 ;
 ss:
+      %name S2
       S ';' ss
-    | S 
+    | %name S1
+      S 
 ;
 
 %%
