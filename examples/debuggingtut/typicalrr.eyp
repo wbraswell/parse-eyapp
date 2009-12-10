@@ -87,7 +87,7 @@ see  correcttypicalrr.eyp and typicalrr_fixed.eyp
 
 =cut
 
-use base q{DebugTail}; 
+use base q{RRTail}; 
 
 %}
 %token ID NUM 
@@ -112,21 +112,6 @@ ws:
 ;
 
 %%
-
-__PACKAGE__->lexer( sub {
-    my $self = shift;
-    
-    for (${$self->input()}) {
-      s{^(\s*)}{};
-
-      return ('',undef) unless $_;
-
-      return ('NUM',$1) if s/^(\d+)//;
-      return ('ID',$1) if s/^([a-zA-Z_]\w*)//;
-    }
-    return ('',undef);
-  }
-);
 
 unless (caller()) {
   my $prompt = 'Try inputs "4 5",  "a b" and "4 5 a b"'.
