@@ -918,12 +918,19 @@ the directory C<examples/Calculator>:
   8
   9:      use base q{Math::Tail};
   10:     my %s; # symbol table
+
+Lines 37 to 41 contain the semantic action associated with the production 
+C<exp -E<gt> VAR> (see file C<examples/Calculator/lib/Math/Calc.eyp>):
+
     DB<2> l 37,41
   37:            my $id = $VAR->[0];
   38:            my $val = $s{$id};
   39:            $_[0]->semantic_error("Accesing undefined variable $id at line $VAR->[1].\n")
   40             unless defined($val);
   41:            return $val;
+
+now we set a break at line 37, to see what happens when a non initialized variable is used:
+
     DB<3> b 37
 
 We issue now the command C<c> (continue). The execution continues until
@@ -950,10 +957,64 @@ behavior.
 
 =head1 SOLVING DIFFICULT CONFLICTS AND AMBIGUITIES
 
-=head2 Reduce-Reduce Conflicts
+=head2 Reduce-Reduce Conflict: Default rules
 
 Most of the time reduce-reduce conflicts are due to some ambiguity in
-the grammar. In this example the programmer has attempted to define
+the grammar as occours in this minimal example:
+
+  pl@nereida:~/LEyapp/examples/debuggingtut$ sed -ne '/%%/,/%%/p' minimalrr.eyp | cat -n
+     1  %%
+     2  s:
+     3        %name S_is_a
+     4        'a'
+     5      | A
+     6  ;
+     7  A:
+     8        %name A_is_a
+     9        'a'
+    10  ;
+    11
+    12  %%
+
+In case of a reduce-reduce conflict, L<Parse::Eyapp> reduces
+using the first production in the text:
+
+  pl@nereida:~/LEyapp/examples/debuggingtut$ eyapp -b '' minimalrr.eyp
+  1 reduce/reduce conflict
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./minimalrr.pm -t
+  Try "a" and press <CR><CTRL-D>: a
+  S_is_a
+
+If we change the order of the productions 
+
+  pl@nereida:~/LEyapp/examples/debuggingtut$ sed -ne '/%start/,40p' minimalrr2.eyp | cat -n
+     1  %start s
+     2
+     3  %%
+     4  A:
+     5        %name A_is_a
+     6        'a'
+     7  ;
+     8
+     9  s:
+    10        %name S_is_a
+    11        'a'
+    12      | %name A
+    13        A
+    14  ;
+    15  %%
+
+the selected production changes:
+
+  pl@nereida:~/LEyapp/examples/debuggingtut$ eyapp -b '' minimalrr2
+  1 reduce/reduce conflict
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./minimalrr2.pm -t
+  Try "a" and press <CR><CTRL-D>: a
+  A(A_is_a)
+
+=head2 Reduce-Reduce conflicts: typical errors
+
+In this example the programmer has attempted to define
 a language made of mixed lists C<ID>s and C<NUM>bers :
 
   pl@europa:~/LEyapp/examples/debuggingtut$ cat -n typicalrr.eyp
