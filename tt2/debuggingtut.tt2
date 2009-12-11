@@ -1045,7 +1045,34 @@ The grammar has several reduce-reduce conflicts:
   State 2: shifts:
     to state    5 with NUM  and 3 reduce/reduce conflicts
 
-In fact we have infinite ways to rightmost derive the empty string.
+=over 2
+
+=item * Statments like 
+
+              NUM NUM NUM
+
+are ambiguous. The following two left-most derivations
+exists:
+
+             s =*=> ns ns =*=> NUM NUM ns => NUM NUM NUM
+and
+
+             s =*=> ns ns =*=> NUM ns =*=> NUM NUM NUM
+ 
+the same with phrases like C<ID ID ID>
+
+=item * The empty word can be generated in many ways. For 
+example:
+
+        s => empty
+
+or
+
+        s => s ns => s empty => empty
+
+etc.
+
+=back
 
 The problem is easily solved designing an equivalent non ambiguous grammar:
 
