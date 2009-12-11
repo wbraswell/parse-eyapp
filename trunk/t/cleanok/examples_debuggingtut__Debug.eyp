@@ -8,7 +8,7 @@ p:
 ;
 ds:
       D ';' ds
-    | D 
+    | D /* this production is never used */
 ;
 ss:
       S ';' ss

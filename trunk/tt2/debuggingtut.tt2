@@ -201,74 +201,60 @@ of declarations (C<D> stands for declaration)
 followed by lists of sentences (C<S> stands for statement)
 separated by semicolons:
 
-  pl@europa:~/LEyapp/examples/debuggingtut$ cat -n Debug.eyp
-     1  # Debug.eyp
-     2  # compile it eyapp -b Debug.eyp -o Debug.pl to produce an
-     3  # executable
-     4
-     5  %token D S
-     6
-     7  %{
-     8  our $VERSION = '0.01';
-     9  %}
-    10
-    11  %%
-    12  p:
-    13      ds ';' ss
-    14    | ss
-    15  ;
+  pl@nereida:~/LEyapp/examples/debuggingtut$ cat -n Debug.eyp                   
+     1  %{                                                                    
+     2  =head1 SYNOPSIS                                                       
+     3                                                                        
+     4  This grammar has an unsolved shift-reduce conflict.                   
+     5                                                                        
+     6  Be sure C<DebugTail.pm> is reachable.                                 
+     7  Compile it with                                                       
+     8                                                                        
+     9        eyapp -b '' Debug.eyp                                           
+    10                                                                        
+    11  See the C<Debug.output> file generated.                               
+    12  Execute the generated modulino with:                                  
+    13                                                                        
+    14        ./Debug.pm -d  # to activate debugging                          
+    15        ./Debug.pm -h  # for help
     16
-    17  ds:
-    18      D ';' ds
-    19    | D
-    20      {
-    21        print "Reducing by rule:\n";
-    22        print "\tds -> D\n";
-    23        $_[1];
-    24      }
-    25  ;
-    26
-    27  ss:
-    28      S ';' ss
-    29    | S
-    30  ;
-    31
-    32  %%
-    33
-    34  my $tokenline = 1;
-    35
-    36  sub _Error {
-    37    my $parser = shift;
-    38
-    39    my ($token) = $parser->YYCurval;
-    40    my ($what) = $token ? "input: '$token'" : "end of input";
-    41    die "Syntax error near $what line num $tokenline\n";
-    42  }
-    43
-    44  my $input;
+    17  The generated parser will not recognize any input, since its shifts forever.
+    18  Try input C<'D; D; S'>.
+    19
+    20  =head1 See also
+    21
+    22      http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
+    23
+    24      Debug1.eyp Debug2.eyp DebugLookForward.eyp DebugDynamicResolution.eyp
+    25
+    26  =cut
+    27
+    28  our $VERSION = '0.01';
+    29  use base q{DebugTail};
+    30
+    31  %}
+    32
+    33  %token D S
+    34
+    35  %%
+    36  p:
+    37      ds ';' ss
+    38    | ss
+    39  ;
+    40
+    41  ds:
+    42      D ';' ds
+    43    | D          /* this production is never used */
+    44  ;
     45
-    46  sub _Lexer {
-    47
-    48    for ($input) {
-    49      s{^(\s)}{} and $tokenline += $1 =~ tr{\n}{};
-    50      return ('',undef) unless $_;
-    51      return ($1,$1) if s/^(.)//;
-    52    }
-    53    return ('',undef);
-    54  }
-    55
-    56  sub Run {
-    57
-    58    $input = <>;
-    59
-    60    my $self = __PACKAGE__->new();
-    61
-    62    return $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error,
-    63                           yydebug => 0x1F
-    64    );
-    65  }
-    66
-    67  Run() unless caller;
+    46  ss:
+    47      S ';' ss
+    48    | S
+    49  ;
+    50
+    51  %%
+    52
+    53  __PACKAGE__->main('Provide a statement like "D; D; S" and press <CR><CTRL-D>: ') unless caller;
 
 
 =head2 Focusing in the Grammar
@@ -519,7 +505,7 @@ as it was done for the calculator example
 in L<Parse::Eyapp::eyappintro>. If we run the analyzer
 it will refuse to accept correct entries like C<D;D;S>: 
 
-  pl@europa:~/LEyapp/examples/debuggingtut$ eyapp -b -o debug.pl Debug.eyp
+  pl@europa:~/LEyapp/examples/debuggingtut$ eyapp -b '' -o debug.pl Debug.eyp
   1 shift/reduce conflict (see .output file)
   State 4: shifts:
     to state    8 with ';'
@@ -595,16 +581,13 @@ priorities and reorganizing the rules.
 Rewriting the recursive rule for C<ds> to
 be let recursive solves the conflict:
 
-  pl@nereida:~/LEyapp/examples$ sed -ne '/^ds:/,/^;/p' Debug1.eyp | cat -n
-   1  ds:
-   2            ds ';' D
-   3          | D
-   4      {
-   5        print "Reducing by rule:\n";
-   6        print "\tds -> D\n";
-   7        $_[1];
-   8      }
-   9  ;
+  pl@nereida:~/LEyapp/examples/debuggingtut$ sed -ne '/^ds:/,/^;/p' Debug1.eyp | cat -n
+     1  ds:
+     2      %name D2
+     3        ds ';' D
+     4    | %name D1
+     5        D
+     6  ;
 
 Now, for any phrase matching the pattern C<D ; ...> the action to build
 the tree is to reduce by
@@ -637,108 +620,99 @@ C<SEMICOLONS> if it is an C<S> and
 C<SEMICOLOND> if it is an C<D>.
 Here is a solution based in this idea:
 
-  Eyapp/examples/debuggingtut$ cat -n DebugLookForward.eyp
-     1  /*VIM: set ts=2 */
-     2  %token D S
-     3  %token SEMICOLONS SEMICOLOND
-     4
-     5  %{
-     6  our $VERSION = '0.01';
-     7  %}
-     8
-     9  %%
-    10  p:
-    11      ds SEMICOLONS ss
-    12    | ss
-    13  ;
-    14
-    15  ds:
-    16      D SEMICOLOND ds
-    17    | D
-    18      {
-    19        print "Reducing by rule:\n";
-    20        print "\tds -> D\n";
-    21        $_[1];
-    22      }
-    23  ;
-    24
-    25  ss:
-    26      S SEMICOLONS ss
-    27    | S
-    28  ;
-    29
-    30  %%
-    31
-    32  my $tokenline = 1;
-    33
-    34  sub _Error {
-    35    my $parser = shift;
-    36    my ($token) = $parser->YYCurval;
-    37    my ($what) = $token ? "input: '$token'" : "end of input";
-    38    die "Syntax error near $what line num $tokenline\n";
-    39  }
-    40
-    41  my $input;
-    42
-    43  sub _Lexer {
+  pl@nereida:~/LEyapp/examples/debuggingtut$ cat -n DebugLookForward.eyp               
+     1  /*VIM: set ts=2 */                                                           
+     2  %{                                                                           
+     3  =head1 SYNOPSIS                                                              
+     4                                                                               
+     5  See                                                                          
+     6                                                                               
+     7     http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut                 
+     8     file DebugLookForward.eyp                                                 
+     9                                                                               
+    10  This grammar fixes the conflicts an bugs in Debug.eyp and Debug1.eyp         
+    11                                                                               
+    12  Be sure C<DebugTail.pm> is reachable                                         
+    13  compile it with                                                              
+    14                                                                               
+    15        eyapp -b '' DebugLookForward.eyp                                       
+    16                                                                               
+    17  execute the generated modulino with:                                         
+    18                                                                               
+    19        ./DebugLookForward.pm -t                                               
+    20                                                                               
+    21  =head1 See also                                                              
+    22                                                                               
+    23      Debug.eyp Debug1.eyp Debug2.eyp                                          
+    24                                                                               
+    25  =cut                                                                         
+    26                                                                               
+    27  our $VERSION = '0.01';                                                       
+    28  use base q{DebugTail};                                                       
+    29                                                                               
+    30  %}                                                                           
+    31                                                                               
+    32  %token D S                                                                   
+    33  %syntactic token SEMICOLONS SEMICOLOND                                       
+    34                                                                               
+    35  %tree                                                                        
+    36                                                                               
+    37  %%                                                                           
+    38  p:                                                                           
+    39      %name P                                                                  
+    40      ds SEMICOLONS ss                                                         
+    41    | %name SS
+    42      ss
+    43  ;
     44
-    45    for ($input) {
-    46       s{^(\s)}{} and $tokenline += $1 =~ tr{\n}{};
-    47       return ('',undef) unless $_;
-    48       return ($1,$1) if s/^([sSDd])//;
-    49       return ('SEMICOLOND', 'SEMICOLOND') if s/^(;)\s*(D)/D/;
-    50       return ('SEMICOLONS', 'SEMICOLONS') if s/^(;)\s*(S)/S/;
-    51       die "Syntax error at line num $tokenline:".substr($_,0,10)."\n";
-    52    }
-    53    return ('',undef);
-    54  }
-    55
-    56  sub Run {
-    57    my ($self) = shift;
+    45  ds:
+    46      %name D2
+    47        D SEMICOLOND ds
+    48    | %name D1
+    49        D
+    50  ;
+    51
+    52  ss:
+    53      %name S2
+    54        S SEMICOLONS ss
+    55    | %name S1
+    56        S
+    57  ;
     58
-    59    $input = shift;
+    59  %%
     60
-    61    return $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error,
-    62                           #yydebug => 0x1F
-    63    );
-    64  }
+    61  __PACKAGE__->lexer(
+    62    sub {
+    63      my $self = shift;
+    64
+    65      for (${$self->input()}) {
+    66         s{^(\s+)}{} and $self->tokenline($1 =~ tr{\n}{});
+    67         return ('',undef) unless $_;
+    68
+    69         return ($1,$1) if s/^([sSDd])//;
+    70         return ('SEMICOLOND', 'SEMICOLOND') if s/^;\s*D/D/;
+    71         return ('SEMICOLONS', 'SEMICOLONS') if s/^;\s*S/S/;
+    72         die "Syntax error at line num ${$self->tokenline()}: ${substr($_,0,10)}\n";
+    73      }
+    74      return ('',undef);
+    75    }
+    76  );
+    77
+    78  __PACKAGE__->main unless caller();
 
 
 =head1 ERRORS DURING TREE CONSTRUCTION
 
-Let us write the typical client program for the parser 
-in C<Debug1>:
+Though C<Debug1.pm> seems to work:
 
-  pl@nereida:~/LEyapp/examples$ cat -n usedebug1.pl
-   1  #!/usr/bin/perl -w
-   2  # usetreebypass.pl prueba2.exp
-   3  use strict;
-   4  use Debug1;
-   5
-   6  sub slurp_file {
-   7    my $fn = shift;
-   8    my $f;
-   9
-  10    local $/ = undef;
-  11    if (defined($fn)) {
-  12      open $f, $fn  or die "Can't find file $fn!\n";
-  13    }
-  14    else {
-  15      $f = \*STDIN;
-  16    }
-  17    my $input = <$f>;
-  18    return $input;
-  19  }
-  20
-  21  my $input = slurp_file( shift() );
-  22
-  23  my $parser = Debug1->new();
-  24
-  25  $parser->Run($input);
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./Debug1.pm -t
+  Try first "D;S" and then "D; D;  S" (press <CR><CTRL-D> to finish): D;D;S
+  P(D2(D1(TERMINAL[D]),TERMINAL[D]),S1(TERMINAL[S]))
 
-When executing the program we observe an abnormal behavior:
+There are occasions where we observe an abnormal behavior:
 
-  examples/debuggingtut$ usedebug1.pl
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./Debug1.pm -t
+  Try first "D;S" and then "D; D;  S" (press <CR><CTRL-D> to finish):
   D
 
   ;
@@ -747,12 +721,11 @@ When executing the program we observe an abnormal behavior:
 
   ;
   S
-  Reducing by rule:
-          ds -> D
-  Syntax error near end of input line num 2
+  Syntax error near end of input line num 3. Expecting (;)
 
-We activate the option C<yydebug =E<gt> 0xF>
-in the call to a C<YYParser>.
+
+We can activate the option C<yydebug =E<gt> 0xF>
+in the call to the parser method C<YYParser>.
 The integer parameter C<yydebug> of C<new> and C<YYParse>
 controls the level of debugging. Different levels of 
 verbosity can be obtained by setting the bits of this
@@ -775,13 +748,16 @@ argument. It works as follows:
 Let us see what happens when the input is C<D;S>. We have introduced
 some white spaces and carriage returns between the terminals:
 
-  pl@nereida:~/LEyapp/examples$ usedebug1.pl
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./Debug1.pm -d
+  Try first "D;S" and then "D; D;  S" (press <CR><CTRL-D> to finish):
   D
 
   ;
 
-  S
+  D
 
+  ;
+  S
   ----------------------------------------
   In state 0:
   Stack:[0]
@@ -791,14 +767,12 @@ some white spaces and carriage returns between the terminals:
   In state 4:
   Stack:[0,4]
   Don't need token.
-  Reduce using rule 4 (ds --> D): Reducing by rule:
-          ds -> D
-  Back to state 0, then go to state 5.
+  Reduce using rule 4 (ds --> D): Back to state 0, then go to state 5.
   ----------------------------------------
   In state 5:
   Stack:[0,5]
   Need token. Got ><
-  Syntax error near end of input line num 1
+  Syntax error near end of input line num 3. Expecting (;)
 
 What's going on?
 After reading the carriage return 
@@ -809,57 +783,66 @@ the parser receives an end of file. ¿Why?.
 Something is going wrong in the communications between lexical analyzer
 and parser. Let us review the lexical analyzer:
 
-  pl@nereida:~/LEyapp/examples$ sed -ne '/sub.*_Lexer/,/^}/p' Debug1.eyp | cat -n
-   1  sub _Lexer {
-   2
-   3          for ($input) {
-   4             s{^(\s)}{} and $tokenline += $1 =~ tr{\n}{};
-   5             return ('',undef) unless $_;
-   6             return ($1,$1) if s/^(.)//;
-   7          }
-   8          return ('',undef);
-   9  }
+  pl@nereida:~/LEyapp/examples/debuggingtut$ sed -ne '/lexer/,/^)/p' Debug1.eyp | cat -n
+     1  __PACKAGE__->lexer(
+     2    sub {
+     3      my $self = shift;
+     4
+     5      for (${$self->input()}) {  # contextualize
+     6          s{^(\s)}{} and $self->tokenline($1 =~ tr{\n}{});
+     7
+     8          return ('', undef) unless $_;
+     9          return ($1, $1) if s/^(.)//;
+    10      }
+    11      return ('', undef);
+    12    }
+    13  );
 
-The error is at line 4. Only a single white space is eaten!
-The second white in the input does not match lines 5 and 6 and the 
-contextualizing C<for> finishes. Line 8 the returns
+
+The error is at line 6. Only a single white space is eaten!
+The second carraige return in the input does not match lines 8 and 9 and the 
+contextualizing C<for> finishes. Line 11 then unconditionally returns
 the C<('',undef)> signaling the end of input.
 
-Let us write a new version C<Debug2.eyp> that fixes the problem:
+The grammar in file C<Debug2.eyp> fixes the problem:
+Now the analysis seems to work for this kind of input:
 
-  pl@nereida:~/LEyapp/examples$ sed -ne '/sub.*_Lexer/,/^}/p' Debug2.eyp | cat -n
-   1  sub _Lexer {
-   2
-   3          for ($input) {
-   4             s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
-   5             return ('',undef) unless $_;
-   6             return ($1,$1) if s/^(.)//;
-   7          }
-   8          return ('',undef);
-   9  }
-
-
-Now the analysis seems to work:
-
-  pl@nereida:~/LEyapp/examples$ usedebug2.pl
-  D
+  pl@nereida:~/LEyapp/examples/debuggingtut$ eyapp -b '' Debug2.eyp                     
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./Debug2.pm -t -d                          
+  Provide a statement like "D; D; S" and press <CR><CTRL-D>:                            
+  D                                                                                     
 
   ;
 
-  S
+  D
 
+  ;
+  S
   ----------------------------------------
-  In state 0:
-  Stack:[0]
+  In state 0:                             
+  Stack:[0]                               
+  Need token. Got >D<                     
+  Shift and go to state 4.                
+  ----------------------------------------
+  In state 4:                             
+  Stack:[0,4]                             
+  Don't need token.                       
+  Reduce using rule 4 (ds --> D): Back to state 0, then go to state 5.
+  ----------------------------------------                            
+  In state 5:                                                         
+  Stack:[0,5]                                                         
+  Need token. Got >;<                                                 
+  Shift and go to state 8.                                            
+  ----------------------------------------                            
+  In state 8:
+  Stack:[0,5,8]
   Need token. Got >D<
-  Shift and go to state 4.
+  Shift and go to state 11.
   ----------------------------------------
-  In state 4:
-  Stack:[0,4]
+  In state 11:
+  Stack:[0,5,8,11]
   Don't need token.
-  Reduce using rule 4 (ds --> D): Reducing by rule:
-          ds -> D
-  Back to state 0, then go to state 5.
+  Reduce using rule 3 (ds --> ds ; D): Back to state 0, then go to state 5.
   ----------------------------------------
   In state 5:
   Stack:[0,5]
@@ -889,6 +872,7 @@ Now the analysis seems to work:
   Stack:[0,2,7]
   Don't need token.
   Accept.
+  P(D2(D1(TERMINAL[D]),TERMINAL[D]),S1(TERMINAL[S]))
 
 =head1 THE LR PARSING ALGORITHM: UNDERSTANDING THE OUTPUT OF C<yydebug> 
 
@@ -1540,7 +1524,7 @@ I use these rules for indenting L<Parse::Eyapp> programs:
 
 =over 2
 
-=item * Use uppercase identifiers for tokens, lowecase identifiers for 
+=item * Use uppercase identifiers for tokens, lowercase identifiers for 
 syntactic variables
 
 =item * The syntactic variable that defines the rule must be at in a single line 
