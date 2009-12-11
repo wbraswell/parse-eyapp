@@ -960,7 +960,7 @@ behavior.
 =head2 Reduce-Reduce Conflict: Default rules
 
 Most of the time reduce-reduce conflicts are due to some ambiguity in
-the grammar as occours in this minimal example:
+the grammar, as it is the case for this minimal example:
 
   pl@nereida:~/LEyapp/examples/debuggingtut$ sed -ne '/%%/,/%%/p' minimalrr.eyp | cat -n
      1  %%
