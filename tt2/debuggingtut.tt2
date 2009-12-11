@@ -955,7 +955,7 @@ behavior.
     DB<5> x %s
     empty array
 
-=head1 SOLVING DIFFICULT CONFLICTS AND AMBIGUITIES
+=head1 SOLVING REDUCE-REDUCE CONFLICTS
 
 =head2 Reduce-Reduce Conflict: Default rules
 
