@@ -64,8 +64,11 @@ use base q{DebugTail};
 type_decl : TYPE ID '=' type ';'
 ;
 
-type : LEFTPAR id_list ')'
-    | expr DOTDOT expr
+type : 
+      %name ENUM
+      LEFTPAR id_list ')'
+    | %name RANGE
+      expr DOTDOT expr
 ;
 
 id_list : ID
@@ -89,7 +92,8 @@ __PACKAGE__->lexer(
     my $parser = shift;
 
     for (${$parser->input()}) {    # contextualize
-      m{\G\s*}gc;
+      m{\G(\s*)}gc;
+      $parser->tokenline($1 =~ tr{\n}{});
 
       m{\Gtype\b}gic                 and return ('TYPE', 'TYPE');
 
@@ -103,6 +107,7 @@ __PACKAGE__->lexer(
                (?:\s*,\s* $ID)*
                \s*
                \)    # closing parenthesis
+               \s*;  # semicolon: end declaration
             )
       }gcx                           and return ('LEFTPAR', '(');
 
@@ -115,14 +120,10 @@ __PACKAGE__->lexer(
   }
 );
 
-sub TERMINAL::info {
-  $_[0]->{attr}
-}
-
 unless (caller()) {
   $Parse::Eyapp::Node::INDENT = 1;
   my $prompt = << 'EOP';
-Try first this input:
+Try this input:
     type 
     r
     =
@@ -130,6 +131,13 @@ Try first this input:
     ..
     y
     ;
+
+Here other inputs you can try:
+
+    type r = (x+2)*3 ..  y/2 ;
+    type e = (x, y, z);
+    type e = (x);
+
 Press CTRL-D (CTRL-W in windows) to produce the end-of-file
 EOP
   __PACKAGE__->main($prompt); 
