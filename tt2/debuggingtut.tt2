@@ -1290,7 +1290,7 @@ The grammar in file C<pascalenumeratedvsrangesolvedvialex.eyp> solves
 this particular problem by looking ahead in the lexical analyzer: if the parenthesis
 is followed by a sequence of comma separated identifiers finished by the closing 
 parenthesis and a semicolon we can conclude that is a enumerated type 
-declaration.
+declaration. For more details, have a look at the file.
 
 =head2 Reduce-Reduce Conflicts with Unambiguous Grammars
 
