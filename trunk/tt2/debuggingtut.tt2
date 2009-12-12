@@ -1103,6 +1103,7 @@ The generated parser loops forever if feed with a list of identifiers:
   Stack:[0,1,2]
   Reduce using rule 3 (s --> s ns): Back to state 0, then go to state 1.
   ----------------------------------------
+  ^C
 
 The problem is easily solved designing an equivalent non ambiguous grammar:
 
@@ -1117,6 +1118,15 @@ The problem is easily solved designing an equivalent non ambiguous grammar:
      8  ;
      9
     10  %%
+
+See also these files:
+
+=over 2
+
+=item * C<typicalrr2.eyp> is equivalent to C<typicalrr.eyp> but has C<%name> directives, to 
+have a nicer tree
+
+=back
 
 =head2 Giving an Explicit Priority to the End-of-Input Token
 
