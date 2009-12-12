@@ -1076,6 +1076,34 @@ etc.
 
 =back
 
+The generated parser loops forever if feed with a list of identifiers:
+
+  ~/LEyapp/examples/debuggingtut$ ./typicalrr.pm -d
+  Try inputs "4 5",  "a b" and "4 5 a b"(press <CR><CTRL-D> to finish): ab
+  ----------------------------------------
+  In state 0:
+  Stack:[0]
+  Don't need token.
+  Reduce using rule 1 (s --> /* empty */): Back to state 0, then go to state 1.
+  ----------------------------------------
+  In state 1:
+  Stack:[0,1]
+  Need token. Got >ID<
+  Reduce using rule 4 (ns --> /* empty */): Back to state 1, then go to state 2.
+  ----------------------------------------
+  In state 2:
+  Stack:[0,1,2]
+  Reduce using rule 3 (s --> s ns): Back to state 0, then go to state 1.
+  ----------------------------------------
+  In state 1:
+  Stack:[0,1]
+  Reduce using rule 4 (ns --> /* empty */): Back to state 1, then go to state 2.
+  ----------------------------------------
+  In state 2:
+  Stack:[0,1,2]
+  Reduce using rule 3 (s --> s ns): Back to state 0, then go to state 1.
+  ----------------------------------------
+
 The problem is easily solved designing an equivalent non ambiguous grammar:
 
   pl@europa:~/LEyapp/examples/debuggingtut$ cat -n correcttypicalrr.eyp
