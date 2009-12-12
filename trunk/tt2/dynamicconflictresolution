@@ -321,7 +321,7 @@ The program now successfully solves the ambiguity:
   int(x);
   PROG(EMPTY,DECL(TERMINAL[int],DECID[x]))
 
-=head2 Solving 
+=head2 Solving the Enumerated versus Range declarations conflict using the Posponed Conflict Resolution Strategy
 
 In file C<pascalenumeratedvsrangesolvedviadyn.eyp> we apply the postponed conflict resolution strategy
 to the reduce reduce conflict that arises in Extended Pascal between the declaration of ranges and
