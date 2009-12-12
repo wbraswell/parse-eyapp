@@ -1017,33 +1017,35 @@ the selected production changes:
 In this example the programmer has attempted to define
 a language made of mixed lists C<ID>s and C<NUM>bers :
 
-  pl@europa:~/LEyapp/examples/debuggingtut$ cat -n typicalrr.eyp
-     1  %token ID NUM
-     2
-     3  %%
-     4  s:
-     5        /* empty */
-     6      | s ws
-     7      | s ns
-     8  ;
-     9  ws:
-    10        /* empty */
-    11      | ws ID
-    12  ;
-    13  ns:
-    14        /* empty */
-    15      | ns NUM
-    16  ;
-    17
-    18  %%
+  ~/LEyapp/examples/debuggingtut$ eyapp -c typicalrr.eyp 
+  %token ID NUM 
+  %tree
+
+  %%
+
+  s:
+        /* empty */
+      | s ws
+      | s ns 
+  ;
+  ns:
+        /* empty */
+      | ns NUM 
+  ;
+  ws:
+        /* empty */
+      | ws ID 
+  ;
+
+  %%
+
 
 The grammar has several reduce-reduce conflicts:
 
-  pl@europa:~/LEyapp/examples/debuggingtut$ eyapp typicalrr.eyp
-  3 shift/reduce conflicts (see .output file)
-  State 2: reduce by rule 3: s -> s ns (default action)
-  State 2: shifts:
-    to state    5 with NUM  and 3 reduce/reduce conflicts
+  ~/LEyapp/examples/debuggingtut$ eyapp -b '' typicalrr.eyp 
+  3 shift/reduce conflicts and 3 reduce/reduce conflicts
+
+There are several sources of ambiguity in this grammar:
 
 =over 2
 
@@ -1088,20 +1090,19 @@ The problem is easily solved designing an equivalent non ambiguous grammar:
      9
     10  %%
 
-Of course you can also try to disambiguate using priorities. In the
-file C<examples/debuggingtut/typicalrrwithprec.eyp> there
-is a solution:
+=head2 Giving an Explicit Priority to the End-of-Input Token
 
-  lusasoft@LusaSoft:~/src/perl/Parse-Eyapp/examples/debuggingtut$ eyapp -c typicalrrwithprec.eyp
-  # This example illustrates how to express EOI in the header section: use ''
-  # For the original grammar
-  # see file
-  #   typicalrr.eyp
-  # For an alternative solution see file
-  #   correcttypicalrr.eyp
-  %right LNUM
-  %right NUM
-  %right ID
+We can also try to disambiguate the former example
+using priorities. For that we need to give an explicit priority to the 
+end-of-input token. To refer to the end-of-input token in the header section,
+use the empty string C<''>. In the
+file C<examples/debuggingtut/typicalrrwithprec.eyp> there
+is a priority based solution:
+
+  ~/LEyapp/examples/debuggingtut$ eyapp -c typicalrrwithprec.eyp
+  %right LNUM 
+  %right NUM 
+  %right ID 
   %right '' # The string '' refers to the 'End of Input' token
   %tree bypass
 
@@ -1110,28 +1111,61 @@ is a solution:
   s:
         %name EMPTY
         /* empty */%prec ''
-      | %name WORDS
+      | %name LIST
         s ws
-      | %name NUMS
-        s ns
+      | %name LIST
+        s ns 
   ;
   ns:
         %name EMPTYNUM
         /* empty */%prec NUM
       | %name NUMS
-        NUM ns
+        NUM ns 
   ;
   ws:
         %name EMPTYID
         /* empty */%prec LNUM
       | %name IDS
-        ID ws
+        ID ws 
   ;
 
   %%
 
+
 Observe the use of C<%right ''> in the header section:
 it gives a priority to the end-of-input token.
+
+  ~/LEyapp/examples/debuggingtut$ ./typicalrrwithprec.pm -t
+  Try "4 5 a b 2 3" (press <CR><CTRL-D> to finish): 4 5 a b 2 3
+  ^D
+  LIST(
+    LIST(
+      LIST(
+        EMPTY,
+        NUMS(
+          TERMINAL[4],
+          NUMS(
+            TERMINAL[5],
+            EMPTYNUM
+          )
+        )
+      ),
+      IDS(
+        TERMINAL[a],
+        IDS(
+          TERMINAL[b],
+          EMPTYID
+        )
+      )
+    ),
+    NUMS(
+      TERMINAL[2],
+      NUMS(
+        TERMINAL[3],
+        EMPTYNUM
+      )
+    )
+  )
 
 =head2 Reduce-Reduce Conflicts with Unambiguous Grammars
 

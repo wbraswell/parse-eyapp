@@ -6,7 +6,7 @@
 #
 # This module is based on Francois Desarmenien Parse::Yapp module
 # (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien, all rights reserved.
-# (c) Parse::Eyapp Copyright 2006-2008 Casiano Rodriguez-Leon, all rights reserved.
+# (c) Parse::Eyapp Copyright 2006-2009 Casiano Rodriguez-Leon, all rights reserved.
 
 our $SVNREVISION = '$Rev: 2399M $';
 our $SVNDATE     = '$Date: 2009-01-06 12:28:04 +0000 (mar, 06 ene 2009) $';
@@ -21,7 +21,7 @@ our ( $VERSION, $COMPATIBLE, $FILENAME );
 
 
 # $VERSION is also in Parse/Eyapp.pm
-$VERSION = "1.148";
+$VERSION = "1.149";
 $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
