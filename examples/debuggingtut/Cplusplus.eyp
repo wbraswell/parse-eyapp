@@ -148,6 +148,8 @@ This Eyapp parser solves the problem by dynamically changing the parser.
 
 =over 2
 
+=item * The file C<Cplusplus2.eyp> in C<examples/debuggintut>
+
 =item * L<http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers>
 
 =item * L<http://en.wikipedia.org/wiki/Significantly_Prettier_and_Easier_C%2B%2B_Syntax>
