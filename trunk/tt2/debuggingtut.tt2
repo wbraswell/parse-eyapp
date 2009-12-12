@@ -1119,12 +1119,20 @@ The problem is easily solved designing an equivalent non ambiguous grammar:
      9
     10  %%
 
-See also these files:
+See also these files in the C<examples/debuggintut/> directory:
 
 =over 2
 
 =item * C<typicalrr2.eyp> is equivalent to C<typicalrr.eyp> but has C<%name> directives, to 
 have a nicer tree
+
+=item * C<typicalrr_fixed.eyp> eliminates the ambiguity using a combination of priorities
+and elimination of the redundant empty productions. Explicit precedence via C<%prec> directives
+are given to produce right recursive lists
+
+=item * C<typicalrr_fixed_rightrecursive.eyp> is almost equal to C<typicalrr_fixed.eyp>
+but eliminates the of C<%prec> directives by making the list production 
+right recursive
 
 =back
 
