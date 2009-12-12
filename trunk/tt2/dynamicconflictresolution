@@ -426,127 +426,83 @@ The generated language is constituted by sequences like:
 
 As you remember the conflict was:
 
-  examples/debuggingtut$ sed -ne '/^State 13:/,/^State/p' DynamicallyChangingTheParser2.output
+  ~/LEyapp/examples/debuggingtut$ sed -ne '/^St.*13:/,/^St.*14/p' DynamicallyChangingTheParser.output  
   State 13:
 
-          ds -> D conflict . ';' ds       (Rule 6)
-          ds -> D conflict .      (Rule 7)
+      ds -> D conflict . ';' ds   (Rule 6)
+      ds -> D conflict .  (Rule 7)
 
-          ';'     shift, and go to state 16
+      ';' shift, and go to state 16
 
-          ';'     [reduce using rule 7 (ds)]
+      ';' [reduce using rule 7 (ds)]
 
   State 14:
 
-The conflict handler (lines 50-56 below) sets the LR action
-to reduce by the production with name C<LAST_D>
+
+The C<conflict> handler below sets the LR action
+to reduce by the production with name C<D1>
 
                  ds -> D
 
-in the presence of token C<';'> if indeed is the last C<'D'>.
-The semantic action associated with the production C<LAST_D> (lines
-34-37) restores the former shift action and proceeds to call
-C<Parse::Eyapp::Driver::YYBuildAST> in order to continue
-with the building of the abstract syntax tree:
+in the presence of token C<';'> if indeed is the last C<'D'>, that is, if:
 
-  examples/debuggingtut$ cat -n DynamicallyChangingTheParser2.eyp
-     1  # See section 'Hacking the Parsing Tables: ACTION and GOTOs' in
-     2  # http://search.cpan.org/perldoc?Parse::Eyapp::debuggingtut
-     3  #
-     4  # See also: Debug.eyp Debug1.eyp Debug2.eyp  LookForward.eyp
-     5  # DynamicallyChangingTheParser.eyp This example illustrates how to dynamically
-     6  # change the behavior of the parser
-     7
-     8  %token D S
-     9
-    10  %{
-    11  our $VERSION = '0.01';
-    12  %}
-    13
-    14  %tree bypass
-    15
-    16  %%
-    17  p: %name PROG
-    18      block +
-    19  ;
-    20
-    21  block:
-    22      %name BLOCK
-    23      '{' ds ';' ss '}'
-    24    | %name SS
-    25      '{' ss '}'
-    26  ;
-    27
-    28  ds:
-    29      %name MORE_Ds
-    30      D conflict ';' ds
-    31    | %name LAST_D
-    32      D conflict
-    33        {
-    34           # Recover former LALR action
-    35           $_[0]->YYRestoreLRAction('conflict', ';');
-    36           # Do whatever you want
-    37           goto &Parse::Eyapp::Driver::YYBuildAST;
-    38        }
-    39  ;
-    40
-    41  ss:
-    42      %name SS
-    43      S ';' ss
-    44    | %name S
-    45      S
-    46  ;
-    47
-    48  conflict:
-    49      /* empty. Just for dynamic precedence */
-    50        {
-    51          my $self = shift;
-    52
-    53          $self->YYSetReduce(';', 'LAST_D' ) if ($self->{INPUT} =~ m{^;\s*S});
-    54
-    55          undef; # skip this node in the AST
-    56        }
-    57  ;
-    58
-    59  %%
-    60
-    61  sub _Error {
-    62    my $parser = shift;
-    63
-    64    my ($token) = $parser->YYCurval;
-    65    my ($what) = $token ? "input: '$token'" : "end of input";
-    66    warn "Syntax error near $what\n";
-    67  }
-    68
-    69  sub _Lexer {
-    70    my $self = shift;
-    71
-    72    for ($self->{INPUT}) {
-    73      s{^(\s*)}{};
-    74
-    75      return ('',undef) unless $_;
-    76
-    77      return ($1,$1) if s/^(.)//;
-    78    }
-    79    return ('',undef);
-    80  }
-    81
-    82  sub Run {
-    83    my $debug = shift || 0;
-    84    $debug = 0x1F if $debug;
-    85
-    86    my $self = __PACKAGE__->new();
-    87    $self->{INPUT} = <STDIN>;
-    88
-    89    print
-    90      $self->YYParse(
-    91        yylex => \&_Lexer,
-    92        yyerror => \&_Error,
-    93        yydebug => $debug,
-    94      )->str."\n";
-    95  }
-    96
-    97  Run(@ARGV) unless caller;
+       ${$self->input()} =~ m{^\s*;\s*S}
 
+Otherwise we set the C<shift> action via a call to the 
+C<YYSetShift> method.
 
+  ~/LEyapp/examples/debuggingtut$ sed -ne '30,$p' DynamicallyChangingTheParser.eyp | cat -n
+     1  %token D S
+     2  
+     3  %tree bypass
+     4  
+     5  # Expect just 1 shift-reduce conflict
+     6  %expect 1 
+     7  
+     8  %%
+     9  p: %name PROG
+    10      block +
+    11  ;
+    12  
+    13  block:
+    14      %name BLOCK_DS
+    15      '{' ds ';' ss '}' 
+    16    | %name BLOCK_S
+    17      '{' ss '}'
+    18  ;
+    19  
+    20  ds:
+    21      %name D2
+    22      D conflict ';' ds    
+    23    | %name D1
+    24      D conflict        
+    25  ;
+    26  
+    27  ss:
+    28      %name S2
+    29      S ';' ss      
+    30    | %name S1
+    31      S       
+    32  ;
+    33  
+    34  conflict:
+    35        /* empty. This action solves the conflict using dynamic precedence */
+    36        {
+    37          my $self = shift;
+    38  
+    39          if (${$self->input()} =~ m{^\s*;\s*S}) {
+    40            $self->YYSetReduce(';', 'D1' )
+    41          }
+    42          else {
+    43            $self->YYSetShift(';')
+    44          }
+    45  
+    46          undef; # skip this node in the AST
+    47        }
+    48  ;
+    49  
+    50  %%
+    51  
+    52  my $prompt = 'Provide a statement like "{D; S} {D; D; S}" and press <CR><CTRL-D>: ';
+    53  __PACKAGE__->main($prompt) unless caller;
 
