@@ -1213,6 +1213,85 @@ it gives a priority to the end-of-input token.
     )
   )
 
+=head2 Reduce-Reduce conflict: Enumerated versus Range declarations in Extended Pascal
+
+
+The grammar in file 
+C<examples/debuggintut/pascalenumeratedvsrange.eyp>:
+
+  ~/LEyapp/examples/debuggingtut$ eyapp -c pascalenumeratedvsrange.eyp 
+  %token TYPE DOTDOT ID 
+  %left '+' '-' 
+  %left '*' '/' 
+
+  %%
+
+  type_decl:
+        TYPE ID '=' type ';' 
+  ;
+  type:
+        '(' id_list ')'
+      | expr DOTDOT expr 
+  ;
+  id_list:
+        ID
+      | id_list ',' ID 
+  ;
+  expr:
+        '(' expr ')'
+      | expr '+' expr
+      | expr '-' expr
+      | expr '*' expr
+      | expr '/' expr
+      | ID 
+  ;
+
+  %%
+
+introduces a problem that arises in the declaration of enumerated 
+and subrange types in Pascal:
+
+  type subrange = lo .. hi;
+  type enum = (a, b, c);
+
+The original language standard allows only numeric literals and constant
+identifiers for the subrange bounds (`lo' and `hi'), but Extended Pascal
+and many other Pascal implementations allow arbitrary expressions there. This
+gives rise to the following situation, containing a superfluous pair of
+parentheses:
+
+     type subrange = (a) .. b;
+
+Compare this to the following declaration of an enumerated type with only one value:
+
+      type enum = (a);
+
+These two declarations look identical until the C<..> token. With normal LALR(1)
+one-token look-ahead it is not possible to decide between the two forms when
+the identifier C<a> is parsed. It is, however, desirable for a parser to decide
+this, since in the latter case C<a> must become a new identifier to represent
+the enumeration value, while in the former case C<a> must be evaluated with its
+current meaning, which may be a constant or even a function call.
+
+The consequence is a reduce-reduce conflict, which is summarized in
+this state of the LALR automata:
+
+  State 10:
+
+    id_list -> ID . (Rule 4)
+    expr -> ID .    (Rule 11)
+
+    ')' [reduce using rule 11 (expr)]
+    ')' reduce using rule 4 (id_list)
+    ',' reduce using rule 4 (id_list)
+    $default    reduce using rule 11 (expr)
+
+The grammar in file C<pascalenumeratedvsrangesolvedvialex.eyp> solves
+this particular problem by looking ahead in the lexical analyzer: if the parenthesis
+is followed by a sequence of comma separated identifiers finished by the closing 
+parenthesis and a semicolon we can conclude that is a enumerated type 
+declaration.
+
 =head2 Reduce-Reduce Conflicts with Unambiguous Grammars
 
 Though not so common, it may occur that a reduce-reduce conflict
