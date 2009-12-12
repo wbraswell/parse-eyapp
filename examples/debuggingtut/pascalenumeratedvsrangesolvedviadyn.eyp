@@ -13,11 +13,11 @@ See
 
 Compile it with:
 
-            eyapp -b '' nolalrrrconflictsolved
+            eyapp -b '' pascalenumeratedvsrangesolvedviadyn.eyp
 
 run it with this options:
 
-            ./nolalrrrconflictsolved.pm -t -d
+            ./pascalenumeratedvsrangesolvedviadyn.pm -t
 
 Try these inputs:
 
@@ -30,7 +30,10 @@ Try these inputs:
 
 use base q{DebugTail}; 
 my $ID = qr{[A-Za-z][A-Za-z0-9_]*};
-
+             # Identifiers separated by commas
+my $IDLIST = qr{ \s*(?:\s*,\s* $ID)* \s* }x;
+             # list followed by a closing par and a semicolon 
+my $RESTOFLIST = qr{$IDLIST \) \s* ; }x;
 %}
 
 %namingscheme {
@@ -60,6 +63,7 @@ my $ID = qr{[A-Za-z][A-Za-z0-9_]*};
 %left   '*' '/'
 
 %tree
+
 %%
 
 type_decl : TYPE ID '=' type ';'
@@ -88,18 +92,10 @@ expr : '(' expr ')'
     | NUM
 ;
 
-rangeORenum:
+rangeORenum: /* empty: postponed conflict resolution */
       {
           my $parser = shift;
-          if (${$parser->input()} =~ m{\G\( 
-                  (?=
-                     \s* $ID
-                     (?:\s*,\s* $ID)*
-                     \s*
-                     \)    # closing parenthesis
-                     \s*;  # semicolon: end declaration
-                  )
-            }gcx) {
+          if (${$parser->input()} =~ m{\G(?= $RESTOFLIST)}gcx) {
               $parser->YYSetReduce(')', 'EnumID' );
             }
             else {
@@ -120,9 +116,9 @@ __PACKAGE__->lexer(
 
       m{\Gtype\b}gic                 and return ('TYPE', 'TYPE');
 
-      m{\G($ID)}gc and return ('ID',  $1);
+      m{\G($ID)}gc                   and return ('ID',  $1);
 
-      m{\G([0-9]+)}gc   and return ('NUM', $1);
+      m{\G([0-9]+)}gc                and return ('NUM', $1);
 
       m{\G\.\.}gc                    and return ('DOTDOT',  '..');
 
