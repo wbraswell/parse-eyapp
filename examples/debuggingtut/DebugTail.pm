@@ -4,6 +4,7 @@ use warnings;
 
 use Getopt::Long;
 use Pod::Usage;
+use Scalar::Util qw{blessed};
 
 # attribute to count the lines
 my $tokenline = 1;
@@ -135,7 +136,7 @@ sub main {
   my $parser = $package->new();
   my $tree = $parser->Run( $debug );
 
-  print $tree->str()."\n" if $showtree && $tree;
+  print $tree->str()."\n" if $showtree && blessed($tree) && $tree->isa('Parse::Eyapp::Node');
 }
 
 sub TERMINAL::info {
