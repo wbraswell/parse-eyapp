@@ -1,9 +1,11 @@
-package Parse::Eyapp::Aux;
+package Parse::Eyapp::TailSupport;
 use strict;
 use warnings;
 
 use Getopt::Long;
 use Pod::Usage;
+use Scalar::Util qw{blessed};
+use Carp;
 
 # attribute to count the lines
 my $tokenline = 1;
@@ -17,10 +19,10 @@ sub tokenline {
 }
 
 # Generic error handler
-# Convetnion: if the attribute of a token is an object
-# assume it has 'line' and 'str' methods otherwise, if it
+# Convention adopted: if the attribute of a token is an object
+# assume it has 'line' and 'str' methods. Otherwise, if it
 # is an array, follows the convention [ str, line, ...]
-# otherwise is just an string
+# otherwise is just an string representing the value of the token
 my $_Error = sub {
   my $parser = shift;
 
@@ -38,13 +40,18 @@ my $_Error = sub {
   my $stoken = '';
 
   if (blessed($attr) && $attr->can('str')) {
-     $stoken = " near ".$attr->str
+     $stoken = " near '".$attr->str."'"
   }
   elsif (ref($attr) eq 'ARRAY') {
-    $stoken = " near ".$attr->[0];
+    $stoken = " near '".$attr->[0]."'";
   }
   else {
-    $stoken = " near $attr";
+    if ($attr) {
+      $stoken = " near '$attr'";
+    }
+    else {
+      $stoken = " near end of input";
+    }
   }
 
   my @expected = map { "'$_'" } $parser->YYExpect();
@@ -79,13 +86,7 @@ sub error {
 # attribute with the lexical analyzer
 # has this value by default
 my $_Lexer = sub {
-
-  for (${input()}) {
-      s{^(\s+)}{} and $tokenline += $1 =~ tr{\n}{};
-      return ('',undef) unless $_;
-      return ($1,$1) if s/^(.)//;
-  }
-  return ('',undef);
+  croak "Error: lexical analizer not defined";
 };
 
 sub lexer {
@@ -104,16 +105,18 @@ sub slurp_file {
   my $fn = shift;
   my $f;
 
-  local $/ = undef;
+  my $mode = undef;
   if ($fn && -r $fn) {
     open $f, $fn  or die "Can't find file '$fn'!\n";
   }
   else {
     $f = \*STDIN;
     my $msg = shift;
+    $mode = shift;
     print($msg) if $msg;
   }
 
+  local $/ = $mode;
   $$input = <$f>;
 }
 
