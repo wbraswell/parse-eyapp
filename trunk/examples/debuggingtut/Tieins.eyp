@@ -90,15 +90,15 @@ __PACKAGE__->main unless caller();
 
 Compile it with:
 
-            eyapp -b '' DynamicvsTieIns.eyp
+            eyapp -b '' Tieins.eyp
 
 Run it with:
 
-            ./DynamicvsTieIns.pm -t -f inputforsemanticinfo.txt
+            ./Tieins.pm -t -f inputforsemanticinfo.txt
 
 try also:
 
-            ./DynamicvsTieIns.pm -t -f inputforsemanticinfo2.txt
+            ./Tieins.pm -t -f inputforsemanticinfo2.txt
 
 =head1 THIS EXAMPLE
 

@@ -38,7 +38,7 @@ examples/debuggingtut/DebugLookForward.eyp
 examples/debuggingtut/DynamicallyChangingTheParser2.eyp
 examples/debuggingtut/DynamicallyChangingTheParser3.eyp
 examples/debuggingtut/DynamicallyChangingTheParser.eyp
-examples/debuggingtut/DynamicvsTieIns.eyp
+examples/debuggingtut/Tieins.eyp
 examples/debuggingtut/lr_1_grammar.eyp
 examples/debuggingtut/minimalrr2.eyp
 examples/debuggingtut/minimalrr.eyp

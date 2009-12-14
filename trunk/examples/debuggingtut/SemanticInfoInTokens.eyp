@@ -1,4 +1,4 @@
-# See: DynamicvsTieIns.eyp
+# See: Tieins.eyp
 # See: http://www.gnu.org/software/bison/manual/html_mono/bison.html#Lexical-Tie_002dins
 # for a more detailed explanation.
 
@@ -149,6 +149,8 @@ parsed as integers if possible.
 =head1 SEE ALSO
 
 =over 2
+
+=item *  File: Tieins.eyp
 
 =item * L<http://www.gnu.org/software/bison/manual/html_mono/bison.html#Lexical-Tie_002dins>
 

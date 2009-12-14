@@ -21,7 +21,7 @@ sub slurp_file {
 my $parser = CalcSimple->new();
 
 my $input = slurp_file( shift() );
-my ($r, $s) = @{$parser->Run($input)};
+my ($r, $s) = @{$parser->Run(\$input)};
 
 print "========= Results  ==============\n";
 print "$_\n" for @$r;
