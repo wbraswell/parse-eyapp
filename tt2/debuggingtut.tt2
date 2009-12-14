@@ -1575,8 +1575,8 @@ declared as variables.  Let us see an example of execution:
   A2 = HEX(A23);
   A2 = HEX(A2)
 
-  %right '='
-  %left '+'
+  $ ./SemanticInfoInTokens.pm -f inputforsemanticinfo2.txt  -t
+  EXPS(ASSIGN(TERMINAL[A2],NUM[2595]),ASSIGN(TERMINAL[A2],ID[A2]))
 
 
 The first hex expression C<HEX(A23)> is interpreted as the number C<2595>
