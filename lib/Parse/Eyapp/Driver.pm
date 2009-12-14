@@ -943,8 +943,9 @@ sub YYCurval {
 #}
 
 sub YYLexer {
-    my($self)=shift;
+  my($self)=shift;
 
+  $$self{LEX} = shift if @_;
   $$self{LEX};
 }
 
