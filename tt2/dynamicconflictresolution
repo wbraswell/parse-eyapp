@@ -197,74 +197,78 @@ The Eyapp program C<examples/debuggingtut/Cplusplus.eyp> solves the
 conflicts in  C<examples/debuggingtut/SimplifiedCplusplusAmbiguity.eyp> 
 by using the I<Postponed Conflict Resolution> strategy:
 
-  examples/debuggingtut$ head -67 Cplusplus.eyp | cat -n
-     1  # See http://www.gnu.org/software/bison/manual/html_mono/bison.html#GLR-Parsers
-     2  %strict
-     3  %token ID INT NUM
-     4
-     5  %right '='
-     6  %left '+'
-     7
-     8  %tree bypass
-     9
-    10  %expect 0 1 # 0 shift-reduce conflicts, 1 reduce-reduce conflict
-    11
-    12  %%
-    13  prog:
-    14      %name EMPTY
-    15      /* empty */
-    16    | %name PROG
-    17      prog stmt
-    18  ;
-    19
-    20  stmt:
-    21      %name EXP
-    22      expr ';'
-    23    | %name DECL
-    24      decl
-    25  ;
-    26
-    27  expr:
-    28      %name EXPID
-    29      ID decexpconflict
-    30    | %name NUM
-    31      NUM
-    32    | %name TYPECAST
-    33      INT '(' expr ')' /* typecast */
-    34    | %name PLUS
-    35      expr '+' expr
-    36    | %name ASSIGN
-    37      expr '=' expr
-    38  ;
-    39
-    40  decl:
-    41      %name DECLARATOR
-    42      INT declarator ';'
-    43    | %name DECLARATORINIT
-    44      INT declarator '=' expr ';'
-    45  ;
-    46
-    47  declarator:
-    48      %name DECID
-    49      ID decexpconflict
-    50    | '(' declarator ')'
-    51  ;
-    52
-    53  decexpconflict:
-    54      /* empty. Just to solve the reduce-reduce conflict */
-    55        {
-    56          my $self = shift;
-    57
-    58          if ($self->{INPUT} =~ m{^[)\s]*[;=]\s*}) {
-    59            $self->YYSetReduce(')', 'DECID' );
-    60          }
-    61          else {
-    62            $self->YYSetReduce(')', 'EXPID' );
-    63          }
-    64        }
-    65  ;
-    66
-    67  %%
+  pl@nereida:~/LEyapp/examples/debuggingtut$ head -71 Cplusplus.eyp | cat -n                           
+     1  %{                                                                                           
+     2  our $VERSION = '0.01';                                                                       
+     3  use base q{DebugTail};                                                                       
+     4  %}                                                                                           
+     5                                                                                               
+     6  %strict                                                                                      
+     7  %token ID INT NUM                                                                            
+     8                                                                                               
+     9  %right '='                                                                                   
+    10  %left '+'                                                                                    
+    11                                                                                               
+    12  %tree bypass                                                                                 
+    13                                                                                               
+    14  %expect 0 1  # 0 shift-reduce conflicts, 1 reduce-reduce conflict                            
+    15                                                                                               
+    16  %%                                                                                           
+    17  prog:                                                                                        
+    18      %name EMPTY                                                                              
+    19      /* empty */                                                                              
+    20    | %name PROG                                                                               
+    21      prog stmt                                                                                
+    22  ;                                                                                            
+    23                                                                                               
+    24  stmt:                                                                                        
+    25      %name EXP                                                                                
+    26      expr ';'                                                                                 
+    27    | %name DECL                                                                               
+    28      decl                                                                                     
+    29  ;                                                                                            
+    30                                                                                               
+    31  expr:                                                                                        
+    32      %name EXPID                                                                              
+    33      ID decexpconflict
+    34    | %name NUM
+    35      NUM
+    36    | %name TYPECAST
+    37      INT '(' expr ')' /* typecast */
+    38    | %name PLUS
+    39      expr '+' expr
+    40    | %name ASSIGN
+    41      expr '=' expr
+    42  ;
+    43
+    44  decl:
+    45      %name DECLARATOR
+    46      INT declarator ';'
+    47    | %name DECLARATORINIT
+    48      INT declarator '=' expr ';'
+    49  ;
+    50
+    51  declarator:
+    52      %name DECID
+    53      ID decexpconflict
+    54    | '(' declarator ')'
+    55  ;
+    56
+    57  decexpconflict:
+    58      /* empty. Just to solve the reduce-reduce conflict */
+    59        {
+    60          my $self = shift;
+    61
+    62          if (${$self->input()} =~ m{^[)\s]*[;=]\s*}) {
+    63            $self->YYSetReduce(')', 'DECID' );
+    64          }
+    65          else {
+    66            $self->YYSetReduce(')', 'EXPID' );
+    67          }
+    68        }
+    69  ;
+    70
+    71  %%
 
 
 The aforementioned conflict in C<examples/debuggingtut/SimplifiedCplusplusAmbiguity.eyp>:
@@ -311,14 +315,16 @@ to reduce by
 
 The program now successfully solves the ambiguity:
 
-  examples/debuggingtut$ Cplusplus.pm
-  int(x)+2;
+  pl@nereida:~/LEyapp/examples/debuggingtut$ eyapp -b '' Cplusplus
+
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./Cplusplus.pm -t
+  Try first "int (x) = 2;" then "int (x) + 2;" (press <CR><CTRL-D> to finish): int(x)+2;
   PROG(EMPTY,EXP(TYPECAST(TERMINAL[int],EXPID[x]),NUM[2]))
-  debuggingtut$ Cplusplus.pm
-  int(x)=2;
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./Cplusplus.pm -t
+  Try first "int (x) = 2;" then "int (x) + 2;" (press <CR><CTRL-D> to finish): int(x)=2;
   PROG(EMPTY,DECL(TERMINAL[int],DECID[x],NUM[2]))
-  examples/debuggingtut$ Cplusplus.pm
-  int(x);
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./Cplusplus.pm -t
+  Try first "int (x) = 2;" then "int (x) + 2;" (press <CR><CTRL-D> to finish): int(x);
   PROG(EMPTY,DECL(TERMINAL[int],DECID[x]))
 
 =head2 Solving the Enumerated versus Range declarations conflict using the Posponed Conflict Resolution Strategy
