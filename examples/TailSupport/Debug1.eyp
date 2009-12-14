@@ -1,0 +1,91 @@
+%{
+
+=head1 SYNOPSIS
+
+Compile it with 
+
+      eyapp -b '' Debug1.eyp
+
+Execute the generated modulino with:
+
+      ./Debug1.pm -t
+
+=cut
+
+our $VERSION = '0.01';
+use base q{Parse::Eyapp::TailSupport}; 
+
+sub TERMINAL::info {
+  $_[0]->{attr};
+}
+
+
+%}
+
+%token D S
+
+%tree 
+
+%%
+p:
+    %name P
+      ds ';' ss  
+  | %name SS
+      ss
+;
+
+
+ds:
+    %name D2
+      ds ';' D
+  | %name D1
+      D       
+;
+
+ss:
+    %name S2
+    S ';' ss      
+  | %name S1
+    S       
+;
+
+%%
+
+# Lexer used as a class method
+__PACKAGE__->lexer(
+  sub {
+    my $self = shift;
+
+    for (${$self->input()}) {  # contextualize
+        s{^(\s+)}{} and $self->tokenline($1 =~ tr{\n}{});
+
+        return ('', undef) unless $_;
+        return ($1, $1) if s/^(.)//;
+    }
+    return ('', undef);
+  }
+);
+
+my $prompt = <<'HELP';
+Try first 
+
+ D
+
+
+;
+
+D
+,
+
+S
+^D
+(You'll get an error message)
+and then 
+
+D; 
+D;  
+^D
+(press <CR><CTRL-D> to finish): 
+HELP
+
+__PACKAGE__->main($prompt) unless caller();
