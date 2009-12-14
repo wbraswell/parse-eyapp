@@ -1567,103 +1567,17 @@ we have a language with a special construct
 C<hex (hex-expr)>. After the keyword C<hex> comes an C<expression> in parentheses in
 which all integers are hexadecimal. In particular, strings in C</[A-F0-9]+/>
 like C<A1B> must be treated as an hex integer unless they were previously
-declared as variables:
+declared as variables.  Let us see an example of execution:
 
-  %strict
-
-  %token ID INT INTEGER
-  %syntactic token HEX
-
-  %right '='
-  %left '+'
-
-  %{
-  my %st;
-  %}
-
-  %tree bypass alias
-
-  %%
-  stmt:
-      decl <* ';'> expr <%name EXPS + ';'>
-        {
-          $_[2]->{st} = { %st };
-          $_[2];
-        }
-  ;
-
-  decl:
-      INT ID <+ ','>
-        {
-          $st{$_->{attr}} = 1 for $_[2]->children();
-        }
-  ;
-
-  expr:
-      %name ID
-      ID
-    | %name NUM
-      INTEGER
-    | %name HEX
-      HEX '(' { $_[0]->{HEXFLAG} = 1; } $expr ')'
-        {
-          $_[0]->{HEXFLAG} = 0;
-          $expr;
-        }
-    | %name ASSIGN
-      $ID '=' expr
-        {
-          my $parser = shift;
-          my $t = $parser->YYBuildAST(@_);
-          # Retype left (TERMINAL) child as ID
-          $t->ID->type('ID');
-          $t;
-        }
-    | %name PLUS
-      expr '+' expr
-  ;
-
-
-
-Here the lexical analyzer looks at the value of the attribute C<HEXFLAG>; when it is nonzero,
-all integers are parsed in hexadecimal, and tokens starting with letters are
-parsed as integers if possible.
-
-  sub lexer {
-    my $parser = shift;
-    my $hexflag = $parser->{HEXFLAG};
-
-    for ($parser->{input}) {    # contextualize
-      m{\G\s*(\#.*)?}gc;
-
-      m{\G(HEX\b|INT\b)}igc and return (uc($1), $1);
-
-      m{(\G\d+)}gc and return ('INTEGER', $hexflag? hex($1) : $1);
-
-
-      m{\G([a-zA-Z_]\w*)}gc and do {
-        my $match = $1;
-        $hexflag and !exists($st{$match}) 
-          and $match =~ m{^([A-F0-9]+)$}gc 
-            and return ('INTEGER', hex($match));
-        return ('ID', $1);
-      };
-
-      m{\G(.)}gc         and return ($1, $1);
-
-      return('',undef);
-    }
-  }
-
-Let us see an example of execution:
-
-  examples/debuggingtut$ cat inputforsemanticinfo2.txt
+  $ eyapp -b '' SemanticInfoInTokens.eyp
+  $ cat inputforsemanticinfo2.txt
   int A2
   A2 = HEX(A23);
   A2 = HEX(A2)
 
-  examples/debuggingtut$ ./SemanticInfoInTokens.pm -file inputforsemanticinfo2.txt
-  EXPS(ASSIGN(ID[A2],NUM[2595]),ASSIGN(ID[A2],ID[A2]))
+  %right '='
+  %left '+'
+
 
 The first hex expression C<HEX(A23)> is interpreted as the number C<2595>
 while the second C<HEX(A2)> refers to previously declared variable C<A2>.
@@ -1671,7 +1585,103 @@ while the second C<HEX(A2)> refers to previously declared variable C<A2>.
 An alternative solution to this problem that does not make use of
 lexical tie-ins - but still uses an attribute C<HEXFLAG> for communication
 between different semantic actions - can be found in the file 
-C<examples/debuggintut/DynamicvsTieIns.eyp>.
+C<examples/debuggintut/Tieins.eyp>.
+
+
+  pl@nereida:~/LEyapp/examples/debuggingtut$ sed -ne '5,91p' SemanticInfoInTokens.eyp | cat -n
+     1  %strict                                                                             
+     2                                                                                      
+     3  %token ID INT INTEGER                                                               
+     4  %syntactic token HEX                                                                
+     5                                                                                      
+     6  %right '='                                                                          
+     7  %left '+'                                                                           
+     8                                                                                      
+     9  %{                                                                                  
+    10  use base q{DebugTail};                                                              
+    11  my %st;                                                                             
+    12  %}                                                                                  
+    13                                                                                      
+    14  %tree bypass alias                                                                  
+    15                                                                                      
+    16  %%                                                                                  
+    17  stmt:                                                                               
+    18      decl <* ';'> expr <%name EXPS + ';'>                                            
+    19        {                                                                             
+    20          # make the symbol table an attribute                                        
+    21          # of the root node                                                          
+    22          $_[2]->{st} = { %st };                                                      
+    23          $_[2];                                                                      
+    24        }                                                                             
+    25  ;                                                                                   
+    26                                                                                      
+    27  decl:                                                                               
+    28      INT ID <+ ','>                                                                  
+    29        {                                                                             
+    30          # insert identifiers in the symbol table                                    
+    31          $st{$_->{attr}} = 1 for $_[2]->children();                                  
+    32        }                                                                             
+    33  ;                                                                                   
+    34                                                                                      
+    35  expr:                                                                               
+    36      %name ID                                                                        
+    37      ID                                                                              
+    38    | %name NUM                                                                       
+    39      INTEGER                                                                         
+    40    | %name HEX                                                                       
+    41      HEX '(' { $_[0]->{HEXFLAG} = 1; } $expr ')'                                     
+    42        {                                                                             
+    43          $_[0]->{HEXFLAG} = 0;                                                       
+    44          $expr;                                                                      
+    45        }                                                                             
+    46    | %name ASSIGN                                                                    
+    47      id '=' expr                                                                     
+    48    | %name PLUS                                                                      
+    49      expr '+' expr
+    50  ;
+    51
+    52  id : ID
+    53  ;
+    54
+    55  %%
+    56
+    57  # Context-dependant lexer
+    58  __PACKAGE__->lexer( sub {
+    59      my $parser = shift;
+    60      my $hexflag = $parser->{HEXFLAG};
+    61
+    62      for (${$parser->input}) {    # contextualize
+    63        m{\G\s*(\#.*)?}gc;
+    64
+    65        m{\G(HEX\b|INT\b)}igc and return (uc($1), $1);
+    66
+    67        m{(\G\d+)}gc and return ('INTEGER', $hexflag? hex($1) : $1);
+    68
+    69
+    70        m{\G([a-zA-Z_]\w*)}gc and do {
+    71          my $match = $1;
+    72          $hexflag and !exists($st{$match}) and $match =~ m{^([A-F0-9]+$)}gc and return ('INTEGER', hex($match));
+    73          return ('ID', $1);
+    74        };
+    75
+    76        m{\G(.)}gc         and return ($1, $1);
+    77
+    78        return('',undef);
+    79      }
+    80    }
+    81  );
+    82
+    83  *TERMINAL::info = *NUM::info = *ID::info = sub {
+    84    $_[0]->{attr}
+    85  };
+    86
+    87  __PACKAGE__->main() unless caller();
+
+
+
+Here the lexical analyzer looks at the value of the attribute C<HEXFLAG>; when it is nonzero,
+all integers are parsed in hexadecimal, and tokens starting with letters are
+parsed as integers if possible.
 
 =head2 References about Lexical tie-ins
 
