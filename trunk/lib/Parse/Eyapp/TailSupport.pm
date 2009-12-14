@@ -8,14 +8,18 @@ use Scalar::Util qw{blessed};
 use Carp;
 
 # attribute to count the lines
-my $tokenline = 1;
-
 sub tokenline {
   my $self = shift;
 
-  $tokenline += shift if @_;
+  if (ref($self)) {
+    $self->{tokenline} += shift if @_;
+    return $self->{tokenline};
+  }
 
-  $tokenline
+  # Called as a class method: static
+  my $classtokenline = $self.'::tokenline';
+  ${$classtokenline} += shift if @_;
+  return ${$classtokenline};
 }
 
 # Generic error handler
@@ -61,10 +65,15 @@ my $_Error = sub {
 
   my $tline = '';
   if (blessed($attr) && $attr->can('line')) {
-    $tline = " (line number ".$attr->line.")." 
+    $tline = " (line number ".$attr->line.")" 
   }
   elsif (ref($attr) eq 'ARRAY') {
-    $tline = " (line number ".$attr->[1].").";
+    $tline = " (line number ".$attr->[1].")";
+  }
+  else {
+    # May be the parser object knows the line number ?
+    my $lineno = $parser->tokenline(0);
+    $tline = " (line number $lineno)" if $lineno > 0;
   }
 
   local $" = ', ';
@@ -99,9 +108,8 @@ sub lexer {
 
 # attribute with the input
 # is a reference to the actual input
-my $input;
-
 sub slurp_file {
+  my $self = shift;
   my $fn = shift;
   my $f;
 
@@ -117,15 +125,30 @@ sub slurp_file {
   }
 
   local $/ = $mode;
-  $$input = <$f>;
+  my $input = <$f>;
+
+  if (ref($self)) {  # called as object method
+    $self->{input} = \$input;
+  }
+  else { # class/static method
+    my $classinput = $self.'::input';
+    ${$classinput} = \$input;
+  }
 }
 
 sub input {
   my $self = shift;
 
-  $$input = shift if @_;
+  if (@_) {
+    if (ref($_[0])) {  # used as setter. Passing ref
+      $self->{input} = shift;
+    }
+    else { # passing string
+      $self->{input} = \shift();
+    }
+  }
 
-  $input;
+  $self->{input};
 }
 
 sub Run {
@@ -147,21 +170,24 @@ sub main {
   my $file = '';
   my $showtree = 0;
   my $help;
+  my $slurp;
   my $result = GetOptions (
     "debug!" => \$debug,  
     "file=s" => \$file,
     "tree!"  => \$showtree,
     "help"   => \$help,
+    "slurp!" => \$slurp,
   );
 
   pod2usage() if $help;
 
   $debug = 0x1F if $debug;
   $file = shift if !$file && @ARGV; 
-
-  slurp_file( $file, $prompt);
+  $slurp = "\n" if defined($slurp);
 
   my $parser = $package->new();
+  $parser->slurp_file( $file, $prompt, $slurp);
+
   my $tree = $parser->Run( $debug );
 
   print $tree->str()."\n" if $showtree && $tree;
