@@ -1,6 +1,3 @@
-# An alternative solution to lexical tie-ins. See also: SemanticInfoInTokens.eyp
-# See: http://www.gnu.org/software/bison/manual/html_mono/bison.html#Lexical-Tie_002dins
-
 %strict
 
 %token ID INT INTEGER 
@@ -10,6 +7,7 @@
 %left '+'
 
 %{
+use base 'DebugTail';
 my %st;
 %}
 
@@ -48,115 +46,59 @@ expr:
   | %name NUM
     INTEGER
   | %name HEX
-    HEX '(' { $_[0]->{HEXFLAG} = 1; } $expr ')'
-      { 
-        $_[0]->{HEXFLAG} = 0; 
-        $expr;
-      }
+    HEX '(' { $_[0]->{HEXFLAG} = 1; } $expr { $_[0]->{HEXFLAG} = 0 } ')'
+      { $expr }
   | %name ASSIGN
-    $ID '=' expr 
-      {
-        my $parser = shift;
-        my $t = $parser->YYBuildAST(@_);
-        # Retype left (TERMINAL) child as ID
-        $t->ID->type('ID');
-        $t;
-      }
+    id '=' expr 
   | %name PLUS
     expr '+' expr
 ;
 
+id : ID
+;
+
 %%
 
-use Getopt::Long;
-use List::Util qw{first};
-use Data::Dumper;
-
-sub _Error {
-  my($token)=$_[0]->YYCurval;
-  my($what)= $token ? "input: '$token'" : "end of input";
-  my @expected = $_[0]->YYExpect();
-
-  local $" = ', ';
-  warn "Syntax error near $what. Expected one of these tokens: <@expected>\n";
-  warn "Remaining input:\n". substr($_[0]->{input}, pos($_[0]->{input}));
-  die # Dumper($_[0]->{STACK}[-1])
-  ;
-}
-
-
 # Context-dependant lexer
-sub lexer {
-  my $parser = shift;
-  my $hexflag = $parser->{HEXFLAG};
+__PACKAGE__->lexer( sub {
+    my $parser = shift;
 
-  for ($parser->{input}) {    # contextualize
-    m{\G\s*(\#.*)?}gc;
+    for (${$parser->input}) {    # contextualize
+      m{\G\s*(\#.*)?}gc;
 
-    m{\G(HEX\b|INT\b)}igc and return (uc($1), $1);
+      m{\G(HEX\b|INT\b)}igc and return (uc($1), $1);
 
-    m{(\G\d+)}gc and return ('INTEGER', $hexflag? hex($1) : $1);
+      m{(\G\d+)}gc and return ('INTEGER', $parser->{HEXFLAG}? hex($1) : $1);
 
 
-    return ('ID', $1) if m{\G([a-zA-Z_]\w*)}gc;
+      return ('ID', $1) if m{\G([a-zA-Z_]\w*)}gc;
 
-    m{\G(.)}gc         and return ($1, $1);
+      m{\G(.)}gc         and return ($1, $1);
 
-    return('',undef);
+      return('',undef);
+    }
   }
-}
-
-sub Run {
-    my($self)=shift;
-    my $yydebug = shift || 0;
-
-    return $self->YYParse( 
-      yylex => \&lexer, 
-      yyerror => \&_Error,
-      yydebug => $yydebug, # 0x1F
-    );
-}
-
-sub uploadfile {
-  my $file = shift;
-  my $msg = shift;
-
-  my $input = '';
-  eval {
-    $input = Parse::Eyapp::Base::slurp_file($file) 
-  };
-  if ($@) {
-    print $msg;
-    local $/ = undef;
-    $input = <STDIN>;
-  }
-  return $input;
-}
-
-sub main {
-  my $package = shift;
-
-  my $debug = 0;
-  my $file = '';
-  my $result = GetOptions (
-    "debug!" => \$debug,  
-    "file=s" => \$file,
-  );
-
-  $debug = 0x1F if $debug;
-  $file = shift if !$file && @ARGV; 
-
-  my $parser = $package->new();
-  my $prompt = "Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:\n";
-  $parser->{input} = uploadfile($file, $prompt);
-  print $parser->Run( $debug )->str,"\n";
-}
+);
 
 *TERMINAL::info = *NUM::info = *ID::info = sub {
   $_[0]->{attr}
 };
 
 __PACKAGE__->main unless caller();
+
+=head1 SYNOPSIS
+
+Compile it with:
+
+            eyapp -b '' DynamicvsTieIns.eyp
+
+Run it with:
+
+            ./DynamicvsTieIns.pm -t -f inputforsemanticinfo.txt
+
+try also:
+
+            ./DynamicvsTieIns.pm -t -f inputforsemanticinfo2.txt
 
 =head1 THIS EXAMPLE
 
@@ -166,23 +108,11 @@ which all integers are hexadecimal. In particular, strings in C</[A-F0-9]+/>
 like C<A1B> must be treated as an hex integer unless they were previously
 declared.
 
-=head1 RUNNING
-
-  Parse-Eyapp/examples/debuggingtut$ eyapp -vb '' DynamicvsTieIns.eyp
-  Parse-Eyapp/examples/debuggingtut$ ./DynamicvsTieIns.pm -file inputforsemanticinfo.txt
-  EXPS(ASSIGN(ID[A],NUM[12]),ASSIGN(ID[B],NUM[177]),ASSIGN(ID[C],NUM[18]),ASSIGN(ID[B],PLUS(ID[A],ID[C])),ASSIGN(ID[B],PLUS(NUM[13],ID[C])))  
-  Parse-Eyapp/examples/debuggingtut$ cat inputforsemanticinfo.txt
-  int A,B,C
-  A = 12;
-  hex(B = B1);
-  C = hex(12);
-  B = A+C;
-  B = HEX(D+C)
-
-
 =head1 SEE ALSO
 
 =over 2
+
+=item * File C<SemanticInfoInTokens.eyp>
 
 =item * L<http://www.gnu.org/software/bison/manual/html_mono/bison.html#Lexical-Tie_002dins>
 
