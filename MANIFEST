@@ -29,6 +29,7 @@ examples/debuggingtut/confusingsolvedstatic2.eyp
 examples/debuggingtut/confusingsolvedstatic.eyp
 examples/debuggingtut/correcttypicalrr.eyp
 examples/debuggingtut/Cplusplus.eyp
+examples/debuggingtut/Cplusplus2.eyp
 examples/debuggingtut/Debug1.eyp
 examples/debuggingtut/Debug2.eyp
 examples/debuggingtut/DebugDynamicResolution.eyp
