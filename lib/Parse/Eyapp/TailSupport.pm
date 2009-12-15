@@ -208,6 +208,8 @@ sub main {
   my $tree = $parser->Run( $debug );
 
   print $tree->str()."\n" if $showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node');
+
+  $tree
 }
 
 1;
