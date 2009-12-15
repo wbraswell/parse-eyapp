@@ -63,35 +63,28 @@ id:
 
 %%
 
-# Returns true if $element is in the list
-sub is_in($@) {
-  my $element = shift;
-
-  return first { $_ eq $element } @_;
-}
-
 # Adaptative lexer
 __PACKAGE__->lexer(
   sub {
-  my $parser = shift;
+    my $parser = shift;
 
-  for (${$parser->input()}) {    # contextualize
-    m{\G\s*(\#.*)?}gc;
+    for (${$parser->input()}) {    # contextualize
+      m{\G\s*(\#.*)?}gc;
 
-    m{\G([a-zA-Z_]\w*)}gc and do {
-      my $id = $1;
+      m{\G([a-zA-Z_]\w*)}gc and do {
+        my $id = $1;
 
-      return ('if',   'if')   if ($id eq 'if')   && is_in('if', $parser->YYExpect);
-      return ('then', 'then') if ($id eq 'then') && is_in('then', $parser->YYExpect);
-      
-      return ('ID', $id);
-    };
+        return ('if',   'if')   if ($id eq 'if')   && $parser->expects('if');
+        return ('then', 'then') if ($id eq 'then') && $parser->expects('then');
+        
+        return ('ID', $id);
+      };
 
-    m{\G(.)}gc         and return ($1, $1);
+      m{\G(.)}gc and return ($1, $1);
 
-    return('',undef);
+      return('',undef);
+    }
   }
-}
 );
 
 my $prompt = 'Try input "if then=if then if=then" '.
