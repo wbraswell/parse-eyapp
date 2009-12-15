@@ -8,7 +8,11 @@ compile it with
 
 execute the generated modulino with:
 
-      ./Precedencia.pm -t
+      ./Precedencia.pm 
+
+or
+
+      ./Precedencia.pm -nos
 
 Try with inputs:
    
