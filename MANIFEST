@@ -260,6 +260,7 @@ lib/Parse/Eyapp/_TreeregexpSupport.pm
 lib/Parse/Eyapp/Treeregexp.yp
 lib/Parse/Eyapp/YATW.pm
 lib/Parse/Eyapp/YATW.pod
+lib/Parse/Eyapp/TailSupport.pm
 t/01calc.t
 t/03newgrammar.t
 t/04foldandzero.t
