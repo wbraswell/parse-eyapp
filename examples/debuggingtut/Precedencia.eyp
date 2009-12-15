@@ -54,10 +54,7 @@ e : %name NUM
 
 %%
 
-sub TERMINAL::info {
-  $_[0]->{attr}[0]
-}
-
+__PACKAGE__->lexer( \&Math::Tail::lex); 
 __PACKAGE__->main('Input (try st. like 2@3&4<CR><CTRL-D>): ') unless caller();
 
 1;

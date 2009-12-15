@@ -60,7 +60,7 @@ sub new {
       STACK => [],
       DEBUG => 0,
       PREFIX => "",
-      CHECK => \$check 
+      CHECK => \$check, 
     };
 
   _CheckParams( [], \%newparams, \@_, $self );
@@ -934,6 +934,13 @@ sub YYCurval {
     @STACK = @{$_[0]->{STACK}};
     goto &YYExpected;
   }
+}
+
+sub expects {
+  my $self = shift;
+  my $token = shift;
+
+  return grep { $_ eq $token } $self->YYExpect;
 }
 
 #sub YYExpect {

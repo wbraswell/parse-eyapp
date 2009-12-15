@@ -22,6 +22,20 @@ sub tokenline {
   return ${$classtokenline};
 }
 
+sub line {
+  my $self = shift;
+
+  if (ref($self)) {
+    $self->{tokenline} = shift if @_;
+    return $self->{tokenline};
+  }
+
+  # Called as a class method: static
+  my $classtokenline = $self.'::tokenline';
+  ${$classtokenline} = shift if @_;
+  return ${$classtokenline};
+}
+
 # Generic error handler
 # Convention adopted: if the attribute of a token is an object
 # assume it has 'line' and 'str' methods. Otherwise, if it
@@ -139,16 +153,19 @@ sub slurp_file {
 sub input {
   my $self = shift;
 
+  no strict 'refs';
   if (@_) {
-    if (ref($_[0])) {  # used as setter. Passing ref
+    $self->line(1);
+    if (ref($self)) {  # used as setter. Passing ref
       $self->{input} = shift;
+      return $self->{input};
     }
-    else { # passing string
-      $self->{input} = \shift();
-    }
+    # passing string
+    ${$self.'::input'} = shift();
+    return ${$self.'::input'};
   }
-
-  $self->{input};
+  return $self->{input} if ref $self;
+  return ${$self.'::input'};
 }
 
 sub Run {
@@ -190,7 +207,7 @@ sub main {
 
   my $tree = $parser->Run( $debug );
 
-  print $tree->str()."\n" if $showtree && $tree;
+  print $tree->str()."\n" if $showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node');
 }
 
 1;
