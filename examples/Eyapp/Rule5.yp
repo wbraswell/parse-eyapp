@@ -1,4 +1,21 @@
 %{
+=head1 SYNOPSIS
+
+Compile the grammar and tree transformations first:
+
+     $ eyapp Rule5
+     $ treereg Shift
+
+Then execute it with:
+
+     $ ./useruleandshift.pl
+
+Try input: 
+
+     a = b * 8
+
+=cut
+
 use base q{Parse::Eyapp::TailSupport};
 %}
 
@@ -10,7 +27,7 @@ use base q{Parse::Eyapp::TailSupport};
 %tree
 
 %%
-line: exp    { $_[1] } 
+line: exp { $_[1] } 
 ;
 
 exp:        %name NUM    NUM 
