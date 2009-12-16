@@ -671,7 +671,7 @@ See the examples in C<examples/debuggingtut/> in files
 
 =back
 
-=head $parser->YYSetShift($token)
+=head1 $parser->YYSetShift($token)
 
 Also:
 
