@@ -178,6 +178,7 @@ sub Run {
     yylex => $self->lexer(), 
     yyerror => $self->error,
     yydebug => $yydebug, # 0xF
+    @_,
   );
 }
 
@@ -207,9 +208,9 @@ sub main {
   my $parser = $package->new();
   $parser->slurp_file( $file, $prompt, $slurp);
 
-  my $tree = $parser->Run( $debug );
+  my $tree = $parser->Run( $debug, @_ );
 
-  if (my $ne = $parser->YYNBerr > 0) {
+  if (my $ne = $parser->YYNberr > 0) {
     print "There were $ne errors during parsing\n";
   }
   else {

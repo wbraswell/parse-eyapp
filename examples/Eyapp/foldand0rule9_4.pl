@@ -7,7 +7,7 @@ Try inputs:
 
    a = 2*3+4   # Reducido a: a = 6
    a = 2*[3+b] # syntax error
-   a=2*3*b     # Reducido a: a = 6*b
+   a = 2*3*b   # Reducido a: a = 6*b
 
 Compile it with 
 

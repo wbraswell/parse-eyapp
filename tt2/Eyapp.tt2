@@ -319,8 +319,6 @@ Multiplications by a power of two are substituted by the corresponding shifts:
   ***********
   ASSIGN(TERMINAL[a],SHIFTLEFT[3](VAR(TERMINAL[b])))
 
-
-
 =head2 Compiling: More Options
 
 See files C<Rule9.yp>, C<Transform4.trg> and C<foldand0rule9_4.pl> 
@@ -345,33 +343,65 @@ node classes are prefixed by C<'R::'>.
 With such parameters the client program uses the generated modules as 
 follows:
 
- nereida:~/src/perl/YappWithDefaultAction/examples> cat -n foldand0rule9_4.pl
-  1  #!/usr/bin/perl -w
-  2  # File: foldand0rule9_4.pl. Compile it with
-  3  #          eyapp -m 'Calc' Rule9.yp; treereg -o T.pm -p 'R::' -m T Transform4
-  4  use strict;
-  5  use Calc;
-  6  use T;
-  7
-  8  sub R::TERMINAL::info { $_[0]{attr} }
-  9  my $parser = new Calc(yyprefix => "R::");
- 10  my $t = $parser->YYParse( yylex => \&Calc::Lexer, yyerror => \&Calc::Error);
- 11  print "\n***** Before ******\n";
- 12  print $t->str."\n";
- 13  $t->s(@T::all);
- 14  print "\n***** After ******\n";
- 15  print $t->str."\n";
+  pl@nereida:~/LEyapp/examples/Eyapp$ cat -n foldand0rule9_4.pl                   
+     1  #!/usr/bin/env perl
+     2  =head1 SYNOPSIS
+     3
+     4     foldand0rule9_4.pl
+     5
+     6  Try inputs:
+     7
+     8     a = 2*3+4   # Reducido a: a = 6
+     9     a = 2*[3+b] # syntax error
+    10     a = 2*3*b   # Reducido a: a = 6*b
+    11
+    12  Compile it with
+    13
+    14           eyapp -m 'Calc' Rule9.yp
+    15           treereg -o T.pm -p 'R::' -m T Transform4
+    16
+    17  =cut
+    18
+    19  use warnings;
+    20  use strict;
+    21  use Calc;
+    22  use T;
+    23
+    24  sub R::TERMINAL::info { $_[0]{attr} }
+    25
+    26  my $parser = new Calc(yyprefix => "R::");
+    27                     # stdin, prompt              , read one line at time
+    28  $parser->slurp_file('','Arithmetic expression: ', "\n");
+    29
+    30  my $t = $parser->YYParse;
+    31
+    32  unless ($parser->YYNberr) {
+    33    print "\n***** Tree before the transformations ******\n";
+    34    print $t->str."\n";
+    35
+    36    $t->s(@T::all);
+    37    print "\n***** Tree after the transformations were applied ******\n";
+    38    print $t->str."\n";
+    39  }
+
 
 running the program produces the following output:
 
- nereida:~/src/perl/YappWithDefaultAction/examples> foldand0rule9_4.pl
- 2*3
+  pl@nereida:~/LEyapp/examples/Eyapp$ ./foldand0rule9_4.pl
+  Arithmetic expression: a = 2*3
 
- ***** Before ******
- R::TIMES(R::NUM(R::TERMINAL[2]),R::TERMINAL[*],R::NUM(R::TERMINAL[3]))
+  ***** Tree before the transformations ******
+  R::ASSIGN(R::TERMINAL[a],R::TERMINAL[=],R::TIMES(R::NUM(R::TERMINAL[2]),R::TERMINAL[*],R::NUM(R::TERMINAL[3])))
 
- ***** After ******
- R::NUM(R::TERMINAL[6])
+  ***** Tree after the transformations were applied ******
+  R::ASSIGN(R::TERMINAL[a],R::TERMINAL[=],R::NUM(R::TERMINAL[6]))
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ ./foldand0rule9_4.pl
+  Arithmetic expression: a = 2*[3+b]
+
+  Syntax error near '['.
+  Expected one of these terminals: '-' 'NUM' 'VAR' '('
+
 
 =head1 L<Parse::Eyapp::Scope>: SUPPORT FOR SCOPE ANALYSIS
 
