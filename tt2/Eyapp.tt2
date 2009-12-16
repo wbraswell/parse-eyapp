@@ -199,85 +199,126 @@ an compiled with the program C<treereg>.
 The default extension is C<.trg>.
 See the following example:
 
-  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ cat -n Shift.trg
+  pl@nereida:~/LEyapp/examples/Eyapp$ cat -n Shift.trg
      1  # File: Shift.trg
      2  {
-     3    sub log2 {
-     4      my $n = shift;
-     5      return log($n)/log(2);
-     6    }
-     7
-     8    my $power;
-     9  }
-    10  mult2shift: TIMES($e, NUM($m))
-    11    and { $power = log2($m->{attr}); (1 << $power) == $m->{attr} } => {
-    12      $_[0]->delete(1);
-    13      $_[0]->{shift} = $power;
-    14      $_[0]->type('SHIFTLEFT');
-    15    }
+     3  =head1 SYNOPSIS
+     4
+     5  Compile the grammar and tree transformations first:
+     6
+     7       $ eyapp Rule5
+     8       $ treereg Shift
+     9
+    10  Then execute it with:
+    11
+    12       $ ./useruleandshift.pl
+    13
+    14  Try input:
+    15
+    16       a = b * 8
+    17
+    18  =cut
+    19  }
+    20
+    21  {
+    22    sub log2 {
+    23      my $n = shift;
+    24      return log($n)/log(2);
+    25    }
+    26
+    27    my $power;
+    28  }
+    29  mult2shift: TIMES($e, NUM($m))
+    30    and { $power = log2($m->{attr}); (1 << $power) == $m->{attr} } => {
+    31      $_[0]->delete(1);
+    32      $_[0]->{shift} = $power;
+    33      $_[0]->type('SHIFTLEFT');
+    34    }
 
 
 Note that auxiliary support code can be inserted at any point
-between transformations (lines 2-9). The code will be inserted (without 
+between transformations (lines 21-28). The code will be inserted (without 
 the defining curly brackets) at that point. Note also
 that the lexical variable C<$power> is visible
 inside the definition of the C<mult2shift> transformation.
 
-A treeregexp like C<$e> matches any node (line 10). A reference to the node
+A treeregexp like C<$e> matches any node (line 29). A reference to the node
 is saved in the lexical variable C<$e>. The scope of the variable
 C<$e> is the current tree transformation, i.e. C<mult2shift>.
 Such kind of treeregexps are called B<scalar treeregexp>s.
 
-The call to the C<delete> method at line 12 deletes 
+The call to the C<delete> method at line 31 deletes 
 the second child of the node being visited (i.e. C<NUM($m)>).
 
-The call to C<type> at line 14 retypes the node
+The call to C<type> at line 33 retypes the node
 as a C<SHIFTLEFT> node.
 
 The program is compiled using the script C<treereg>:
 
-  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ eyapp Rule5
-  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ treereg Shift
-  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ ls -ltr | tail -2
+  pl@nereida:~/LEyapp/examples/Eyapp$ eyapp Rule5
+  pl@nereida:~/LEyapp/examples/Eyapp$ treereg Shift
+  pl@nereida:~/LEyapp/examples/Eyapp$ ls -ltr | tail -2
   -rw-r--r-- 1 pl users 6439 2008-09-02 08:59 Rule5.pm
   -rw-r--r-- 1 pl users 1424 2008-09-02 08:59 Shift.pm
 
 
-The Grammar C<Rule5.yp> is similar to the one in the L</SYNOPSIS>
+The Grammar C<examples/Eyapp/Rule5.yp> is similar to the one in the L</SYNOPSIS>
 section. Module C<Rule5.pm> contains the parser.
 The module C<Shift.pm> contains the code implementing
 the tree transformations.
 
 The client program follows:
 
-  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ cat -n useruleandshift.pl
+  pl@nereida:~/LEyapp/examples/Eyapp$ cat -n useruleandshift.pl
      1  #!/usr/bin/perl -w
      2  use strict;
      3  use Rule5;
      4  use Parse::Eyapp::Base qw(insert_function);
      5  use Shift;
      6
-     7  sub SHIFTLEFT::info { $_[0]{shift} }
-     8  insert_function('TERMINAL::info', \&TERMINAL::attr);
-     9
-    10  my $parser = new Rule5();
-    11  my $t = $parser->Run;
-    12  print "***********\n",$t->str,"\n";
-    13  $t->s(@Shift::all);
-    14  print "***********\n",$t->str,"\n";
+     7  =head1 SYNOPSIS
+     8
+     9  Compile the grammar and tree transformations first:
+    10
+    11       $ eyapp Rule5
+    12       $ treereg Shift
+    13
+    14  Then execute it with:
+    15
+    16       $ ./useruleandshift.pl
+    17
+    18  Try inputs:
+    19
+    20       a = b * 8
+    21       d = c * 16
+    22
+    23  =cut
+    24
+    25  sub SHIFTLEFT::info { $_[0]{shift} }
+    26  insert_function('TERMINAL::info', \&TERMINAL::attr);
+    27
+    28  my $parser = new Rule5();
+    29  $parser->slurp_file('','Arithmetic expression: ', "\n");
+    30  my $t = $parser->Run;
+    31  unless ($parser->YYNberr) {
+    32    print "***********\n",$t->str,"\n";
+    33    $t->s(@Shift::all);
+    34    print "***********\n",$t->str,"\n";
+    35  }
 
 
-Lines 7 and 8 provide the node classes C<TERMINAL> and C<SHIFTLEFT> of C<info>
-methods to be used during the calls to the C<str> method (lines 12 and 14). 
+Lines 25 and 26 provide the node classes C<TERMINAL> and C<SHIFTLEFT> of C<info>
+methods to be used during the calls to the C<str> method (lines 32 and 34). 
 
 Multiplications by a power of two are substituted by the corresponding shifts:
 
-  pl@nereida:~/src/perl/YappWithDefaultAction/examples/Eyapp$ useruleandshift.pl
-  a=b*8
+  pl@nereida:~/LEyapp/examples/Eyapp$ ./useruleandshift.pl
+  Arithmetic expression: a = b * 8
   ***********
   ASSIGN(TERMINAL[a],TIMES(VAR(TERMINAL[b]),NUM(TERMINAL[8])))
   ***********
   ASSIGN(TERMINAL[a],SHIFTLEFT[3](VAR(TERMINAL[b])))
+
 
 
 =head2 Compiling: More Options

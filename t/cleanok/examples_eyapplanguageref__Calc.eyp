@@ -1,4 +1,4 @@
-# examples/Calc.eyp
+# examples/eyapplanguageref/Calc.eyp
 %right '=' 
 %left '-' '+' 
 %left '*' '/' 

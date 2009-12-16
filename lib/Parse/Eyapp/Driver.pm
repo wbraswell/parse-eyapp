@@ -29,7 +29,7 @@ use Carp;
 use Scalar::Util qw{reftype looks_like_number};
 
 #Known parameters, all starting with YY (leading YY will be discarded)
-my(%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
+my (%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
        YYRULES => 'ARRAY', YYSTATES => 'ARRAY', YYDEBUG => '', 
        # added by Casiano
        #YYPREFIX  => '',  # Not allowed at YYParse time but in new
@@ -43,7 +43,7 @@ my(%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
 my (%newparams) = (%params, YYPREFIX => '',);
 
 #Mandatory parameters
-my(@params)=('LEX','RULES','STATES');
+my (@params)=('LEX','RULES','STATES');
 
 sub new {
     my($class)=shift;
@@ -51,7 +51,6 @@ sub new {
     my($errst,$nberr,$token,$value,$check,$dotpos);
 
     my($self)={ 
-      ERROR => \&_Error,
       ERRST => \$errst,
       NBERR => \$nberr,
       TOKEN => \$token,
@@ -74,7 +73,25 @@ sub new {
         ref($class)
     and $class=ref($class);
 
-    bless($self,$class);
+    unless($self->{ERROR}) {
+      if ($class->isa('Parse::Eyapp::TailSupport')) {
+        $self->{ERROR} = $class->error;
+      }
+      else {
+        $self->{ERROR} = \&_Error;
+      }
+    }
+
+    unless($self->{LEX}) {
+      if ($class->isa('Parse::Eyapp::TailSupport')) {
+        $self->{LEX} = $class->lexer;
+        @params = ('RULES','STATES');
+      }
+    }
+
+    my $parser = bless($self,$class);
+
+    $parser;
 }
 
 sub YYParse {

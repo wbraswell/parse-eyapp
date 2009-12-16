@@ -122,6 +122,8 @@ sub lexer {
 
 # attribute with the input
 # is a reference to the actual input
+# slurp_file. 
+# Parameters: object or class, filename, prompt messagge, mode (interactive or not: undef or "\n")
 sub slurp_file {
   my $self = shift;
   my $fn = shift;
@@ -207,7 +209,12 @@ sub main {
 
   my $tree = $parser->Run( $debug );
 
-  print $tree->str()."\n" if $showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node');
+  if (my $ne = $parser->YYNBerr > 0) {
+    print "There were $ne errors during parsing\n";
+  }
+  else {
+    print $tree->str()."\n" if $showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node');
+  }
 
   $tree
 }
