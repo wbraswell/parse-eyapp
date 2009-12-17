@@ -37,6 +37,16 @@ my $IDLIST = qr{ \s*(?:\s*,\s* $ID)* \s* }x;
 my $RESTOFLIST = qr{$IDLIST \) \s* ; }x;
 %}
 
+%conflict rangeORenum {
+          my $parser = shift;
+          if (${$parser->input()} =~ m{\G(?= $RESTOFLIST)}gcx) {
+              $parser->YYSetReduce(')', 'EnumID' );
+            }
+            else {
+              $parser->YYSetReduce(')', 'RangeID' );
+            }
+      }
+
 %namingscheme {
   #Receives a Parse::Eyapp object describing the grammar
   my $self = shift;
@@ -62,6 +72,8 @@ my $RESTOFLIST = qr{$IDLIST \) \s* ; }x;
 %token ID NUM DOTDOT TYPE
 %left   '-' '+'
 %left   '*' '/'
+
+%expect 0 1
 
 %tree
 
@@ -91,18 +103,6 @@ expr : '(' expr ')'
     | %name RangeID
       ID rangeORenum
     | NUM
-;
-
-rangeORenum: /* empty: postponed conflict resolution */
-      {
-          my $parser = shift;
-          if (${$parser->input()} =~ m{\G(?= $RESTOFLIST)}gcx) {
-              $parser->YYSetReduce(')', 'EnumID' );
-            }
-            else {
-              $parser->YYSetReduce(')', 'RangeID' );
-            }
-      }
 ;
 
 %%
