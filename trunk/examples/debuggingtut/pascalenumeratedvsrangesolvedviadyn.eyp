@@ -142,7 +142,7 @@ Try this input:
     y
     ;
 
-Here other inputs you can try:
+Here are other inputs you can try:
 
     type r = (x+2)*3 ..  y/2 ;
     type e = (x, y, z);
