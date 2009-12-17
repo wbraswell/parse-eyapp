@@ -17,10 +17,10 @@ use base q{DebugTail};
         my $self = shift;
 
         if (${$self->input()} =~ m{^[)\s]*[;=]\s*}) {
-          $self->YYSetReduce(')', 'DECID' );
+          $self->YYSetReduce(')', 'ID:DEC' );
         }
         else {
-          $self->YYSetReduce(')', 'EXPID' ); 
+          $self->YYSetReduce(')', 'ID:EXP' ); 
         }
       }
 
@@ -40,7 +40,7 @@ stmt:
 ;
 
 expr:
-    %name EXPID
+    %name ID:EXP
     ID                            %PREC decORexp 
   | %name NUM 
     NUM
@@ -60,7 +60,7 @@ decl:
 ;
 
 declarator:
-    %name DECID
+    %name ID:DEC
     ID                            %PREC decORexp 
   | '(' declarator ')'
 ;

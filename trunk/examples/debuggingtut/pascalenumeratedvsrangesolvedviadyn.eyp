@@ -40,10 +40,10 @@ my $RESTOFLIST = qr{$IDLIST \) \s* ; }x;
 %conflict rangeORenum {
           my $parser = shift;
           if (${$parser->input()} =~ m{\G(?= $RESTOFLIST)}gcx) {
-              $parser->YYSetReduce(')', 'EnumID' );
+              $parser->YYSetReduce(')', 'ID:ENUM' );
             }
             else {
-              $parser->YYSetReduce(')', 'RangeID' );
+              $parser->YYSetReduce(')', 'ID:RANGE' );
             }
       }
 
@@ -90,7 +90,7 @@ type :
 ;
 
 id_list : 
-      %name EnumID
+      %name ID:ENUM
       ID                      %PREC rangeORenum
     | id_list ',' ID
 ;
@@ -100,7 +100,7 @@ expr : '(' expr ')'
     | expr '-' expr
     | expr '*' expr
     | expr '/' expr
-    | %name RangeID
+    | %name ID:RANGE
       ID                     %PREC rangeORenum
     | NUM
 ;
