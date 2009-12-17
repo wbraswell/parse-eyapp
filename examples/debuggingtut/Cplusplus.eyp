@@ -41,7 +41,7 @@ stmt:
 
 expr:
     %name EXPID
-    ID decORexp
+    ID                            %PREC decORexp 
   | %name NUM 
     NUM
   | %name TYPECAST
@@ -61,7 +61,7 @@ decl:
 
 declarator:
     %name DECID
-    ID decORexp
+    ID                            %PREC decORexp 
   | '(' declarator ')'
 ;
 
