@@ -13,17 +13,6 @@ use base q{DebugTail};
 
 %expect 0 1  # 0 shift-reduce conflicts, 1 reduce-reduce conflict
 
-%conflict decORexp {
-        my $self = shift;
-
-        if (${$self->input()} =~ m{^[)\s]*[;=]\s*}) {
-          $self->YYSetReduce(')', 'DECID' );
-        }
-        else {
-          $self->YYSetReduce(')', 'EXPID' ); 
-        }
-      }
-
 %%
 prog:
     %name EMPTY
@@ -41,7 +30,7 @@ stmt:
 
 expr:
     %name EXPID
-    ID decORexp
+    ID decexpconflict
   | %name NUM 
     NUM
   | %name TYPECAST
@@ -61,8 +50,22 @@ decl:
 
 declarator:
     %name DECID
-    ID decORexp
+    ID decexpconflict
   | '(' declarator ')'
+;
+
+decexpconflict:
+    /* empty. Just to solve the reduce-reduce conflict */
+      {
+        my $self = shift;
+
+        if (${$self->input()} =~ m{^[)\s]*[;=]\s*}) {
+          $self->YYSetReduce(')', 'DECID' );
+        }
+        else {
+          $self->YYSetReduce(')', 'EXPID' ); 
+        }
+      }
 ;
 
 %%
