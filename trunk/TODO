@@ -1,4 +1,6 @@
-  * Lexical Analyzer generation
+  * Lexical Analyzer generation:
+      * Specify reserved words, characters, and handlers (like C code) for specific beginnings
+      * Lexer automatic construction
 
   * Dynamic conflict  resolution:
       %conflict CONLFICTIDENTIFIER { # conflict solver
@@ -137,10 +139,6 @@
   * Reference manual. Document functions and methods
     -- Sort by alphabetical order
     -- User methods and subroutines. Internal documentation
-
-- Lexical Analysis
-  * Specify reserved words, characters, and handlers (like C code) for specific beginnings
-  * Lexer automatic construction
 
 - Treereg Tree grammars and tree walkers
  
