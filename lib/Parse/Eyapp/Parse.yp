@@ -719,7 +719,18 @@ rhselt:     symbol    { [ 'SYMB', $_[1] ] }
 optname: /* empty */
        | NAME IDENT 
          { 
+                      # save bypass status
            $_[2][2] = $_[1][0];
+           $_[2] 
+         }
+       | NAME IDENT LABEL
+         { 
+                      # save bypass status
+           $_[2][2] = $_[1][0];
+           # 0: identifier 1: line number 2: bypass 
+           # concat the label to the name
+           $_[2][0] .= "$_[3][0]";
+
            $_[2] 
          }
        ;
@@ -789,6 +800,9 @@ sub slurp_perl_code {
   return [ $code, $lineno[0] ];
 }
 
+my $ID = qr{[A-Za-z_][A-Za-z0-9_]*};
+my $LABEL = qr{:$ID};
+
 sub _Lexer {
  
     #At EOF
@@ -830,8 +844,9 @@ sub _Lexer {
 
     $lineno[0]=$lineno[1];
 
-        $$input=~/\G([A-Za-z_][A-Za-z0-9_]*)/gc
+        $$input=~/\G($ID)/gc
     and return('IDENT',[ $1, $lineno[0] ]);
+
 
         $$input=~/\G( '                # opening apostrophe
                          (?:[^'\\]|    # an ordinary character
@@ -951,19 +966,19 @@ sub _Lexer {
             $$input=~/\G%(PREC)/gc
         and return('DPREC',[ undef, $lineno[0] ]);
 
-            $$input=~/\G(<\s*%name\s*([A-Za-z_][A-Za-z0-9_]*)\s*)?\*\s*>/gc
+            $$input=~/\G(<\s*%name\s*($ID)\s*)?\*\s*>/gc
         and return('STAR',[ $2, $lineno[0] ]);
-            $$input=~/\G(%name\s*([A-Za-z_][A-Za-z0-9_]*)\s*)?\*/gc
+            $$input=~/\G(%name\s*($ID)\s*)?\*/gc
         and return('STAR',[ $2, $lineno[0] ]);
 
-            $$input=~/\G(<\s*%name\s*([A-Za-z_][A-Za-z0-9_]*)\s*)?\+\s*>/gc
+            $$input=~/\G(<\s*%name\s*($ID)\s*)?\+\s*>/gc
         and return('PLUS',[ $2, $lineno[0] ]);
-            $$input=~/\G(%name\s*([A-Za-z_][A-Za-z0-9_]*)\s*)?\+/gc
+            $$input=~/\G(%name\s*($ID)\s*)?\+/gc
         and return('PLUS',[ $2, $lineno[0] ]);
 
-            $$input=~/\G(<\s*%name\s*([A-Za-z_][A-Za-z0-9_]*)\s*)?\?\s*>/gc
+            $$input=~/\G(<\s*%name\s*($ID)\s*)?\?\s*>/gc
         and return('OPTION',[ $2, $lineno[0] ]);
-            $$input=~/\G(%name\s*([A-Za-z_][A-Za-z0-9_]*)\s*)?\?/gc
+            $$input=~/\G(%name\s*($ID)\s*)?\?/gc
         and return('OPTION',[ $2, $lineno[0] ]);
 
             $$input=~/\G%no\s+bypass/gc
@@ -976,6 +991,10 @@ sub _Lexer {
         and do {
           return('NAME',[ $bypass, $lineno[0] ]);
         };
+
+        $$input=~/\G($LABEL)/gc
+    and return('LABEL',[ $1, $lineno[0] ]);
+
     }
 
     #Always return something
