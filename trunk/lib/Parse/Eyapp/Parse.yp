@@ -35,6 +35,7 @@ my $strict = 0; # When true, all tokens must be declared or a warning will be is
 my $nocompact; # Do not compact action tables. No DEFAULT field for "STATES"
 
 my %nondeclared; # Potential non declared token identifiers appearing in the program
+my @conflict;    # List of [conflict name, code handler]
 
 sub not_an_id {
   my $id = shift;
@@ -232,6 +233,7 @@ sub symbol {
 %token ASSOC         /* is %(left|right|nonassoc) */
 %token BEGINCODE     /* is %begin { Perl code ... } */
 %token CODE          /* is { Perl code ... } */
+%token CONFLICT      /* is %conflict */
 %token DEFAULTACTION /* is %defaultaction */
 %token EXPECT        /* is %expect */
 %token HEADCODE      /* is %{ Perl code ... %} */
@@ -445,6 +447,17 @@ decl:  '\n'                 #default action
                     $$nterm{$symbol}=undef;    #is a non-terminal
                 }
             }
+    |   CONFLICT ident CODE '\n'
+            {
+              my ($name, $code) = @_[2,3];
+              my ($cn, $line) = @$name;
+              push @conflict, [$name, $code];
+
+              $$syms{$cn} = $line;
+              $$nterm{$cn} = undef;
+
+              undef;
+            }
     |   EXPECT NUMBER '\n'             { $expect=$_[2][0]; undef }
     |   EXPECT NUMBER NUMBER '\n'      { $expect= [ $_[2][0], $_[3][0]]; undef }
     |   error '\n'                     { $_[0]->YYErrok }
@@ -473,6 +486,14 @@ body:
             or  _SyntaxError(2,"Start symbol $start not found ".
                                 "in rules section",$_[2][1]);
 
+            # Add conflict handlers
+            # [ left hand side,   right hand side,  precedence, rulename, code, ]
+            for my $c (@conflict) { 
+              my ($A, $code) = @$c;
+              my $rhss = [ rhs([], name => $A, code => $code->[0]), ];
+              _AddRules($A, $rhss);
+            }
+
             # # If exists an @identifiers that is not a nterm and not a term is a warn
             if ($strict) {
               for (keys %nondeclared) {
@@ -482,7 +503,8 @@ body:
             }
             # Superstart rule
             # [ left hand side,   right hand side,  precedence, rulename, code, ]
-            $$rules[0]=[ '$start', [ $start, chr(0) ], undef, undef, undef,]  
+            $$rules[0]=[ '$start', [ $start, chr(0) ], undef, undef, undef,];  
+
         }
     |   '%%'    { _SyntaxError(2,"No rules in input grammar",$_[1][1]); }
 ;
@@ -910,6 +932,9 @@ sub _Lexer {
           my $treeoptions =  defined($2)? $2 : '';
           return('TREE',[ $treeoptions, $lineno[0] ])
         };
+
+            $$input=~/\G%(conflict)/gc
+        and return('CONFLICT',[ undef, $lineno[0] ]);
 
             $$input=~/\G%metatree/gc
         and return('METATREE',[ undef, $lineno[0] ]);
