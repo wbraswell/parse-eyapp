@@ -21,7 +21,7 @@ our ( $VERSION, $COMPATIBLE, $FILENAME );
 
 
 # $VERSION is also in Parse/Eyapp.pm
-$VERSION = "1.150";
+$VERSION = "1.151";
 $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
@@ -618,7 +618,7 @@ sub BeANode {
     }
 
     for (@_) {
-       my ($class) = split /::/, $_;
+       my ($class) = split /:/, $_;
        BeANode("$prefix$class"); 
     }
 
@@ -653,7 +653,7 @@ sub YYBuildAST {
   my @right = $self->YYRightside(); # Symbols on the right hand side of the production
   my $lhs = $self->YYLhs;
   my $fullname = $self->YYName();
-  my ($name) = split /::/, $fullname;
+  my ($name) = split /:/, $fullname;
   my $bypass = $self->YYBypassrule; # Boolean: shall we do bypassing of lonely nodes?
   my $class = "$PREFIX$name";
   my @children;
