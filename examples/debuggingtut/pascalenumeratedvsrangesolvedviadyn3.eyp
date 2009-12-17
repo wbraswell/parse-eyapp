@@ -91,7 +91,7 @@ type :
 
 id_list : 
       %name EnumID
-      ID                      %PREC rangeORenum
+      ID rangeORenum
     | id_list ',' ID
 ;
 
@@ -101,7 +101,7 @@ expr : '(' expr ')'
     | expr '*' expr
     | expr '/' expr
     | %name RangeID
-      ID                     %PREC rangeORenum
+      ID rangeORenum
     | NUM
 ;
 
