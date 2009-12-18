@@ -156,32 +156,45 @@ sub input {
   my $self = shift;
 
   no strict 'refs';
-  if (@_) {
+  if (@_) { # used as setter. Passing ref
     $self->line(1);
-    if (ref($self)) {  # used as setter. Passing ref
+    if (ref($self)) { # object method
       $self->{input} = shift;
+
       return $self->{input};
     }
-    # passing string
+    # Static method passing string
     ${$self.'::input'} = shift();
+
     return ${$self.'::input'};
   }
   return $self->{input} if ref $self;
   return ${$self.'::input'};
 }
 
+# args: parser, debug and optionally the input or a reference to the input
 sub Run {
   my ($self) = shift;
   my $yydebug = shift;
   
+  unless ($self->input && defined(${$self->input()}) && ${$self->input()} ne '') {
+    croak "Provide some input for parsing" unless defined($_[0]);
+    if (ref($_[0])) {
+      $self->input(shift());
+    }
+    else {
+      my $x = shift();
+      $self->input(\$x);
+    }
+  }
   return $self->YYParse( 
     yylex => $self->lexer(), 
     yyerror => $self->error,
     yydebug => $yydebug, # 0xF
-    @_,
   );
 }
 
+# args: class, prompt, file, optionally input (ref or not)
 sub main {
   my $package = shift;
   my $prompt = shift;
@@ -191,12 +204,14 @@ sub main {
   my $showtree = 0;
   my $help;
   my $slurp;
+  my $inputfromfile = 1;
   my $result = GetOptions (
-    "debug!" => \$debug,  
-    "file=s" => \$file,
-    "tree!"  => \$showtree,
-    "help"   => \$help,
-    "slurp!" => \$slurp,
+    "debug!"         => \$debug,  
+    "file=s"         => \$file,
+    "tree!"          => \$showtree,
+    "help"           => \$help,
+    "slurp!"         => \$slurp,
+    "inputfromfile!" => \$inputfromfile,
   );
 
   pod2usage() if $help;
@@ -206,7 +221,20 @@ sub main {
   $slurp = "\n" if defined($slurp);
 
   my $parser = $package->new();
-  $parser->slurp_file( $file, $prompt, $slurp);
+
+  if ($inputfromfile) {
+    $parser->slurp_file( $file, $prompt, $slurp);
+  }
+  else { # input must be a string argument
+    croak "No input provided for parsing! " unless defined($_[0]);
+    if (ref($_[0])) {
+      $parser->input(shift());
+    }
+    else {
+      my $x = shift();
+      $parser->input(\$x);
+    }
+  }
 
   my $tree = $parser->Run( $debug, @_ );
 

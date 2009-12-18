@@ -724,7 +724,7 @@ optname: /* empty */
            $_[2] 
          }
        | NAME IDENT LABEL
-         { 
+         {  # LABELs are used for dynamic conflict resolution
                       # save bypass status
            $_[2][2] = $_[1][0];
            # 0: identifier 1: line number 2: bypass 
