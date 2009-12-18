@@ -887,7 +887,7 @@ sub _Lexer {
         return ('BEGINCODE', &slurp_perl_code());
     };
 
-        $$input=~/\G{/gc
+        $$input=~/\G\s*{/gc
     and do {
         return ('CODE', &slurp_perl_code());
     };
@@ -949,7 +949,7 @@ sub _Lexer {
           return('TREE',[ $treeoptions, $lineno[0] ])
         };
 
-            $$input=~/\G%(conflict)/gc
+            $$input=~/\G%(conflict)\s*/gc
         and return('CONFLICT',[ undef, $lineno[0] ]);
 
             $$input=~/\G%metatree/gc
