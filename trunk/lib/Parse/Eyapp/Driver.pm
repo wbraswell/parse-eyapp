@@ -713,7 +713,8 @@ sub YYBuildTS {
   my $PREFIX = $self->YYPrefix();
   my @right = $self->YYRightside(); # Symbols on the right hand side of the production
   my $lhs = $self->YYLhs;
-  my $name = $self->YYName();
+  my $fullname = $self->YYName();
+  my ($name) = split /:/, $fullname;
   my $class;
   my @children;
 
