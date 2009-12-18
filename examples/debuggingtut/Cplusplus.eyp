@@ -13,7 +13,8 @@ use base q{DebugTail};
 
 %expect 0 1  # 0 shift-reduce conflicts, 1 reduce-reduce conflict
 
-%conflict decORexp {
+%conflict decORexp 
+      {
         my $self = shift;
 
         if (${$self->input()} =~ m{^[)\s]*[;=]\s*}) {
