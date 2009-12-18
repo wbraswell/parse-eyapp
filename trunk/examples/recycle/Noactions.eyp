@@ -22,16 +22,7 @@ exp:        %name NUM
 ;
 
 %%
-
-sub _Error {
-  my($token)=$_[0]->YYCurval;
-  my($what)= $token ? "input: '$token'" : "end of input";
-  my @expected = $_[0]->YYExpect();
-
-  local $" = ', ';
-  die "Syntax error near $what. Expected one of these tokens: @expected\n";
-}
-
+use base 'Parse::Eyapp::TailSupport';
 
 my $x = '';
 
@@ -55,7 +46,7 @@ sub Run {
 
   $self->YYParse( 
     yylex    => \&_Lexer, 
-    yyerror  => \&_Error,
+    yyerror  => $self->error,
     yydebug  => $debug,
   );
 }

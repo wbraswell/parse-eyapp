@@ -16,12 +16,10 @@ sub Post::TIMES::action {
 
 my $debug = shift || 0;
 my $parser = Noactions->new( yyprefix => 'Post::');
+
 print "Write an expression: "; 
-my $x;
-{
-  local $/ = undef;
-  $x = <STDIN>;
-}
+my $x = <STDIN>;
+
 my $t = $parser->Run($x, $debug);
 
-print "$t\n";
+print "$t\n" unless $parser->YYNberr;
