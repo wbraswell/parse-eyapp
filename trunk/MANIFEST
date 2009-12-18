@@ -213,6 +213,7 @@ examples/recycle/PostfixWithActions.eyp
 examples/recycle/postf.pl
 examples/recycle/README
 examples/recycle/rewritepostfixwithactions.pl
+examples/recycle/CommonTail.pm
 examples/translationschemestut/README
 examples/translationschemestut/trans_scheme_default_action.pl
 examples/translationschemestut/trans_scheme_simple_decls4.pl
