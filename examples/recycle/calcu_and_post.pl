@@ -28,13 +28,17 @@ sub Post::TIMES::action {
 
 my $debug = shift || 0;
 my $pparser = Noactions->new( yyprefix => 'Post::');
+
 print "Write an expression: "; 
 my $x = <STDIN>;
+
 my $t = $pparser->Run($x, $debug);
 
-print "$t\n";
+unless ($pparser->YYNberr) {
+  print "$t\n";
 
-my $cparser = Noactions->new(yyprefix => 'Calc::');
-my $e = $cparser->Run($x, $debug);
+  my $cparser = Noactions->new(yyprefix => 'Calc::');
+  my $e = $cparser->Run($x, $debug);
 
-print "$e\n";
+  print "$e\n";
+}

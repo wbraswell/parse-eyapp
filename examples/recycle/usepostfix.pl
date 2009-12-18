@@ -3,4 +3,5 @@ use strict;
 use Postfix;
 
 my $parser = new Postfix();
-$parser->Run;
+push @ARGV, '--noslurp';
+$parser->main('Expression (i.e. 2*3): ');
