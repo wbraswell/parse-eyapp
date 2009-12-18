@@ -20,6 +20,6 @@ my $parser = Noactions->new( yyprefix => 'Post::');
 print "Write an expression: "; 
 my $x = <STDIN>;
 
-my $t = $parser->Run($x, $debug);
+my $t = $parser->Run($debug, $x);
 
 print "$t\n" unless $parser->YYNberr;
