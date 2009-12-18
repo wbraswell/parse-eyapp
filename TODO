@@ -1,12 +1,3 @@
-  * label for names %name B.A (label is B, names is A). A conflict can refer to 
-    a label or a name
-
-  * Dynamic conflict  resolution:
-      %conflict CONLFICTIDENTIFIER { # conflict solver
-               if (is_A()) { $self->YYSetReduce('@', 'ruleA') }
-               else { $self->YYSetShift('@') }
-      }
-
   * Dynamic conflict resolution: test YYSetShift
         The case where the default is a reduction is not solved. Investigate
 
@@ -32,7 +23,7 @@
     Not always a syntactic variable is a valid identifier: e.g. PLUS-1
     Probably, it is better that the method "tokennames" give names to the syntactic variables
 
-  * str method can produce GraphViz, latex and/or other formats
+  * str method to produce GraphViz, latex and/or other formats
   * Treereg EXPORT and EXPORT_OK
   * Language generation example examples/generator
      -- Return a Test::LectroTest::Generator? 
