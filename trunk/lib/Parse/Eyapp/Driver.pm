@@ -21,7 +21,7 @@ our ( $VERSION, $COMPATIBLE, $FILENAME );
 
 
 # $VERSION is also in Parse/Eyapp.pm
-$VERSION = "1.151";
+$VERSION = "1.152";
 $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
@@ -990,7 +990,7 @@ sub _CheckParams {
   while(($prm,$value)=splice(@$inarray,0,2)) {
         $prm=uc($prm);
       exists($$checklist{$prm})
-    or  croak("Unknow parameter '$prm'");
+    or  croak("Unknown parameter '$prm'");
       ref($value) eq $$checklist{$prm}
     or  croak("Invalid value for parameter '$prm'");
         $prm=unpack('@2A*',$prm);
