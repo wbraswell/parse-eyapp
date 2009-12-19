@@ -6,8 +6,6 @@ package Parse::Eyapp;
 use 5.00600;
 use strict;
 
-use constant 'EndOfInput' => ('', undef);
-
 BEGIN {
   unless (Parse::Eyapp::Driver->can('YYParse')) {
     our @ISA = qw(Parse::Eyapp::Output);
