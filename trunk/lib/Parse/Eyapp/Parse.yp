@@ -257,7 +257,7 @@ __PACKAGE__->lexer(
 #line <<line>> "<<filename>>"
       <<code>>       
 <<end_user_code>>
-      return ('', undef) unless $_;
+      return ('', undef) if pos($_) >= length($_);
       die("Error at the end of lexical analyzer. Line: <<errline>>. File: <<filename>>. No regexp matched.\n");
     } 
   } # end lexical analyzer
