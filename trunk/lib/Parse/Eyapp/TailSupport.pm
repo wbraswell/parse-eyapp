@@ -235,6 +235,7 @@ sub main {
       *TERMINAL::info = sub { $_[0]->attr->[0 ]};
     }
     else {
+      $TERMINALinfo = "sub { my \$self = shift; $TERMINALinfo }" unless ($TERMINALinfo =~ /^\s*sub/);
       eval {
         *TERMINAL::info = eval $TERMINALinfo;
       };
