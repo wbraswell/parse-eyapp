@@ -179,10 +179,10 @@ sub Run {
   
   unless ($self->input && defined(${$self->input()}) && ${$self->input()} ne '') {
     croak "Provide some input for parsing" unless defined($_[0]);
-    if (ref($_[0])) {
+    if (ref($_[0])) { # if arg is a reference
       $self->input(shift());
     }
-    else {
+    else { # arg isn't a ref: make a copy
       my $x = shift();
       $self->input(\$x);
     }
@@ -195,6 +195,7 @@ sub Run {
 }
 
 # args: class, prompt, file, optionally input (ref or not)
+# return the abstract syntax tree (or whatever was returned by the parser)
 sub main {
   my $package = shift;
   my $prompt = shift;
@@ -205,13 +206,15 @@ sub main {
   my $help;
   my $slurp;
   my $inputfromfile = 1;
+  my $commandinput = '';
   my $result = GetOptions (
-    "debug!"         => \$debug,  
-    "file=s"         => \$file,
-    "tree!"          => \$showtree,
-    "help"           => \$help,
-    "slurp!"         => \$slurp,
-    "inputfromfile!" => \$inputfromfile,
+    "debug!"         => \$debug,         # sets yydebug on
+    "file=s"         => \$file,          # read input from that file
+    "commandinput=s" => \$commandinput,  # read input from command line arg
+    "tree!"          => \$showtree,      # prints $tree->str
+    "help"           => \$help,          # shows SYNOPSIS section from the script pod
+    "slurp!"         => \$slurp,         # read until EOF or CR is reached
+    "inputfromfile!" => \$inputfromfile, # take input from @_
   );
 
   pod2usage() if $help;
@@ -222,7 +225,10 @@ sub main {
 
   my $parser = $package->new();
 
-  if ($inputfromfile) {
+  if ($commandinput) {
+    $parser->input(\$commandinput);
+  }
+  elsif ($inputfromfile) {
     $parser->slurp_file( $file, $prompt, $slurp);
   }
   else { # input must be a string argument
