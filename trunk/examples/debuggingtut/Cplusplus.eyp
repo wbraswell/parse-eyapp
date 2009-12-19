@@ -4,7 +4,7 @@ use base q{DebugTail};
 %}
 
 %strict
-%token ID INT NUM
+%token ID NUM INT 
 
 %right '='
 %left '+'
@@ -86,7 +86,7 @@ __PACKAGE__->lexer(
       return ($1,    $1) if s/^(.)//;
     }
 
-    return ('',undef);
+    return EndOfInput();
   }
 );
 

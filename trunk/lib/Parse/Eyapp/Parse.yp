@@ -18,9 +18,20 @@ my (
   $nberr,    # Number of errors up to now
   $prec,
   $labelno);
-my($syms,$head,$tail,$token,$term,$nterm,$rules,$precterm,$start,$nullable,
-   $semantic);
-my($expect);
+my (
+    $syms,
+    $head,
+    $tail,
+    $token,
+    $term,
+    $nterm,
+    $rules,
+    $precterm,
+    $start,
+    $nullable,
+    $semantic,
+   );
+my ($expect);
 my ($namingscheme, $defaultaction);
 my $filename;
 my $tree = 0; # true if %tree or %metatree
