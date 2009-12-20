@@ -47,7 +47,6 @@ use base q{DebugTail};
 %lexer {
         s{^(\s)}{} and $self->tokenline($1 =~ tr{\n}{});
 
-        return ('', undef) unless $_;
         return ($1, $1) if s/^(.)//;
     }
 
