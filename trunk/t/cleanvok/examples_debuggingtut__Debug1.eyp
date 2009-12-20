@@ -1,4 +1,5 @@
-%token D S %lexer 
+%token D S 
+%lexer 
 %tree
 
 %%
