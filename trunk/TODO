@@ -1,9 +1,12 @@
+  * if lex or error are already set don't ask for then in YYParse
+
   * Lexical Analyzer generation:
-      * Specify reserved words, characters, and handlers (like C code) for specific beginnings
       * Lexer automatic construction
 
   * Dynamic conflict resolution: test YYSetShift
         The case where the default is a reduction is not solved. Investigate
+
+  * C interface with YAML
 
   * Lars request (see dir contributions): allow AST classes to be Moose or any other OOP framework
 
@@ -183,6 +186,5 @@
 
 
 ************ PROJECTS *********************
-* C interface with YAML
 * Human friendly warnings and errors, conflicts, debugger with breaks, etc.
 
