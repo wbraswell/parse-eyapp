@@ -2,8 +2,6 @@ package DebugTail;
 use strict;
 use warnings;
 
-use base q{Parse::Eyapp::TailSupport};
-
 sub lex {
   my $self = shift;
 
