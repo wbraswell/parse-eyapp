@@ -67,7 +67,6 @@ examples/debuggingtut/DebugTail.pm
 examples/debuggingtut/RRTail.pm
 examples/debuggingtut/Tail.pm
 examples/Driver/aSb.yp
-examples/Driver/paste.pl
 examples/Driver/Postfix.eyp
 examples/Driver/Rule3.yp
 examples/Driver/use_aSb.pl

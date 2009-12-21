@@ -82,8 +82,10 @@ sub _Lexer {
 
 sub Run {
     my($self)=shift;
-    $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, 
-                          #yydebug =>0xFF
-			 );
+    $self->YYParse( 
+      yylex => \&_Lexer, 
+      yyerror => \&_Error, 
+      #yydebug =>0xFF
+	);
 }
 

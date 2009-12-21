@@ -7,21 +7,6 @@ use Pod::Usage;
 use Scalar::Util qw{blessed};
 use Carp;
 
-# attribute to count the lines
-sub tokenline {
-  my $self = shift;
-
-  if (ref($self)) {
-    $self->{tokenline} += shift if @_;
-    return $self->{tokenline};
-  }
-
-  # Called as a class method: static
-  my $classtokenline = $self.'::tokenline';
-  ${$classtokenline} += shift if @_;
-  return ${$classtokenline};
-}
-
 sub line {
   my $self = shift;
 
@@ -35,68 +20,6 @@ sub line {
   ${$classtokenline} = shift if @_;
   return ${$classtokenline};
 }
-
-# Generic error handler
-# Convention adopted: if the attribute of a token is an object
-# assume it has 'line' and 'str' methods. Otherwise, if it
-# is an array, follows the convention [ str, line, ...]
-# otherwise is just an string representing the value of the token
-my $_Error = sub {
-  my $parser = shift;
-
-  my $yydata = $parser->YYData;
-
-    exists $yydata->{ERRMSG}
-  and do {
-      warn $yydata->{ERRMSG};
-      delete $yydata->{ERRMSG};
-      return;
-  };
-
-  my ($attr)=$parser->YYCurval;
-
-  my $stoken = '';
-
-  if (blessed($attr) && $attr->can('str')) {
-     $stoken = " near '".$attr->str."'"
-  }
-  elsif (ref($attr) eq 'ARRAY') {
-    $stoken = " near '".$attr->[0]."'";
-  }
-  else {
-    if ($attr) {
-      $stoken = " near '$attr'";
-    }
-    else {
-      $stoken = " near end of input";
-    }
-  }
-
-  my @expected = map { "'$_'" } $parser->YYExpect();
-  my $expected = '';
-    $expected = "Expected one of these terminals: @expected"
-  if @expected;
-
-  my $tline = '';
-  if (blessed($attr) && $attr->can('line')) {
-    $tline = " (line number ".$attr->line.")" 
-  }
-  elsif (ref($attr) eq 'ARRAY') {
-    $tline = " (line number ".$attr->[1].")";
-  }
-  else {
-    # May be the parser object knows the line number ?
-    my $lineno = $parser->tokenline(0);
-    $tline = " (line number $lineno)" if $lineno > 0;
-  }
-
-  local $" = ', ';
-  warn << "ERRMSG";
-
-Syntax error$stoken$tline. 
-$expected
-ERRMSG
-};
 
 sub error {
   my $self = shift;
