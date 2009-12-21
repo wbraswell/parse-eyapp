@@ -82,7 +82,7 @@ sub new {
       }
     }
 
-    unless($self->{LEX}) {
+    unless ($self->{LEX}) {
       if ($class->isa('Parse::Eyapp::TailSupport')) {
         $self->{LEX} = $class->lexer;
         @params = ('RULES','STATES');
@@ -99,6 +99,22 @@ sub YYParse {
     my($retval);
 
   _CheckParams( \@params, \%params, \@_, $self );
+
+  unless($self->{ERROR}) {
+    if ($self->isa('Parse::Eyapp::TailSupport')) {
+      $self->{ERROR} = $self->error;
+    }
+    else {
+      $self->{ERROR} = \&_Error;
+    }
+  }
+
+  unless($self->{LEX}) {
+    if ($self->isa('Parse::Eyapp::TailSupport')) {
+      $self->{LEX} = $self->lexer;
+    }
+  }
+
 
   if($$self{DEBUG}) {
     _DBLoad();
@@ -983,9 +999,9 @@ sub YYLexer {
 
 
 sub _CheckParams {
-  my($mandatory,$checklist,$inarray,$outhash)=@_;
-  my($prm,$value);
-  my($prmlst)={};
+  my ($mandatory,$checklist,$inarray,$outhash)=@_;
+  my ($prm,$value);
+  my ($prmlst)={};
 
   while(($prm,$value)=splice(@$inarray,0,2)) {
         $prm=uc($prm);
@@ -1002,9 +1018,68 @@ sub _CheckParams {
   }
 }
 
+# Generic error handler
+# Convention adopted: if the attribute of a token is an object
+# assume it has 'line' and 'str' methods. Otherwise, if it
+# is an array, follows the convention [ str, line, ...]
+# otherwise is just an string representing the value of the token
 sub _Error {
-  print "Parse error.\n";
-}
+  my $parser = shift;
+
+  my $yydata = $parser->YYData;
+
+    exists $yydata->{ERRMSG}
+  and do {
+      warn $yydata->{ERRMSG};
+      delete $yydata->{ERRMSG};
+      return;
+  };
+
+  my ($attr)=$parser->YYCurval;
+
+  my $stoken = '';
+
+  if (blessed($attr) && $attr->can('str')) {
+     $stoken = " near '".$attr->str."'"
+  }
+  elsif (ref($attr) eq 'ARRAY') {
+    $stoken = " near '".$attr->[0]."'";
+  }
+  else {
+    if ($attr) {
+      $stoken = " near '$attr'";
+    }
+    else {
+      $stoken = " near end of input";
+    }
+  }
+
+  my @expected = map { "'$_'" } $parser->YYExpect();
+  my $expected = '';
+    $expected = "Expected one of these terminals: @expected"
+  if @expected;
+
+  my $tline = '';
+  if (blessed($attr) && $attr->can('line')) {
+    $tline = " (line number ".$attr->line.")" 
+  }
+  elsif (ref($attr) eq 'ARRAY') {
+    $tline = " (line number ".$attr->[1].")";
+  }
+  else {
+    # May be the parser object knows the line number ?
+    my $lineno = $parser->tokenline(0);
+    $tline = " (line number $lineno)" if $lineno > 0;
+  }
+
+  local $" = ', ';
+  warn << "ERRMSG";
+
+Syntax error$stoken$tline. 
+$expected
+ERRMSG
+};
+
 
 sub _DBLoad {
 
