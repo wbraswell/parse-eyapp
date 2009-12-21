@@ -1008,6 +1008,21 @@ sub _CheckParams {
   }
 }
 
+# attribute to count the lines
+sub tokenline {
+  my $self = shift;
+
+  if (ref($self)) {
+    $self->{tokenline} += shift if @_;
+    return $self->{tokenline};
+  }
+
+  # Called as a class method: static
+  my $classtokenline = $self.'::tokenline';
+  ${$classtokenline} += shift if @_;
+  return ${$classtokenline};
+}
+
 # Generic error handler
 # Convention adopted: if the attribute of a token is an object
 # assume it has 'line' and 'str' methods. Otherwise, if it

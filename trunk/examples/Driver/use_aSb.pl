@@ -1,6 +1,5 @@
 #!/usr/bin/perl -w
-
+use strict;
 use aSb;
 
-$parser = new aSb();
-$parser->Run;
+aSb->new->Run;
