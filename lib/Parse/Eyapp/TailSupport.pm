@@ -44,23 +44,6 @@ sub error {
 #  croak "Error: lexical analizer not defined";
 #};
 
-sub lexer {
-  my $self = shift;
-
-  if (ref $self) { # instance method
-    $self->{LEX} = shift if @_;
-
-    $self->{LEX}
-  }
-  else { # class/static method
-    no strict 'refs';
-    my $classlexer = $self.'::LEX';
-    ${$classlexer} = shift if @_;
-
-    ${$classlexer};
-  }
-}
-
 # attribute with the input
 # is a reference to the actual input
 # slurp_file. 

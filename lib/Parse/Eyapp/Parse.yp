@@ -248,9 +248,7 @@ sub make_lexer {
   my $errline = $line + ($code =~ tr/\n//);
 
 my $lexertemplate = << 'ENDOFLEXER';
-use base q{Parse::Eyapp::TailSupport};
-
-__PACKAGE__->lexer( 
+__PACKAGE__->YYLexer( 
   sub { # lexical analyzer
     my $self = shift; 
     for (${$self->input()}) {  # contextualize

@@ -75,5 +75,5 @@ __PACKAGE__->lexer(
   }
 );
 
-__PACKAGE__->main unless caller();
+__PACKAGE__->main('Provide a statement like "D; D; S" and press <CR><CTRL-D>: ') unless caller;
 
