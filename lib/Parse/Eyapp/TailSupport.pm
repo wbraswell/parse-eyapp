@@ -101,23 +101,41 @@ ERRMSG
 sub error {
   my $self = shift;
 
-  $_Error = shift if @_;
+  if (ref $self) { # instance method
+    $self->{ERROR} = shift if @_;
 
-  $_Error;
+    $self->{ERROR}
+  }
+  else { # class/static method
+    no strict 'refs';
+    my $classerror = $self.'::ERROR';
+    ${$classerror} = shift if @_;
+
+    ${$classerror};
+  }
 }
 
 # attribute with the lexical analyzer
 # has this value by default
-my $_Lexer = sub {
-  croak "Error: lexical analizer not defined";
-};
+#= sub {
+#  croak "Error: lexical analizer not defined";
+#};
 
 sub lexer {
   my $self = shift;
 
-  $_Lexer = shift if @_;
+  if (ref $self) { # instance method
+    $self->{LEX} = shift if @_;
 
-  $_Lexer;
+    $self->{LEX}
+  }
+  else { # class/static method
+    no strict 'refs';
+    my $classlexer = $self.'::LEX';
+    ${$classlexer} = shift if @_;
+
+    ${$classlexer};
+  }
 }
 
 # attribute with the input
@@ -188,8 +206,8 @@ sub Run {
     }
   }
   return $self->YYParse( 
-    yylex => $self->lexer(), 
-    yyerror => $self->error,
+    #yylex => $self->lexer(), 
+    #yyerror => $self->error(),
     yydebug => $yydebug, # 0xF
   );
 }
