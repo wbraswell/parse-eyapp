@@ -26,7 +26,7 @@ $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
 use Carp;
-use Scalar::Util qw{reftype looks_like_number};
+use Scalar::Util qw{blessed reftype looks_like_number};
 
 #Known parameters, all starting with YY (leading YY will be discarded)
 my (%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
@@ -74,12 +74,7 @@ sub new {
     and $class=ref($class);
 
     unless($self->{ERROR}) {
-      if ($class->isa('Parse::Eyapp::TailSupport')) {
-        $self->{ERROR} = $class->error;
-      }
-      else {
-        $self->{ERROR} = \&_Error;
-      }
+      $self->{ERROR} = \&_Error;
     }
 
     unless ($self->{LEX}) {
@@ -101,12 +96,7 @@ sub YYParse {
   _CheckParams( \@params, \%params, \@_, $self );
 
   unless($self->{ERROR}) {
-    if ($self->isa('Parse::Eyapp::TailSupport')) {
-      $self->{ERROR} = $self->error;
-    }
-    else {
-      $self->{ERROR} = \&_Error;
-    }
+    $self->{ERROR} = \&_Error;
   }
 
   unless($self->{LEX}) {
