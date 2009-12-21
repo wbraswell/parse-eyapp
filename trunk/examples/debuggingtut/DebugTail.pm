@@ -13,8 +13,4 @@ sub lex {
   return ('',undef);
 }
 
-sub TERMINAL::info {
-  $_[0]->{attr};
-}
-
 1;
