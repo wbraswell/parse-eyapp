@@ -1148,7 +1148,7 @@ sub main {
   my $debug = 0;
   my $file = '';
   my $showtree = 0;
-  my $TERMINALinfo = '';
+  my $TERMINALinfo;
   my $help;
   my $slurp;
   my $inputfromfile = 1;
