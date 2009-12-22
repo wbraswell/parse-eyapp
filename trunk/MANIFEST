@@ -163,7 +163,6 @@ examples/MatchingTrees/m2.pl
 examples/MatchingTrees/numchildren.pl
 examples/MatchingTrees/Rule6.yp
 examples/MatchingTrees/synopsis.pl
-examples/MatchingTrees/Tail2.pm
 examples/Node/28foldwithnewwithvars.pl
 examples/naming/default_naming_scheme.eyp
 examples/naming/explicit_default_naming_scheme.eyp
