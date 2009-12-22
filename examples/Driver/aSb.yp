@@ -4,16 +4,13 @@
 }
 
 %%
-S:                 { print "S -> epsilon\n" }
-    |   'a' S 'b'  { print "S -> a S b\n" }
+S:      /* empty */ 
+    |   'a' S 'b'  
 ;
 %%
 
-sub Run {
-    my($self)=shift;
+=head1 SYNOPSIS
 
-    $self->slurp_file('','Try aaabbb: ', "\n");
-    $self->YYParse( 
-       yydebug => 0x1F 
-    );
-}
+This example illustrates the C<yydebug> option.
+Compile it with C<eyapp aSb> and the run the
+script C<use_aSb.pl>.
