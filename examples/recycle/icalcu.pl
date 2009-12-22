@@ -15,7 +15,7 @@ sub TIMES {
   $_[1]*$_[3];
 }
 
-my $parser = __PACKAGE__->new(); #yylex => \&CommonTail::_Lexer);
+my $parser = __PACKAGE__->new(); 
 $parser->slurp_file('', "Write an expression: ","\n"); 
 my $t = $parser->Run();
 

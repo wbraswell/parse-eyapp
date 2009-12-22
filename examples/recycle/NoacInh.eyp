@@ -23,7 +23,6 @@ exp:        %name NUM
 %%
 
 use base 'CommonTail';
-__PACKAGE__->lexer(\&CommonTail::_Lexer);
 
 =head1 SYNOPSIS
 
