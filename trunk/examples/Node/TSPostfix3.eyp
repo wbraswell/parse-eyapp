@@ -59,24 +59,24 @@ sub Run {
     my($self)=shift;
     my $input = shift || "a=-b*3\n";
     $self->input(\$input);
-    print $self->input;
+    print "Input: $input\n";
 
     my $tree = $self->YYParse();
 
     return if $self->YYNberr > 0;
 
     $Parse::Eyapp::Node::INDENT = 2;
-    print $tree->str."\n";
+    print "Tree after parsing the translation scheme and before traversing:\n".$tree->str."\n";
 
     $tree->translation_scheme();
 
     *NUM::info = *VAR::info = *PLUS::info = *MINUS::info = *TIMES::info = *DIV::info 
     = *NEG::info = *ASSIGN::info = sub { $_[0]{t} };
 
-    print $tree->str."\n";
+    print "After traversing:\n".$tree->str."\n";
     {
       local $" = ";";
-      print "Translation:\n@{$tree->{t}}\n";
+      print "Final translation:\n@{$tree->{t}}\n";
     }
 }
 
