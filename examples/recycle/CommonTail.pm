@@ -2,9 +2,6 @@ package CommonTail;
 use strict;
 use warnings;
 
-use base 'Parse::Eyapp::Driver';
-__PACKAGE__->lexer(\&_Lexer);
-
 sub _Lexer {
   my($parser)=shift;
 
