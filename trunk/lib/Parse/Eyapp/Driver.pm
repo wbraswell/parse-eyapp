@@ -983,7 +983,6 @@ sub expects {
 #  $$self{LEX};
 #}
 
-my $LEX;
 *Parse::Eyapp::Driver::lexer = \&Parse::Eyapp::Driver::YYLexer;
 sub YYLexer {
   my $self = shift;
@@ -994,9 +993,24 @@ sub YYLexer {
     $self->{LEX}
   }
   else { # class/static method
-    $LEX = shift if @_;
+ # class/static method
+    no strict 'refs';
+    my $classlexer = $self.'::LEX';
+    if (@_) {
+      ${$classlexer} = shift;
+    }
 
-    $LEX
+    return ${$classlexer} if defined($$classlexer);
+   
+    my @classes = @{$self.'::ISA'};
+    my %classes = map { $_ => undef } @classes;
+    while (@classes) {
+      my $c = shift @classes || return;  
+      $classlexer = $c.'::LEX';
+      return $$classlexer if defined($classlexer);
+      # push those that aren't already there
+      push @classes, grep { !exists $classes{$_} } @{$c.'::ISA'};
+    }
   }
 }
 
