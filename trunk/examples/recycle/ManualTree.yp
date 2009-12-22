@@ -1,4 +1,5 @@
-# eyapp -b ''-o manualtree.pl ManualTree.yp 
+# eyapp -b '' ManualTree.yp 
+# ./ManualTree.pm -noslu
 %{
 use Data::Dumper;
 $Data::Dumper::Indent=1;
@@ -29,6 +30,14 @@ sub build_node {
 %left   NEG
 %defaultaction { build_node(@_) }
 
+%lexer {
+    s/^[ \t]+//;
+
+    s/^([0-9]+(?:\.[0-9]+)?)// and return('NUM',$1);
+    s/^([A-Za-z][A-Za-z0-9_]*)// and return('VAR',$1);
+    s/^(.)//s and return($1,$1);
+}
+
 %%
 input:                 { } 
         |   input line { }
@@ -52,45 +61,5 @@ exp:        NUM
 
 %%
 
-
-sub _Error {
-        exists $_[0]->YYData->{ERRMSG}
-    and do {
-        print $_[0]->YYData->{ERRMSG};
-        delete $_[0]->YYData->{ERRMSG};
-        return;
-    };
-    print "Syntax error.\n";
-}
-
-sub _Lexer {
-    my($parser)=shift;
-
-        $parser->YYData->{INPUT}
-    or  $parser->YYData->{INPUT} = <STDIN>
-    or  return('',undef);
-
-    $parser->YYData->{INPUT}=~s/^[ \t]//;
-
-    for ($parser->YYData->{INPUT}) {
-        s/^([0-9]+(?:\.[0-9]+)?)//
-                and return('NUM',$1);
-        s/^([A-Za-z][A-Za-z0-9_]*)//
-                and return('VAR',$1);
-        s/^(.)//s
-                and return($1,$1);
-    }
-}
-
-sub Run {
-    my($self)=shift;
-    $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error, 
-                          #yydebug =>0xFF
-                         );
-}
-
-unless (caller()) {
-  my $parser = __PACKAGE__->new();
-  $parser->Run;
-}
+__PACKAGE__->main("exp: ") unless caller();
 
