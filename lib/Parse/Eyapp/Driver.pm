@@ -983,6 +983,7 @@ sub expects {
 #  $$self{LEX};
 #}
 
+my $LEX;
 *Parse::Eyapp::Driver::lexer = \&Parse::Eyapp::Driver::YYLexer;
 sub YYLexer {
   my $self = shift;
@@ -993,11 +994,13 @@ sub YYLexer {
     $self->{LEX}
   }
   else { # class/static method
-    no strict 'refs';
-    my $classlexer = $self.'::LEX';
-    ${$classlexer} = shift if @_;
+    #no strict 'refs';
+    #my $classlexer = $self.'::LEX';
+    #${$classlexer} = shift if @_;
+    $LEX = shift if @_;
 
-    ${$classlexer};
+    $LEX
+    #${$classlexer};
   }
 }
 

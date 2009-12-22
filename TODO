@@ -1,9 +1,12 @@
   * Parse::Eyapp::TailSupport must be embedded in Driver !!!
+  * 
   * if lex or error are already set don't ask for then in YYParse
   * the #line directive in Parse.yp for %lexer is buggy (worst practice)
 
   * Lexical Analyzer generation:
       * Lexer automatic construction
+      * lexer must support a sub name
+         %lexer mylexer
 
   * Dynamic conflict resolution: test YYSetShift
         The case where the default is a reduction is not solved. Investigate

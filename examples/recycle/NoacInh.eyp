@@ -22,5 +22,17 @@ exp:        %name NUM
 
 %%
 
-use base qw{CommonTail};
+use base 'CommonTail';
 
+=head1 SYNOPSIS
+
+Both C<icalcu.pl> and C<ipostf.pl> inherit and recycle
+this grammar 
+
+Do:
+
+       eyapp NoacInh
+       icalcu.pl
+       ipostf.pl
+      
+=cut
