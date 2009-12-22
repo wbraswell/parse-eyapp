@@ -983,6 +983,31 @@ sub expects {
 #  $$self{LEX};
 #}
 
+sub staticLEX { 
+    my $class = shift;
+
+    # class/static method
+    no strict 'refs';
+    my $classlexer = $class.'::LEX';
+    if (@_) {
+      ${$classlexer} = shift;
+    }
+
+    return ${$classlexer} if defined($$classlexer);
+   
+    # Traverse the inheritance tree for a defined
+    # version of the attribute
+    my @classes = @{$class.'::ISA'};
+    my %classes = map { $_ => undef } @classes;
+    while (@classes) {
+      my $c = shift @classes || return;  
+      $classlexer = $c.'::LEX';
+      return $$classlexer if defined($classlexer);
+      # push those that aren't already there
+      push @classes, grep { !exists $classes{$_} } @{$c.'::ISA'};
+    }
+}
+
 *Parse::Eyapp::Driver::lexer = \&Parse::Eyapp::Driver::YYLexer;
 sub YYLexer {
   my $self = shift;
@@ -992,25 +1017,8 @@ sub YYLexer {
 
     $self->{LEX}
   }
-  else { # class/static method
- # class/static method
-    no strict 'refs';
-    my $classlexer = $self.'::LEX';
-    if (@_) {
-      ${$classlexer} = shift;
-    }
-
-    return ${$classlexer} if defined($$classlexer);
-   
-    my @classes = @{$self.'::ISA'};
-    my %classes = map { $_ => undef } @classes;
-    while (@classes) {
-      my $c = shift @classes || return;  
-      $classlexer = $c.'::LEX';
-      return $$classlexer if defined($classlexer);
-      # push those that aren't already there
-      push @classes, grep { !exists $classes{$_} } @{$c.'::ISA'};
-    }
+  else {
+    return $self->staticLEX(@_); # class/static method 
   }
 }
 
