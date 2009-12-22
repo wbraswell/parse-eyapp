@@ -1,6 +1,17 @@
-# eyapp -b '' ManualTree.yp 
-# ./ManualTree.pm -noslu
 %{
+=head1 SYNOPSIS
+
+This example illustrates the way the directive C<%tree> works.
+Compile it with:
+
+   eyapp -b '' ManualTree.yp 
+
+Run it with:
+
+    ./ManualTree.pm 
+
+=cut
+
 use Data::Dumper;
 $Data::Dumper::Indent=1;
 sub build_node { 

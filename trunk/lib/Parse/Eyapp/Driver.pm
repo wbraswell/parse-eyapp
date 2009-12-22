@@ -1241,7 +1241,16 @@ sub main {
     print "There were $ne errors during parsing\n";
   }
   else {
-    print $tree->str()."\n" if $showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node');
+    if ($showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node')) {
+      print $tree->str()."\n";
+    }
+    elsif ($showtree && $tree && ref $tree) {
+      require Data::Dumper;
+      print Data::Dumper::Dumper($tree)."\n";
+    }
+    elsif ($showtree && defined($tree)) {
+      print "$tree\n";
+    }
   }
 
   $tree
