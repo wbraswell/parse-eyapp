@@ -113,7 +113,7 @@ Parse::Eyapp::Node - The nodes of the Syntax Trees
 
 =head1 TREE MATCHING AND TREE SUBSTITUTION
 
-See the documentation in L<Parse::Eyapp::MatchingTrees>
+See the documentation in L<Parse::Eyapp::treematchingtut>
 
 
 =head1 SEE ALSO
