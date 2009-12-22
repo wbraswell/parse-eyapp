@@ -20,3 +20,14 @@ exp:        %name NUM
 
 use base qw{CommonTail};
 
+=head1 SYNOPSIS
+
+Compile it with:
+
+        eyapp NoacYYDelegateaction.eyp
+
+Execute it with:
+
+      ./icalcu_and_ipost_yydel.pl
+
+=cut

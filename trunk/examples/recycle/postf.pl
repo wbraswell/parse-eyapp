@@ -23,3 +23,4 @@ my $x = <STDIN>;
 my $t = $parser->Run($debug, $x);
 
 print "$t\n" unless $parser->YYNberr;
+

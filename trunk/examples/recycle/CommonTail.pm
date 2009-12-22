@@ -1,8 +1,11 @@
 package CommonTail;
 use strict;
 use warnings;
+use base 'Parse::Eyapp::Driver';
 
-sub _Lexer {
+#__PACKAGE__->error(sub { die 'Package CommonTail overwrites default error' });
+__PACKAGE__->lexer(\&Lexer);
+sub Lexer {
   my($parser)=shift;
 
   for (${$parser->input}) {

@@ -36,7 +36,10 @@ use strict;
 my $calcparser = CalcActions->new();
 print "Write an expression: "; 
 my $x = <STDIN>;
-my $e = $calcparser->Run(0, $x);
+my $e = $calcparser->Run(
+  0,  # debug mode
+  $x  # input
+);
 
 unless ($calcparser->YYNberr) {
   print "$e\n";

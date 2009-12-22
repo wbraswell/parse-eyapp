@@ -161,6 +161,7 @@ sub YYAccept {
     undef;
 }
 
+# Used to set that we are in "error recovery" state
 sub YYError {
   my($self)=shift;
 
@@ -970,25 +971,18 @@ sub expects {
   return grep { $_ eq $token } $self->YYExpect;
 }
 
-#sub YYExpect {
-#    my($self)=shift;
-#
-#    keys %{$self->{STATES}[$self->{STACK}[-1][0]]{ACTIONS}}
-#}
-
-#sub YYLexer {
-#  my($self)=shift;
-#
-#  $$self{LEX} = shift if @_;
-#  $$self{LEX};
-#}
-
-sub staticLEX { 
+# Set/Get a static/class attribute for $class
+# Searches the $class ancestor tree for  an ancestor
+# having defined such attribute. If found, that value is returned
+sub static_attribute { 
     my $class = shift;
+    $class = ref($class) if ref($class);
+    my $attributename = shift;
 
     # class/static method
     no strict 'refs';
-    my $classlexer = $class.'::LEX';
+    my $classlexer;
+    my $classname = $classlexer = $class.'::'.$attributename;
     if (@_) {
       ${$classlexer} = shift;
     }
@@ -1001,8 +995,11 @@ sub staticLEX {
     my %classes = map { $_ => undef } @classes;
     while (@classes) {
       my $c = shift @classes || return;  
-      $classlexer = $c.'::LEX';
-      return $$classlexer if defined($classlexer);
+      $classlexer = $c.'::'.$attributename;
+      if (defined($$classlexer)) {
+        $$classname = $$classlexer;
+        return $$classlexer;
+      }
       # push those that aren't already there
       push @classes, grep { !exists $classes{$_} } @{$c.'::ISA'};
     }
@@ -1013,12 +1010,14 @@ sub YYLexer {
   my $self = shift;
 
   if (ref $self) { # instance method
+    # The class attribute isn't changed, only the instance
     $self->{LEX} = shift if @_;
 
-    $self->{LEX}
+    return $self->static_attribute('LEX', @_,) unless defined($self->{LEX}); # class/static method 
+    return $self->{LEX};
   }
   else {
-    return $self->staticLEX(@_); # class/static method 
+    return $self->static_attribute('LEX', @_,);
   }
 }
 
@@ -1063,27 +1062,20 @@ sub line {
   return ${$classtokenline};
 }
 
-my $ERR = \&_Error;
+our $ERROR = \&_Error;
 sub error {
   my $self = shift;
 
   if (ref $self) { # instance method
     $self->{ERROR} = shift if @_;
 
-    $self->{ERROR}
+    return $self->static_attribute('ERROR', @_,) unless defined($self->{ERROR}); # class/static method 
+    return $self->{ERROR};
   }
   else { # class/static method
-    $ERR = shift if @_;
-
-    $ERR;
+    return $self->static_attribute('ERROR', @_,); # class/static method 
   }
 }
-
-# attribute with the lexical analyzer
-# has this value by default
-#= sub {
-#  croak "Error: lexical analizer not defined";
-#};
 
 # attribute with the input
 # is a reference to the actual input
@@ -1109,33 +1101,49 @@ sub slurp_file {
   my $input = <$f>;
 
   if (ref($self)) {  # called as object method
-    $self->{input} = \$input;
+    $self->input(\$input);
   }
   else { # class/static method
     my $classinput = $self.'::input';
-    ${$classinput} = \$input;
+    ${$classinput}->input(\$input);
   }
 }
 
 sub input {
   my $self = shift;
 
-  no strict 'refs';
-  if (@_) { # used as setter. Passing ref
-    $self->line(1);
-    if (ref($self)) { # object method
-      $self->{input} = shift;
+  $self->line(1) if @_; # used as setter
+  if (ref $self) { # instance method
+    $self->{INPUT} = shift if @_;
 
-      return $self->{input};
-    }
-    # Static method passing string
-    ${$self.'::input'} = shift();
-
-    return ${$self.'::input'};
+    return $self->static_attribute('INPUT', @_,) unless defined($self->{INPUT}); # class/static method 
+    return $self->{INPUT};
   }
-  return $self->{input} if ref $self;
-  return ${$self.'::input'};
+  else { # class/static method
+    return $self->static_attribute('INPUT', @_,); # class/static method 
+  }
 }
+
+
+#sub input {
+#  my $self = shift;
+#
+#  no strict 'refs';
+#  if (@_) { # used as setter. Passing ref
+#    $self->line(1);
+#    if (ref($self)) { # object method
+#      $self->{input} = shift;
+#
+#      return $self->{input};
+#    }
+#    # Static method passing string
+#    ${$self.'::input'} = shift();
+#
+#    return ${$self.'::input'};
+#  }
+#  return $self->{input} if ref $self;
+#  return ${$self.'::input'};
+#}
 
 # args: parser, debug and optionally the input or a reference to the input
 sub Run {
