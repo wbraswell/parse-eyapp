@@ -994,13 +994,9 @@ sub YYLexer {
     $self->{LEX}
   }
   else { # class/static method
-    #no strict 'refs';
-    #my $classlexer = $self.'::LEX';
-    #${$classlexer} = shift if @_;
     $LEX = shift if @_;
 
     $LEX
-    #${$classlexer};
   }
 }
 
@@ -1045,6 +1041,7 @@ sub line {
   return ${$classtokenline};
 }
 
+my $ERR = \&_Error;
 sub error {
   my $self = shift;
 
@@ -1054,11 +1051,9 @@ sub error {
     $self->{ERROR}
   }
   else { # class/static method
-    no strict 'refs';
-    my $classerror = $self.'::ERROR';
-    ${$classerror} = shift if @_;
+    $ERR = shift if @_;
 
-    ${$classerror};
+    $ERR;
   }
 }
 
