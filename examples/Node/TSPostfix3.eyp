@@ -1,15 +1,22 @@
-# File TSPostfix3.eyp. To use it:
-# eyapp TSPostfix3.eyp; usetspostfix3.pl
 %right  '='
 %left   '-' '+'
 %left   '*' '/'
 %left   NEG
 
 %{
-  use Data::Dumper;
-  $Data::Dumper::Indent = 1;
-  $Data::Dumper::Deepcopy = 1;
-  $Data::Dumper::Deparse = 1;
+=head1 SYMOPSIS
+
+This example illustrates the directive C<%metatree> 
+to build I<translation schemes>.
+
+Compile and execute it with:
+
+   eyapp TSPostfix3.eyp; ./usetspostfix3.pl
+
+See perldoc L<Parse::Eyapp::translationschemestut>
+
+=cut
+
 %}
 
 %lexer {
