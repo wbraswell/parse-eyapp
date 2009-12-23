@@ -28,8 +28,6 @@ Try these inputs:
 
 =cut
 
-use base q{DebugTail}; 
-
 my $ID = qr{[A-Za-z][A-Za-z0-9_]*};
              # Identifiers separated by commas
 my $IDLIST = qr{ \s*(?:\s*,\s* $ID)* \s* }x;
