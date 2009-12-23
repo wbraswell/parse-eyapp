@@ -2,7 +2,7 @@
 use strict;
 my $nt;
 
-BEGIN { $nt = 7 }
+BEGIN { $nt = 9 }
 use Test::More tests=>$nt;
 #use_ok qw(Parse::Eyapp) or exit;
 
