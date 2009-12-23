@@ -1,5 +1,8 @@
 Revision history for Perl extension Eyapp.
 1.152
+  * lexer, input and error as static/class attributes and inheritance
+  * Parse::Eyapp::TailSupport embedded in Driver 
+  * if lex or error are already set don't ask for then in YYParse
   * label for names %name B:A (label is A, name is B). A conflict can refer to 
     the  name:label but the class is 'name'
 

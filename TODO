@@ -1,8 +1,3 @@
-  * lexer, input and error as static/class attributes and inheritance
-  * Parse::Eyapp::TailSupport must be embedded in Driver !!!
-  * 
-  * if lex or error are already set don't ask for then in YYParse
-
   * the #line directive in Parse.yp for %lexer is buggy (worst practice)
 
   * Lexical Analyzer generation:
