@@ -39,7 +39,18 @@ SKIP: {
   ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
 
   $expected = qr{type_decl_is_TYPE_ID_type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+id_list_is_id_list_COMMA_ID\(\s+id_list_is_id_list_COMMA_ID\(\s+ID\(\s+TERMINAL\s+\),\s+TERMINAL\s+\),\s+TERMINAL\s+\)\s+\)\s+\)};
+
   like($r, $expected,'AST for type e = (x, y, z);');
+
+  eval {
+    $r = qx{t/dynamicresolution/persvd.pl -t -c 'type e = (x);'};
+  };
+
+  ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
+
+  $expected = qr{type_decl_is_TYPE_ID_type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+ID\(\s+TERMINAL\s+\)\s+\)\s+\)};
+
+  like($r, $expected,'AST for type e = (x);');
 
   unlink 't/dynamicresolution/persvd.pl';
 
