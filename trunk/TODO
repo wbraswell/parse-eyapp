@@ -10,6 +10,8 @@
 
   * C interface with YAML
 
+  * Parse::Eyapp::Base must be pruned
+
   * Lars request (see dir contributions): allow AST classes to be Moose or any other OOP framework
 
   * Provide debugging support for standalone modules: currently skipped
