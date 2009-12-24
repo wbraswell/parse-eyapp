@@ -198,8 +198,8 @@ tags:
 	ctags -a --exclude=examples --exclude=t --exclude=doc --exclude=tt2
 
 wiki:
-    # Pod::Simple::Wiki::Googlecode
-    pod2wiki --style googlecode lib/Parse/Eyapp/debuggingtut | ./filter.pl > debuggingtut.wiki
+	#Pod::Simple::Wiki::Googlecode
+	pod2wiki --style googlecode lib/Parse/Eyapp/debuggingtut.pod | ./filter.pl > debuggingtut.wiki
 
 EOSQT
 
