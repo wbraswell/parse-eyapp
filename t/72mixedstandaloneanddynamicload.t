@@ -3,7 +3,7 @@ use strict;
 use Test::More tests=>5;
 
 SKIP: {
-  skip "Gift.yp not found", 3 unless ($ENV{DEVELOPER} && -r "t/Gift.yp" && -x "./eyapp");
+  skip "Gift.yp not found", 5 unless ($ENV{DEVELOPER} && -r "t/Gift.yp" && -x "./eyapp");
 
   unlink 't/Gift.pm';
 

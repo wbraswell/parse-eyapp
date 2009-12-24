@@ -7,7 +7,7 @@ use Test::More tests=>$nt;
 #use_ok qw(Parse::Eyapp) or exit;
 
 SKIP: {
-  skip "t/dynamicresolution/pascalenumeratedvsrangesolvedviadyn.eyp not found", $nt unless ($ENV{DEVELOPER} && -r "t/dynamicresolution/pascalenumeratedvsrangesolvedviadyn.eyp" && -x "./eyapp");
+  skip "t/dynamicresolution/pascalenumeratedvsrangesolvedviadyn.eyp not found", $nt unless ($ENV{DEVELOPER} eq 'casiano' && -r "t/dynamicresolution/pascalenumeratedvsrangesolvedviadyn.eyp" && -x "./eyapp");
 
   unlink 't/Calc.pm';
 
