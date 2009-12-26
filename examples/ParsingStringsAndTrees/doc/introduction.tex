@@ -76,21 +76,6 @@ PIR:
 20  .end
 \end{verbatim}
 
-The Parrot VM is register based. This means that, like a hardware
-CPU, it has a number of fast-access units of storage called registers.
-There are 4 types of register in Parrot: integers (I), numbers (N),
-strings (S) and PMCs (P). For each type there are several of these, named
-$N0,$N1, \ldots , Number registers map
-to the machine native floating point type. 
-
-The code above is an example of PIR, which stands for 
-Parrot Intermediate Representation and is also known as
-Intermediate Code or IMC. PIR files use the extension .pir.
-PIR is an intermediate language that can be compiled to
-Parrot Byte code. It was conceived as a possible target language for compilers
-targeting the Parrot Virtual Machine. PIR is halfway between a High
-Level Language (HLL) and Parrot Assembly (PASM).
-
 You can download the code for this example from
 \htmladdnormallink
 {http://nereida.deioc.ull.es/~pl/eyapsimple/source.tgz}
@@ -132,5 +117,3 @@ c = 4
 d = -1
 \end{verbatim}
 
-See \htmladdnormallink{http://www.parrot.org/download}{http://www.parrot.org/download} 
-for several ways to get a recent version of parrot.
