@@ -13,8 +13,11 @@ reside in the body section.
 The tail section includes Perl code that gives support
 to the semantic actions. Commonly 
 the lexical analyzer and error diagnostic subroutines
-go there.
- 
+go there. In the case of \verb|eyapp| the lexical analyzer 
+is usually defined through a \verb|%lexer| directive inside 
+the head section.  Also,
+for most cases, there is no need to overwrite the provided default
+\verb|error| diagnostic method.
 
 \begin{verbatim}
 %right  '='        # Head section
@@ -41,26 +44,50 @@ exp:
   | %name TIMES  exp '*' exp
   | %name DIV    exp '/' exp
   | %name NEG
-          '-' exp %prec NEG
-  |            '(' exp ')'
+                '-' exp              %prec NEG
+  |             '(' exp ')'
 ;
 leftvalue : %name VAR VAR
 ;
 %% 
-...               # tail section
 \end{verbatim}
 
 \subsection{Ambiguities and Conflicts}
-The former grammar is ambiguous.
+The former grammar is ambiguous.  
 For instance, an expression like \verb|exp '-' exp| followed by a
-minus \verb|'-'| can be worked in more than one way. If we
+minus \verb|'-'| can be worked in more than one way. An expression like:
+
+\begin{verbatim}
+               4 - 3 - 1
+\end{verbatim}
+
+Is ambiguous. If you can't see it, it is because after so many years in 
+school, your mind has ruled out one of the interpretations. Two interpretations
+of the former phrase are:
+\begin{verbatim}
+               (4 - 3) - 1
+               4 - (3 - 1)
+\end{verbatim}
+In our planet the first interpretation is preferred over the second.
+
+If we
 have an input like \verb|NUM - NUM - NUM| the activity of a LALR(1) parser
 (the family of parsers to which Eyapp belongs)
-consists of a sequence of \I{shift and reduce actions}. A \I{shift action}
-has as consequence the reading of the next token. A \I{reduce action}
+consists of a sequence of \I{shift and reduce actions}:
+
+\begin{itemize}
+\item
+A \I{shift action}
+has as consequence the reading of the next token. 
+
+\item
+A \I{reduce action}
 is finding a production rule that matches and substituting 
 the \I{right hand side} (rhs) of the production by the \
-\I{left hand side} (lhs).  For input \verb|NUM - NUM - NUM|
+\I{left hand side} (lhs).  
+\end{itemize}
+
+For input \verb|NUM - NUM - NUM|
 the activity will be as follows (the dot is used to indicate where the next 
 input token is):
 
@@ -83,11 +110,18 @@ or:
 \end{verbatim}
 that is called a \I{shift-reduce conflict}: the parser must decide
 whether to shift \verb|NUM| or to \I{reduce} by the rule \verb|exp: exp - exp|.
+A shift-reduce conflict means that the parser is not in condition to decide
+whether to associate the processed phrase (left association) or to continue reading 
+more input to make an association later (right association). This incapability
+usually comes from the fact that the grammar is ambiguous but can also be due
+to other reasons, as the myopic condition of the parser, being able only to see one token ahead.
 
-That is also the reason for the precedence declarations in the 
-head section. Another kind of conflicts are \I{reduce-reduce conflicts}.
+Another kind of conflicts are \I{reduce-reduce conflicts}.
 They arise when more that rhs can be applied for a reduction
 action.
+
+The precedence declarations in the 
+head section tells the parser what to do in case of ambiguity. 
 
 By associating priorities with tokens
 the programmer can tell Eyapp what syntax tree
@@ -97,21 +131,52 @@ The declarations
 \verb|%nonassoc|, \verb|%left| and \verb|%right| 
 declare and associate a {\it priority} with the tokens
 that follow them.  
+
+\begin{itemize}
+\item
 Tokens declared in the same line have the same precedence. 
+\item
 Tokens declared in lines below have more
-precedence than those declared above. Thus, in the example
+precedence than those declared above. 
+\item 
+The precedence of a rhs is the precedence of the rightmost token  
+in that rhs. Thus, the production named \verb|MINUS|: \verb|exp -> exp '-' exp|
+has the precedence of \verb|'-'|.
+\item
+We can always give an explicit priority to a rhs using the \verb|%prec TOKEN| directive,
+like in the rhs named \verb|NEG|:
+\begin{verbatim}
+  | %name NEG
+          '-' exp %prec NEG
+\end{verbatim}
+\end{itemize}
+When there is a shift-reduce conflict the precedence of the rule and the precedence of the
+incoming token are compared
+\begin{itemize}
+\item
+If the precedence of the rule is greater, a reduction (left association) takes place
+\item 
+If the precedence of the token is greater, a shift (right association) takes place
+\item
+If both token and rule have the same precedence the parser action depends on whether
+the declaration was made using the \verb|%left| or \verb|%right| directive. In the
+first case the reduction takes place, in the second the shift predominates.
+\end{itemize}
+Thus, in the example
 we are saying that \verb|'+'| and \verb|'-'| have the same precedence
 but higher than \verb|'='|. The final effect of \verb|'-'|
 having greater precedence than \verb|'='| is that an
 expression like \verb|a=4-5| is interpreted as \verb|a=(4-5)| 
-and not as \verb|(a=4)-5|.  The use of \verb|%left| applied to \verb|'-'|
-indicates that - in case of ambiguity 
-and a match between precedences - 
+and not as \verb|(a=4)-5|.  
+
+The use of \verb|%left| applied to \verb|'-'|
+indicates that, in case of ambiguity 
+and a match between precedences,  
 the parser must build the tree corresponding
 to a left parenthesization. Thus, \verb|4-5-9| 
 is interpreted as  \verb|(4-5)-9|.
 
-The \verb|%prec| directive can be used when
+As was said, the \verb|%prec| directive can be used when
 a rhs is involved in a conflict and has no tokens
 inside or it has but the precedence of the last token leads
 to an incorrect interpretation. A rhs can be followed by 
@@ -157,14 +222,28 @@ produces the following AST\footnote{The information
 between brackets shows the attribute 
 for {\tt TERMINAL} nodes}:
 \begin{verbatim}
-EXPS(
-  ASSIGN(
-    VAR(TERMINAL[b]),
-    TIMES(
-      NUM(TERMINAL[2]),
-      VAR(TERMINAL[a]))
-  )
-)
+~/LEyapp/examples/ParsingStringsAndTrees$ perl -wd infix2pir.pl  # start the debugger
+
+Loading DB routines from perl5db.pl version 1.31
+Editor support available.
+
+Enter h or `h h' for help, or `man perldebug' for more help.
+
+main::(infix2pir.pl:48):    my $filename = shift;
+  DB<1> l 48,55               # let us see the source code ...
+48==>   my $filename = shift;
+49: my $parser = Infix->new(); 
+50: $parser->slurp_file($filename);
+51  
+52: my $t = $parser->YYParse();
+53  
+54  # Machine independent optimizations
+55: $t->s(our @algebra);  
+  DB<2> c 55  # continue until the abstract syntax tree (AST) is built
+b = 2 * a     # <- user input
+main::(infix2pir.pl:55):    $t->s(our @algebra);  
+  DB<3> p $t->str  # show us the AST
+line_3(EXPS(sts_5(ASSIGN(VAR(TERMINAL[b]),TIMES(NUM(TERMINAL[2]),VAR(TERMINAL[a]))))))
 \end{verbatim}
 Nodes of the AST are hashes that can be 
 \I{decorated} with new keys/attributes.

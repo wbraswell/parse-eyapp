@@ -5,7 +5,8 @@
 %  $Date: 1995/09/15 15:20:59 $
 %  $Revision: 1.4 $
 %
-\documentclass[times, 10pt,twocolumn]{article}
+\documentclass[times, 10pt,%twocolumn
+]{article}
 \usepackage{latex8}
 \usepackage{times, graphics}
 \usepackage{html}
@@ -14,8 +15,8 @@
 % take the % away on next line to produce the final camera-ready version
 \pagestyle{empty}
 %-------------------------------------------------------------------------
-\textwidth 17 cm
-\textheight 256 mm
+%\textwidth 17 cm
+%\textheight 256 mm
 \columnsep 3 mm
 
 \newcommand{\code}[1]{{\tt #1}}
@@ -29,6 +30,7 @@
 %\end{center}
 %}
 %\newcommand{\ici}[1] {\index{#1}}
+\hyphenation{a-na-ly-zer}
 
 \title{Parsing Strings and Trees with {\tt Parse::Eyapp}\\
 \it (An Introduction to Compiler Construction)}
@@ -66,8 +68,8 @@ that extends Francois Desarmenien Parse::Yapp 1.05.
 Eyapp extends yacc/yapp syntax with 
 functionalities like named attributes,
 EBNF-like expressions, modifiable default action,
-automatic syntax tree building,
-semi-automatic abstract syntax tree building,
+automatic abstract syntax tree building,
+dynamic conflict resolution,
 translation schemes, tree regular expressions,
 tree transformations, scope analysis support,
 and directed acyclic graphs among others.

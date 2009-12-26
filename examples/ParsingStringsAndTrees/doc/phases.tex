@@ -15,25 +15,27 @@ Don't get overflowed for so much terminology:
 The incoming sections will
 explain in more detail each of these phases.
 \begin{verbatim}
-my $parser = Infix->new();
-# Set input 
-$parser->YYData->{INPUT} 
-  = slurp_file($filename, 'inf');
+my $filename = shift;
+my $parser = Infix->new(); 
 
-# Lexical and syntax analysis
-my $t = $parser->YYParse(
- yylex => \&Infix::Lex, 
- yyerror => \&Infix::Err);
+# read input
+$parser->slurp_file($filename);
 
-# Tree transformations
-$t->s(our @algebra);
+# lexical and syntax analysis
+my $t = $parser->YYParse();
 
-# Address assignment
+# tree transformations:
+# machine independent optimizations
+$t->s(our @algebra);  
+
+# Address Assignment 
 our $reg_assign;
 $reg_assign->s($t);
 
-# Code generation
+# Translate to PARROT
 $t->bud(our @translation);
+
+# variable declarations
 my $dec = build_dec();
 
 peephole_optimization($t->{tr});
@@ -62,6 +64,9 @@ $ head -1 I2PIR.pm
 package main;
 \end{verbatim}
 The option \verb|-m main| tells \verb|treereg|
-to place the transformations inside the \verb|main|
-namespace. 
-% Make a makefile! or make a dist with the example and put it in CPAN
+to place the generated tree transformations inside the \verb|main|
+namespace. Is in this file that the variables 
+\verb|@algebra|, \verb|@translation| and 
+\verb|$reg_assign| used during the machine-independent optimization,
+code generation and register allocation phases are defined.
+
