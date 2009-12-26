@@ -1,0 +1,212 @@
+The Parrot virtual machine is register based. This means that, like a hardware
+CPU, it has a number of fast-access units of storage called registers.
+There are 4 types of register in Parrot: integers (\verb|I|), numbers (\verb|N|),
+strings (\verb|S|) and PMCs (\verb|P|). For each type there are several of these, named
+\verb|$N0|, \verb|$N1|, \ldots  Number registers map
+to the machine native floating point type. 
+You can download a recent version of parrot from
+\htmladdnormallink{http://www.parrot.org/download}{http://www.parrot.org/download}.
+
+The code produced by \verb|infix2pir.pl| is an example of PIR, which stands for 
+Parrot Intermediate Representation and is also known as
+Intermediate Code or IMC. PIR files use the extension \verb|.pir|.
+PIR is an intermediate language that can be compiled to
+Parrot Byte code (PBC). It was conceived as a possible target language for compilers
+targeting the Parrot Virtual Machine. PIR is halfway between a High
+Level Language (HLL) and Parrot Assembly (PASM).
+
+PIR has a relatively simple syntax. Every line is a comment, a
+label, a statement, or a directive. Each statement or directive
+stands on its own line. There is no end-of-line symbol (such as a
+semicolon in C). These is a brief enumeration of the main characteristics of the language:
+
+\begin{itemize}
+\item {\bf Comments }
+A comment begins with the \verb|#| symbol, and continues until the end of
+the line. Comments can stand alone on a line or follow a statement
+or directive.
+
+\item {\bf Statements }
+
+A statement is either an opcode or syntactic sugar for one or more
+opcodes. An opcode is a native instruction for the virtual machine;
+it consists of the name of the instruction followed by zero or more
+arguments.
+
+\item {\bf Higher-level constructs }
+
+PIR also provides higher-level constructs, including symbolic operators:
+
+\begin{verbatim}
+  $I1 = 2 + 5
+\end{verbatim}
+
+These special statement forms are just syntactic sugar for regular
+opcodes. The \verb|+| symbol corresponds to the \verb|add| opcode, the 
+\verb|-| symbol
+to the \verb|sub| opcode, and so on. The previous example is equivalent
+to:
+
+\begin{verbatim}
+  add $I1, 2, 5
+\end{verbatim}
+
+\item {\bf Directives }
+
+Directives resemble opcodes, but they begin with a period (\verb|.|). Some
+directives specify actions that occur at compile time. Other
+directives represent complex operations that require the generation
+of multiple instructions. The \verb|.local| directive, for example, declares
+a named variable.
+
+\begin{verbatim}
+  .local string hello
+\end{verbatim}
+
+\item {\bf Literals }
+
+\begin{itemize}
+\item {\bf Numbers }
+
+Integers and floating point numbers are numeric literals. They can be positive or negative.
+Integer literals can also be binary, octal, or hexadecimal:
+
+\begin{verbatim}
+  $I0 = 42       # positive
+  $I1 = -1       # negative
+  $I1 = 0b01010  # binary
+  $I2 = 0o72     # octal
+  $I3 = 0xA5     # hexadecimal
+\end{verbatim}
+
+Floating point number literals have a decimal point and can use scientific notation:
+
+\begin{verbatim}
+  $N0 = 3.14
+  $N2 = -1.2e+4
+\end{verbatim}
+
+\item {\bf Strings }
+
+String literals are enclosed in single or double-quotes.
+Strings in double-quotes allow escape sequences using backslashes.
+Strings in single-quotes only allow escapes for nested quotes
+
+\begin{verbatim}
+  $S0 = "This is a valid literal string"
+  $S1 = 'This is also a valid literal string'
+\end{verbatim}
+\end{itemize}
+
+\item {\bf Variables }
+
+PIR variables can store four different kinds of values—integers,
+numbers (floating point), strings, and objects. Parrot's objects
+are called PMCs, for "PolyMorphic Container".
+
+The simplest kind of variable is a register variable. The name of
+a register variable always starts with a dollar sign (\verb|$|), followed
+by a single character which specifies the type of the variable --
+integer (\verb|I|), number (\verb|N|), string (\verb|S|), or PMC (\verb|P|) 
+-- and ends with a unique number. You need not predeclare register variables:
+
+\begin{verbatim}
+  $S0 = "Who's a pretty boy, then?"
+  say $S0
+\end{verbatim}
+
+PIR also has named variables; the \verb|.local| directive declares them.
+As with register variables, there are four valid types: \verb|int|, \verb|num|,
+\verb|string|, and \verb|pmc|. You must declare named variables; otherwise they
+behave exactly the same as register variables.
+
+\begin{verbatim}
+  .local string hello
+  hello = "'Allo, 'allo, 'allo."
+  say hello
+\end{verbatim}
+
+\item {\bf Constants }
+
+The \verb|.const| directive declares a named constant. Named constants are
+similar to named variables, but the values set in the declaration
+may never change. Like \verb|.local|, \verb|.const| takes a type and a name. It
+also requires a literal argument to set the value of the constant.
+
+\begin{verbatim}
+  .const int    frog = 4                       # integer
+  .const string name = "Superintendent Parrot" # string
+  .const num    pi   = 3.14159                 # floating point
+\end{verbatim}
+
+You may use a named constant anywhere you may use a literal, but
+you must declare the named constant beforehand. 
+
+\item {\bf Keys }
+
+A key is a special kind of constant used for accessing elements in
+complex variables (such as an array). A key is either an integer
+or a string; and it's always enclosed in square brackets 
+(\verb|[| and \verb|]|).
+You do not have to declare literal keys. This code example stores
+the string \verb|"foo"|
+in \verb|$P0| as element \verb|5|, and then retrieves it.
+
+\begin{verbatim}
+  $P0[5] = "foo"
+  $S1    = $P0[5]
+\end{verbatim}
+
+PIR supports multi-part keys. Use a semicolon to separate each part.
+
+\begin{verbatim}
+  $P0['my';'key'] = 472
+  $I1             = $P0['my';'key']
+\end{verbatim}
+
+\item {\bf Control Structures }
+
+\begin{itemize}
+\item {\bf goto}
+
+The \verb|goto label| statement 
+jumps to a named label. It can only
+jump inside a subroutine, and only to a named label. 
+Example:
+
+\begin{verbatim}
+    goto GREET
+      # ... some skipped code ...
+  GREET:
+    say "'Allo, 'allo, 'allo."
+\end{verbatim}
+
+\item {\bf if }
+
+Variations on the basic \verb|goto| check whether a particular condition
+is true or false before jumping:
+
+\begin{verbatim}
+  if $I0 > 5 goto GREET
+\end{verbatim}
+\end{itemize}
+
+\item {\bf Subroutines }
+
+A PIR subroutine starts with the \verb|.sub| directive and ends with the
+\verb|.end| directive. 
+Parameter declarations use the \verb|.param| directive;
+they resemble named variable declarations. 
+
+This example declares a
+subroutine named greeting, that takes a single string parameter
+named \verb|hello|:
+
+\begin{verbatim}
+  .sub 'greeting'
+      .param string hello
+      say hello
+  .end
+\end{verbatim}
+\end{itemize}
+
