@@ -19,6 +19,10 @@
 %\textheight 256 mm
 \columnsep 3 mm
 
+
+\newcommand{\cpan}[1]
+ {\htmladdnormallink{#1}
+ {http://search.cpan.org/perldoc?#1}}
 \newcommand{\code}[1]{{\tt #1}}
 \newcommand{\I}[1]{{\it #1}}
 %\newenvironment{tabcode}{
@@ -63,7 +67,7 @@ Universidad de La Laguna
 % an abbreviated author list is needed
 
 \begin{abstract}
-Parse::Eyapp (Extended yapp) is a collection of modules
+\cpan{Parse::Eyapp} (Extended yapp) is a collection of modules
 that extends Francois Desarmenien Parse::Yapp 1.05.
 Eyapp extends yacc/yapp syntax with 
 functionalities like named attributes,
