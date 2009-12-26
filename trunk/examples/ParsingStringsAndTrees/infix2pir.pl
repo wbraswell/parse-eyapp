@@ -42,7 +42,7 @@ my $filename = shift;
 my $parser = Infix->new(); 
 $parser->slurp_file($filename);
 
-my $t = $parser->YYParse();
+my $t = $parser->YYParse() || exit(1);
 
 # Machine independent optimizations
 $t->s(our @algebra);  

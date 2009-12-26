@@ -7,8 +7,10 @@ algebra = fold wxz zxw neg;
 
 fold: /TIMES|PLUS|DIV|MINUS/:b(NUM, NUM) => { 
   my $op = $Op{ref($b)};
-  $NUM[0]->{attr} = eval  
-  "$NUM[0]->{attr} $op $NUM[1]->{attr}";
+
+  croak "Unexpected tree shape: ".$_[0]->str." can't find number in the expected place\n" unless exists ($NUM[0]->{attr}) && ($NUM[0]->{attr} =~ /^\d+/);
+
+  $NUM[0]->{attr} = eval  "$NUM[0]->{attr} $op $NUM[1]->{attr}";
   $_[0] = $NUM[0]; 
 }
 
@@ -45,7 +47,11 @@ t_num: NUM => { $NUM->{tr} = $NUM->{attr} }
 
 { our %s; }
 
-t_var: VAR => { $s{$_[0]->{attr}} = "num"; $_[0]->{tr} = $_[0]->{attr}; }
+t_var: VAR => { 
+   croak "Unexpected tree shape: ".$_[0]->str." can't find identifier in VAR node\n" unless exists $_[0]->{attr};
+   $s{$_[0]->{attr}} = "num"; 
+   $_[0]->{tr} = $_[0]->{attr}; 
+}
 
 t_op:  /TIMES|PLUS|DIV|MINUS/:b($x, $y) => {
     my $op = $Op{ref($b)};
