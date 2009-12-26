@@ -5,21 +5,21 @@ concatenating the keys of the symbol table hash \verb|%s|.
 The code is then indented and the different components
 are articulated through a HERE document:
 \begin{verbatim}
-sub output_code {
-  my ($trans, $dec) = @_;
+    sub output_code {
+      my ($trans, $dec) = @_;
 
-  # Indent
-  $$trans =~ s/^/\t/gm;
+      # Indent
+      $$trans =~ s/^/\t/gm;
 
-  # Output the code
-print << "TRANSLATION";
-.sub 'main' :main
-\t.local num $$dec
-$$trans
-.end
-TRANSLATION
+      # Output the code
+    print << "TRANSLATION";
+    .sub 'main' :main
+    \t.local num $$dec
+    $$trans
+    .end
+    TRANSLATION
 \end{verbatim}
 The call to \verb|output_code| finishes the job:
 \begin{verbatim}
-output_code(\$t->{trans}, \$dec);
+    output_code(\$t->{trans}, \$dec);
 \end{verbatim}
