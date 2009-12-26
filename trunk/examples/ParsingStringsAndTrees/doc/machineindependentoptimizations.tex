@@ -7,31 +7,30 @@ machine independent optimizations.
 \begin{verbatim}
 { #  Example of support code
   use List::Util qw(reduce);
-  my %Op = (PLUS=>'+', MINUS => '-',
-            TIMES=>'*', DIV => '/');
+  my %Op = (PLUS=>'+', MINUS => '-', TIMES=>'*', DIV => '/');
 }
+
 algebra = fold wxz zxw neg;
 
-fold: /TIMES|PLUS|DIV|MINUS/:b(NUM, NUM)
-=> {
+fold: /TIMES|PLUS|DIV|MINUS/:b(NUM, NUM) => { 
   my $op = $Op{ref($b)};
-  $NUM[0]->{attr} = eval
-  "$NUM[0]->{attr} $op $NUM[1]->{attr}";
-  $_[0] = $NUM[0];
+    croak "Unexpected tree shape: ".$_[0]->str." can't find number in the expected place\n" 
+  unless exists ($NUM[0]->{attr}) && ($NUM[0]->{attr} =~ /^\d+/);
+
+  $NUM[0]->{attr} = eval  "$NUM[0]->{attr} $op $NUM[1]->{attr}";
+  $_[0] = $NUM[0]; 
 }
-zxw: TIMES(NUM, .) and {$NUM->{attr}==0}
-=> { $_[0] = $NUM }
-wxz: TIMES(., NUM) and {$NUM->{attr}==0}
-=> { $_[0] = $NUM }
-neg: NEG(NUM)
-=> { $NUM->{attr} = -$NUM->{attr};
-     $_[0] = $NUM }
+
+zxw: TIMES(NUM, .) and {$NUM->{attr} == 0} => { $_[0] = $NUM }
+
+wxz: TIMES(., NUM) and {$NUM->{attr} == 0} => { $_[0] = $NUM }
+
+neg: NEG(NUM) => { $NUM->{attr} = -$NUM->{attr}; $_[0] = $NUM }
 \end{verbatim}
 A Treeregexp programs is made of \I{treeregexp} rules
 that describe what subtrees match and how transform them:
 \begin{verbatim}
-wxz: TIMES(., NUM) and {$NUM->{attr}==0}
-=> { $_[0] = $NUM }
+wxz: TIMES(., NUM) and {$NUM->{attr}==0} => { $_[0] = $NUM }
 \end{verbatim}
 This rule comes to say 
 \begin{quote}
@@ -111,20 +110,42 @@ proceeds to apply all the transformation in the family
 \verb|@algebra| to tree \verb|$t|
 until none of them matches. Thus, for input
 \verb|a = 2*(a+b)*(2-4/2)| the parser
-produces the tree:
+produces the following tree:
 \begin{verbatim}
-EXPS(
-  ASSIGN(
-    VAR[a],
-    TIMES(
-      TIMES(NUM[2],PLUS(VAR[a],VAR[b])),
-      MINUS(NUM[2],DIV(NUM[4],NUM[2])
-    )
-  )
-)
+~/LEyapp/examples/ParsingStringsAndTrees$ perl -wd infix2pir.pl
+
+Loading DB routines from perl5db.pl version 1.31
+Editor support available.
+
+Enter h or `h h' for help, or `man perldebug' for more help.
+
+main::(infix2pir.pl:41):    my $filename = shift;
+  DB<1> l 41,52                                           # let us remind the code involved
+41==>   my $filename = shift;
+42: my $parser = Infix->new(); 
+43: $parser->slurp_file($filename);
+44  
+45: my $t = $parser->YYParse() || exit(1);
+46  
+47  # Machine independent optimizations
+48: $t->s(our @algebra);  
+49  
+50  # Address Assignment 
+51: our $reg_assign;
+52: $reg_assign->s($t);
+  DB<2> c 48                                               # get input and build the AST
+a = 2*(a+b)*(2-4/2)
+main::(infix2pir.pl:48):    $t->s(our @algebra);  
+  DB<3> p $t->str
+EXPS(ASSIGN(VAR[a],TIMES(TIMES(NUM[2],PLUS(VAR[a],VAR[b])),MINUS(NUM[2],DIV(NUM[4],NUM[2])))))
 \end{verbatim}
-which is transformed by the call 
-\verb|$t->s(@algebra)| in:
+Which is transformed by the call \verb|$t->s(@algebra)| onto this optimized version:
+\begin{verbatim}
+  DB<4> n
+main::(infix2pir.pl:51):    our $reg_assign;
+  DB<4> p $t->str
+EXPS(ASSIGN(VAR[a],NUM[0]))
+\end{verbatim}
 \begin{verbatim}
 EXPS(ASSIGN(VAR[a],NUM[0]))
 \end{verbatim}
