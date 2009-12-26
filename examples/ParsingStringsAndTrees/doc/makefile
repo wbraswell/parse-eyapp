@@ -21,5 +21,8 @@ cleanall:
 	rm -f *.log *.dvi *.aux *.bbl *.blg *~ *.pdf *.ps
 
 tar:
-	tar cvzf /tmp/theperlreview07_casiano.tar.gz *.dvi *.tex *.bbl *.sty *.pdf casiophoto.jpg makefile src/*
+	tar cvzf /tmp/theperlreview07_casiano.tar.gz *.dvi *.tex *.bbl *.sty *.pdf makefile src/*
 	chmod a+r /tmp/theperlreview07_casiano.tar.gz
+
+link:
+	ln -s ${HOME}/Lbook/perlbib/perl.bib
