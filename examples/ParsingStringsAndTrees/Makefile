@@ -1,4 +1,4 @@
-input1.pir: Infix.pm I2PIR.pm input1.inf
+input1.pir: Infix.pm I2PIR.pm input1.inf infix2pir.pl
 	./infix2pir.pl input1.inf > input1.pir
 	cat input1.pir
 
