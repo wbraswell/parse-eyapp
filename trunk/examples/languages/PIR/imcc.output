@@ -1,0 +1,5075 @@
+Warnings:
+---------
+Unused terminals:
+
+	ADV_INVOCANT, declared line 21
+	INC, declared line 24
+	DOTDOT, declared line 32
+	SYM, declared line 23
+	DOT_METHOD, declared line 22
+	DEC, declared line 24
+	ENDM, declared line 41
+	NEW, declared line 21
+
+1 shift/reduce conflict 
+Conflicts:
+----------
+Conflict in state 121 between rule 45 and token '\n' resolved as shift.
+State 345 contains 1 shift/reduce conflict
+
+Rules:
+------
+0:	$start -> program $end
+1:	program -> compilation_units
+2:	compilation_units -> compilation_unit
+3:	compilation_units -> compilation_units compilation_unit
+4:	compilation_unit -> class_namespace
+5:	compilation_unit -> constdef
+6:	compilation_unit -> sub
+7:	compilation_unit -> emit
+8:	compilation_unit -> MACRO '\n'
+9:	compilation_unit -> pragma
+10:	compilation_unit -> location_directive
+11:	compilation_unit -> '\n'
+12:	pragma -> hll_def '\n'
+13:	pragma -> LOADLIB STRINGC '\n'
+14:	location_directive -> TK_LINE INTC COMMA STRINGC '\n'
+15:	location_directive -> TK_FILE STRINGC '\n'
+16:	annotate_directive -> ANNOTATE STRINGC COMMA const
+17:	hll_def -> HLL STRINGC
+18:	constdef -> CONST type IDENTIFIER '=' const
+19:	pmc_const -> CONST INTC var_or_i '=' any_string
+20:	pmc_const -> CONST STRINGC var_or_i '=' any_string
+21:	any_string -> STRINGC
+22:	any_string -> USTRINGC
+23:	pasmcode -> pasmline
+24:	pasmcode -> pasmcode pasmline
+25:	pasmline -> labels pasm_inst '\n'
+26:	pasmline -> MACRO '\n'
+27:	pasmline -> FILECOMMENT
+28:	pasmline -> LINECOMMENT
+29:	pasmline -> class_namespace
+30:	pasmline -> pmc_const
+31:	pasmline -> pragma
+32:	pasm_inst -> PARROT_OP pasm_args
+33:	pasm_inst -> PCC_SUB sub_proto LABEL
+34:	pasm_inst -> PNULL var
+35:	pasm_inst -> LEXICAL STRINGC COMMA REG
+36:	pasm_inst -> /* empty */
+37:	pasm_args -> vars
+38:	emit -> EMIT opt_pasmcode EOM
+39:	opt_pasmcode -> /* empty */
+40:	opt_pasmcode -> pasmcode
+41:	class_namespace -> NAMESPACE maybe_ns '\n'
+42:	maybe_ns -> '[' keylist ']'
+43:	maybe_ns -> '[' ']'
+44:	sub -> SUB sub_label_op_c sub_proto '\n' sub_params sub_body ESUB
+45:	sub_params -> /* empty */
+46:	sub_params -> '\n'
+47:	sub_params -> sub_params sub_param '\n'
+48:	sub_param -> PARAM sub_param_type_def
+49:	sub_param_type_def -> type IDENTIFIER paramtype_list
+50:	multi -> MULTI '(' multi_types ')'
+51:	outer -> OUTER '(' STRINGC ')'
+52:	outer -> OUTER '(' IDENTIFIER ')'
+53:	vtable -> VTABLE_METHOD
+54:	vtable -> VTABLE_METHOD '(' STRINGC ')'
+55:	method -> METHOD
+56:	method -> METHOD '(' any_string ')'
+57:	ns_entry_name -> NS_ENTRY
+58:	ns_entry_name -> NS_ENTRY '(' any_string ')'
+59:	instanceof -> SUB_INSTANCE_OF '(' STRINGC ')'
+60:	subid -> SUBID
+61:	subid -> SUBID '(' any_string ')'
+62:	multi_types -> /* empty */
+63:	multi_types -> multi_types COMMA multi_type
+64:	multi_types -> multi_type
+65:	multi_type -> INTV
+66:	multi_type -> FLOATV
+67:	multi_type -> PMCV
+68:	multi_type -> STRINGV
+69:	multi_type -> IDENTIFIER
+70:	multi_type -> STRINGC
+71:	multi_type -> '[' keylist ']'
+72:	sub_body -> /* empty */
+73:	sub_body -> statements
+74:	pcc_sub_call -> PCC_BEGIN '\n' pcc_args opt_invocant pcc_call opt_label pcc_results PCC_END
+75:	opt_label -> /* empty */
+76:	opt_label -> label '\n'
+77:	opt_invocant -> /* empty */
+78:	opt_invocant -> INVOCANT var '\n'
+79:	sub_proto -> /* empty */
+80:	sub_proto -> sub_proto_list
+81:	sub_proto_list -> proto
+82:	sub_proto_list -> sub_proto_list proto
+83:	proto -> LOAD
+84:	proto -> INIT
+85:	proto -> MAIN
+86:	proto -> IMMEDIATE
+87:	proto -> POSTCOMP
+88:	proto -> ANON
+89:	proto -> NEED_LEX
+90:	proto -> multi
+91:	proto -> outer
+92:	proto -> vtable
+93:	proto -> method
+94:	proto -> ns_entry_name
+95:	proto -> instanceof
+96:	proto -> subid
+97:	pcc_call -> PCC_CALL var COMMA var '\n'
+98:	pcc_call -> PCC_CALL var '\n'
+99:	pcc_call -> NCI_CALL var '\n'
+100:	pcc_call -> METH_CALL target '\n'
+101:	pcc_call -> METH_CALL STRINGC '\n'
+102:	pcc_call -> METH_CALL target COMMA var '\n'
+103:	pcc_call -> METH_CALL STRINGC COMMA var '\n'
+104:	pcc_args -> /* empty */
+105:	pcc_args -> pcc_args pcc_arg '\n'
+106:	pcc_arg -> ARG arg
+107:	pcc_results -> /* empty */
+108:	pcc_results -> pcc_results pcc_result '\n'
+109:	pcc_result -> RESULT target paramtype_list
+110:	pcc_result -> LOCAL type id_list_id
+111:	paramtype_list -> /* empty */
+112:	paramtype_list -> paramtype_list paramtype
+113:	paramtype -> ADV_SLURPY
+114:	paramtype -> ADV_OPTIONAL
+115:	paramtype -> ADV_OPT_FLAG
+116:	paramtype -> ADV_NAMED
+117:	paramtype -> ADV_NAMED '(' STRINGC ')'
+118:	paramtype -> ADV_NAMED '(' USTRINGC ')'
+119:	paramtype -> UNIQUE_REG
+120:	paramtype -> ADV_CALL_SIG
+121:	pcc_ret -> PCC_BEGIN_RETURN '\n' pcc_returns PCC_END_RETURN
+122:	pcc_ret -> pcc_return_many
+123:	pcc_yield -> PCC_BEGIN_YIELD '\n' pcc_yields PCC_END_YIELD
+124:	pcc_returns -> /* empty */
+125:	pcc_returns -> pcc_returns '\n'
+126:	pcc_returns -> pcc_returns pcc_return '\n'
+127:	pcc_yields -> /* empty */
+128:	pcc_yields -> pcc_yields '\n'
+129:	pcc_yields -> pcc_yields pcc_set_yield '\n'
+130:	pcc_return -> SET_RETURN var argtype_list
+131:	pcc_set_yield -> SET_YIELD var argtype_list
+132:	pcc_return_many -> return_or_yield '(' var_returns ')'
+133:	return_or_yield -> RETURN
+134:	return_or_yield -> YIELDT
+135:	var_returns -> /* empty */
+136:	var_returns -> arg
+137:	var_returns -> STRINGC ADV_ARROW var
+138:	var_returns -> var_returns COMMA arg
+139:	var_returns -> var_returns COMMA STRINGC ADV_ARROW var
+140:	statements -> statement
+141:	statements -> statements statement
+142:	helper_clear_state -> /* empty */
+143:	statement -> helper_clear_state instruction
+144:	statement -> MACRO '\n'
+145:	statement -> FILECOMMENT
+146:	statement -> LINECOMMENT
+147:	statement -> location_directive
+148:	statement -> annotate_directive
+149:	labels -> /* empty */
+150:	labels -> _labels
+151:	_labels -> _labels label
+152:	_labels -> label
+153:	label -> LABEL
+154:	instruction -> labels labeled_inst '\n'
+155:	instruction -> error '\n'
+156:	id_list -> id_list_id
+157:	id_list -> id_list COMMA id_list_id
+158:	id_list_id -> IDENTIFIER opt_unique_reg
+159:	opt_unique_reg -> /* empty */
+160:	opt_unique_reg -> UNIQUE_REG
+161:	labeled_inst -> assignment
+162:	labeled_inst -> conditional_statement
+163:	labeled_inst -> LOCAL type id_list
+164:	labeled_inst -> LEXICAL STRINGC COMMA target
+165:	labeled_inst -> LEXICAL USTRINGC COMMA target
+166:	labeled_inst -> CONST type IDENTIFIER '=' const
+167:	labeled_inst -> pmc_const
+168:	labeled_inst -> GLOBAL_CONST type IDENTIFIER '=' const
+169:	labeled_inst -> TAILCALL sub_call
+170:	labeled_inst -> GOTO label_op
+171:	labeled_inst -> PARROT_OP vars
+172:	labeled_inst -> PNULL var
+173:	labeled_inst -> sub_call
+174:	labeled_inst -> pcc_sub_call
+175:	labeled_inst -> pcc_ret
+176:	labeled_inst -> pcc_yield
+177:	labeled_inst -> /* empty */
+178:	type -> INTV
+179:	type -> FLOATV
+180:	type -> STRINGV
+181:	type -> PMCV
+182:	classname -> IDENTIFIER
+183:	assignment -> target '=' var
+184:	assignment -> target '=' un_op var
+185:	assignment -> target '=' var bin_op var
+186:	assignment -> target '=' var '[' keylist ']'
+187:	assignment -> target '[' keylist ']' '=' var
+188:	assignment -> target '=' 'new' classname '[' keylist ']'
+189:	assignment -> target '=' sub_call
+190:	assignment -> '(' targetlist ')' '=' the_sub '(' arglist ')'
+191:	assignment -> get_results
+192:	assignment -> op_assign
+193:	assignment -> func_assign
+194:	assignment -> target '=' PNULL
+195:	un_op -> '!'
+196:	un_op -> '~'
+197:	un_op -> '-'
+198:	bin_op -> '-'
+199:	bin_op -> '+'
+200:	bin_op -> '*'
+201:	bin_op -> '/'
+202:	bin_op -> '%'
+203:	bin_op -> FDIV
+204:	bin_op -> POW
+205:	bin_op -> CONCAT
+206:	bin_op -> RELOP_EQ
+207:	bin_op -> RELOP_NE
+208:	bin_op -> RELOP_GT
+209:	bin_op -> RELOP_GTE
+210:	bin_op -> RELOP_LT
+211:	bin_op -> RELOP_LTE
+212:	bin_op -> SHIFT_LEFT
+213:	bin_op -> SHIFT_RIGHT
+214:	bin_op -> SHIFT_RIGHT_U
+215:	bin_op -> LOG_AND
+216:	bin_op -> LOG_OR
+217:	bin_op -> LOG_XOR
+218:	bin_op -> '&'
+219:	bin_op -> '|'
+220:	bin_op -> '~'
+221:	get_results -> GET_RESULTS '(' targetlist ')'
+222:	op_assign -> target assign_op var
+223:	assign_op -> PLUS_ASSIGN
+224:	assign_op -> MINUS_ASSIGN
+225:	assign_op -> MUL_ASSIGN
+226:	assign_op -> DIV_ASSIGN
+227:	assign_op -> MOD_ASSIGN
+228:	assign_op -> FDIV_ASSIGN
+229:	assign_op -> CONCAT_ASSIGN
+230:	assign_op -> BAND_ASSIGN
+231:	assign_op -> BOR_ASSIGN
+232:	assign_op -> BXOR_ASSIGN
+233:	assign_op -> SHR_ASSIGN
+234:	assign_op -> SHL_ASSIGN
+235:	assign_op -> SHR_U_ASSIGN
+236:	func_assign -> target '=' PARROT_OP pasm_args
+237:	the_sub -> IDENTIFIER
+238:	the_sub -> STRINGC
+239:	the_sub -> USTRINGC
+240:	the_sub -> target
+241:	the_sub -> target DOT sub_label_op
+242:	the_sub -> target DOT USTRINGC
+243:	the_sub -> target DOT STRINGC
+244:	the_sub -> target DOT target
+245:	sub_call -> the_sub '(' arglist ')'
+246:	arglist -> /* empty */
+247:	arglist -> arglist COMMA arg
+248:	arglist -> arg
+249:	arglist -> arglist COMMA STRINGC ADV_ARROW var
+250:	arglist -> var ADV_ARROW var
+251:	arglist -> STRINGC ADV_ARROW var
+252:	arg -> var argtype_list
+253:	argtype_list -> /* empty */
+254:	argtype_list -> argtype_list argtype
+255:	argtype -> ADV_FLAT
+256:	argtype -> ADV_NAMED
+257:	argtype -> ADV_CALL_SIG
+258:	argtype -> ADV_NAMED '(' USTRINGC ')'
+259:	argtype -> ADV_NAMED '(' STRINGC ')'
+260:	result -> target paramtype_list
+261:	targetlist -> targetlist COMMA result
+262:	targetlist -> targetlist COMMA STRINGC ADV_ARROW target
+263:	targetlist -> result
+264:	targetlist -> STRINGC ADV_ARROW target
+265:	targetlist -> /* empty */
+266:	conditional_statement -> if_statement
+267:	conditional_statement -> unless_statement
+268:	unless_statement -> UNLESS var relop var GOTO label_op
+269:	unless_statement -> UNLESS PNULL var GOTO label_op
+270:	unless_statement -> UNLESS var comma_or_goto label_op
+271:	if_statement -> IF var comma_or_goto label_op
+272:	if_statement -> IF var relop var GOTO label_op
+273:	if_statement -> IF PNULL var GOTO label_op
+274:	comma_or_goto -> COMMA
+275:	comma_or_goto -> GOTO
+276:	relop -> RELOP_EQ
+277:	relop -> RELOP_NE
+278:	relop -> RELOP_GT
+279:	relop -> RELOP_GTE
+280:	relop -> RELOP_LT
+281:	relop -> RELOP_LTE
+282:	target -> VAR
+283:	target -> reg
+284:	vars -> /* empty */
+285:	vars -> _vars
+286:	_vars -> _vars COMMA _var_or_i
+287:	_vars -> _var_or_i
+288:	_var_or_i -> var_or_i
+289:	_var_or_i -> target '[' keylist ']'
+290:	_var_or_i -> '[' keylist_force ']'
+291:	sub_label_op_c -> sub_label_op
+292:	sub_label_op_c -> STRINGC
+293:	sub_label_op_c -> USTRINGC
+294:	sub_label_op -> IDENTIFIER
+295:	sub_label_op -> PARROT_OP
+296:	label_op -> IDENTIFIER
+297:	label_op -> PARROT_OP
+298:	var_or_i -> label_op
+299:	var_or_i -> var
+300:	var -> target
+301:	var -> const
+302:	keylist -> _keylist
+303:	keylist_force -> _keylist
+304:	_keylist -> key
+305:	_keylist -> _keylist ';' key
+306:	key -> var
+307:	reg -> IREG
+308:	reg -> NREG
+309:	reg -> SREG
+310:	reg -> PREG
+311:	reg -> REG
+312:	const -> INTC
+313:	const -> FLOATC
+314:	const -> STRINGC
+315:	const -> USTRINGC
+
+States:
+-------
+State 0:
+
+	$start -> . program $end	(Rule 0)
+
+	'\n'	shift, and go to state 12
+	CONST	shift, and go to state 14
+	EMIT	shift, and go to state 15
+	HLL	shift, and go to state 10
+	LOADLIB	shift, and go to state 18
+	MACRO	shift, and go to state 17
+	NAMESPACE	shift, and go to state 1
+	SUB	shift, and go to state 11
+	TK_FILE	shift, and go to state 2
+	TK_LINE	shift, and go to state 3
+
+	compilation_unit	go to state 13
+	location_directive	go to state 4
+	program	go to state 6
+	emit	go to state 5
+	hll_def	go to state 7
+	constdef	go to state 8
+	pragma	go to state 9
+	sub	go to state 16
+	compilation_units	go to state 19
+	class_namespace	go to state 20
+
+State 1:
+
+	class_namespace -> NAMESPACE . maybe_ns '\n'	(Rule 41)
+
+	'['	shift, and go to state 22
+
+	maybe_ns	go to state 21
+
+State 2:
+
+	location_directive -> TK_FILE . STRINGC '\n'	(Rule 15)
+
+	STRINGC	shift, and go to state 23
+
+State 3:
+
+	location_directive -> TK_LINE . INTC COMMA STRINGC '\n'	(Rule 14)
+
+	INTC	shift, and go to state 24
+
+State 4:
+
+	compilation_unit -> location_directive .	(Rule 10)
+
+	$default	reduce using rule 10 (compilation_unit)
+
+State 5:
+
+	compilation_unit -> emit .	(Rule 7)
+
+	$default	reduce using rule 7 (compilation_unit)
+
+State 6:
+
+	$start -> program . $end	(Rule 0)
+
+	$end	shift, and go to state 25
+
+State 7:
+
+	pragma -> hll_def . '\n'	(Rule 12)
+
+	'\n'	shift, and go to state 26
+
+State 8:
+
+	compilation_unit -> constdef .	(Rule 5)
+
+	$default	reduce using rule 5 (compilation_unit)
+
+State 9:
+
+	compilation_unit -> pragma .	(Rule 9)
+
+	$default	reduce using rule 9 (compilation_unit)
+
+State 10:
+
+	hll_def -> HLL . STRINGC	(Rule 17)
+
+	STRINGC	shift, and go to state 27
+
+State 11:
+
+	sub -> SUB . sub_label_op_c sub_proto '\n' sub_params sub_body ESUB	(Rule 44)
+
+	IDENTIFIER	shift, and go to state 30
+	PARROT_OP	shift, and go to state 33
+	STRINGC	shift, and go to state 28
+	USTRINGC	shift, and go to state 29
+
+	sub_label_op	go to state 31
+	sub_label_op_c	go to state 32
+
+State 12:
+
+	compilation_unit -> '\n' .	(Rule 11)
+
+	$default	reduce using rule 11 (compilation_unit)
+
+State 13:
+
+	compilation_units -> compilation_unit .	(Rule 2)
+
+	$default	reduce using rule 2 (compilation_units)
+
+State 14:
+
+	constdef -> CONST . type IDENTIFIER '=' const	(Rule 18)
+
+	FLOATV	shift, and go to state 35
+	INTV	shift, and go to state 36
+	PMCV	shift, and go to state 38
+	STRINGV	shift, and go to state 34
+
+	type	go to state 37
+
+State 15:
+
+	emit -> EMIT . opt_pasmcode EOM	(Rule 38)
+
+	CONST	shift, and go to state 48
+	FILECOMMENT	shift, and go to state 40
+	HLL	shift, and go to state 10
+	LABEL	shift, and go to state 41
+	LINECOMMENT	shift, and go to state 44
+	LOADLIB	shift, and go to state 18
+	MACRO	shift, and go to state 49
+	NAMESPACE	shift, and go to state 1
+
+	EOM	reduce using rule 39 (opt_pasmcode)
+	$default	reduce using rule 149 (labels)
+
+	pmc_const	go to state 39
+	pasmcode	go to state 47
+	opt_pasmcode	go to state 43
+	_labels	go to state 42
+	hll_def	go to state 7
+	pragma	go to state 45
+	label	go to state 50
+	labels	go to state 46
+	pasmline	go to state 51
+	class_namespace	go to state 52
+
+State 16:
+
+	compilation_unit -> sub .	(Rule 6)
+
+	$default	reduce using rule 6 (compilation_unit)
+
+State 17:
+
+	compilation_unit -> MACRO . '\n'	(Rule 8)
+
+	'\n'	shift, and go to state 53
+
+State 18:
+
+	pragma -> LOADLIB . STRINGC '\n'	(Rule 13)
+
+	STRINGC	shift, and go to state 54
+
+State 19:
+
+	program -> compilation_units .	(Rule 1)
+	compilation_units -> compilation_units . compilation_unit	(Rule 3)
+
+	'\n'	shift, and go to state 12
+	CONST	shift, and go to state 14
+	EMIT	shift, and go to state 15
+	HLL	shift, and go to state 10
+	LOADLIB	shift, and go to state 18
+	MACRO	shift, and go to state 17
+	NAMESPACE	shift, and go to state 1
+	SUB	shift, and go to state 11
+	TK_FILE	shift, and go to state 2
+	TK_LINE	shift, and go to state 3
+
+	$default	reduce using rule 1 (program)
+
+	compilation_unit	go to state 55
+	location_directive	go to state 4
+	emit	go to state 5
+	hll_def	go to state 7
+	pragma	go to state 9
+	constdef	go to state 8
+	sub	go to state 16
+	class_namespace	go to state 20
+
+State 20:
+
+	compilation_unit -> class_namespace .	(Rule 4)
+
+	$default	reduce using rule 4 (compilation_unit)
+
+State 21:
+
+	class_namespace -> NAMESPACE maybe_ns . '\n'	(Rule 41)
+
+	'\n'	shift, and go to state 56
+
+State 22:
+
+	maybe_ns -> '[' . keylist ']'	(Rule 42)
+	maybe_ns -> '[' . ']'	(Rule 43)
+
+	']'	shift, and go to state 64
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	keylist	go to state 70
+	_keylist	go to state 66
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	key	go to state 58
+
+State 23:
+
+	location_directive -> TK_FILE STRINGC . '\n'	(Rule 15)
+
+	'\n'	shift, and go to state 75
+
+State 24:
+
+	location_directive -> TK_LINE INTC . COMMA STRINGC '\n'	(Rule 14)
+
+	COMMA	shift, and go to state 76
+
+State 25:
+
+	$start -> program $end .	(Rule 0)
+
+	$default	accept
+
+State 26:
+
+	pragma -> hll_def '\n' .	(Rule 12)
+
+	$default	reduce using rule 12 (pragma)
+
+State 27:
+
+	hll_def -> HLL STRINGC .	(Rule 17)
+
+	$default	reduce using rule 17 (hll_def)
+
+State 28:
+
+	sub_label_op_c -> STRINGC .	(Rule 292)
+
+	$default	reduce using rule 292 (sub_label_op_c)
+
+State 29:
+
+	sub_label_op_c -> USTRINGC .	(Rule 293)
+
+	$default	reduce using rule 293 (sub_label_op_c)
+
+State 30:
+
+	sub_label_op -> IDENTIFIER .	(Rule 294)
+
+	$default	reduce using rule 294 (sub_label_op)
+
+State 31:
+
+	sub_label_op_c -> sub_label_op .	(Rule 291)
+
+	$default	reduce using rule 291 (sub_label_op_c)
+
+State 32:
+
+	sub -> SUB sub_label_op_c . sub_proto '\n' sub_params sub_body ESUB	(Rule 44)
+
+	ANON	shift, and go to state 97
+	IMMEDIATE	shift, and go to state 82
+	INIT	shift, and go to state 85
+	LOAD	shift, and go to state 98
+	MAIN	shift, and go to state 84
+	METHOD	shift, and go to state 100
+	MULTI	shift, and go to state 96
+	NEED_LEX	shift, and go to state 87
+	NS_ENTRY	shift, and go to state 81
+	OUTER	shift, and go to state 95
+	POSTCOMP	shift, and go to state 93
+	SUBID	shift, and go to state 94
+	SUB_INSTANCE_OF	shift, and go to state 80
+	VTABLE_METHOD	shift, and go to state 90
+
+	$default	reduce using rule 79 (sub_proto)
+
+	outer	go to state 78
+	instanceof	go to state 77
+	proto	go to state 91
+	ns_entry_name	go to state 79
+	sub_proto	go to state 92
+	subid	go to state 83
+	multi	go to state 99
+	method	go to state 86
+	sub_proto_list	go to state 88
+	vtable	go to state 89
+
+State 33:
+
+	sub_label_op -> PARROT_OP .	(Rule 295)
+
+	$default	reduce using rule 295 (sub_label_op)
+
+State 34:
+
+	type -> STRINGV .	(Rule 180)
+
+	$default	reduce using rule 180 (type)
+
+State 35:
+
+	type -> FLOATV .	(Rule 179)
+
+	$default	reduce using rule 179 (type)
+
+State 36:
+
+	type -> INTV .	(Rule 178)
+
+	$default	reduce using rule 178 (type)
+
+State 37:
+
+	constdef -> CONST type . IDENTIFIER '=' const	(Rule 18)
+
+	IDENTIFIER	shift, and go to state 101
+
+State 38:
+
+	type -> PMCV .	(Rule 181)
+
+	$default	reduce using rule 181 (type)
+
+State 39:
+
+	pasmline -> pmc_const .	(Rule 30)
+
+	$default	reduce using rule 30 (pasmline)
+
+State 40:
+
+	pasmline -> FILECOMMENT .	(Rule 27)
+
+	$default	reduce using rule 27 (pasmline)
+
+State 41:
+
+	label -> LABEL .	(Rule 153)
+
+	$default	reduce using rule 153 (label)
+
+State 42:
+
+	labels -> _labels .	(Rule 150)
+	_labels -> _labels . label	(Rule 151)
+
+	LABEL	shift, and go to state 41
+
+	$default	reduce using rule 150 (labels)
+
+	label	go to state 102
+
+State 43:
+
+	emit -> EMIT opt_pasmcode . EOM	(Rule 38)
+
+	EOM	shift, and go to state 103
+
+State 44:
+
+	pasmline -> LINECOMMENT .	(Rule 28)
+
+	$default	reduce using rule 28 (pasmline)
+
+State 45:
+
+	pasmline -> pragma .	(Rule 31)
+
+	$default	reduce using rule 31 (pasmline)
+
+State 46:
+
+	pasmline -> labels . pasm_inst '\n'	(Rule 25)
+
+	LEXICAL	shift, and go to state 106
+	PARROT_OP	shift, and go to state 108
+	PCC_SUB	shift, and go to state 107
+	PNULL	shift, and go to state 104
+
+	$default	reduce using rule 36 (pasm_inst)
+
+	pasm_inst	go to state 105
+
+State 47:
+
+	pasmcode -> pasmcode . pasmline	(Rule 24)
+	opt_pasmcode -> pasmcode .	(Rule 40)
+
+	CONST	shift, and go to state 48
+	FILECOMMENT	shift, and go to state 40
+	HLL	shift, and go to state 10
+	LABEL	shift, and go to state 41
+	LINECOMMENT	shift, and go to state 44
+	LOADLIB	shift, and go to state 18
+	MACRO	shift, and go to state 49
+	NAMESPACE	shift, and go to state 1
+
+	EOM	reduce using rule 40 (opt_pasmcode)
+	$default	reduce using rule 149 (labels)
+
+	hll_def	go to state 7
+	pragma	go to state 45
+	pmc_const	go to state 39
+	_labels	go to state 42
+	label	go to state 50
+	pasmline	go to state 109
+	labels	go to state 46
+	class_namespace	go to state 52
+
+State 48:
+
+	pmc_const -> CONST . INTC var_or_i '=' any_string	(Rule 19)
+	pmc_const -> CONST . STRINGC var_or_i '=' any_string	(Rule 20)
+
+	INTC	shift, and go to state 111
+	STRINGC	shift, and go to state 110
+
+State 49:
+
+	pasmline -> MACRO . '\n'	(Rule 26)
+
+	'\n'	shift, and go to state 112
+
+State 50:
+
+	_labels -> label .	(Rule 152)
+
+	$default	reduce using rule 152 (_labels)
+
+State 51:
+
+	pasmcode -> pasmline .	(Rule 23)
+
+	$default	reduce using rule 23 (pasmcode)
+
+State 52:
+
+	pasmline -> class_namespace .	(Rule 29)
+
+	$default	reduce using rule 29 (pasmline)
+
+State 53:
+
+	compilation_unit -> MACRO '\n' .	(Rule 8)
+
+	$default	reduce using rule 8 (compilation_unit)
+
+State 54:
+
+	pragma -> LOADLIB STRINGC . '\n'	(Rule 13)
+
+	'\n'	shift, and go to state 113
+
+State 55:
+
+	compilation_units -> compilation_units compilation_unit .	(Rule 3)
+
+	$default	reduce using rule 3 (compilation_units)
+
+State 56:
+
+	class_namespace -> NAMESPACE maybe_ns '\n' .	(Rule 41)
+
+	$default	reduce using rule 41 (class_namespace)
+
+State 57:
+
+	reg -> NREG .	(Rule 308)
+
+	$default	reduce using rule 308 (reg)
+
+State 58:
+
+	_keylist -> key .	(Rule 304)
+
+	$default	reduce using rule 304 (_keylist)
+
+State 59:
+
+	const -> STRINGC .	(Rule 314)
+
+	$default	reduce using rule 314 (const)
+
+State 60:
+
+	var -> target .	(Rule 300)
+
+	$default	reduce using rule 300 (var)
+
+State 61:
+
+	const -> INTC .	(Rule 312)
+
+	$default	reduce using rule 312 (const)
+
+State 62:
+
+	const -> USTRINGC .	(Rule 315)
+
+	$default	reduce using rule 315 (const)
+
+State 63:
+
+	key -> var .	(Rule 306)
+
+	$default	reduce using rule 306 (key)
+
+State 64:
+
+	maybe_ns -> '[' ']' .	(Rule 43)
+
+	$default	reduce using rule 43 (maybe_ns)
+
+State 65:
+
+	reg -> REG .	(Rule 311)
+
+	$default	reduce using rule 311 (reg)
+
+State 66:
+
+	keylist -> _keylist .	(Rule 302)
+	_keylist -> _keylist . ';' key	(Rule 305)
+
+	';'	shift, and go to state 114
+
+	$default	reduce using rule 302 (keylist)
+
+State 67:
+
+	reg -> PREG .	(Rule 310)
+
+	$default	reduce using rule 310 (reg)
+
+State 68:
+
+	reg -> IREG .	(Rule 307)
+
+	$default	reduce using rule 307 (reg)
+
+State 69:
+
+	const -> FLOATC .	(Rule 313)
+
+	$default	reduce using rule 313 (const)
+
+State 70:
+
+	maybe_ns -> '[' keylist . ']'	(Rule 42)
+
+	']'	shift, and go to state 115
+
+State 71:
+
+	var -> const .	(Rule 301)
+
+	$default	reduce using rule 301 (var)
+
+State 72:
+
+	target -> reg .	(Rule 283)
+
+	$default	reduce using rule 283 (target)
+
+State 73:
+
+	target -> VAR .	(Rule 282)
+
+	$default	reduce using rule 282 (target)
+
+State 74:
+
+	reg -> SREG .	(Rule 309)
+
+	$default	reduce using rule 309 (reg)
+
+State 75:
+
+	location_directive -> TK_FILE STRINGC '\n' .	(Rule 15)
+
+	$default	reduce using rule 15 (location_directive)
+
+State 76:
+
+	location_directive -> TK_LINE INTC COMMA . STRINGC '\n'	(Rule 14)
+
+	STRINGC	shift, and go to state 116
+
+State 77:
+
+	proto -> instanceof .	(Rule 95)
+
+	$default	reduce using rule 95 (proto)
+
+State 78:
+
+	proto -> outer .	(Rule 91)
+
+	$default	reduce using rule 91 (proto)
+
+State 79:
+
+	proto -> ns_entry_name .	(Rule 94)
+
+	$default	reduce using rule 94 (proto)
+
+State 80:
+
+	instanceof -> SUB_INSTANCE_OF . '(' STRINGC ')'	(Rule 59)
+
+	'('	shift, and go to state 117
+
+State 81:
+
+	ns_entry_name -> NS_ENTRY .	(Rule 57)
+	ns_entry_name -> NS_ENTRY . '(' any_string ')'	(Rule 58)
+
+	'('	shift, and go to state 118
+
+	$default	reduce using rule 57 (ns_entry_name)
+
+State 82:
+
+	proto -> IMMEDIATE .	(Rule 86)
+
+	$default	reduce using rule 86 (proto)
+
+State 83:
+
+	proto -> subid .	(Rule 96)
+
+	$default	reduce using rule 96 (proto)
+
+State 84:
+
+	proto -> MAIN .	(Rule 85)
+
+	$default	reduce using rule 85 (proto)
+
+State 85:
+
+	proto -> INIT .	(Rule 84)
+
+	$default	reduce using rule 84 (proto)
+
+State 86:
+
+	proto -> method .	(Rule 93)
+
+	$default	reduce using rule 93 (proto)
+
+State 87:
+
+	proto -> NEED_LEX .	(Rule 89)
+
+	$default	reduce using rule 89 (proto)
+
+State 88:
+
+	sub_proto -> sub_proto_list .	(Rule 80)
+	sub_proto_list -> sub_proto_list . proto	(Rule 82)
+
+	ANON	shift, and go to state 97
+	IMMEDIATE	shift, and go to state 82
+	INIT	shift, and go to state 85
+	LOAD	shift, and go to state 98
+	MAIN	shift, and go to state 84
+	METHOD	shift, and go to state 100
+	MULTI	shift, and go to state 96
+	NEED_LEX	shift, and go to state 87
+	NS_ENTRY	shift, and go to state 81
+	OUTER	shift, and go to state 95
+	POSTCOMP	shift, and go to state 93
+	SUBID	shift, and go to state 94
+	SUB_INSTANCE_OF	shift, and go to state 80
+	VTABLE_METHOD	shift, and go to state 90
+
+	$default	reduce using rule 80 (sub_proto)
+
+	outer	go to state 78
+	instanceof	go to state 77
+	proto	go to state 119
+	ns_entry_name	go to state 79
+	subid	go to state 83
+	method	go to state 86
+	multi	go to state 99
+	vtable	go to state 89
+
+State 89:
+
+	proto -> vtable .	(Rule 92)
+
+	$default	reduce using rule 92 (proto)
+
+State 90:
+
+	vtable -> VTABLE_METHOD .	(Rule 53)
+	vtable -> VTABLE_METHOD . '(' STRINGC ')'	(Rule 54)
+
+	'('	shift, and go to state 120
+
+	$default	reduce using rule 53 (vtable)
+
+State 91:
+
+	sub_proto_list -> proto .	(Rule 81)
+
+	$default	reduce using rule 81 (sub_proto_list)
+
+State 92:
+
+	sub -> SUB sub_label_op_c sub_proto . '\n' sub_params sub_body ESUB	(Rule 44)
+
+	'\n'	shift, and go to state 121
+
+State 93:
+
+	proto -> POSTCOMP .	(Rule 87)
+
+	$default	reduce using rule 87 (proto)
+
+State 94:
+
+	subid -> SUBID .	(Rule 60)
+	subid -> SUBID . '(' any_string ')'	(Rule 61)
+
+	'('	shift, and go to state 122
+
+	$default	reduce using rule 60 (subid)
+
+State 95:
+
+	outer -> OUTER . '(' STRINGC ')'	(Rule 51)
+	outer -> OUTER . '(' IDENTIFIER ')'	(Rule 52)
+
+	'('	shift, and go to state 123
+
+State 96:
+
+	multi -> MULTI . '(' multi_types ')'	(Rule 50)
+
+	'('	shift, and go to state 124
+
+State 97:
+
+	proto -> ANON .	(Rule 88)
+
+	$default	reduce using rule 88 (proto)
+
+State 98:
+
+	proto -> LOAD .	(Rule 83)
+
+	$default	reduce using rule 83 (proto)
+
+State 99:
+
+	proto -> multi .	(Rule 90)
+
+	$default	reduce using rule 90 (proto)
+
+State 100:
+
+	method -> METHOD .	(Rule 55)
+	method -> METHOD . '(' any_string ')'	(Rule 56)
+
+	'('	shift, and go to state 125
+
+	$default	reduce using rule 55 (method)
+
+State 101:
+
+	constdef -> CONST type IDENTIFIER . '=' const	(Rule 18)
+
+	'='	shift, and go to state 126
+
+State 102:
+
+	_labels -> _labels label .	(Rule 151)
+
+	$default	reduce using rule 151 (_labels)
+
+State 103:
+
+	emit -> EMIT opt_pasmcode EOM .	(Rule 38)
+
+	$default	reduce using rule 38 (emit)
+
+State 104:
+
+	pasm_inst -> PNULL . var	(Rule 34)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 127
+
+State 105:
+
+	pasmline -> labels pasm_inst . '\n'	(Rule 25)
+
+	'\n'	shift, and go to state 128
+
+State 106:
+
+	pasm_inst -> LEXICAL . STRINGC COMMA REG	(Rule 35)
+
+	STRINGC	shift, and go to state 129
+
+State 107:
+
+	pasm_inst -> PCC_SUB . sub_proto LABEL	(Rule 33)
+
+	ANON	shift, and go to state 97
+	IMMEDIATE	shift, and go to state 82
+	INIT	shift, and go to state 85
+	LOAD	shift, and go to state 98
+	MAIN	shift, and go to state 84
+	METHOD	shift, and go to state 100
+	MULTI	shift, and go to state 96
+	NEED_LEX	shift, and go to state 87
+	NS_ENTRY	shift, and go to state 81
+	OUTER	shift, and go to state 95
+	POSTCOMP	shift, and go to state 93
+	SUBID	shift, and go to state 94
+	SUB_INSTANCE_OF	shift, and go to state 80
+	VTABLE_METHOD	shift, and go to state 90
+
+	$default	reduce using rule 79 (sub_proto)
+
+	outer	go to state 78
+	instanceof	go to state 77
+	proto	go to state 91
+	ns_entry_name	go to state 79
+	sub_proto	go to state 130
+	subid	go to state 83
+	multi	go to state 99
+	method	go to state 86
+	sub_proto_list	go to state 88
+	vtable	go to state 89
+
+State 108:
+
+	pasm_inst -> PARROT_OP . pasm_args	(Rule 32)
+
+	'['	shift, and go to state 136
+	FLOATC	shift, and go to state 69
+	IDENTIFIER	shift, and go to state 137
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 141
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 284 (vars)
+
+	var_or_i	go to state 131
+	_var_or_i	go to state 138
+	_vars	go to state 132
+	label_op	go to state 133
+	vars	go to state 139
+	pasm_args	go to state 140
+	target	go to state 134
+	const	go to state 71
+	reg	go to state 72
+	var	go to state 135
+
+State 109:
+
+	pasmcode -> pasmcode pasmline .	(Rule 24)
+
+	$default	reduce using rule 24 (pasmcode)
+
+State 110:
+
+	pmc_const -> CONST STRINGC . var_or_i '=' any_string	(Rule 20)
+
+	FLOATC	shift, and go to state 69
+	IDENTIFIER	shift, and go to state 137
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 141
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	var_or_i	go to state 142
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 135
+	label_op	go to state 133
+
+State 111:
+
+	pmc_const -> CONST INTC . var_or_i '=' any_string	(Rule 19)
+
+	FLOATC	shift, and go to state 69
+	IDENTIFIER	shift, and go to state 137
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 141
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	var_or_i	go to state 143
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 135
+	label_op	go to state 133
+
+State 112:
+
+	pasmline -> MACRO '\n' .	(Rule 26)
+
+	$default	reduce using rule 26 (pasmline)
+
+State 113:
+
+	pragma -> LOADLIB STRINGC '\n' .	(Rule 13)
+
+	$default	reduce using rule 13 (pragma)
+
+State 114:
+
+	_keylist -> _keylist ';' . key	(Rule 305)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	key	go to state 144
+
+State 115:
+
+	maybe_ns -> '[' keylist ']' .	(Rule 42)
+
+	$default	reduce using rule 42 (maybe_ns)
+
+State 116:
+
+	location_directive -> TK_LINE INTC COMMA STRINGC . '\n'	(Rule 14)
+
+	'\n'	shift, and go to state 145
+
+State 117:
+
+	instanceof -> SUB_INSTANCE_OF '(' . STRINGC ')'	(Rule 59)
+
+	STRINGC	shift, and go to state 146
+
+State 118:
+
+	ns_entry_name -> NS_ENTRY '(' . any_string ')'	(Rule 58)
+
+	STRINGC	shift, and go to state 148
+	USTRINGC	shift, and go to state 149
+
+	any_string	go to state 147
+
+State 119:
+
+	sub_proto_list -> sub_proto_list proto .	(Rule 82)
+
+	$default	reduce using rule 82 (sub_proto_list)
+
+State 120:
+
+	vtable -> VTABLE_METHOD '(' . STRINGC ')'	(Rule 54)
+
+	STRINGC	shift, and go to state 150
+
+State 121:
+
+	sub -> SUB sub_label_op_c sub_proto '\n' . sub_params sub_body ESUB	(Rule 44)
+
+	'\n'	shift, and go to state 152
+
+	$default	reduce using rule 45 (sub_params)
+
+	sub_params	go to state 151
+
+State 122:
+
+	subid -> SUBID '(' . any_string ')'	(Rule 61)
+
+	STRINGC	shift, and go to state 148
+	USTRINGC	shift, and go to state 149
+
+	any_string	go to state 153
+
+State 123:
+
+	outer -> OUTER '(' . STRINGC ')'	(Rule 51)
+	outer -> OUTER '(' . IDENTIFIER ')'	(Rule 52)
+
+	IDENTIFIER	shift, and go to state 155
+	STRINGC	shift, and go to state 154
+
+State 124:
+
+	multi -> MULTI '(' . multi_types ')'	(Rule 50)
+
+	'['	shift, and go to state 160
+	FLOATV	shift, and go to state 159
+	IDENTIFIER	shift, and go to state 161
+	INTV	shift, and go to state 162
+	PMCV	shift, and go to state 164
+	STRINGC	shift, and go to state 157
+	STRINGV	shift, and go to state 158
+
+	$default	reduce using rule 62 (multi_types)
+
+	multi_type	go to state 163
+	multi_types	go to state 156
+
+State 125:
+
+	method -> METHOD '(' . any_string ')'	(Rule 56)
+
+	STRINGC	shift, and go to state 148
+	USTRINGC	shift, and go to state 149
+
+	any_string	go to state 165
+
+State 126:
+
+	constdef -> CONST type IDENTIFIER '=' . const	(Rule 18)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+
+	const	go to state 166
+
+State 127:
+
+	pasm_inst -> PNULL var .	(Rule 34)
+
+	$default	reduce using rule 34 (pasm_inst)
+
+State 128:
+
+	pasmline -> labels pasm_inst '\n' .	(Rule 25)
+
+	$default	reduce using rule 25 (pasmline)
+
+State 129:
+
+	pasm_inst -> LEXICAL STRINGC . COMMA REG	(Rule 35)
+
+	COMMA	shift, and go to state 167
+
+State 130:
+
+	pasm_inst -> PCC_SUB sub_proto . LABEL	(Rule 33)
+
+	LABEL	shift, and go to state 168
+
+State 131:
+
+	_var_or_i -> var_or_i .	(Rule 288)
+
+	$default	reduce using rule 288 (_var_or_i)
+
+State 132:
+
+	vars -> _vars .	(Rule 285)
+	_vars -> _vars . COMMA _var_or_i	(Rule 286)
+
+	COMMA	shift, and go to state 169
+
+	$default	reduce using rule 285 (vars)
+
+State 133:
+
+	var_or_i -> label_op .	(Rule 298)
+
+	$default	reduce using rule 298 (var_or_i)
+
+State 134:
+
+	_var_or_i -> target . '[' keylist ']'	(Rule 289)
+	var -> target .	(Rule 300)
+
+	'['	shift, and go to state 170
+
+	$default	reduce using rule 300 (var)
+
+State 135:
+
+	var_or_i -> var .	(Rule 299)
+
+	$default	reduce using rule 299 (var_or_i)
+
+State 136:
+
+	_var_or_i -> '[' . keylist_force ']'	(Rule 290)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	_keylist	go to state 172
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	keylist_force	go to state 171
+	key	go to state 58
+
+State 137:
+
+	label_op -> IDENTIFIER .	(Rule 296)
+
+	$default	reduce using rule 296 (label_op)
+
+State 138:
+
+	_vars -> _var_or_i .	(Rule 287)
+
+	$default	reduce using rule 287 (_vars)
+
+State 139:
+
+	pasm_args -> vars .	(Rule 37)
+
+	$default	reduce using rule 37 (pasm_args)
+
+State 140:
+
+	pasm_inst -> PARROT_OP pasm_args .	(Rule 32)
+
+	$default	reduce using rule 32 (pasm_inst)
+
+State 141:
+
+	label_op -> PARROT_OP .	(Rule 297)
+
+	$default	reduce using rule 297 (label_op)
+
+State 142:
+
+	pmc_const -> CONST STRINGC var_or_i . '=' any_string	(Rule 20)
+
+	'='	shift, and go to state 173
+
+State 143:
+
+	pmc_const -> CONST INTC var_or_i . '=' any_string	(Rule 19)
+
+	'='	shift, and go to state 174
+
+State 144:
+
+	_keylist -> _keylist ';' key .	(Rule 305)
+
+	$default	reduce using rule 305 (_keylist)
+
+State 145:
+
+	location_directive -> TK_LINE INTC COMMA STRINGC '\n' .	(Rule 14)
+
+	$default	reduce using rule 14 (location_directive)
+
+State 146:
+
+	instanceof -> SUB_INSTANCE_OF '(' STRINGC . ')'	(Rule 59)
+
+	')'	shift, and go to state 175
+
+State 147:
+
+	ns_entry_name -> NS_ENTRY '(' any_string . ')'	(Rule 58)
+
+	')'	shift, and go to state 176
+
+State 148:
+
+	any_string -> STRINGC .	(Rule 21)
+
+	$default	reduce using rule 21 (any_string)
+
+State 149:
+
+	any_string -> USTRINGC .	(Rule 22)
+
+	$default	reduce using rule 22 (any_string)
+
+State 150:
+
+	vtable -> VTABLE_METHOD '(' STRINGC . ')'	(Rule 54)
+
+	')'	shift, and go to state 177
+
+State 151:
+
+	sub -> SUB sub_label_op_c sub_proto '\n' sub_params . sub_body ESUB	(Rule 44)
+	sub_params -> sub_params . sub_param '\n'	(Rule 47)
+
+	ANNOTATE	shift, and go to state 181
+	FILECOMMENT	shift, and go to state 179
+	LINECOMMENT	shift, and go to state 182
+	MACRO	shift, and go to state 187
+	PARAM	shift, and go to state 188
+	TK_FILE	shift, and go to state 2
+	TK_LINE	shift, and go to state 3
+
+	ESUB	reduce using rule 72 (sub_body)
+	$default	reduce using rule 142 (helper_clear_state)
+
+	sub_body	go to state 186
+	helper_clear_state	go to state 185
+	statements	go to state 178
+	statement	go to state 183
+	annotate_directive	go to state 184
+	sub_param	go to state 189
+	location_directive	go to state 180
+
+State 152:
+
+	sub_params -> '\n' .	(Rule 46)
+
+	$default	reduce using rule 46 (sub_params)
+
+State 153:
+
+	subid -> SUBID '(' any_string . ')'	(Rule 61)
+
+	')'	shift, and go to state 190
+
+State 154:
+
+	outer -> OUTER '(' STRINGC . ')'	(Rule 51)
+
+	')'	shift, and go to state 191
+
+State 155:
+
+	outer -> OUTER '(' IDENTIFIER . ')'	(Rule 52)
+
+	')'	shift, and go to state 192
+
+State 156:
+
+	multi -> MULTI '(' multi_types . ')'	(Rule 50)
+	multi_types -> multi_types . COMMA multi_type	(Rule 63)
+
+	')'	shift, and go to state 193
+	COMMA	shift, and go to state 194
+
+State 157:
+
+	multi_type -> STRINGC .	(Rule 70)
+
+	$default	reduce using rule 70 (multi_type)
+
+State 158:
+
+	multi_type -> STRINGV .	(Rule 68)
+
+	$default	reduce using rule 68 (multi_type)
+
+State 159:
+
+	multi_type -> FLOATV .	(Rule 66)
+
+	$default	reduce using rule 66 (multi_type)
+
+State 160:
+
+	multi_type -> '[' . keylist ']'	(Rule 71)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	keylist	go to state 195
+	_keylist	go to state 66
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	key	go to state 58
+
+State 161:
+
+	multi_type -> IDENTIFIER .	(Rule 69)
+
+	$default	reduce using rule 69 (multi_type)
+
+State 162:
+
+	multi_type -> INTV .	(Rule 65)
+
+	$default	reduce using rule 65 (multi_type)
+
+State 163:
+
+	multi_types -> multi_type .	(Rule 64)
+
+	$default	reduce using rule 64 (multi_types)
+
+State 164:
+
+	multi_type -> PMCV .	(Rule 67)
+
+	$default	reduce using rule 67 (multi_type)
+
+State 165:
+
+	method -> METHOD '(' any_string . ')'	(Rule 56)
+
+	')'	shift, and go to state 196
+
+State 166:
+
+	constdef -> CONST type IDENTIFIER '=' const .	(Rule 18)
+
+	$default	reduce using rule 18 (constdef)
+
+State 167:
+
+	pasm_inst -> LEXICAL STRINGC COMMA . REG	(Rule 35)
+
+	REG	shift, and go to state 197
+
+State 168:
+
+	pasm_inst -> PCC_SUB sub_proto LABEL .	(Rule 33)
+
+	$default	reduce using rule 33 (pasm_inst)
+
+State 169:
+
+	_vars -> _vars COMMA . _var_or_i	(Rule 286)
+
+	'['	shift, and go to state 136
+	FLOATC	shift, and go to state 69
+	IDENTIFIER	shift, and go to state 137
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 141
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	var_or_i	go to state 131
+	_var_or_i	go to state 198
+	target	go to state 134
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 135
+	label_op	go to state 133
+
+State 170:
+
+	_var_or_i -> target '[' . keylist ']'	(Rule 289)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	keylist	go to state 199
+	_keylist	go to state 66
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	key	go to state 58
+
+State 171:
+
+	_var_or_i -> '[' keylist_force . ']'	(Rule 290)
+
+	']'	shift, and go to state 200
+
+State 172:
+
+	keylist_force -> _keylist .	(Rule 303)
+	_keylist -> _keylist . ';' key	(Rule 305)
+
+	';'	shift, and go to state 114
+
+	$default	reduce using rule 303 (keylist_force)
+
+State 173:
+
+	pmc_const -> CONST STRINGC var_or_i '=' . any_string	(Rule 20)
+
+	STRINGC	shift, and go to state 148
+	USTRINGC	shift, and go to state 149
+
+	any_string	go to state 201
+
+State 174:
+
+	pmc_const -> CONST INTC var_or_i '=' . any_string	(Rule 19)
+
+	STRINGC	shift, and go to state 148
+	USTRINGC	shift, and go to state 149
+
+	any_string	go to state 202
+
+State 175:
+
+	instanceof -> SUB_INSTANCE_OF '(' STRINGC ')' .	(Rule 59)
+
+	$default	reduce using rule 59 (instanceof)
+
+State 176:
+
+	ns_entry_name -> NS_ENTRY '(' any_string ')' .	(Rule 58)
+
+	$default	reduce using rule 58 (ns_entry_name)
+
+State 177:
+
+	vtable -> VTABLE_METHOD '(' STRINGC ')' .	(Rule 54)
+
+	$default	reduce using rule 54 (vtable)
+
+State 178:
+
+	sub_body -> statements .	(Rule 73)
+	statements -> statements . statement	(Rule 141)
+
+	ANNOTATE	shift, and go to state 181
+	FILECOMMENT	shift, and go to state 179
+	LINECOMMENT	shift, and go to state 182
+	MACRO	shift, and go to state 187
+	TK_FILE	shift, and go to state 2
+	TK_LINE	shift, and go to state 3
+
+	ESUB	reduce using rule 73 (sub_body)
+	$default	reduce using rule 142 (helper_clear_state)
+
+	helper_clear_state	go to state 185
+	statement	go to state 203
+	annotate_directive	go to state 184
+	location_directive	go to state 180
+
+State 179:
+
+	statement -> FILECOMMENT .	(Rule 145)
+
+	$default	reduce using rule 145 (statement)
+
+State 180:
+
+	statement -> location_directive .	(Rule 147)
+
+	$default	reduce using rule 147 (statement)
+
+State 181:
+
+	annotate_directive -> ANNOTATE . STRINGC COMMA const	(Rule 16)
+
+	STRINGC	shift, and go to state 204
+
+State 182:
+
+	statement -> LINECOMMENT .	(Rule 146)
+
+	$default	reduce using rule 146 (statement)
+
+State 183:
+
+	statements -> statement .	(Rule 140)
+
+	$default	reduce using rule 140 (statements)
+
+State 184:
+
+	statement -> annotate_directive .	(Rule 148)
+
+	$default	reduce using rule 148 (statement)
+
+State 185:
+
+	statement -> helper_clear_state . instruction	(Rule 143)
+
+	LABEL	shift, and go to state 41
+	error	shift, and go to state 206
+
+	'('	reduce using rule 149 (labels)
+	'\n'	reduce using rule 149 (labels)
+	CONST	reduce using rule 149 (labels)
+	GET_RESULTS	reduce using rule 149 (labels)
+	GLOBAL_CONST	reduce using rule 149 (labels)
+	GOTO	reduce using rule 149 (labels)
+	IDENTIFIER	reduce using rule 149 (labels)
+	IF	reduce using rule 149 (labels)
+	IREG	reduce using rule 149 (labels)
+	LEXICAL	reduce using rule 149 (labels)
+	LOCAL	reduce using rule 149 (labels)
+	NREG	reduce using rule 149 (labels)
+	PARROT_OP	reduce using rule 149 (labels)
+	PCC_BEGIN	reduce using rule 149 (labels)
+	PCC_BEGIN_RETURN	reduce using rule 149 (labels)
+	PCC_BEGIN_YIELD	reduce using rule 149 (labels)
+	PNULL	reduce using rule 149 (labels)
+	PREG	reduce using rule 149 (labels)
+	REG	reduce using rule 149 (labels)
+	RETURN	reduce using rule 149 (labels)
+	SREG	reduce using rule 149 (labels)
+	STRINGC	reduce using rule 149 (labels)
+	TAILCALL	reduce using rule 149 (labels)
+	UNLESS	reduce using rule 149 (labels)
+	USTRINGC	reduce using rule 149 (labels)
+	VAR	reduce using rule 149 (labels)
+	YIELDT	reduce using rule 149 (labels)
+
+	_labels	go to state 42
+	label	go to state 50
+	instruction	go to state 205
+	labels	go to state 207
+
+State 186:
+
+	sub -> SUB sub_label_op_c sub_proto '\n' sub_params sub_body . ESUB	(Rule 44)
+
+	ESUB	shift, and go to state 208
+
+State 187:
+
+	statement -> MACRO . '\n'	(Rule 144)
+
+	'\n'	shift, and go to state 209
+
+State 188:
+
+	sub_param -> PARAM . sub_param_type_def	(Rule 48)
+
+	FLOATV	shift, and go to state 35
+	INTV	shift, and go to state 36
+	PMCV	shift, and go to state 38
+	STRINGV	shift, and go to state 34
+
+	sub_param_type_def	go to state 210
+	type	go to state 211
+
+State 189:
+
+	sub_params -> sub_params sub_param . '\n'	(Rule 47)
+
+	'\n'	shift, and go to state 212
+
+State 190:
+
+	subid -> SUBID '(' any_string ')' .	(Rule 61)
+
+	$default	reduce using rule 61 (subid)
+
+State 191:
+
+	outer -> OUTER '(' STRINGC ')' .	(Rule 51)
+
+	$default	reduce using rule 51 (outer)
+
+State 192:
+
+	outer -> OUTER '(' IDENTIFIER ')' .	(Rule 52)
+
+	$default	reduce using rule 52 (outer)
+
+State 193:
+
+	multi -> MULTI '(' multi_types ')' .	(Rule 50)
+
+	$default	reduce using rule 50 (multi)
+
+State 194:
+
+	multi_types -> multi_types COMMA . multi_type	(Rule 63)
+
+	'['	shift, and go to state 160
+	FLOATV	shift, and go to state 159
+	IDENTIFIER	shift, and go to state 161
+	INTV	shift, and go to state 162
+	PMCV	shift, and go to state 164
+	STRINGC	shift, and go to state 157
+	STRINGV	shift, and go to state 158
+
+	multi_type	go to state 213
+
+State 195:
+
+	multi_type -> '[' keylist . ']'	(Rule 71)
+
+	']'	shift, and go to state 214
+
+State 196:
+
+	method -> METHOD '(' any_string ')' .	(Rule 56)
+
+	$default	reduce using rule 56 (method)
+
+State 197:
+
+	pasm_inst -> LEXICAL STRINGC COMMA REG .	(Rule 35)
+
+	$default	reduce using rule 35 (pasm_inst)
+
+State 198:
+
+	_vars -> _vars COMMA _var_or_i .	(Rule 286)
+
+	$default	reduce using rule 286 (_vars)
+
+State 199:
+
+	_var_or_i -> target '[' keylist . ']'	(Rule 289)
+
+	']'	shift, and go to state 215
+
+State 200:
+
+	_var_or_i -> '[' keylist_force ']' .	(Rule 290)
+
+	$default	reduce using rule 290 (_var_or_i)
+
+State 201:
+
+	pmc_const -> CONST STRINGC var_or_i '=' any_string .	(Rule 20)
+
+	$default	reduce using rule 20 (pmc_const)
+
+State 202:
+
+	pmc_const -> CONST INTC var_or_i '=' any_string .	(Rule 19)
+
+	$default	reduce using rule 19 (pmc_const)
+
+State 203:
+
+	statements -> statements statement .	(Rule 141)
+
+	$default	reduce using rule 141 (statements)
+
+State 204:
+
+	annotate_directive -> ANNOTATE STRINGC . COMMA const	(Rule 16)
+
+	COMMA	shift, and go to state 216
+
+State 205:
+
+	statement -> helper_clear_state instruction .	(Rule 143)
+
+	$default	reduce using rule 143 (statement)
+
+State 206:
+
+	instruction -> error . '\n'	(Rule 155)
+
+	'\n'	shift, and go to state 217
+
+State 207:
+
+	instruction -> labels . labeled_inst '\n'	(Rule 154)
+
+	'('	shift, and go to state 231
+	CONST	shift, and go to state 250
+	GET_RESULTS	shift, and go to state 230
+	GLOBAL_CONST	shift, and go to state 238
+	GOTO	shift, and go to state 219
+	IDENTIFIER	shift, and go to state 225
+	IF	shift, and go to state 224
+	IREG	shift, and go to state 68
+	LEXICAL	shift, and go to state 245
+	LOCAL	shift, and go to state 246
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 233
+	PCC_BEGIN	shift, and go to state 229
+	PCC_BEGIN_RETURN	shift, and go to state 227
+	PCC_BEGIN_YIELD	shift, and go to state 252
+	PNULL	shift, and go to state 236
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	RETURN	shift, and go to state 242
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 240
+	TAILCALL	shift, and go to state 254
+	UNLESS	shift, and go to state 221
+	USTRINGC	shift, and go to state 244
+	VAR	shift, and go to state 73
+	YIELDT	shift, and go to state 220
+
+	$default	reduce using rule 177 (labeled_inst)
+
+	conditional_statement	go to state 234
+	pmc_const	go to state 235
+	unless_statement	go to state 237
+	op_assign	go to state 218
+	labeled_inst	go to state 239
+	pcc_yield	go to state 222
+	target	go to state 223
+	the_sub	go to state 241
+	pcc_ret	go to state 243
+	func_assign	go to state 247
+	assignment	go to state 226
+	if_statement	go to state 248
+	get_results	go to state 228
+	pcc_sub_call	go to state 249
+	pcc_return_many	go to state 251
+	reg	go to state 72
+	return_or_yield	go to state 232
+	sub_call	go to state 253
+
+State 208:
+
+	sub -> SUB sub_label_op_c sub_proto '\n' sub_params sub_body ESUB .	(Rule 44)
+
+	$default	reduce using rule 44 (sub)
+
+State 209:
+
+	statement -> MACRO '\n' .	(Rule 144)
+
+	$default	reduce using rule 144 (statement)
+
+State 210:
+
+	sub_param -> PARAM sub_param_type_def .	(Rule 48)
+
+	$default	reduce using rule 48 (sub_param)
+
+State 211:
+
+	sub_param_type_def -> type . IDENTIFIER paramtype_list	(Rule 49)
+
+	IDENTIFIER	shift, and go to state 255
+
+State 212:
+
+	sub_params -> sub_params sub_param '\n' .	(Rule 47)
+
+	$default	reduce using rule 47 (sub_params)
+
+State 213:
+
+	multi_types -> multi_types COMMA multi_type .	(Rule 63)
+
+	$default	reduce using rule 63 (multi_types)
+
+State 214:
+
+	multi_type -> '[' keylist ']' .	(Rule 71)
+
+	$default	reduce using rule 71 (multi_type)
+
+State 215:
+
+	_var_or_i -> target '[' keylist ']' .	(Rule 289)
+
+	$default	reduce using rule 289 (_var_or_i)
+
+State 216:
+
+	annotate_directive -> ANNOTATE STRINGC COMMA . const	(Rule 16)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+
+	const	go to state 256
+
+State 217:
+
+	instruction -> error '\n' .	(Rule 155)
+
+	$default	reduce using rule 155 (instruction)
+
+State 218:
+
+	assignment -> op_assign .	(Rule 192)
+
+	$default	reduce using rule 192 (assignment)
+
+State 219:
+
+	labeled_inst -> GOTO . label_op	(Rule 170)
+
+	IDENTIFIER	shift, and go to state 137
+	PARROT_OP	shift, and go to state 141
+
+	label_op	go to state 257
+
+State 220:
+
+	return_or_yield -> YIELDT .	(Rule 134)
+
+	$default	reduce using rule 134 (return_or_yield)
+
+State 221:
+
+	unless_statement -> UNLESS . var relop var GOTO label_op	(Rule 268)
+	unless_statement -> UNLESS . PNULL var GOTO label_op	(Rule 269)
+	unless_statement -> UNLESS . var comma_or_goto label_op	(Rule 270)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PNULL	shift, and go to state 258
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 259
+
+State 222:
+
+	labeled_inst -> pcc_yield .	(Rule 176)
+
+	$default	reduce using rule 176 (labeled_inst)
+
+State 223:
+
+	assignment -> target . '=' var	(Rule 183)
+	assignment -> target . '=' un_op var	(Rule 184)
+	assignment -> target . '=' var bin_op var	(Rule 185)
+	assignment -> target . '=' var '[' keylist ']'	(Rule 186)
+	assignment -> target . '[' keylist ']' '=' var	(Rule 187)
+	assignment -> target . '=' 'new' classname '[' keylist ']'	(Rule 188)
+	assignment -> target . '=' sub_call	(Rule 189)
+	assignment -> target . '=' PNULL	(Rule 194)
+	op_assign -> target . assign_op var	(Rule 222)
+	func_assign -> target . '=' PARROT_OP pasm_args	(Rule 236)
+	the_sub -> target .	(Rule 240)
+	the_sub -> target . DOT sub_label_op	(Rule 241)
+	the_sub -> target . DOT USTRINGC	(Rule 242)
+	the_sub -> target . DOT STRINGC	(Rule 243)
+	the_sub -> target . DOT target	(Rule 244)
+
+	'='	shift, and go to state 274
+	'['	shift, and go to state 261
+	BAND_ASSIGN	shift, and go to state 268
+	BOR_ASSIGN	shift, and go to state 269
+	BXOR_ASSIGN	shift, and go to state 263
+	CONCAT_ASSIGN	shift, and go to state 266
+	DIV_ASSIGN	shift, and go to state 275
+	DOT	shift, and go to state 264
+	FDIV_ASSIGN	shift, and go to state 265
+	MINUS_ASSIGN	shift, and go to state 260
+	MOD_ASSIGN	shift, and go to state 273
+	MUL_ASSIGN	shift, and go to state 276
+	PLUS_ASSIGN	shift, and go to state 270
+	SHL_ASSIGN	shift, and go to state 262
+	SHR_ASSIGN	shift, and go to state 272
+	SHR_U_ASSIGN	shift, and go to state 267
+
+	$default	reduce using rule 240 (the_sub)
+
+	assign_op	go to state 271
+
+State 224:
+
+	if_statement -> IF . var comma_or_goto label_op	(Rule 271)
+	if_statement -> IF . var relop var GOTO label_op	(Rule 272)
+	if_statement -> IF . PNULL var GOTO label_op	(Rule 273)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PNULL	shift, and go to state 277
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 278
+
+State 225:
+
+	the_sub -> IDENTIFIER .	(Rule 237)
+
+	$default	reduce using rule 237 (the_sub)
+
+State 226:
+
+	labeled_inst -> assignment .	(Rule 161)
+
+	$default	reduce using rule 161 (labeled_inst)
+
+State 227:
+
+	pcc_ret -> PCC_BEGIN_RETURN . '\n' pcc_returns PCC_END_RETURN	(Rule 121)
+
+	'\n'	shift, and go to state 279
+
+State 228:
+
+	assignment -> get_results .	(Rule 191)
+
+	$default	reduce using rule 191 (assignment)
+
+State 229:
+
+	pcc_sub_call -> PCC_BEGIN . '\n' pcc_args opt_invocant pcc_call opt_label pcc_results PCC_END	(Rule 74)
+
+	'\n'	shift, and go to state 280
+
+State 230:
+
+	get_results -> GET_RESULTS . '(' targetlist ')'	(Rule 221)
+
+	'('	shift, and go to state 281
+
+State 231:
+
+	assignment -> '(' . targetlist ')' '=' the_sub '(' arglist ')'	(Rule 190)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 285
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 265 (targetlist)
+
+	target	go to state 282
+	reg	go to state 72
+	targetlist	go to state 283
+	result	go to state 284
+
+State 232:
+
+	pcc_return_many -> return_or_yield . '(' var_returns ')'	(Rule 132)
+
+	'('	shift, and go to state 286
+
+State 233:
+
+	labeled_inst -> PARROT_OP . vars	(Rule 171)
+
+	'['	shift, and go to state 136
+	FLOATC	shift, and go to state 69
+	IDENTIFIER	shift, and go to state 137
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 141
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 284 (vars)
+
+	var_or_i	go to state 131
+	_var_or_i	go to state 138
+	_vars	go to state 132
+	label_op	go to state 133
+	vars	go to state 287
+	target	go to state 134
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 135
+
+State 234:
+
+	labeled_inst -> conditional_statement .	(Rule 162)
+
+	$default	reduce using rule 162 (labeled_inst)
+
+State 235:
+
+	labeled_inst -> pmc_const .	(Rule 167)
+
+	$default	reduce using rule 167 (labeled_inst)
+
+State 236:
+
+	labeled_inst -> PNULL . var	(Rule 172)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 288
+
+State 237:
+
+	conditional_statement -> unless_statement .	(Rule 267)
+
+	$default	reduce using rule 267 (conditional_statement)
+
+State 238:
+
+	labeled_inst -> GLOBAL_CONST . type IDENTIFIER '=' const	(Rule 168)
+
+	FLOATV	shift, and go to state 35
+	INTV	shift, and go to state 36
+	PMCV	shift, and go to state 38
+	STRINGV	shift, and go to state 34
+
+	type	go to state 289
+
+State 239:
+
+	instruction -> labels labeled_inst . '\n'	(Rule 154)
+
+	'\n'	shift, and go to state 290
+
+State 240:
+
+	the_sub -> STRINGC .	(Rule 238)
+
+	$default	reduce using rule 238 (the_sub)
+
+State 241:
+
+	sub_call -> the_sub . '(' arglist ')'	(Rule 245)
+
+	'('	shift, and go to state 291
+
+State 242:
+
+	return_or_yield -> RETURN .	(Rule 133)
+
+	$default	reduce using rule 133 (return_or_yield)
+
+State 243:
+
+	labeled_inst -> pcc_ret .	(Rule 175)
+
+	$default	reduce using rule 175 (labeled_inst)
+
+State 244:
+
+	the_sub -> USTRINGC .	(Rule 239)
+
+	$default	reduce using rule 239 (the_sub)
+
+State 245:
+
+	labeled_inst -> LEXICAL . STRINGC COMMA target	(Rule 164)
+	labeled_inst -> LEXICAL . USTRINGC COMMA target	(Rule 165)
+
+	STRINGC	shift, and go to state 292
+	USTRINGC	shift, and go to state 293
+
+State 246:
+
+	labeled_inst -> LOCAL . type id_list	(Rule 163)
+
+	FLOATV	shift, and go to state 35
+	INTV	shift, and go to state 36
+	PMCV	shift, and go to state 38
+	STRINGV	shift, and go to state 34
+
+	type	go to state 294
+
+State 247:
+
+	assignment -> func_assign .	(Rule 193)
+
+	$default	reduce using rule 193 (assignment)
+
+State 248:
+
+	conditional_statement -> if_statement .	(Rule 266)
+
+	$default	reduce using rule 266 (conditional_statement)
+
+State 249:
+
+	labeled_inst -> pcc_sub_call .	(Rule 174)
+
+	$default	reduce using rule 174 (labeled_inst)
+
+State 250:
+
+	pmc_const -> CONST . INTC var_or_i '=' any_string	(Rule 19)
+	pmc_const -> CONST . STRINGC var_or_i '=' any_string	(Rule 20)
+	labeled_inst -> CONST . type IDENTIFIER '=' const	(Rule 166)
+
+	FLOATV	shift, and go to state 35
+	INTC	shift, and go to state 111
+	INTV	shift, and go to state 36
+	PMCV	shift, and go to state 38
+	STRINGC	shift, and go to state 110
+	STRINGV	shift, and go to state 34
+
+	type	go to state 295
+
+State 251:
+
+	pcc_ret -> pcc_return_many .	(Rule 122)
+
+	$default	reduce using rule 122 (pcc_ret)
+
+State 252:
+
+	pcc_yield -> PCC_BEGIN_YIELD . '\n' pcc_yields PCC_END_YIELD	(Rule 123)
+
+	'\n'	shift, and go to state 296
+
+State 253:
+
+	labeled_inst -> sub_call .	(Rule 173)
+
+	$default	reduce using rule 173 (labeled_inst)
+
+State 254:
+
+	labeled_inst -> TAILCALL . sub_call	(Rule 169)
+
+	IDENTIFIER	shift, and go to state 225
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 240
+	USTRINGC	shift, and go to state 244
+	VAR	shift, and go to state 73
+
+	target	go to state 297
+	reg	go to state 72
+	the_sub	go to state 241
+	sub_call	go to state 298
+
+State 255:
+
+	sub_param_type_def -> type IDENTIFIER . paramtype_list	(Rule 49)
+
+	$default	reduce using rule 111 (paramtype_list)
+
+	paramtype_list	go to state 299
+
+State 256:
+
+	annotate_directive -> ANNOTATE STRINGC COMMA const .	(Rule 16)
+
+	$default	reduce using rule 16 (annotate_directive)
+
+State 257:
+
+	labeled_inst -> GOTO label_op .	(Rule 170)
+
+	$default	reduce using rule 170 (labeled_inst)
+
+State 258:
+
+	unless_statement -> UNLESS PNULL . var GOTO label_op	(Rule 269)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 300
+
+State 259:
+
+	unless_statement -> UNLESS var . relop var GOTO label_op	(Rule 268)
+	unless_statement -> UNLESS var . comma_or_goto label_op	(Rule 270)
+
+	COMMA	shift, and go to state 309
+	GOTO	shift, and go to state 302
+	RELOP_EQ	shift, and go to state 306
+	RELOP_GT	shift, and go to state 307
+	RELOP_GTE	shift, and go to state 303
+	RELOP_LT	shift, and go to state 305
+	RELOP_LTE	shift, and go to state 310
+	RELOP_NE	shift, and go to state 308
+
+	relop	go to state 301
+	comma_or_goto	go to state 304
+
+State 260:
+
+	assign_op -> MINUS_ASSIGN .	(Rule 224)
+
+	$default	reduce using rule 224 (assign_op)
+
+State 261:
+
+	assignment -> target '[' . keylist ']' '=' var	(Rule 187)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	_keylist	go to state 66
+	keylist	go to state 311
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	key	go to state 58
+
+State 262:
+
+	assign_op -> SHL_ASSIGN .	(Rule 234)
+
+	$default	reduce using rule 234 (assign_op)
+
+State 263:
+
+	assign_op -> BXOR_ASSIGN .	(Rule 232)
+
+	$default	reduce using rule 232 (assign_op)
+
+State 264:
+
+	the_sub -> target DOT . sub_label_op	(Rule 241)
+	the_sub -> target DOT . USTRINGC	(Rule 242)
+	the_sub -> target DOT . STRINGC	(Rule 243)
+	the_sub -> target DOT . target	(Rule 244)
+
+	IDENTIFIER	shift, and go to state 30
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 33
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 313
+	USTRINGC	shift, and go to state 314
+	VAR	shift, and go to state 73
+
+	target	go to state 312
+	reg	go to state 72
+	sub_label_op	go to state 315
+
+State 265:
+
+	assign_op -> FDIV_ASSIGN .	(Rule 228)
+
+	$default	reduce using rule 228 (assign_op)
+
+State 266:
+
+	assign_op -> CONCAT_ASSIGN .	(Rule 229)
+
+	$default	reduce using rule 229 (assign_op)
+
+State 267:
+
+	assign_op -> SHR_U_ASSIGN .	(Rule 235)
+
+	$default	reduce using rule 235 (assign_op)
+
+State 268:
+
+	assign_op -> BAND_ASSIGN .	(Rule 230)
+
+	$default	reduce using rule 230 (assign_op)
+
+State 269:
+
+	assign_op -> BOR_ASSIGN .	(Rule 231)
+
+	$default	reduce using rule 231 (assign_op)
+
+State 270:
+
+	assign_op -> PLUS_ASSIGN .	(Rule 223)
+
+	$default	reduce using rule 223 (assign_op)
+
+State 271:
+
+	op_assign -> target assign_op . var	(Rule 222)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 316
+
+State 272:
+
+	assign_op -> SHR_ASSIGN .	(Rule 233)
+
+	$default	reduce using rule 233 (assign_op)
+
+State 273:
+
+	assign_op -> MOD_ASSIGN .	(Rule 227)
+
+	$default	reduce using rule 227 (assign_op)
+
+State 274:
+
+	assignment -> target '=' . var	(Rule 183)
+	assignment -> target '=' . un_op var	(Rule 184)
+	assignment -> target '=' . var bin_op var	(Rule 185)
+	assignment -> target '=' . var '[' keylist ']'	(Rule 186)
+	assignment -> target '=' . 'new' classname '[' keylist ']'	(Rule 188)
+	assignment -> target '=' . sub_call	(Rule 189)
+	assignment -> target '=' . PNULL	(Rule 194)
+	func_assign -> target '=' . PARROT_OP pasm_args	(Rule 236)
+
+	'!'	shift, and go to state 320
+	'-'	shift, and go to state 317
+	'new'	shift, and go to state 323
+	'~'	shift, and go to state 318
+	FLOATC	shift, and go to state 69
+	IDENTIFIER	shift, and go to state 225
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 321
+	PNULL	shift, and go to state 322
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 324
+	USTRINGC	shift, and go to state 325
+	VAR	shift, and go to state 73
+
+	target	go to state 319
+	reg	go to state 72
+	un_op	go to state 327
+	the_sub	go to state 241
+	const	go to state 71
+	sub_call	go to state 328
+	var	go to state 326
+
+State 275:
+
+	assign_op -> DIV_ASSIGN .	(Rule 226)
+
+	$default	reduce using rule 226 (assign_op)
+
+State 276:
+
+	assign_op -> MUL_ASSIGN .	(Rule 225)
+
+	$default	reduce using rule 225 (assign_op)
+
+State 277:
+
+	if_statement -> IF PNULL . var GOTO label_op	(Rule 273)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 329
+
+State 278:
+
+	if_statement -> IF var . comma_or_goto label_op	(Rule 271)
+	if_statement -> IF var . relop var GOTO label_op	(Rule 272)
+
+	COMMA	shift, and go to state 309
+	GOTO	shift, and go to state 302
+	RELOP_EQ	shift, and go to state 306
+	RELOP_GT	shift, and go to state 307
+	RELOP_GTE	shift, and go to state 303
+	RELOP_LT	shift, and go to state 305
+	RELOP_LTE	shift, and go to state 310
+	RELOP_NE	shift, and go to state 308
+
+	relop	go to state 330
+	comma_or_goto	go to state 331
+
+State 279:
+
+	pcc_ret -> PCC_BEGIN_RETURN '\n' . pcc_returns PCC_END_RETURN	(Rule 121)
+
+	$default	reduce using rule 124 (pcc_returns)
+
+	pcc_returns	go to state 332
+
+State 280:
+
+	pcc_sub_call -> PCC_BEGIN '\n' . pcc_args opt_invocant pcc_call opt_label pcc_results PCC_END	(Rule 74)
+
+	$default	reduce using rule 104 (pcc_args)
+
+	pcc_args	go to state 333
+
+State 281:
+
+	get_results -> GET_RESULTS '(' . targetlist ')'	(Rule 221)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 285
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 265 (targetlist)
+
+	target	go to state 282
+	reg	go to state 72
+	targetlist	go to state 334
+	result	go to state 284
+
+State 282:
+
+	result -> target . paramtype_list	(Rule 260)
+
+	$default	reduce using rule 111 (paramtype_list)
+
+	paramtype_list	go to state 335
+
+State 283:
+
+	assignment -> '(' targetlist . ')' '=' the_sub '(' arglist ')'	(Rule 190)
+	targetlist -> targetlist . COMMA result	(Rule 261)
+	targetlist -> targetlist . COMMA STRINGC ADV_ARROW target	(Rule 262)
+
+	')'	shift, and go to state 336
+	COMMA	shift, and go to state 337
+
+State 284:
+
+	targetlist -> result .	(Rule 263)
+
+	$default	reduce using rule 263 (targetlist)
+
+State 285:
+
+	targetlist -> STRINGC . ADV_ARROW target	(Rule 264)
+
+	ADV_ARROW	shift, and go to state 338
+
+State 286:
+
+	pcc_return_many -> return_or_yield '(' . var_returns ')'	(Rule 132)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 341
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 135 (var_returns)
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	arg	go to state 339
+	var	go to state 342
+	var_returns	go to state 340
+
+State 287:
+
+	labeled_inst -> PARROT_OP vars .	(Rule 171)
+
+	$default	reduce using rule 171 (labeled_inst)
+
+State 288:
+
+	labeled_inst -> PNULL var .	(Rule 172)
+
+	$default	reduce using rule 172 (labeled_inst)
+
+State 289:
+
+	labeled_inst -> GLOBAL_CONST type . IDENTIFIER '=' const	(Rule 168)
+
+	IDENTIFIER	shift, and go to state 343
+
+State 290:
+
+	instruction -> labels labeled_inst '\n' .	(Rule 154)
+
+	$default	reduce using rule 154 (instruction)
+
+State 291:
+
+	sub_call -> the_sub '(' . arglist ')'	(Rule 245)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 345
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 246 (arglist)
+
+	arglist	go to state 347
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	arg	go to state 344
+	var	go to state 346
+
+State 292:
+
+	labeled_inst -> LEXICAL STRINGC . COMMA target	(Rule 164)
+
+	COMMA	shift, and go to state 348
+
+State 293:
+
+	labeled_inst -> LEXICAL USTRINGC . COMMA target	(Rule 165)
+
+	COMMA	shift, and go to state 349
+
+State 294:
+
+	labeled_inst -> LOCAL type . id_list	(Rule 163)
+
+	IDENTIFIER	shift, and go to state 350
+
+	id_list	go to state 351
+	id_list_id	go to state 352
+
+State 295:
+
+	labeled_inst -> CONST type . IDENTIFIER '=' const	(Rule 166)
+
+	IDENTIFIER	shift, and go to state 353
+
+State 296:
+
+	pcc_yield -> PCC_BEGIN_YIELD '\n' . pcc_yields PCC_END_YIELD	(Rule 123)
+
+	$default	reduce using rule 127 (pcc_yields)
+
+	pcc_yields	go to state 354
+
+State 297:
+
+	the_sub -> target .	(Rule 240)
+	the_sub -> target . DOT sub_label_op	(Rule 241)
+	the_sub -> target . DOT USTRINGC	(Rule 242)
+	the_sub -> target . DOT STRINGC	(Rule 243)
+	the_sub -> target . DOT target	(Rule 244)
+
+	DOT	shift, and go to state 264
+
+	$default	reduce using rule 240 (the_sub)
+
+State 298:
+
+	labeled_inst -> TAILCALL sub_call .	(Rule 169)
+
+	$default	reduce using rule 169 (labeled_inst)
+
+State 299:
+
+	sub_param_type_def -> type IDENTIFIER paramtype_list .	(Rule 49)
+	paramtype_list -> paramtype_list . paramtype	(Rule 112)
+
+	ADV_CALL_SIG	shift, and go to state 360
+	ADV_NAMED	shift, and go to state 356
+	ADV_OPTIONAL	shift, and go to state 358
+	ADV_OPT_FLAG	shift, and go to state 359
+	ADV_SLURPY	shift, and go to state 361
+	UNIQUE_REG	shift, and go to state 357
+
+	$default	reduce using rule 49 (sub_param_type_def)
+
+	paramtype	go to state 355
+
+State 300:
+
+	unless_statement -> UNLESS PNULL var . GOTO label_op	(Rule 269)
+
+	GOTO	shift, and go to state 362
+
+State 301:
+
+	unless_statement -> UNLESS var relop . var GOTO label_op	(Rule 268)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 363
+
+State 302:
+
+	comma_or_goto -> GOTO .	(Rule 275)
+
+	$default	reduce using rule 275 (comma_or_goto)
+
+State 303:
+
+	relop -> RELOP_GTE .	(Rule 279)
+
+	$default	reduce using rule 279 (relop)
+
+State 304:
+
+	unless_statement -> UNLESS var comma_or_goto . label_op	(Rule 270)
+
+	IDENTIFIER	shift, and go to state 137
+	PARROT_OP	shift, and go to state 141
+
+	label_op	go to state 364
+
+State 305:
+
+	relop -> RELOP_LT .	(Rule 280)
+
+	$default	reduce using rule 280 (relop)
+
+State 306:
+
+	relop -> RELOP_EQ .	(Rule 276)
+
+	$default	reduce using rule 276 (relop)
+
+State 307:
+
+	relop -> RELOP_GT .	(Rule 278)
+
+	$default	reduce using rule 278 (relop)
+
+State 308:
+
+	relop -> RELOP_NE .	(Rule 277)
+
+	$default	reduce using rule 277 (relop)
+
+State 309:
+
+	comma_or_goto -> COMMA .	(Rule 274)
+
+	$default	reduce using rule 274 (comma_or_goto)
+
+State 310:
+
+	relop -> RELOP_LTE .	(Rule 281)
+
+	$default	reduce using rule 281 (relop)
+
+State 311:
+
+	assignment -> target '[' keylist . ']' '=' var	(Rule 187)
+
+	']'	shift, and go to state 365
+
+State 312:
+
+	the_sub -> target DOT target .	(Rule 244)
+
+	$default	reduce using rule 244 (the_sub)
+
+State 313:
+
+	the_sub -> target DOT STRINGC .	(Rule 243)
+
+	$default	reduce using rule 243 (the_sub)
+
+State 314:
+
+	the_sub -> target DOT USTRINGC .	(Rule 242)
+
+	$default	reduce using rule 242 (the_sub)
+
+State 315:
+
+	the_sub -> target DOT sub_label_op .	(Rule 241)
+
+	$default	reduce using rule 241 (the_sub)
+
+State 316:
+
+	op_assign -> target assign_op var .	(Rule 222)
+
+	$default	reduce using rule 222 (op_assign)
+
+State 317:
+
+	un_op -> '-' .	(Rule 197)
+
+	$default	reduce using rule 197 (un_op)
+
+State 318:
+
+	un_op -> '~' .	(Rule 196)
+
+	$default	reduce using rule 196 (un_op)
+
+State 319:
+
+	the_sub -> target .	(Rule 240)
+	the_sub -> target . DOT sub_label_op	(Rule 241)
+	the_sub -> target . DOT USTRINGC	(Rule 242)
+	the_sub -> target . DOT STRINGC	(Rule 243)
+	the_sub -> target . DOT target	(Rule 244)
+	var -> target .	(Rule 300)
+
+	DOT	shift, and go to state 264
+
+	'('	reduce using rule 240 (the_sub)
+	$default	reduce using rule 300 (var)
+
+State 320:
+
+	un_op -> '!' .	(Rule 195)
+
+	$default	reduce using rule 195 (un_op)
+
+State 321:
+
+	func_assign -> target '=' PARROT_OP . pasm_args	(Rule 236)
+
+	'['	shift, and go to state 136
+	FLOATC	shift, and go to state 69
+	IDENTIFIER	shift, and go to state 137
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PARROT_OP	shift, and go to state 141
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 284 (vars)
+
+	var_or_i	go to state 131
+	_var_or_i	go to state 138
+	_vars	go to state 132
+	label_op	go to state 133
+	vars	go to state 139
+	pasm_args	go to state 366
+	target	go to state 134
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 135
+
+State 322:
+
+	assignment -> target '=' PNULL .	(Rule 194)
+
+	$default	reduce using rule 194 (assignment)
+
+State 323:
+
+	assignment -> target '=' 'new' . classname '[' keylist ']'	(Rule 188)
+
+	IDENTIFIER	shift, and go to state 367
+
+	classname	go to state 368
+
+State 324:
+
+	the_sub -> STRINGC .	(Rule 238)
+	const -> STRINGC .	(Rule 314)
+
+	'('	reduce using rule 238 (the_sub)
+	$default	reduce using rule 314 (const)
+
+State 325:
+
+	the_sub -> USTRINGC .	(Rule 239)
+	const -> USTRINGC .	(Rule 315)
+
+	'('	reduce using rule 239 (the_sub)
+	$default	reduce using rule 315 (const)
+
+State 326:
+
+	assignment -> target '=' var .	(Rule 183)
+	assignment -> target '=' var . bin_op var	(Rule 185)
+	assignment -> target '=' var . '[' keylist ']'	(Rule 186)
+
+	'%'	shift, and go to state 372
+	'&'	shift, and go to state 389
+	'*'	shift, and go to state 376
+	'+'	shift, and go to state 386
+	'-'	shift, and go to state 369
+	'/'	shift, and go to state 391
+	'['	shift, and go to state 380
+	'|'	shift, and go to state 383
+	'~'	shift, and go to state 370
+	CONCAT	shift, and go to state 375
+	FDIV	shift, and go to state 390
+	LOG_AND	shift, and go to state 374
+	LOG_OR	shift, and go to state 377
+	LOG_XOR	shift, and go to state 371
+	POW	shift, and go to state 373
+	RELOP_EQ	shift, and go to state 385
+	RELOP_GT	shift, and go to state 387
+	RELOP_GTE	shift, and go to state 381
+	RELOP_LT	shift, and go to state 384
+	RELOP_LTE	shift, and go to state 393
+	RELOP_NE	shift, and go to state 388
+	SHIFT_LEFT	shift, and go to state 379
+	SHIFT_RIGHT	shift, and go to state 382
+	SHIFT_RIGHT_U	shift, and go to state 378
+
+	$default	reduce using rule 183 (assignment)
+
+	bin_op	go to state 392
+
+State 327:
+
+	assignment -> target '=' un_op . var	(Rule 184)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 394
+
+State 328:
+
+	assignment -> target '=' sub_call .	(Rule 189)
+
+	$default	reduce using rule 189 (assignment)
+
+State 329:
+
+	if_statement -> IF PNULL var . GOTO label_op	(Rule 273)
+
+	GOTO	shift, and go to state 395
+
+State 330:
+
+	if_statement -> IF var relop . var GOTO label_op	(Rule 272)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 396
+
+State 331:
+
+	if_statement -> IF var comma_or_goto . label_op	(Rule 271)
+
+	IDENTIFIER	shift, and go to state 137
+	PARROT_OP	shift, and go to state 141
+
+	label_op	go to state 397
+
+State 332:
+
+	pcc_ret -> PCC_BEGIN_RETURN '\n' pcc_returns . PCC_END_RETURN	(Rule 121)
+	pcc_returns -> pcc_returns . '\n'	(Rule 125)
+	pcc_returns -> pcc_returns . pcc_return '\n'	(Rule 126)
+
+	'\n'	shift, and go to state 401
+	PCC_END_RETURN	shift, and go to state 398
+	SET_RETURN	shift, and go to state 399
+
+	pcc_return	go to state 400
+
+State 333:
+
+	pcc_sub_call -> PCC_BEGIN '\n' pcc_args . opt_invocant pcc_call opt_label pcc_results PCC_END	(Rule 74)
+	pcc_args -> pcc_args . pcc_arg '\n'	(Rule 105)
+
+	ARG	shift, and go to state 405
+	INVOCANT	shift, and go to state 402
+
+	$default	reduce using rule 77 (opt_invocant)
+
+	pcc_arg	go to state 404
+	opt_invocant	go to state 403
+
+State 334:
+
+	get_results -> GET_RESULTS '(' targetlist . ')'	(Rule 221)
+	targetlist -> targetlist . COMMA result	(Rule 261)
+	targetlist -> targetlist . COMMA STRINGC ADV_ARROW target	(Rule 262)
+
+	')'	shift, and go to state 406
+	COMMA	shift, and go to state 337
+
+State 335:
+
+	paramtype_list -> paramtype_list . paramtype	(Rule 112)
+	result -> target paramtype_list .	(Rule 260)
+
+	ADV_CALL_SIG	shift, and go to state 360
+	ADV_NAMED	shift, and go to state 356
+	ADV_OPTIONAL	shift, and go to state 358
+	ADV_OPT_FLAG	shift, and go to state 359
+	ADV_SLURPY	shift, and go to state 361
+	UNIQUE_REG	shift, and go to state 357
+
+	$default	reduce using rule 260 (result)
+
+	paramtype	go to state 355
+
+State 336:
+
+	assignment -> '(' targetlist ')' . '=' the_sub '(' arglist ')'	(Rule 190)
+
+	'='	shift, and go to state 407
+
+State 337:
+
+	targetlist -> targetlist COMMA . result	(Rule 261)
+	targetlist -> targetlist COMMA . STRINGC ADV_ARROW target	(Rule 262)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 409
+	VAR	shift, and go to state 73
+
+	target	go to state 282
+	reg	go to state 72
+	result	go to state 408
+
+State 338:
+
+	targetlist -> STRINGC ADV_ARROW . target	(Rule 264)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	VAR	shift, and go to state 73
+
+	target	go to state 410
+	reg	go to state 72
+
+State 339:
+
+	var_returns -> arg .	(Rule 136)
+
+	$default	reduce using rule 136 (var_returns)
+
+State 340:
+
+	pcc_return_many -> return_or_yield '(' var_returns . ')'	(Rule 132)
+	var_returns -> var_returns . COMMA arg	(Rule 138)
+	var_returns -> var_returns . COMMA STRINGC ADV_ARROW var	(Rule 139)
+
+	')'	shift, and go to state 411
+	COMMA	shift, and go to state 412
+
+State 341:
+
+	var_returns -> STRINGC . ADV_ARROW var	(Rule 137)
+	const -> STRINGC .	(Rule 314)
+
+	ADV_ARROW	shift, and go to state 413
+
+	$default	reduce using rule 314 (const)
+
+State 342:
+
+	arg -> var . argtype_list	(Rule 252)
+
+	$default	reduce using rule 253 (argtype_list)
+
+	argtype_list	go to state 414
+
+State 343:
+
+	labeled_inst -> GLOBAL_CONST type IDENTIFIER . '=' const	(Rule 168)
+
+	'='	shift, and go to state 415
+
+State 344:
+
+	arglist -> arg .	(Rule 248)
+
+	$default	reduce using rule 248 (arglist)
+
+State 345:
+
+	arglist -> STRINGC . ADV_ARROW var	(Rule 251)
+	const -> STRINGC .	(Rule 314)
+
+	ADV_ARROW	shift, and go to state 416
+
+	ADV_ARROW	[reduce using rule 314 (const)]
+	$default	reduce using rule 314 (const)
+
+State 346:
+
+	arglist -> var . ADV_ARROW var	(Rule 250)
+	arg -> var . argtype_list	(Rule 252)
+
+	ADV_ARROW	shift, and go to state 417
+
+	$default	reduce using rule 253 (argtype_list)
+
+	argtype_list	go to state 414
+
+State 347:
+
+	sub_call -> the_sub '(' arglist . ')'	(Rule 245)
+	arglist -> arglist . COMMA arg	(Rule 247)
+	arglist -> arglist . COMMA STRINGC ADV_ARROW var	(Rule 249)
+
+	')'	shift, and go to state 418
+	COMMA	shift, and go to state 419
+
+State 348:
+
+	labeled_inst -> LEXICAL STRINGC COMMA . target	(Rule 164)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	VAR	shift, and go to state 73
+
+	target	go to state 420
+	reg	go to state 72
+
+State 349:
+
+	labeled_inst -> LEXICAL USTRINGC COMMA . target	(Rule 165)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	VAR	shift, and go to state 73
+
+	target	go to state 421
+	reg	go to state 72
+
+State 350:
+
+	id_list_id -> IDENTIFIER . opt_unique_reg	(Rule 158)
+
+	UNIQUE_REG	shift, and go to state 422
+
+	$default	reduce using rule 159 (opt_unique_reg)
+
+	opt_unique_reg	go to state 423
+
+State 351:
+
+	id_list -> id_list . COMMA id_list_id	(Rule 157)
+	labeled_inst -> LOCAL type id_list .	(Rule 163)
+
+	COMMA	shift, and go to state 424
+
+	$default	reduce using rule 163 (labeled_inst)
+
+State 352:
+
+	id_list -> id_list_id .	(Rule 156)
+
+	$default	reduce using rule 156 (id_list)
+
+State 353:
+
+	labeled_inst -> CONST type IDENTIFIER . '=' const	(Rule 166)
+
+	'='	shift, and go to state 425
+
+State 354:
+
+	pcc_yield -> PCC_BEGIN_YIELD '\n' pcc_yields . PCC_END_YIELD	(Rule 123)
+	pcc_yields -> pcc_yields . '\n'	(Rule 128)
+	pcc_yields -> pcc_yields . pcc_set_yield '\n'	(Rule 129)
+
+	'\n'	shift, and go to state 428
+	PCC_END_YIELD	shift, and go to state 427
+	SET_YIELD	shift, and go to state 429
+
+	pcc_set_yield	go to state 426
+
+State 355:
+
+	paramtype_list -> paramtype_list paramtype .	(Rule 112)
+
+	$default	reduce using rule 112 (paramtype_list)
+
+State 356:
+
+	paramtype -> ADV_NAMED .	(Rule 116)
+	paramtype -> ADV_NAMED . '(' STRINGC ')'	(Rule 117)
+	paramtype -> ADV_NAMED . '(' USTRINGC ')'	(Rule 118)
+
+	'('	shift, and go to state 430
+
+	$default	reduce using rule 116 (paramtype)
+
+State 357:
+
+	paramtype -> UNIQUE_REG .	(Rule 119)
+
+	$default	reduce using rule 119 (paramtype)
+
+State 358:
+
+	paramtype -> ADV_OPTIONAL .	(Rule 114)
+
+	$default	reduce using rule 114 (paramtype)
+
+State 359:
+
+	paramtype -> ADV_OPT_FLAG .	(Rule 115)
+
+	$default	reduce using rule 115 (paramtype)
+
+State 360:
+
+	paramtype -> ADV_CALL_SIG .	(Rule 120)
+
+	$default	reduce using rule 120 (paramtype)
+
+State 361:
+
+	paramtype -> ADV_SLURPY .	(Rule 113)
+
+	$default	reduce using rule 113 (paramtype)
+
+State 362:
+
+	unless_statement -> UNLESS PNULL var GOTO . label_op	(Rule 269)
+
+	IDENTIFIER	shift, and go to state 137
+	PARROT_OP	shift, and go to state 141
+
+	label_op	go to state 431
+
+State 363:
+
+	unless_statement -> UNLESS var relop var . GOTO label_op	(Rule 268)
+
+	GOTO	shift, and go to state 432
+
+State 364:
+
+	unless_statement -> UNLESS var comma_or_goto label_op .	(Rule 270)
+
+	$default	reduce using rule 270 (unless_statement)
+
+State 365:
+
+	assignment -> target '[' keylist ']' . '=' var	(Rule 187)
+
+	'='	shift, and go to state 433
+
+State 366:
+
+	func_assign -> target '=' PARROT_OP pasm_args .	(Rule 236)
+
+	$default	reduce using rule 236 (func_assign)
+
+State 367:
+
+	classname -> IDENTIFIER .	(Rule 182)
+
+	$default	reduce using rule 182 (classname)
+
+State 368:
+
+	assignment -> target '=' 'new' classname . '[' keylist ']'	(Rule 188)
+
+	'['	shift, and go to state 434
+
+State 369:
+
+	bin_op -> '-' .	(Rule 198)
+
+	$default	reduce using rule 198 (bin_op)
+
+State 370:
+
+	bin_op -> '~' .	(Rule 220)
+
+	$default	reduce using rule 220 (bin_op)
+
+State 371:
+
+	bin_op -> LOG_XOR .	(Rule 217)
+
+	$default	reduce using rule 217 (bin_op)
+
+State 372:
+
+	bin_op -> '%' .	(Rule 202)
+
+	$default	reduce using rule 202 (bin_op)
+
+State 373:
+
+	bin_op -> POW .	(Rule 204)
+
+	$default	reduce using rule 204 (bin_op)
+
+State 374:
+
+	bin_op -> LOG_AND .	(Rule 215)
+
+	$default	reduce using rule 215 (bin_op)
+
+State 375:
+
+	bin_op -> CONCAT .	(Rule 205)
+
+	$default	reduce using rule 205 (bin_op)
+
+State 376:
+
+	bin_op -> '*' .	(Rule 200)
+
+	$default	reduce using rule 200 (bin_op)
+
+State 377:
+
+	bin_op -> LOG_OR .	(Rule 216)
+
+	$default	reduce using rule 216 (bin_op)
+
+State 378:
+
+	bin_op -> SHIFT_RIGHT_U .	(Rule 214)
+
+	$default	reduce using rule 214 (bin_op)
+
+State 379:
+
+	bin_op -> SHIFT_LEFT .	(Rule 212)
+
+	$default	reduce using rule 212 (bin_op)
+
+State 380:
+
+	assignment -> target '=' var '[' . keylist ']'	(Rule 186)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	_keylist	go to state 66
+	keylist	go to state 435
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	key	go to state 58
+
+State 381:
+
+	bin_op -> RELOP_GTE .	(Rule 209)
+
+	$default	reduce using rule 209 (bin_op)
+
+State 382:
+
+	bin_op -> SHIFT_RIGHT .	(Rule 213)
+
+	$default	reduce using rule 213 (bin_op)
+
+State 383:
+
+	bin_op -> '|' .	(Rule 219)
+
+	$default	reduce using rule 219 (bin_op)
+
+State 384:
+
+	bin_op -> RELOP_LT .	(Rule 210)
+
+	$default	reduce using rule 210 (bin_op)
+
+State 385:
+
+	bin_op -> RELOP_EQ .	(Rule 206)
+
+	$default	reduce using rule 206 (bin_op)
+
+State 386:
+
+	bin_op -> '+' .	(Rule 199)
+
+	$default	reduce using rule 199 (bin_op)
+
+State 387:
+
+	bin_op -> RELOP_GT .	(Rule 208)
+
+	$default	reduce using rule 208 (bin_op)
+
+State 388:
+
+	bin_op -> RELOP_NE .	(Rule 207)
+
+	$default	reduce using rule 207 (bin_op)
+
+State 389:
+
+	bin_op -> '&' .	(Rule 218)
+
+	$default	reduce using rule 218 (bin_op)
+
+State 390:
+
+	bin_op -> FDIV .	(Rule 203)
+
+	$default	reduce using rule 203 (bin_op)
+
+State 391:
+
+	bin_op -> '/' .	(Rule 201)
+
+	$default	reduce using rule 201 (bin_op)
+
+State 392:
+
+	assignment -> target '=' var bin_op . var	(Rule 185)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 436
+
+State 393:
+
+	bin_op -> RELOP_LTE .	(Rule 211)
+
+	$default	reduce using rule 211 (bin_op)
+
+State 394:
+
+	assignment -> target '=' un_op var .	(Rule 184)
+
+	$default	reduce using rule 184 (assignment)
+
+State 395:
+
+	if_statement -> IF PNULL var GOTO . label_op	(Rule 273)
+
+	IDENTIFIER	shift, and go to state 137
+	PARROT_OP	shift, and go to state 141
+
+	label_op	go to state 437
+
+State 396:
+
+	if_statement -> IF var relop var . GOTO label_op	(Rule 272)
+
+	GOTO	shift, and go to state 438
+
+State 397:
+
+	if_statement -> IF var comma_or_goto label_op .	(Rule 271)
+
+	$default	reduce using rule 271 (if_statement)
+
+State 398:
+
+	pcc_ret -> PCC_BEGIN_RETURN '\n' pcc_returns PCC_END_RETURN .	(Rule 121)
+
+	$default	reduce using rule 121 (pcc_ret)
+
+State 399:
+
+	pcc_return -> SET_RETURN . var argtype_list	(Rule 130)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 439
+
+State 400:
+
+	pcc_returns -> pcc_returns pcc_return . '\n'	(Rule 126)
+
+	'\n'	shift, and go to state 440
+
+State 401:
+
+	pcc_returns -> pcc_returns '\n' .	(Rule 125)
+
+	$default	reduce using rule 125 (pcc_returns)
+
+State 402:
+
+	opt_invocant -> INVOCANT . var '\n'	(Rule 78)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 441
+
+State 403:
+
+	pcc_sub_call -> PCC_BEGIN '\n' pcc_args opt_invocant . pcc_call opt_label pcc_results PCC_END	(Rule 74)
+
+	METH_CALL	shift, and go to state 443
+	NCI_CALL	shift, and go to state 442
+	PCC_CALL	shift, and go to state 445
+
+	pcc_call	go to state 444
+
+State 404:
+
+	pcc_args -> pcc_args pcc_arg . '\n'	(Rule 105)
+
+	'\n'	shift, and go to state 446
+
+State 405:
+
+	pcc_arg -> ARG . arg	(Rule 106)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	arg	go to state 447
+	var	go to state 342
+
+State 406:
+
+	get_results -> GET_RESULTS '(' targetlist ')' .	(Rule 221)
+
+	$default	reduce using rule 221 (get_results)
+
+State 407:
+
+	assignment -> '(' targetlist ')' '=' . the_sub '(' arglist ')'	(Rule 190)
+
+	IDENTIFIER	shift, and go to state 225
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 240
+	USTRINGC	shift, and go to state 244
+	VAR	shift, and go to state 73
+
+	target	go to state 297
+	reg	go to state 72
+	the_sub	go to state 448
+
+State 408:
+
+	targetlist -> targetlist COMMA result .	(Rule 261)
+
+	$default	reduce using rule 261 (targetlist)
+
+State 409:
+
+	targetlist -> targetlist COMMA STRINGC . ADV_ARROW target	(Rule 262)
+
+	ADV_ARROW	shift, and go to state 449
+
+State 410:
+
+	targetlist -> STRINGC ADV_ARROW target .	(Rule 264)
+
+	$default	reduce using rule 264 (targetlist)
+
+State 411:
+
+	pcc_return_many -> return_or_yield '(' var_returns ')' .	(Rule 132)
+
+	$default	reduce using rule 132 (pcc_return_many)
+
+State 412:
+
+	var_returns -> var_returns COMMA . arg	(Rule 138)
+	var_returns -> var_returns COMMA . STRINGC ADV_ARROW var	(Rule 139)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 451
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	arg	go to state 450
+	var	go to state 342
+
+State 413:
+
+	var_returns -> STRINGC ADV_ARROW . var	(Rule 137)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 452
+
+State 414:
+
+	arg -> var argtype_list .	(Rule 252)
+	argtype_list -> argtype_list . argtype	(Rule 254)
+
+	ADV_CALL_SIG	shift, and go to state 456
+	ADV_FLAT	shift, and go to state 453
+	ADV_NAMED	shift, and go to state 455
+
+	$default	reduce using rule 252 (arg)
+
+	argtype	go to state 454
+
+State 415:
+
+	labeled_inst -> GLOBAL_CONST type IDENTIFIER '=' . const	(Rule 168)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+
+	const	go to state 457
+
+State 416:
+
+	arglist -> STRINGC ADV_ARROW . var	(Rule 251)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 458
+
+State 417:
+
+	arglist -> var ADV_ARROW . var	(Rule 250)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 459
+
+State 418:
+
+	sub_call -> the_sub '(' arglist ')' .	(Rule 245)
+
+	$default	reduce using rule 245 (sub_call)
+
+State 419:
+
+	arglist -> arglist COMMA . arg	(Rule 247)
+	arglist -> arglist COMMA . STRINGC ADV_ARROW var	(Rule 249)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 461
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	arg	go to state 460
+	var	go to state 342
+
+State 420:
+
+	labeled_inst -> LEXICAL STRINGC COMMA target .	(Rule 164)
+
+	$default	reduce using rule 164 (labeled_inst)
+
+State 421:
+
+	labeled_inst -> LEXICAL USTRINGC COMMA target .	(Rule 165)
+
+	$default	reduce using rule 165 (labeled_inst)
+
+State 422:
+
+	opt_unique_reg -> UNIQUE_REG .	(Rule 160)
+
+	$default	reduce using rule 160 (opt_unique_reg)
+
+State 423:
+
+	id_list_id -> IDENTIFIER opt_unique_reg .	(Rule 158)
+
+	$default	reduce using rule 158 (id_list_id)
+
+State 424:
+
+	id_list -> id_list COMMA . id_list_id	(Rule 157)
+
+	IDENTIFIER	shift, and go to state 350
+
+	id_list_id	go to state 462
+
+State 425:
+
+	labeled_inst -> CONST type IDENTIFIER '=' . const	(Rule 166)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+
+	const	go to state 463
+
+State 426:
+
+	pcc_yields -> pcc_yields pcc_set_yield . '\n'	(Rule 129)
+
+	'\n'	shift, and go to state 464
+
+State 427:
+
+	pcc_yield -> PCC_BEGIN_YIELD '\n' pcc_yields PCC_END_YIELD .	(Rule 123)
+
+	$default	reduce using rule 123 (pcc_yield)
+
+State 428:
+
+	pcc_yields -> pcc_yields '\n' .	(Rule 128)
+
+	$default	reduce using rule 128 (pcc_yields)
+
+State 429:
+
+	pcc_set_yield -> SET_YIELD . var argtype_list	(Rule 131)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 465
+
+State 430:
+
+	paramtype -> ADV_NAMED '(' . STRINGC ')'	(Rule 117)
+	paramtype -> ADV_NAMED '(' . USTRINGC ')'	(Rule 118)
+
+	STRINGC	shift, and go to state 466
+	USTRINGC	shift, and go to state 467
+
+State 431:
+
+	unless_statement -> UNLESS PNULL var GOTO label_op .	(Rule 269)
+
+	$default	reduce using rule 269 (unless_statement)
+
+State 432:
+
+	unless_statement -> UNLESS var relop var GOTO . label_op	(Rule 268)
+
+	IDENTIFIER	shift, and go to state 137
+	PARROT_OP	shift, and go to state 141
+
+	label_op	go to state 468
+
+State 433:
+
+	assignment -> target '[' keylist ']' '=' . var	(Rule 187)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 469
+
+State 434:
+
+	assignment -> target '=' 'new' classname '[' . keylist ']'	(Rule 188)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	_keylist	go to state 66
+	keylist	go to state 470
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 63
+	key	go to state 58
+
+State 435:
+
+	assignment -> target '=' var '[' keylist . ']'	(Rule 186)
+
+	']'	shift, and go to state 471
+
+State 436:
+
+	assignment -> target '=' var bin_op var .	(Rule 185)
+
+	$default	reduce using rule 185 (assignment)
+
+State 437:
+
+	if_statement -> IF PNULL var GOTO label_op .	(Rule 273)
+
+	$default	reduce using rule 273 (if_statement)
+
+State 438:
+
+	if_statement -> IF var relop var GOTO . label_op	(Rule 272)
+
+	IDENTIFIER	shift, and go to state 137
+	PARROT_OP	shift, and go to state 141
+
+	label_op	go to state 472
+
+State 439:
+
+	pcc_return -> SET_RETURN var . argtype_list	(Rule 130)
+
+	$default	reduce using rule 253 (argtype_list)
+
+	argtype_list	go to state 473
+
+State 440:
+
+	pcc_returns -> pcc_returns pcc_return '\n' .	(Rule 126)
+
+	$default	reduce using rule 126 (pcc_returns)
+
+State 441:
+
+	opt_invocant -> INVOCANT var . '\n'	(Rule 78)
+
+	'\n'	shift, and go to state 474
+
+State 442:
+
+	pcc_call -> NCI_CALL . var '\n'	(Rule 99)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 475
+
+State 443:
+
+	pcc_call -> METH_CALL . target '\n'	(Rule 100)
+	pcc_call -> METH_CALL . STRINGC '\n'	(Rule 101)
+	pcc_call -> METH_CALL . target COMMA var '\n'	(Rule 102)
+	pcc_call -> METH_CALL . STRINGC COMMA var '\n'	(Rule 103)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 477
+	VAR	shift, and go to state 73
+
+	target	go to state 476
+	reg	go to state 72
+
+State 444:
+
+	pcc_sub_call -> PCC_BEGIN '\n' pcc_args opt_invocant pcc_call . opt_label pcc_results PCC_END	(Rule 74)
+
+	LABEL	shift, and go to state 41
+
+	$default	reduce using rule 75 (opt_label)
+
+	opt_label	go to state 478
+	label	go to state 479
+
+State 445:
+
+	pcc_call -> PCC_CALL . var COMMA var '\n'	(Rule 97)
+	pcc_call -> PCC_CALL . var '\n'	(Rule 98)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 480
+
+State 446:
+
+	pcc_args -> pcc_args pcc_arg '\n' .	(Rule 105)
+
+	$default	reduce using rule 105 (pcc_args)
+
+State 447:
+
+	pcc_arg -> ARG arg .	(Rule 106)
+
+	$default	reduce using rule 106 (pcc_arg)
+
+State 448:
+
+	assignment -> '(' targetlist ')' '=' the_sub . '(' arglist ')'	(Rule 190)
+
+	'('	shift, and go to state 481
+
+State 449:
+
+	targetlist -> targetlist COMMA STRINGC ADV_ARROW . target	(Rule 262)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	VAR	shift, and go to state 73
+
+	target	go to state 482
+	reg	go to state 72
+
+State 450:
+
+	var_returns -> var_returns COMMA arg .	(Rule 138)
+
+	$default	reduce using rule 138 (var_returns)
+
+State 451:
+
+	var_returns -> var_returns COMMA STRINGC . ADV_ARROW var	(Rule 139)
+	const -> STRINGC .	(Rule 314)
+
+	ADV_ARROW	shift, and go to state 483
+
+	$default	reduce using rule 314 (const)
+
+State 452:
+
+	var_returns -> STRINGC ADV_ARROW var .	(Rule 137)
+
+	$default	reduce using rule 137 (var_returns)
+
+State 453:
+
+	argtype -> ADV_FLAT .	(Rule 255)
+
+	$default	reduce using rule 255 (argtype)
+
+State 454:
+
+	argtype_list -> argtype_list argtype .	(Rule 254)
+
+	$default	reduce using rule 254 (argtype_list)
+
+State 455:
+
+	argtype -> ADV_NAMED .	(Rule 256)
+	argtype -> ADV_NAMED . '(' USTRINGC ')'	(Rule 258)
+	argtype -> ADV_NAMED . '(' STRINGC ')'	(Rule 259)
+
+	'('	shift, and go to state 484
+
+	$default	reduce using rule 256 (argtype)
+
+State 456:
+
+	argtype -> ADV_CALL_SIG .	(Rule 257)
+
+	$default	reduce using rule 257 (argtype)
+
+State 457:
+
+	labeled_inst -> GLOBAL_CONST type IDENTIFIER '=' const .	(Rule 168)
+
+	$default	reduce using rule 168 (labeled_inst)
+
+State 458:
+
+	arglist -> STRINGC ADV_ARROW var .	(Rule 251)
+
+	$default	reduce using rule 251 (arglist)
+
+State 459:
+
+	arglist -> var ADV_ARROW var .	(Rule 250)
+
+	$default	reduce using rule 250 (arglist)
+
+State 460:
+
+	arglist -> arglist COMMA arg .	(Rule 247)
+
+	$default	reduce using rule 247 (arglist)
+
+State 461:
+
+	arglist -> arglist COMMA STRINGC . ADV_ARROW var	(Rule 249)
+	const -> STRINGC .	(Rule 314)
+
+	ADV_ARROW	shift, and go to state 485
+
+	$default	reduce using rule 314 (const)
+
+State 462:
+
+	id_list -> id_list COMMA id_list_id .	(Rule 157)
+
+	$default	reduce using rule 157 (id_list)
+
+State 463:
+
+	labeled_inst -> CONST type IDENTIFIER '=' const .	(Rule 166)
+
+	$default	reduce using rule 166 (labeled_inst)
+
+State 464:
+
+	pcc_yields -> pcc_yields pcc_set_yield '\n' .	(Rule 129)
+
+	$default	reduce using rule 129 (pcc_yields)
+
+State 465:
+
+	pcc_set_yield -> SET_YIELD var . argtype_list	(Rule 131)
+
+	$default	reduce using rule 253 (argtype_list)
+
+	argtype_list	go to state 486
+
+State 466:
+
+	paramtype -> ADV_NAMED '(' STRINGC . ')'	(Rule 117)
+
+	')'	shift, and go to state 487
+
+State 467:
+
+	paramtype -> ADV_NAMED '(' USTRINGC . ')'	(Rule 118)
+
+	')'	shift, and go to state 488
+
+State 468:
+
+	unless_statement -> UNLESS var relop var GOTO label_op .	(Rule 268)
+
+	$default	reduce using rule 268 (unless_statement)
+
+State 469:
+
+	assignment -> target '[' keylist ']' '=' var .	(Rule 187)
+
+	$default	reduce using rule 187 (assignment)
+
+State 470:
+
+	assignment -> target '=' 'new' classname '[' keylist . ']'	(Rule 188)
+
+	']'	shift, and go to state 489
+
+State 471:
+
+	assignment -> target '=' var '[' keylist ']' .	(Rule 186)
+
+	$default	reduce using rule 186 (assignment)
+
+State 472:
+
+	if_statement -> IF var relop var GOTO label_op .	(Rule 272)
+
+	$default	reduce using rule 272 (if_statement)
+
+State 473:
+
+	pcc_return -> SET_RETURN var argtype_list .	(Rule 130)
+	argtype_list -> argtype_list . argtype	(Rule 254)
+
+	ADV_CALL_SIG	shift, and go to state 456
+	ADV_FLAT	shift, and go to state 453
+	ADV_NAMED	shift, and go to state 455
+
+	$default	reduce using rule 130 (pcc_return)
+
+	argtype	go to state 454
+
+State 474:
+
+	opt_invocant -> INVOCANT var '\n' .	(Rule 78)
+
+	$default	reduce using rule 78 (opt_invocant)
+
+State 475:
+
+	pcc_call -> NCI_CALL var . '\n'	(Rule 99)
+
+	'\n'	shift, and go to state 490
+
+State 476:
+
+	pcc_call -> METH_CALL target . '\n'	(Rule 100)
+	pcc_call -> METH_CALL target . COMMA var '\n'	(Rule 102)
+
+	'\n'	shift, and go to state 491
+	COMMA	shift, and go to state 492
+
+State 477:
+
+	pcc_call -> METH_CALL STRINGC . '\n'	(Rule 101)
+	pcc_call -> METH_CALL STRINGC . COMMA var '\n'	(Rule 103)
+
+	'\n'	shift, and go to state 493
+	COMMA	shift, and go to state 494
+
+State 478:
+
+	pcc_sub_call -> PCC_BEGIN '\n' pcc_args opt_invocant pcc_call opt_label . pcc_results PCC_END	(Rule 74)
+
+	$default	reduce using rule 107 (pcc_results)
+
+	pcc_results	go to state 495
+
+State 479:
+
+	opt_label -> label . '\n'	(Rule 76)
+
+	'\n'	shift, and go to state 496
+
+State 480:
+
+	pcc_call -> PCC_CALL var . COMMA var '\n'	(Rule 97)
+	pcc_call -> PCC_CALL var . '\n'	(Rule 98)
+
+	'\n'	shift, and go to state 497
+	COMMA	shift, and go to state 498
+
+State 481:
+
+	assignment -> '(' targetlist ')' '=' the_sub '(' . arglist ')'	(Rule 190)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 345
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	$default	reduce using rule 246 (arglist)
+
+	arglist	go to state 499
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	arg	go to state 344
+	var	go to state 346
+
+State 482:
+
+	targetlist -> targetlist COMMA STRINGC ADV_ARROW target .	(Rule 262)
+
+	$default	reduce using rule 262 (targetlist)
+
+State 483:
+
+	var_returns -> var_returns COMMA STRINGC ADV_ARROW . var	(Rule 139)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 500
+
+State 484:
+
+	argtype -> ADV_NAMED '(' . USTRINGC ')'	(Rule 258)
+	argtype -> ADV_NAMED '(' . STRINGC ')'	(Rule 259)
+
+	STRINGC	shift, and go to state 501
+	USTRINGC	shift, and go to state 502
+
+State 485:
+
+	arglist -> arglist COMMA STRINGC ADV_ARROW . var	(Rule 249)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 503
+
+State 486:
+
+	pcc_set_yield -> SET_YIELD var argtype_list .	(Rule 131)
+	argtype_list -> argtype_list . argtype	(Rule 254)
+
+	ADV_CALL_SIG	shift, and go to state 456
+	ADV_FLAT	shift, and go to state 453
+	ADV_NAMED	shift, and go to state 455
+
+	$default	reduce using rule 131 (pcc_set_yield)
+
+	argtype	go to state 454
+
+State 487:
+
+	paramtype -> ADV_NAMED '(' STRINGC ')' .	(Rule 117)
+
+	$default	reduce using rule 117 (paramtype)
+
+State 488:
+
+	paramtype -> ADV_NAMED '(' USTRINGC ')' .	(Rule 118)
+
+	$default	reduce using rule 118 (paramtype)
+
+State 489:
+
+	assignment -> target '=' 'new' classname '[' keylist ']' .	(Rule 188)
+
+	$default	reduce using rule 188 (assignment)
+
+State 490:
+
+	pcc_call -> NCI_CALL var '\n' .	(Rule 99)
+
+	$default	reduce using rule 99 (pcc_call)
+
+State 491:
+
+	pcc_call -> METH_CALL target '\n' .	(Rule 100)
+
+	$default	reduce using rule 100 (pcc_call)
+
+State 492:
+
+	pcc_call -> METH_CALL target COMMA . var '\n'	(Rule 102)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 504
+
+State 493:
+
+	pcc_call -> METH_CALL STRINGC '\n' .	(Rule 101)
+
+	$default	reduce using rule 101 (pcc_call)
+
+State 494:
+
+	pcc_call -> METH_CALL STRINGC COMMA . var '\n'	(Rule 103)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 505
+
+State 495:
+
+	pcc_sub_call -> PCC_BEGIN '\n' pcc_args opt_invocant pcc_call opt_label pcc_results . PCC_END	(Rule 74)
+	pcc_results -> pcc_results . pcc_result '\n'	(Rule 108)
+
+	LOCAL	shift, and go to state 508
+	PCC_END	shift, and go to state 509
+	RESULT	shift, and go to state 506
+
+	pcc_result	go to state 507
+
+State 496:
+
+	opt_label -> label '\n' .	(Rule 76)
+
+	$default	reduce using rule 76 (opt_label)
+
+State 497:
+
+	pcc_call -> PCC_CALL var '\n' .	(Rule 98)
+
+	$default	reduce using rule 98 (pcc_call)
+
+State 498:
+
+	pcc_call -> PCC_CALL var COMMA . var '\n'	(Rule 97)
+
+	FLOATC	shift, and go to state 69
+	INTC	shift, and go to state 61
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	STRINGC	shift, and go to state 59
+	USTRINGC	shift, and go to state 62
+	VAR	shift, and go to state 73
+
+	target	go to state 60
+	reg	go to state 72
+	const	go to state 71
+	var	go to state 510
+
+State 499:
+
+	assignment -> '(' targetlist ')' '=' the_sub '(' arglist . ')'	(Rule 190)
+	arglist -> arglist . COMMA arg	(Rule 247)
+	arglist -> arglist . COMMA STRINGC ADV_ARROW var	(Rule 249)
+
+	')'	shift, and go to state 511
+	COMMA	shift, and go to state 419
+
+State 500:
+
+	var_returns -> var_returns COMMA STRINGC ADV_ARROW var .	(Rule 139)
+
+	$default	reduce using rule 139 (var_returns)
+
+State 501:
+
+	argtype -> ADV_NAMED '(' STRINGC . ')'	(Rule 259)
+
+	')'	shift, and go to state 512
+
+State 502:
+
+	argtype -> ADV_NAMED '(' USTRINGC . ')'	(Rule 258)
+
+	')'	shift, and go to state 513
+
+State 503:
+
+	arglist -> arglist COMMA STRINGC ADV_ARROW var .	(Rule 249)
+
+	$default	reduce using rule 249 (arglist)
+
+State 504:
+
+	pcc_call -> METH_CALL target COMMA var . '\n'	(Rule 102)
+
+	'\n'	shift, and go to state 514
+
+State 505:
+
+	pcc_call -> METH_CALL STRINGC COMMA var . '\n'	(Rule 103)
+
+	'\n'	shift, and go to state 515
+
+State 506:
+
+	pcc_result -> RESULT . target paramtype_list	(Rule 109)
+
+	IREG	shift, and go to state 68
+	NREG	shift, and go to state 57
+	PREG	shift, and go to state 67
+	REG	shift, and go to state 65
+	SREG	shift, and go to state 74
+	VAR	shift, and go to state 73
+
+	target	go to state 516
+	reg	go to state 72
+
+State 507:
+
+	pcc_results -> pcc_results pcc_result . '\n'	(Rule 108)
+
+	'\n'	shift, and go to state 517
+
+State 508:
+
+	pcc_result -> LOCAL . type id_list_id	(Rule 110)
+
+	FLOATV	shift, and go to state 35
+	INTV	shift, and go to state 36
+	PMCV	shift, and go to state 38
+	STRINGV	shift, and go to state 34
+
+	type	go to state 518
+
+State 509:
+
+	pcc_sub_call -> PCC_BEGIN '\n' pcc_args opt_invocant pcc_call opt_label pcc_results PCC_END .	(Rule 74)
+
+	$default	reduce using rule 74 (pcc_sub_call)
+
+State 510:
+
+	pcc_call -> PCC_CALL var COMMA var . '\n'	(Rule 97)
+
+	'\n'	shift, and go to state 519
+
+State 511:
+
+	assignment -> '(' targetlist ')' '=' the_sub '(' arglist ')' .	(Rule 190)
+
+	$default	reduce using rule 190 (assignment)
+
+State 512:
+
+	argtype -> ADV_NAMED '(' STRINGC ')' .	(Rule 259)
+
+	$default	reduce using rule 259 (argtype)
+
+State 513:
+
+	argtype -> ADV_NAMED '(' USTRINGC ')' .	(Rule 258)
+
+	$default	reduce using rule 258 (argtype)
+
+State 514:
+
+	pcc_call -> METH_CALL target COMMA var '\n' .	(Rule 102)
+
+	$default	reduce using rule 102 (pcc_call)
+
+State 515:
+
+	pcc_call -> METH_CALL STRINGC COMMA var '\n' .	(Rule 103)
+
+	$default	reduce using rule 103 (pcc_call)
+
+State 516:
+
+	pcc_result -> RESULT target . paramtype_list	(Rule 109)
+
+	$default	reduce using rule 111 (paramtype_list)
+
+	paramtype_list	go to state 520
+
+State 517:
+
+	pcc_results -> pcc_results pcc_result '\n' .	(Rule 108)
+
+	$default	reduce using rule 108 (pcc_results)
+
+State 518:
+
+	pcc_result -> LOCAL type . id_list_id	(Rule 110)
+
+	IDENTIFIER	shift, and go to state 350
+
+	id_list_id	go to state 521
+
+State 519:
+
+	pcc_call -> PCC_CALL var COMMA var '\n' .	(Rule 97)
+
+	$default	reduce using rule 97 (pcc_call)
+
+State 520:
+
+	pcc_result -> RESULT target paramtype_list .	(Rule 109)
+	paramtype_list -> paramtype_list . paramtype	(Rule 112)
+
+	ADV_CALL_SIG	shift, and go to state 360
+	ADV_NAMED	shift, and go to state 356
+	ADV_OPTIONAL	shift, and go to state 358
+	ADV_OPT_FLAG	shift, and go to state 359
+	ADV_SLURPY	shift, and go to state 361
+	UNIQUE_REG	shift, and go to state 357
+
+	$default	reduce using rule 109 (pcc_result)
+
+	paramtype	go to state 355
+
+State 521:
+
+	pcc_result -> LOCAL type id_list_id .	(Rule 110)
+
+	$default	reduce using rule 110 (pcc_result)
+
+
+Summary:
+--------
+Number of rules         : 316
+Number of terminals     : 130
+Number of non-terminals : 103
+Number of states        : 522
