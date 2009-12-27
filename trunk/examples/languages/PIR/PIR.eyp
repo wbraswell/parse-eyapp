@@ -776,17 +776,17 @@ my %directives = (
 ".begin_yield"           => 'PCC_BEGIN_YIELD',
 ".end_yield"             => 'PCC_END_YIELD',
 
-".get_result"                  => 'RESULT',
-".get_results"             => 'GET_RESULTS',
-".yield"                   => 'YIELDT',
-".set_yield"               => 'SET_YIELD',
-".return"                  => 'RETURN',
-".set_return"              => 'SET_RETURN',
-".tailcall"                => 'TAILCALL',
+".get_result"            => 'RESULT',
+".get_results"           => 'GET_RESULTS',
+".yield"                 => 'YIELDT',
+".set_yield"             => 'SET_YIELD',
+".return"                => 'RETURN',
+".set_return"            => 'SET_RETURN',
+".tailcall"              => 'TAILCALL',
 
-".local"                      => 'LOCAL',
-".globalconst"                => 'GLOBAL_CONST',
-".param"                      => 'PARAM',
+".local"                 => 'LOCAL',
+".globalconst"           => 'GLOBAL_CONST',
+".param"                 => 'PARAM',
 );
 
 my %colons = (
