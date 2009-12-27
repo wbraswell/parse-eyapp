@@ -1,5 +1,5 @@
 /*
- * imcc.y
+ * imcc.eyp
  *
  * Intermediate Code Compiler for Parrot.
  *
@@ -7,10 +7,13 @@
  * Copyright (C) 2002-2009, Parrot Foundation.
  *
  * Grammar of the PIR language parser.
- *
+ * Casiano: cleaned semantic actions to study the grammar with Eyapp. 2009
  */
 
+%strict
+
 /* We need precedence for a few tokens to resolve a couple of conflicts */
+/* commented tokes aren't used */
 %nonassoc LOW_PREC
 %nonassoc '\n'
 %nonassoc <t> PARAM
@@ -18,10 +21,13 @@
 %token HLL TK_LINE TK_FILE
 %token GOTO ARG IF UNLESS PNULL SET_RETURN SET_YIELD
 %token ADV_FLAT ADV_SLURPY ADV_OPTIONAL ADV_OPT_FLAG ADV_NAMED ADV_ARROW
-%token NEW ADV_INVOCANT ADV_CALL_SIG
-%token NAMESPACE DOT_METHOD
-%token SUB SYM LOCAL LEXICAL CONST ANNOTATE
-%token INC DEC GLOBAL_CONST
+#%token NEW 
+#%token ADV_INVOCANT 
+%token ADV_CALL_SIG
+%token NAMESPACE
+%token SUB LOCAL LEXICAL CONST ANNOTATE
+#%token INC SYM DOT_METHOD DEC 
+%token GLOBAL_CONST
 %token PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN CONCAT_ASSIGN
 %token BAND_ASSIGN BOR_ASSIGN BXOR_ASSIGN FDIV FDIV_ASSIGN MOD_ASSIGN
 %token SHR_ASSIGN SHL_ASSIGN SHR_U_ASSIGN
@@ -29,7 +35,8 @@
 %token RELOP_EQ RELOP_NE RELOP_GT RELOP_GTE RELOP_LT RELOP_LTE
 %token RESULT RETURN TAILCALL YIELDT GET_RESULTS
 %token POW SHIFT_RIGHT_U LOG_AND LOG_OR
-%token COMMA ESUB DOTDOT
+%token COMMA ESUB 
+#%token DOTDOT ENDM
 %token PCC_BEGIN PCC_END PCC_CALL PCC_SUB PCC_BEGIN_RETURN PCC_END_RETURN
 %token PCC_BEGIN_YIELD PCC_END_YIELD NCI_CALL METH_CALL INVOCANT
 %token MAIN LOAD INIT IMMEDIATE POSTCOMP METHOD ANON OUTER NEED_LEX
@@ -38,7 +45,7 @@
 %token UNIQUE_REG
 %token LABEL
 %token EMIT EOM
-%token IREG NREG SREG PREG IDENTIFIER REG MACRO ENDM
+%token IREG NREG SREG PREG IDENTIFIER REG MACRO
 %token STRINGC INTC FLOATC USTRINGC
 %token PARROT_OP
 
@@ -111,7 +118,7 @@ location_directive:
    ;
 
 annotate_directive:
-    ANNOTATE STRINGC COMMA const
+      ANNOTATE STRINGC COMMA const
     ;
 
 hll_def:
@@ -123,7 +130,7 @@ constdef:
    ;
 
 pmc_const:
-     CONST  INTC var_or_i '=' any_string
+       CONST  INTC var_or_i '=' any_string
      | CONST  STRINGC var_or_i '=' any_string
    ;
 any_string:
@@ -168,7 +175,7 @@ opt_pasmcode:
   ;
 
 class_namespace:
-    NAMESPACE maybe_ns '\n'
+      NAMESPACE maybe_ns '\n'
    ;
 
 maybe_ns:
@@ -187,7 +194,7 @@ sub_params:
    ;
 
 sub_param:
-   PARAM  sub_param_type_def 
+     PARAM  sub_param_type_def 
    ;
 
 sub_param_type_def:
@@ -199,7 +206,7 @@ multi:
    ;
 
 outer:
-     OUTER '(' STRINGC ')'
+      OUTER '(' STRINGC ')'
     | OUTER '(' IDENTIFIER ')'
    ;
 
@@ -214,7 +221,7 @@ method:
    ;
 
 ns_entry_name:
-    NS_ENTRY
+     NS_ENTRY
    | NS_ENTRY '(' any_string ')'
    ;
 
@@ -244,7 +251,7 @@ multi_type:
    ;
 
 sub_body:
-     /* empty */
+      /* empty */
    |  statements
    ;
 
