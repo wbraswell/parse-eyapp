@@ -3,15 +3,20 @@ dvi:addressassign.tex codegeneration.tex introduction.tex lexicalanalysis.tex ma
 	bibtex theperlreview
 	latex theperlreview.tex
 	
+ps: addressassign.tex codegeneration.tex introduction.tex lexicalanalysis.tex machineindependentoptimizations.tex output.tex peephole.tex phases.tex syntacticanalysis.tex theperlreview.tex
+	dvips theperlreview
+
 pdf: addressassign.tex codegeneration.tex introduction.tex lexicalanalysis.tex machineindependentoptimizations.tex output.tex peephole.tex phases.tex syntacticanalysis.tex theperlreview.tex
-	pdflatex theperlreview
+	dvipdf theperlreview
 
 html: dvi
 	latex2html theperlreview
 
-public: html
+public: html ps pdf
 	cp theperlreview/* /home/pl/public_html/eyapsimple/
 	cp theperlreview.dvi /home/pl/public_html/eyapsimple/eyapsimple.dvi
+	cp theperlreview.ps /home/pl/public_html/eyapsimple/eyapsimple.ps
+	cp theperlreview.pdf /home/pl/public_html/eyapsimple/eyapsimple.pdf
 	chmod a+r /home/pl/public_html/eyapsimple/*
 
 clean:
