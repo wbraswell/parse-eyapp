@@ -31,3 +31,6 @@ tar:
 
 link:
 	ln -s ${HOME}/Lbook/perlbib/perl.bib
+
+images:
+	cp images/* theperlreview/
