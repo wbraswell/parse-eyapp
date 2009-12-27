@@ -83,18 +83,47 @@
 
 %nonassoc CONCAT DOT
 
+%{
+my $LETTER           = qr{[a-zA-Z_\@]};
+my $DIGIT            = qr{[0-9]};
+my $DIGITS           = qr{(?:$DIGIT)+};
+my $HEX              = qr{0[xX][0-9A-Fa-f]+};
+my $OCT              = qr{0[oO][0-7]+};
+my $BIN              = qr{0[bB][01]+};
+my $DOT              = qr{[.]};
+my $SIGN             = qr{[-+]};
+my $BIGINT           = qr{(?:$SIGN)?$DIGITS"L"};
+my $FLOATNUM         = qr{(?:$SIGN)?(?:(?:$DIGITS$DOT(?:$DIGIT)*|$DOT$DIGITS)(?:[eE](?:$SIGN)?$DIGITS)?|$DIGITS[eE](?:$SIGN)?$DIGITS)};
+my $LETTERDIGIT      = qr{[a-zA-Z0-9_]};
+my $LABELLETTERDIGIT = qr{(?:[a-zA-Z0-9_@])};
+my $ID               = qr{$LETTER(?:$LABELLETTERDIGIT)*};
+my $DQ_STRING        = qr{\"(?:\\.|[^"\\\n])*\"};
+my $ENCCHAR          = qr{$LETTER|$DIGIT|"-"};
+my $ENCCHARS         = qr{(?:$ENCCHAR)*};
+my $ENC              = qr{$LETTER$ENCCHARS":"};
+my $UNICODE          = qr{$ENC(?:$ENC)?$DQ_STRING};
+my $SQ_STRING        = qr{\'[^'\n]*\'};
+my $STRINGCONSTANT   = qr{$SQ_STRING|$DQ_STRING};
+my $RANKSPEC         = qr{\[[,]*\]};
+my $EOL              = qr{\r?\n};
+my $WS               = qr{[\t\f\r\x1a ]};
+my $SP               = qr{[ ]};
+%}
+
 %start program
+
+%tree
 
 %%
 
 program:
      compilation_units    
-   ;
+;
 
 compilation_units:
      compilation_unit
    | compilation_units compilation_unit
-   ;
+;
 
 compilation_unit:
      class_namespace           
@@ -105,43 +134,43 @@ compilation_unit:
    | pragma                    
    | location_directive            
    | '\n'                      
-   ;
+;
 
 pragma:
      hll_def         '\n'      
    | LOADLIB STRINGC '\n'
-   ;
+;
 
 location_directive:
      TK_LINE INTC COMMA STRINGC '\n'
    | TK_FILE STRINGC '\n'
-   ;
+;
 
 annotate_directive:
       ANNOTATE STRINGC COMMA const
-    ;
+;
 
 hll_def:
      HLL STRINGC
-   ;
+;
 
 constdef:
      CONST  type IDENTIFIER '=' const
-   ;
+;
 
 pmc_const:
        CONST  INTC var_or_i '=' any_string
      | CONST  STRINGC var_or_i '=' any_string
-   ;
+;
 any_string:
      STRINGC
    | USTRINGC
-   ;
+;
 
 pasmcode:
      pasmline
    | pasmcode pasmline
-   ;
+;
 
 pasmline:
      labels  pasm_inst '\n'    
@@ -151,7 +180,7 @@ pasmline:
    | class_namespace           
    | pmc_const
    | pragma
-   ;
+;
 
 pasm_inst:                     
      PARROT_OP pasm_args
@@ -159,86 +188,86 @@ pasm_inst:
    | PNULL var
    | LEXICAL STRINGC COMMA REG
    | /* empty */                
-   ;
+;
 
 pasm_args:
      vars
-   ;
+;
 
 emit:                         /* EMIT and EOM tokens are used when compiling a .pasm file. */
      EMIT opt_pasmcode EOM
-   ;
+;
 
 opt_pasmcode:
      /* empty */
   | pasmcode
-  ;
+;
 
 class_namespace:
       NAMESPACE maybe_ns '\n'
-   ;
+;
 
 maybe_ns:
      '[' keylist ']'
    | '[' ']'                   
-   ;
+;
 
 sub:
      SUB sub_label_op_c sub_proto '\n' sub_params sub_body  ESUB            
-   ;
+;
 
 sub_params:
      /* empty */                %prec LOW_PREC
    | '\n'                               
    | sub_params sub_param '\n'
-   ;
+;
 
 sub_param:
      PARAM  sub_param_type_def 
-   ;
+;
 
 sub_param_type_def:
      type IDENTIFIER paramtype_list
-   ;
+;
 
 multi:
      MULTI '(' multi_types ')' 
-   ;
+;
 
 outer:
       OUTER '(' STRINGC ')'
     | OUTER '(' IDENTIFIER ')'
-   ;
+;
 
 vtable:
      VTABLE_METHOD
    | VTABLE_METHOD '(' STRINGC ')'
-   ;
+;
 
 method:
      METHOD
    | METHOD '(' any_string ')'
-   ;
+;
 
 ns_entry_name:
      NS_ENTRY
    | NS_ENTRY '(' any_string ')'
-   ;
+;
 
 instanceof:
      SUB_INSTANCE_OF '(' STRINGC ')'
-   ;
+;
 
 subid:
      SUBID
    | SUBID '(' any_string ')'
-   ;
+;
 
 multi_types:
      /* empty */
    | multi_types COMMA multi_type
    | multi_type
-   ;
+;
 
 multi_type:
      INTV                      
@@ -248,12 +277,12 @@ multi_type:
    | IDENTIFIER
    | STRINGC
    | '[' keylist ']'           
-   ;
+;
 
 sub_body:
       /* empty */
    |  statements
-   ;
+;
 
 pcc_sub_call:
      PCC_BEGIN '\n'
@@ -263,27 +292,27 @@ pcc_sub_call:
      opt_label
      pcc_results
      PCC_END                   
-   ;
+;
 
 opt_label:
      /* empty */               
    | label '\n'                
-   ;
+;
 
 opt_invocant:
      /* empty */               
    | INVOCANT var '\n'         
-   ;
+;
 
 sub_proto:
      /* empty */               
    | sub_proto_list
-   ;
+;
 
 sub_proto_list:
      proto                     
    | sub_proto_list proto      
-   ;
+;
 
 proto:
      LOAD                      
@@ -300,7 +329,7 @@ proto:
    | ns_entry_name
    | instanceof
    | subid
-   ;
+;
 
 pcc_call:
      PCC_CALL var COMMA var '\n'
@@ -310,33 +339,33 @@ pcc_call:
    | METH_CALL STRINGC '\n'
    | METH_CALL target COMMA var '\n'
    | METH_CALL STRINGC COMMA var '\n'
-   ;
+;
 
 
 pcc_args:
      /* empty */               
    | pcc_args pcc_arg '\n'     
-   ;
+;
 
 pcc_arg:
      ARG arg                   
-   ;
+;
 
 
 pcc_results:
      /* empty */               
    | pcc_results pcc_result '\n'
-   ;
+;
 
 pcc_result:
      RESULT target paramtype_list 
    | LOCAL  type id_list_id
-   ;
+;
 
 paramtype_list:
      /* empty */               
    | paramtype_list paramtype  
-   ;
+;
 
 paramtype:
      ADV_SLURPY                 
@@ -347,7 +376,7 @@ paramtype:
    | ADV_NAMED '(' USTRINGC ')' 
    | UNIQUE_REG                 
    | ADV_CALL_SIG               
-   ;
+;
 
 
 pcc_ret:
@@ -355,43 +384,43 @@ pcc_ret:
      pcc_returns
      PCC_END_RETURN            
    | pcc_return_many
-   ;
+;
 
 pcc_yield:
      PCC_BEGIN_YIELD '\n'      
      pcc_yields
      PCC_END_YIELD             
-   ;
+;
 
 pcc_returns:
      /* empty */               
    | pcc_returns '\n'
    | pcc_returns pcc_return '\n'
-   ;
+;
 
 pcc_yields:
      /* empty */                
    | pcc_yields '\n'
    | pcc_yields pcc_set_yield '\n'
-   ;
+;
 
 pcc_return:
      SET_RETURN var argtype_list   
-   ;
+;
 
 pcc_set_yield:
      SET_YIELD var argtype_list    
-   ;
+;
 
 pcc_return_many:
     return_or_yield  '('
     var_returns  ')'
-  ;
+;
 
 return_or_yield:
      RETURN                    
    | YIELDT                    
-   ;
+;
 
 var_returns:
      /* empty */               
@@ -399,12 +428,12 @@ var_returns:
    | STRINGC ADV_ARROW var
    | var_returns COMMA arg
    | var_returns COMMA STRINGC ADV_ARROW var
-   ;
+;
 
 statements:
      statement
    | statements statement
-   ;
+;
 
 /* This is ugly. Because 'instruction' can start with PARAM and in the
  * 'pcc_sub' rule, 'pcc_params' is followed by 'statement', we get a
@@ -416,7 +445,7 @@ statements:
 
 helper_clear_state:
                                 %prec LOW_PREC
-   ;
+;
 
 statement:
      helper_clear_state instruction               
@@ -425,41 +454,40 @@ statement:
    | LINECOMMENT               
    | location_directive        
    | annotate_directive        
-   ;
+;
 
 labels:
      /* none */                
    |  _labels
-   ;
+;
 
 _labels:
      _labels label
    | label
-   ;
+;
 
 label:
      LABEL
-   ;
-
+;
 
 instruction:
      labels labeled_inst '\n'  
    | error '\n'
-   ;
+;
 
 id_list :
      id_list_id
    | id_list COMMA id_list_id
-   ;
+;
 
 id_list_id :
      IDENTIFIER opt_unique_reg
-   ;
+;
 
 opt_unique_reg:
      /* empty */               
    | UNIQUE_REG                
-   ;
+;
 
 labeled_inst:
      assignment
@@ -479,18 +507,18 @@ labeled_inst:
    | pcc_ret
    | pcc_yield
    | /* none */                
-   ;
+;
 
 type:
      INTV                      
    | FLOATV                    
    | STRINGV                   
    | PMCV                      
-   ;
+;
 
 classname:
      IDENTIFIER
-   ;
+;
 
 assignment:
      target '=' var
@@ -501,19 +529,18 @@ assignment:
    | target '=' 'new' classname '[' keylist ']'
      /* Subroutine call the short way */
    | target  '=' sub_call
-   | '('
-     targetlist  ')' '=' the_sub '(' arglist ')'
+   | '(' targetlist  ')' '=' the_sub '(' arglist ')'
    | get_results
    | op_assign
    | func_assign
    | target '=' PNULL
-   ;
+;
 
 un_op:
      '!'                       
    | '~'                       
    | '-'                       
-   ;
+;
 
 bin_op:
      '-'                       
@@ -539,15 +566,15 @@ bin_op:
    | '&'                       
    | '|'                       
    | '~'                       
-   ;
+;
 
 get_results:
      GET_RESULTS '(' targetlist  ')'       
-   ;
+;
 
 op_assign:
      target assign_op var
-   ;
+;
 
 assign_op:
      PLUS_ASSIGN               
@@ -563,26 +590,26 @@ assign_op:
    | SHR_ASSIGN                
    | SHL_ASSIGN                
    | SHR_U_ASSIGN              
-   ;
+;
 
 func_assign:
    target '=' PARROT_OP pasm_args
-   ;
+;
 
 the_sub:
-       IDENTIFIER     
-     | STRINGC      
-     | USTRINGC     
+     IDENTIFIER     
+   | STRINGC      
+   | USTRINGC     
    | target
    | target DOT sub_label_op
    | target DOT USTRINGC
    | target DOT STRINGC
    | target DOT target         
-   ;
+;
 
 sub_call:
      the_sub '(' arglist ')'           
-   ;
+;
 
 arglist:
      /* empty */               
@@ -591,16 +618,16 @@ arglist:
    | arglist COMMA STRINGC ADV_ARROW var
    | var ADV_ARROW var
    | STRINGC ADV_ARROW var
-   ;
+;
 
 arg:
      var argtype_list          
-   ;
+;
 
 argtype_list:
      /* empty */               
    | argtype_list argtype      
-   ;
+;
 
 argtype:
      ADV_FLAT                  
@@ -608,11 +635,11 @@ argtype:
    | ADV_CALL_SIG              
    | ADV_NAMED '(' USTRINGC ')' 
    | ADV_NAMED '(' STRINGC  ')' 
-   ;
+;
 
 result:
      target paramtype_list     
-   ;
+;
 
 targetlist:
      targetlist COMMA result
@@ -620,29 +647,29 @@ targetlist:
    | result
    | STRINGC ADV_ARROW target
    | /* empty */                
-   ;
+;
 
 conditional_statement:
      if_statement               
    | unless_statement           
-   ;
+;
 
 unless_statement:
      UNLESS var relop var GOTO label_op
    | UNLESS PNULL var GOTO label_op
    | UNLESS var comma_or_goto label_op
-   ;
+;
 
 if_statement:
      IF var comma_or_goto label_op
    | IF var relop var GOTO label_op
    | IF PNULL var GOTO label_op
-   ;
+;
 
 comma_or_goto:
      COMMA                     
    | GOTO                      
-   ;
+;
 
 relop:
      RELOP_EQ                  
@@ -651,70 +678,70 @@ relop:
    | RELOP_GTE                 
    | RELOP_LT                  
    | RELOP_LTE                 
-   ;
+;
 
 target:
      VAR
    | reg
-   ;
+;
 
 vars:
      /* empty */               
    | _vars                     
-   ;
+;
 
 _vars:
      _vars COMMA _var_or_i     
    | _var_or_i
-   ;
+;
 
 _var_or_i:
      var_or_i                  
    | target '[' keylist ']'
    | '[' keylist_force ']'
-   ;
+;
 sub_label_op_c:
      sub_label_op
    | STRINGC                   
    | USTRINGC                  
-   ;
+;
 
 sub_label_op:
      IDENTIFIER                
    | PARROT_OP                 
-   ;
+;
 
 label_op:
      IDENTIFIER                
    | PARROT_OP                 
-   ;
+;
 
 var_or_i:
      label_op
    | var
-   ;
+;
 
 var:
      target
    | const
-   ;
+;
 
 keylist:
      _keylist
-   ;
+;
 
 keylist_force:
      _keylist
-   ;
+;
 
 _keylist:
      key                       
    | _keylist ';' key
-   ;
+;
 
 key:
      var
-   ;
+;
 
 reg:
      IREG                      
@@ -722,14 +749,14 @@ reg:
    | SREG                      
    | PREG                      
    | REG                       
-   ;
+;
 
 const:
      INTC                      
    | FLOATC                    
    | STRINGC                   
    | USTRINGC                  
-   ;
+;
 
 /* The End */
 %%
