@@ -7,7 +7,7 @@
 %
 \documentclass[times, 10pt,%twocolumn
 ]{article}
-\usepackage{latex8}
+%\usepackage{latex8}
 \usepackage{times, graphics}
 \usepackage{html}
 %\documentstyle[times,art10,twocolumn,latex8]{article}
@@ -62,6 +62,40 @@ Universidad de La Laguna
   {http://nereida.deioc.ull.es/~pl/eyapsimple/eyapsimple.dvi}
 }
 
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=24
+                 alt="eyapsimple.ps"
+                ]
+     {gv.jpeg}}
+     {eyapsimple.ps}} 
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=24
+                 alt="eyapsimple.pdf"
+                ]
+     {pdf_logo.jpg}}
+     {eyapsimple.pdf}} 
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=60 
+                 alt="modulos"
+                ]
+     {lupa.gif}}
+     {http://search.cpan.org/dist/Parse-Eyapp/}} 
+
+\htmladdtonavigation{\htmladdnormallink{\htmladdimg[width=35 alt="apuntes"]{dragon_tree4.jpg}}{../perlexamples/}} 
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=70 
+                 alt="modulos"
+                ]
+     {parrotify_logo.png}}
+     {http://www.parrot.org/}} 
+
 %
 % if the list of authors exceeds the space for a headline,
 % an abbreviated author list is needed
@@ -77,9 +111,10 @@ dynamic conflict resolution,
 translation schemes, tree regular expressions,
 tree transformations, scope analysis support,
 and directed acyclic graphs among others.
+
 This article teaches you the basics of 
-Compiler Construction and Parse::Eyapp by
-building a translator from infix expressions to Parrot 
+Compiler Construction using \cpan{Parse::Eyapp} to
+build a translator from infix expressions to Parrot 
 Intermediate Representation.
 \end{abstract}
 %-------------------------------------------------------------------------------

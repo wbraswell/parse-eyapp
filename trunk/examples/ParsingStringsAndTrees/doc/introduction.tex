@@ -1,8 +1,8 @@
 Almost any Perl programmer knows what {\it Parsing} is about.
 One of the strengths of Perl is its excellence for text analysis. 
 Additionally to its embedded regular expression capacities, modules 
-like \code{Parse::RecDescent} \cite{conwayrd} and 
-\code{Parse::Yapp} \cite{desarmenien} make easier the task of text 
+like \cpan{Parse::RecDescent} \cite{conwayrd} and 
+\cpan{Parse::Yapp} \cite{desarmenien} make easier the task of text 
 understanding and text transformation.
 %This is in clear contrast with the absence of Perl 5 
 %generic tools\footnote{There are however very good specific ones,
@@ -19,8 +19,8 @@ understanding and text transformation.
 %\cite{randaltge}.
 
 \cpan{Parse::Eyapp} (Extended yapp) is a collection of modules
-that extends Francois Desarmenien \code{Parse::Yapp} \code{1.05}:
-Any \code{yapp} program runs without changes with \code{eyapp}.
+that extends Francois Desarmenien \cpan{Parse::Yapp} \code{1.05}:
+Any \code{yapp} program runs without changes with \cpan{eyapp}.
 Additionally \cpan{Parse::Eyapp} provides new 
 functionalities like named attributes,
 EBNF-like expressions, modifiable default actions,
@@ -29,30 +29,31 @@ It also provides a language for tree transformations.
 
 This article introduces the basics of 
 translator construction with \cpan{Parse::Eyapp} through an
-example that compiles infix expressions into Parrot 
+example that compiles infix expressions into \cpan{Parrot} 
 Intermediate Representation (PIR)\cite{randal04}.
-Parrot is a virtual machine (VM), similar to the Java VM and the
+\cpan{Parrot} is a virtual machine (VM), similar to the Java VM and the
 .NET VM. However, unlike these two which are designed for
-statically-typed languages like Java or C\#, Parrot is designed for
+statically-typed languages like Java or C\#, \cpan{Parrot} is designed for
 use with dynamically typed languages such as Perl, Python, Ruby,
 or PHP.
 
 The input to the program will be a (semicolon separated)
-list of infix expressions, like:
-
+list of infix expressions, like in this example 
+located in file \verb|input1.inf|:
 \begin{verbatim}
-1  b = 5;
-2  a = b+2;
-3  a = 2*(a+b)*(2-4/2); # is zero
-4  print a;
-5  d = (a = a+1)*4-b;
-6  c = a*b+d;
-7  print c;
-8  print d
+$ cat input1.inf 
+b = 5;
+a = b+2;
+a = 2*(a+b)*(2-4/2);
+print a;
+d = (a = a+1)*4-b;
+c = a*b+d;
+print c;
+print d
 \end{verbatim}
 
-and the output is an equivalent
-PIR: 
+and the output is the
+PIR resulting from the translation: 
 \begin{verbatim}
  1  .sub 'main' :main
  2     .local num a, b, c, d
