@@ -3,6 +3,7 @@
 %left '-' '+' 
 %left '*' '/' 
 %left NEG 
+%lexer 
 %metatree
 
 %%

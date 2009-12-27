@@ -2,6 +2,7 @@
 %left '-' '+' 
 %left '*' '/' 
 %left NEG 
+%lexer 
 
 %%
 

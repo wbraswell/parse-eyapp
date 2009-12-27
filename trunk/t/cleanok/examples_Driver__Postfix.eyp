@@ -1,4 +1,4 @@
-# File examples/eyapplanguageref/Postfix.eyp
+%lexer 
 %right '=' 
 %left '-' '+' 
 %left '*' '/' 
