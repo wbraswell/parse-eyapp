@@ -13,7 +13,7 @@
 %strict
 
 /* We need precedence for a few tokens to resolve a couple of conflicts */
-/* commented tokes aren't used */
+/* Commented tokens look as if they aren't used */
 %nonassoc LOW_PREC
 %nonassoc '\n'
 %nonassoc <t> PARAM
