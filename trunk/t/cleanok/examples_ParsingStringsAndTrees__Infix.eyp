@@ -2,7 +2,8 @@
 %right '=' 
 %left '-' '+' 
 %left '*' '/' 
-%left NEG #%tree
+%left NEG 
+%lexer #%tree
 %tree  bypass
 
 %%

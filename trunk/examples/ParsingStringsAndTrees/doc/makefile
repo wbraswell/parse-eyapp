@@ -17,6 +17,7 @@ public: html ps pdf
 	cp theperlreview.dvi /home/pl/public_html/eyapsimple/eyapsimple.dvi
 	cp theperlreview.ps /home/pl/public_html/eyapsimple/eyapsimple.ps
 	cp theperlreview.pdf /home/pl/public_html/eyapsimple/eyapsimple.pdf
+	cp theperlreview.pdf /home/pl/public_html/perlexamples/eyapptut.pdf
 	chmod a+r /home/pl/public_html/eyapsimple/*
 
 clean:
