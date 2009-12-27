@@ -15,64 +15,64 @@
 %nonassoc '\n'
 %nonassoc <t> PARAM
 
-%token <t> HLL TK_LINE TK_FILE
-%token <t> GOTO ARG IF UNLESS PNULL SET_RETURN SET_YIELD
-%token <t> ADV_FLAT ADV_SLURPY ADV_OPTIONAL ADV_OPT_FLAG ADV_NAMED ADV_ARROW
-%token <t> NEW ADV_INVOCANT ADV_CALL_SIG
-%token <t> NAMESPACE DOT_METHOD
-%token <t> SUB SYM LOCAL LEXICAL CONST ANNOTATE
-%token <t> INC DEC GLOBAL_CONST
-%token <t> PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN CONCAT_ASSIGN
-%token <t> BAND_ASSIGN BOR_ASSIGN BXOR_ASSIGN FDIV FDIV_ASSIGN MOD_ASSIGN
-%token <t> SHR_ASSIGN SHL_ASSIGN SHR_U_ASSIGN
-%token <t> SHIFT_LEFT SHIFT_RIGHT INTV FLOATV STRINGV PMCV LOG_XOR
-%token <t> RELOP_EQ RELOP_NE RELOP_GT RELOP_GTE RELOP_LT RELOP_LTE
-%token <t> RESULT RETURN TAILCALL YIELDT GET_RESULTS
-%token <t> POW SHIFT_RIGHT_U LOG_AND LOG_OR
-%token <t> COMMA ESUB DOTDOT
-%token <t> PCC_BEGIN PCC_END PCC_CALL PCC_SUB PCC_BEGIN_RETURN PCC_END_RETURN
-%token <t> PCC_BEGIN_YIELD PCC_END_YIELD NCI_CALL METH_CALL INVOCANT
-%token <t> MAIN LOAD INIT IMMEDIATE POSTCOMP METHOD ANON OUTER NEED_LEX
-%token <t> MULTI VTABLE_METHOD LOADLIB SUB_INSTANCE_OF SUBID
-%token <t> NS_ENTRY
-%token <t> UNIQUE_REG
-%token <s> LABEL
-%token <t> EMIT EOM
-%token <s> IREG NREG SREG PREG IDENTIFIER REG MACRO ENDM
-%token <s> STRINGC INTC FLOATC USTRINGC
-%token <s> PARROT_OP
+%token HLL TK_LINE TK_FILE
+%token GOTO ARG IF UNLESS PNULL SET_RETURN SET_YIELD
+%token ADV_FLAT ADV_SLURPY ADV_OPTIONAL ADV_OPT_FLAG ADV_NAMED ADV_ARROW
+%token NEW ADV_INVOCANT ADV_CALL_SIG
+%token NAMESPACE DOT_METHOD
+%token SUB SYM LOCAL LEXICAL CONST ANNOTATE
+%token INC DEC GLOBAL_CONST
+%token PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN CONCAT_ASSIGN
+%token BAND_ASSIGN BOR_ASSIGN BXOR_ASSIGN FDIV FDIV_ASSIGN MOD_ASSIGN
+%token SHR_ASSIGN SHL_ASSIGN SHR_U_ASSIGN
+%token SHIFT_LEFT SHIFT_RIGHT INTV FLOATV STRINGV PMCV LOG_XOR
+%token RELOP_EQ RELOP_NE RELOP_GT RELOP_GTE RELOP_LT RELOP_LTE
+%token RESULT RETURN TAILCALL YIELDT GET_RESULTS
+%token POW SHIFT_RIGHT_U LOG_AND LOG_OR
+%token COMMA ESUB DOTDOT
+%token PCC_BEGIN PCC_END PCC_CALL PCC_SUB PCC_BEGIN_RETURN PCC_END_RETURN
+%token PCC_BEGIN_YIELD PCC_END_YIELD NCI_CALL METH_CALL INVOCANT
+%token MAIN LOAD INIT IMMEDIATE POSTCOMP METHOD ANON OUTER NEED_LEX
+%token MULTI VTABLE_METHOD LOADLIB SUB_INSTANCE_OF SUBID
+%token NS_ENTRY
+%token UNIQUE_REG
+%token LABEL
+%token EMIT EOM
+%token IREG NREG SREG PREG IDENTIFIER REG MACRO ENDM
+%token STRINGC INTC FLOATC USTRINGC
+%token PARROT_OP
 
-%type <t> type hll_def return_or_yield comma_or_goto opt_unique_reg
-%type <i> program
-%type <i> class_namespace
-%type <i> constdef sub emit pcc_ret pcc_yield
-%type <i> compilation_units compilation_unit pmc_const pragma
-%type <s> classname relop any_string assign_op  bin_op  un_op
-%type <i> labels _labels label  statement sub_call
-%type <i> pcc_sub_call
-%type <sr> sub_param sub_params pcc_arg pcc_result pcc_args pcc_results sub_param_type_def
-%type <sr> pcc_returns pcc_yields pcc_return pcc_call arg arglist the_sub multi_type
-%type <t> argtype_list argtype paramtype_list paramtype
-%type <t> pcc_return_many
-%type <t> proto sub_proto sub_proto_list multi multi_types outer
-%type <t> vtable instanceof subid
-%type <t> method ns_entry_name
-%type <i> instruction assignment conditional_statement labeled_inst opt_label op_assign
-%type <i> if_statement unless_statement
-%type <i> func_assign get_results
-%type <i> opt_invocant
-%type <i> annotate_directive
-%type <sr> target targetlist reg const var result pcc_set_yield
-%type <sr> keylist keylist_force _keylist key maybe_ns
-%type <sr> vars _vars var_or_i _var_or_i label_op sub_label_op sub_label_op_c
-%type <i> pasmcode pasmline pasm_inst
-%type <sr> pasm_args
-%type <i> var_returns
+%type type hll_def return_or_yield comma_or_goto opt_unique_reg
+%type program
+%type class_namespace
+%type constdef sub emit pcc_ret pcc_yield
+%type compilation_units compilation_unit pmc_const pragma
+%type classname relop any_string assign_op  bin_op  un_op
+%type labels _labels label  statement sub_call
+%type pcc_sub_call
+%type sub_param sub_params pcc_arg pcc_result pcc_args pcc_results sub_param_type_def
+%type pcc_returns pcc_yields pcc_return pcc_call arg arglist the_sub multi_type
+%type argtype_list argtype paramtype_list paramtype
+%type pcc_return_many
+%type proto sub_proto sub_proto_list multi multi_types outer
+%type vtable instanceof subid
+%type method ns_entry_name
+%type instruction assignment conditional_statement labeled_inst opt_label op_assign
+%type if_statement unless_statement
+%type func_assign get_results
+%type opt_invocant
+%type annotate_directive
+%type target targetlist reg const var result pcc_set_yield
+%type keylist keylist_force _keylist key maybe_ns
+%type vars _vars var_or_i _var_or_i label_op sub_label_op sub_label_op_c
+%type pasmcode pasmline pasm_inst
+%type pasm_args
+%type var_returns
 
-%token <sr> VAR
-%token <t> LINECOMMENT
-%token <s> FILECOMMENT
-%type <idlist> id_list id_list_id
+%token VAR
+%token LINECOMMENT
+%token FILECOMMENT
+%type id_list id_list_id
 
 %nonassoc CONCAT DOT
 
@@ -151,7 +151,7 @@ pasm_inst:
    | PCC_SUB sub_proto LABEL
    | PNULL var
    | LEXICAL STRINGC COMMA REG
-   | /* none */                
+   | /* empty */                
    ;
 
 pasm_args:
@@ -491,9 +491,6 @@ assignment:
    | target '=' var bin_op var
    | target '=' var '[' keylist ']'
    | target '[' keylist ']' '=' var
-     /* Removing this line causes test failures in t/compilers/tge/* for
-        some reason. Eventually it should be removed and the normal handling
-        of ops should be used for all forms of "new". */
    | target '=' 'new' classname '[' keylist ']'
      /* Subroutine call the short way */
    | target  '=' sub_call
@@ -505,7 +502,6 @@ assignment:
    | target '=' PNULL
    ;
 
-/* C++ hates implicit casts from string constants to char *, so be explicit */
 un_op:
      '!'                       
    | '~'                       
