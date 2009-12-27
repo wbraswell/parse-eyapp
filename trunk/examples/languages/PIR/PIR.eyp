@@ -761,3 +761,90 @@ const:
 /* The End */
 %%
 
+my %directives = (
+".set_arg"               => 'ARG',
+".sub"                   => 'SUB',
+".end"                   => 'ESUB',
+".begin_call"            => 'PCC_BEGIN',
+".end_call"              => 'PCC_END',
+".call"                  => 'PCC_CALL',
+".nci_call"              => 'NCI_CALL',
+".meth_call"             => 'METH_CALL',
+".invocant"              => 'INVOCANT',
+".begin_return"          => 'PCC_BEGIN_RETURN',
+".end_return"            => 'PCC_END_RETURN',
+".begin_yield"           => 'PCC_BEGIN_YIELD',
+".end_yield"             => 'PCC_END_YIELD',
+
+".get_result"                  => 'RESULT',
+".get_results"             => 'GET_RESULTS',
+".yield"                   => 'YIELDT',
+".set_yield"               => 'SET_YIELD',
+".return"                  => 'RETURN',
+".set_return"              => 'SET_RETURN',
+".tailcall"                => 'TAILCALL',
+
+".local"                      => 'LOCAL',
+".globalconst"                => 'GLOBAL_CONST',
+".param"                      => 'PARAM',
+);
+
+my %colons = (
+":unique_reg"   => 'UNIQUE_REG',
+":instanceof"   => 'SUB_INSTANCE_OF',
+":subid"        => 'SUBID',
+":flat"         => 'ADV_FLAT',
+":slurpy"       => 'ADV_SLURPY',
+":optional"     => 'ADV_OPTIONAL',
+":opt_flag"     => 'ADV_OPT_FLAG',
+":named"        => 'ADV_NAMED',
+":invocant"     => 'ADV_INVOCANT',
+":call_sig"     => 'ADV_CALL_SIG',
+);
+
+my %words = (
+"goto"                        => 'GOTO',
+"if"                          => 'IF',
+"unless"                      => 'UNLESS',
+"null"                        => 'PNULL',
+"int"                         => 'INTV',
+"num"                         => 'FLOATV',
+
+"pmc"                         => 'PMCV',
+"string"                      => 'STRINGV',
+);
+
+my %lexemes = (
+"=>"                   => 'ADV_ARROW',
+"<<"                   => 'SHIFT_LEFT',
+">>"                   => 'SHIFT_RIGHT',
+">>>"                  => 'SHIFT_RIGHT_U',
+"&&"                   => 'LOG_AND',
+"||"                   => 'LOG_OR',
+"~~"                   => 'LOG_XOR',
+"<"                    => 'RELOP_LT',
+"<="                   => 'RELOP_LTE',
+">"                    => 'RELOP_GT',
+">="                   => 'RELOP_GTE',
+"=="                   => 'RELOP_EQ',
+"!="                   => 'RELOP_NE',
+"**"                   => 'POW',
+
+"."                    => 'DOT',
+
+"+="                   => 'PLUS_ASSIGN',
+"-="                   => 'MINUS_ASSIGN',
+"*="                   => 'MUL_ASSIGN',
+"/="                   => 'DIV_ASSIGN',
+"%="                   => 'MOD_ASSIGN',
+"//"                   => 'FDIV',
+"//="                  => 'FDIV_ASSIGN',
+"&="                   => 'BAND_ASSIGN',
+"|="                   => 'BOR_ASSIGN',
+"~="                   => 'BXOR_ASSIGN',
+">>="                  => 'SHR_ASSIGN',
+"<<="                  => 'SHL_ASSIGN',
+">>>="                 => 'SHR_U_ASSIGN',
+".="                   => 'CONCAT_ASSIGN',
+);
+
