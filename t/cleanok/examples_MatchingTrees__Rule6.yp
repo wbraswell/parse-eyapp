@@ -3,6 +3,7 @@
 %left '*' '/' 
 %left NEG 
 %tree
+%lexer 
 
 %%
 

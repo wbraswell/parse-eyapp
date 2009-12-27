@@ -1,7 +1,9 @@
+%lexer 
 
 %%
 
 S:
+      /* empty */
     | 'a' S 'b' 
 ;
 

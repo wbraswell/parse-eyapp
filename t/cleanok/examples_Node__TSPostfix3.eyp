@@ -1,9 +1,8 @@
-# File TSPostfix3.eyp. To use it:
-# eyapp TSPostfix3.eyp; usetspostfix3.pl
 %right '=' 
 %left '-' '+' 
 %left '*' '/' 
 %left NEG 
+%lexer 
 %metatree
 
 %%
