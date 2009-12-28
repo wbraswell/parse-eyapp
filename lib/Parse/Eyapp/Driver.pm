@@ -1196,6 +1196,8 @@ sub main {
   my $slurp;
   my $inputfromfile = 1;
   my $commandinput = '';
+  my $yaml = 0;
+
   my $result = GetOptions (
     "debug!"         => \$debug,         # sets yydebug on
     "file=s"         => \$file,          # read input from that file
@@ -1205,6 +1207,7 @@ sub main {
     "help"           => \$help,          # shows SYNOPSIS section from the script pod
     "slurp!"         => \$slurp,         # read until EOF or CR is reached
     "argfile!"       => \$inputfromfile, # take input string from @_
+    "yaml"           => \$yaml,          # dumps YAML for $tree: YAML must be installed
   );
 
   pod2usage() if $help;
@@ -1236,27 +1239,42 @@ sub main {
 
   if (my $ne = $parser->YYNberr > 0) {
     print "There were $ne errors during parsing\n";
+    return undef;
   }
   else {
-    if ($showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node')) {
+    if ($showtree) {
+      if ($tree && blessed $tree && $tree->isa('Parse::Eyapp::Node')) {
 
-    if (defined($TERMINALinfo)) {
-      $showtree = 1;
-      *TERMINAL::info = sub {  (ref($_[0]->attr) eq 'ARRAY')? $_[0]->attr->[0] : $_[0]->attr };
+        if (defined($TERMINALinfo)) {
+          $showtree = 1;
+          *TERMINAL::info = sub {  (ref($_[0]->attr) eq 'ARRAY')? $_[0]->attr->[0] : $_[0]->attr };
+        }
+
+          print $tree->str()."\n";
+      }
+      elsif ($tree && ref $tree) {
+        require Data::Dumper;
+        print Data::Dumper::Dumper($tree)."\n";
+      }
+      elsif (defined($tree)) {
+        print "$tree\n";
+      }
+    }
+    if ($yaml && ref($tree)) {
+      eval {
+        require YAML;
+      };
+      if ($@) {
+        print "You must install 'YAML' to use this option\n";
+      }
+      else {
+        YAML->import;
+        print Dump($tree);
+      }
     }
 
-      print $tree->str()."\n";
-    }
-    elsif ($showtree && $tree && ref $tree) {
-      require Data::Dumper;
-      print Data::Dumper::Dumper($tree)."\n";
-    }
-    elsif ($showtree && defined($tree)) {
-      print "$tree\n";
-    }
+    return $tree
   }
-
-  $tree
 }
 
 # Generic error handler
