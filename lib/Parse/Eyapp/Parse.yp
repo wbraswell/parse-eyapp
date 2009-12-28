@@ -508,6 +508,12 @@ decl:  '\n'                 #default action
             }
     |   EXPECT NUMBER '\n'             { $expect=$_[2][0]; undef }
     |   EXPECT NUMBER NUMBER '\n'      { $expect= [ $_[2][0], $_[3][0]]; undef }
+    |   EXPECTRR NUMBER '\n'           { 
+                                          $expect = 0 unless defined($expect);
+                                          croak "Number of reduce-reduce conflicts is redefined (line $_[2][1], file: $filename)\n" if ref($expect);
+                                          $expect= [ $expect, $_[2][0]]; 
+                                          undef 
+                                        }
     |   error '\n'                     { $_[0]->YYErrok }
 ;    
 
@@ -998,6 +1004,11 @@ sub _Lexer {
 
             $$input=~/\G([0-9]+)/gc
         and return('NUMBER',[ $1, $lineno[0] ]);
+
+            $$input=~/\G%expect-rr/gc
+        and do {
+           return('EXPECTRR',[ undef, $lineno[0] ]);
+        };
 
             $$input=~/\G%($ID)/gc
         and do {
