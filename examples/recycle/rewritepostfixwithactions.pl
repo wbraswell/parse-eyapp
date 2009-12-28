@@ -27,8 +27,10 @@ $pparser->YYSetaction(
 
 $pparser->Run($debug, $x);
 
+# Let su reuse the grammar a third time.
+# Now we use it to generate the AST
 $pparser->YYSetaction(
-  'EXP'           => sub { $_[1] },
+  'EXP'           => sub { $_[1] }, # bypass 
   'OPERAND:NUM'   => \&Parse::Eyapp::Driver::YYBuildAST,
   'OPERAND:VAR'   => \&Parse::Eyapp::Driver::YYBuildAST,
   'OP:ASSIGN'     => \&Parse::Eyapp::Driver::YYBuildAST,

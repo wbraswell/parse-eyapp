@@ -875,7 +875,7 @@ my %listtoken = (
 );
 
 my $ID = qr{[A-Za-z_][A-Za-z0-9_]*};
-my $LABEL = qr{:$ID};
+my $LABEL = qr{:[A-Za-z0-9_]+};
 my $STRING = qr {
    '             # opening apostrophe
    (?:[^'\\]|    # an ordinary character
