@@ -1201,35 +1201,17 @@ sub main {
     "file=s"         => \$file,          # read input from that file
     "commandinput=s" => \$commandinput,  # read input from command line arg
     "tree!"          => \$showtree,      # prints $tree->str
-    "info=s"         => \$TERMINALinfo,  # prints $tree->str and provides default TERMINAL::info
+    "info"           => \$TERMINALinfo,  # prints $tree->str and provides default TERMINAL::info
     "help"           => \$help,          # shows SYNOPSIS section from the script pod
     "slurp!"         => \$slurp,         # read until EOF or CR is reached
-    "inputfromfile!" => \$inputfromfile, # take input from @_
+    "argfile!"       => \$inputfromfile, # take input string from @_
   );
 
   pod2usage() if $help;
 
   $debug = 0x1F if $debug;
-  $file = shift if !$file && @ARGV; 
+  $file = shift if !$file && @ARGV; # file is taken from the @ARGS unless already defined
   $slurp = "\n" if defined($slurp);
-  if (defined($TERMINALinfo)) {
-    $showtree = 1;
-    no warnings 'redefine';
-    no strict 'refs';
-    if ($TERMINALinfo eq '') {
-      *TERMINAL::info = sub { $_[0]->attr; }
-    }
-    elsif ($TERMINALinfo eq 'line') {
-      *TERMINAL::info = sub { $_[0]->attr->[0 ]};
-    }
-    else {
-      $TERMINALinfo = "sub { my \$self = shift; $TERMINALinfo }" unless ($TERMINALinfo =~ /^\s*sub/);
-      eval {
-        *TERMINAL::info = eval $TERMINALinfo;
-      };
-      croak "Argument '$TERMINALinfo' isn't legal: try 'line' or '' instead\n($)\n" if $@;
-    }
-  }
 
   my $parser = $package->new();
 
@@ -1257,6 +1239,12 @@ sub main {
   }
   else {
     if ($showtree && $tree && blessed $tree && $tree->isa('Parse::Eyapp::Node')) {
+
+    if (defined($TERMINALinfo)) {
+      $showtree = 1;
+      *TERMINAL::info = sub {  (ref($_[0]->attr) eq 'ARRAY')? $_[0]->attr->[0] : $_[0]->attr };
+    }
+
       print $tree->str()."\n";
     }
     elsif ($showtree && $tree && ref $tree) {
