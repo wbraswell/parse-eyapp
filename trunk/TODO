@@ -1,7 +1,6 @@
   * Article: rewrite, both research and divulgation
 
   * Parse::Eyapp::Driver::main 
-     - option to define the info function (for array and plain scalars)
      - option to dump YAML instead
      - option to send output to a file
 
