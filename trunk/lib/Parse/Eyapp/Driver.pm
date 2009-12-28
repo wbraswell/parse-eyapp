@@ -1321,8 +1321,8 @@ sub _Error {
   }
   else {
     # May be the parser object knows the line number ?
-    my $lineno = $parser->tokenline(0);
-    $tline = " (line number $lineno)" if $lineno > 0;
+    my $lineno = $parser->line;
+    $tline = " (line number $lineno)" if $lineno > 1;
   }
 
   local $" = ', ';
