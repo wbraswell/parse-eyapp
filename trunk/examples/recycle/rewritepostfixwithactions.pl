@@ -38,6 +38,7 @@ $pparser->YYSetaction(
   'OP:NEG'        => \&Parse::Eyapp::Driver::YYBuildAST,
 );
 
+*TERMINAL::info = sub { $_[0]{attr} };
 my $t = $pparser->Run($debug, $x);
 print $t->str."\n";
 
