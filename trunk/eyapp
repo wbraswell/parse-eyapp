@@ -100,10 +100,15 @@ This will output a file called F<myscript.pl> whose very first line is:
 The argument is mandatory, but if you specify an empty string, the value
 of I<$Config{perlpath}> will be used instead.
 
+=item I<-B prompt>   
+
+Adds a modulino call '__PACKAGE->main(<prompt>) unless caller();' 
+as the very last line of the output file. The argument is mandatory.
+
 =item I<grammar>
 
 The input grammar file. If no suffix is given, and the file does not exists,
-an attempt to open the file with a suffix of  F<.yp> is tried before exiting.
+an attempt to open the file with a suffix of  F<.eyp> is tried before exiting.
 
 =item I<-V>
 
@@ -175,13 +180,13 @@ use Parse::Eyapp;
 
 use strict;
 
-our ( $opt_n, $opt_m, $opt_V, $opt_v, $opt_o, $opt_h, $opt_s, $opt_t, $opt_b, $opt_c,);
+our ( $opt_n, $opt_m, $opt_V, $opt_v, $opt_o, $opt_h, $opt_s, $opt_t, $opt_b, $opt_c, $opt_B);
 
 sub Usage {
 	my($prog)=(fileparse($0,'\..*'))[0];
 	die <<EOF;
 
-Usage:	$prog [options] grammar[.yp]
+Usage:	$prog [options] grammar[.eyp]
   or	$prog -V
   or	$prog -h
 
@@ -197,21 +202,21 @@ Usage:	$prog [options] grammar[.yp]
                 module file.  Default is to use internal template defined
                 in Parse::Eyapp::Output
     -b shebang  Adds '#!<shebang>' as the very first line of the output file
-
-    grammar     The grammar file. If no suffix is given, and the file
-                does not exists, .yp is added
-
+    -B prompt   Adds a modulino call '__PACKAGE->main(<prompt>) unless caller();' 
+                as the very last line of the output file
     -c grammar  Displays the "clean" grammar without actions     
-
     -V          Display current version of Parse::Eyapp and gracefully exits
     -h          Display this help screen
+
+    grammar     The grammar file. If no suffix is given, and the file
+                does not exists, .eyp is added
 
 EOF
 }
 
 my($nbargs)=@ARGV;
 
-	getopts('Vhvsnc:b:m:t:o:')
+	getopts('Vhvsnc:b:B:m:t:o:')
 or	Usage;
 
    (  ($opt_V and $nbargs > 1)
@@ -315,6 +320,7 @@ my $text = $parser->Output(
                           standalone => $opt_s,
                           linenumbers => $opt_n,
                           template    => $opt_t,
+                          modulino    => $opt_B,
                           #prefixname => 'R::',
                          );
 compute_lines(\$text, $outfile, $Parse::Eyapp::Output::pattern) if $opt_n;

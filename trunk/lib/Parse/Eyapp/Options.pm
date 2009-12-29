@@ -60,6 +60,9 @@ my(%known_options)= (
     prefixname   =>  {
         ''      =>  "Prefix for the Tree Classes"
     },
+    modulino   =>  {
+        ''      =>  "Produce modulino code at the end of the generated module"
+    },
 );
 
 my(%default_options)= (
@@ -74,6 +77,7 @@ my(%default_options)= (
     template => undef,
     shebang => undef,
     prefixname => '',
+    modulino => undef,
 );
 
 my(%actions)= (
@@ -119,7 +123,7 @@ sub _SetOption {
     or  croak "Unknown option: '$key'";
 
     if(exists($known_options{$key}{lc($value)})) {
-        $value=lc($value);
+        $value=lc($value) if defined($value);
     }
     elsif(not exists($known_options{$key}{''})) {
         croak "Invalid value '$value' for option '$key'";

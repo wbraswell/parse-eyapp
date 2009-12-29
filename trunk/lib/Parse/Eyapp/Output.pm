@@ -72,6 +72,15 @@ sub Output {
   my ($GRAMMAR, $TERMS, $FILENAME, $PACKAGES); # Cas
   my($package)=$self->Option('classname');
 
+  my $modulino = $self->Option('modulino'); # prompt or undef 
+
+  if (defined($modulino)) {
+    $modulino = "\n__PACKAGE__->main('$modulino') unless caller;\n";
+  }
+  else {
+    $modulino = '';
+  }
+
   my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix);
   my($version)=$Parse::Eyapp::Driver::VERSION;
   my($datapos);
@@ -197,8 +206,9 @@ sub new {
 }
 
 <<$tail>>
-
 ################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################
+
+<<$modulino>>
 
 1;
 EOT
