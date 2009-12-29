@@ -1,3 +1,33 @@
+  * -B prompt eyapp option
+    -%modulino directive 
+
+  * Provide a module providing regexp for most common non destructive lexing: NUMs, IDs, etc
+
+      use Parse::Eyapp::LexSupport qw{INT PERLWS ID};
+
+         $INT = qr{\G(\d+)}gc; $WS = qr{{\G(\s*) (?{  $self->tokenline($1 =~ tr{\n}{}) }) }gxc; etc.
+
+      tokens can be "defined" with:
+
+          %token DOTDOT /(\.\.)/
+
+      The parser will defined $DOTDOT = qr{/\G(\.\.)/gc;
+      and then:
+
+      m{$WS}; # No need to update the line number
+
+      m{\Gtype\b}gic           and return ('TYPE', 'TYPE'); # old way
+
+      m{$ID}                   and return ('ID',  $1);
+
+      m{$INT}                  and return ('NUM', $1);
+
+      m{$DOTDOT}               and return ('DOTDOT',  '..');
+
+      m{\G(.)}gc               and return ($1,    $1);
+
+  * Make ambiguous calc example: exp: exp '-' exp with precedences dynamically changed by the user (left, right)
+
   * Article: rewrite, both research and divulgation
 
   * Parse::Eyapp::Driver::main 
