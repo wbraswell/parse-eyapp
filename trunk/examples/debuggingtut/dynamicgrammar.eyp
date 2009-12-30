@@ -1,0 +1,60 @@
+%{
+=head1 SYNOPSIS
+
+This example shows how the dynamic conlfict resolution
+technique makes possible to change the behavior of the parser
+at the programmer's command.
+
+Compile it with:
+
+    eyapp -n -b '' -B '' dynamicgrammar.eyp 
+
+Run with:
+
+    $ ./dynamicgrammar.pm -f input_for_dynamicgrammar.txt 
+
+=cut
+
+my $reduce = 1;
+%}
+%lexer {
+      m{\G(\s+)(?:#.*)?}gc and $self->tokenline($1 =~ tr{\n}{});
+      m{\G(LEFT|RIGHT)\b}gic         and return (uc($1), uc($1));
+      m{\G([0-9]+)}gc                and return ('NUM', $1);
+      m{\G(.)}gc                     and return ($1,    $1);
+  }
+
+%conflict leftORright {
+          my $parser = shift;
+          if ($reduce && ${$parser->input} =~ m{\G(?=-)}gc) {
+              $parser->YYSetReduce('-', 'MINUS' );
+            }
+            else {
+              $parser->YYSetShift('-');
+            }
+      }
+
+%%
+p:  
+      /* empty */     {}
+    | p c             {}
+;
+
+c:
+      $expr { print "$expr\n" }
+    | RIGHT { $reduce = 0}
+    | LEFT  { $reduce = 1}
+
+;
+
+expr: 
+      '(' $expr ')'  { $expr } 
+    | %name MINUS
+      expr.left                         %PREC leftORright
+                '-' expr.right          %PREC leftORright
+         { $left -$right }
+
+    | NUM
+;
+
+%%
