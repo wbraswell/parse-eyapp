@@ -75,7 +75,11 @@ sub Output {
   my $modulino = $self->Option('modulino'); # prompt or undef 
 
   if (defined($modulino)) {
-    $modulino = "\n__PACKAGE__->main('$modulino') unless caller;\n";
+    $modulino = <<"MODULINO";
+unless (caller) {
+  exit !__PACKAGE__->main('$modulino');
+}
+MODULINO
   }
   else {
     $modulino = '';
