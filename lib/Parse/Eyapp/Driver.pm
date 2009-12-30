@@ -1196,6 +1196,7 @@ sub main {
   my $slurp;
   my $inputfromfile = 1;
   my $commandinput = '';
+  my $quotedcommandinput = '';
   my $yaml = 0;
 
   my $result = GetOptions (
