@@ -19,3 +19,7 @@ command execution
 
 println "Salida: $tree"
 
+/*
+The easier solution will be to create an script without args
+which wraps the true script and execute it
+*/
