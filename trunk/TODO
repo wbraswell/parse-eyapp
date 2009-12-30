@@ -1,3 +1,17 @@
+  *  While %lexer provides $self, %conflict does not. Be consistent.
+  * Error message when a conflict handler isn't used is inaccurate:
+
+      ~/LEyapp/examples/debuggingtut$ eyapp dynamicgrammar.eyp 
+      Useless non-terminals:
+
+          rangeORenum, declared line 10
+
+      Useless rules:
+
+          rangeORenum -> 
+
+      1 shift/reduce conflict and 0 reduce/reduce conflicts
+
   * -B prompt eyapp option
     -%modulino directive 
 
