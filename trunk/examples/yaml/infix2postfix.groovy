@@ -48,6 +48,17 @@ def showtree(tree, input) {
 compilegrammar();
 
 tree = buildast("a = 2")
+//--- !!perl/hash:ASSIGN
+//children:
+//  - !!perl/hash:VAR
+//    attr: a
+//    children: []
+//    token: VAR
+//  - !!perl/hash:NUM
+//    attr: 2
+//    children: []
+//    token: NUM
+
 assert(tree == [children:[[token:'VAR', children:[], attr:'a'], [token:'NUM', children:[], attr:2]]])
 
 showtree(tree, "a = 2");
