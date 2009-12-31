@@ -11,37 +11,41 @@
 
       1 shift/reduce conflict and 0 reduce/reduce conflicts
 
-  * -B prompt eyapp option
-    -%modulino directive 
+  * -%modulino directive 
 
   *  Line numbers seem to be in a buggy state.
-     There is a "bug" with tokenline and the static attribute approach: tokenline
+     There is also a "bug" with tokenline and the static attribute approach: tokenline
      attribute is defined to 1 while the static/attribute approach searches while "undef"
 
+  * Lexical Analyzer generation:
+      * Lexer automatic construction
+      * lexer must support a sub name
+         %lexer mylexer
   * Provide a module providing regexp for most common non destructive lexing: NUMs, IDs, etc
 
       use Parse::Eyapp::LexSupport qw{INT PERLWS ID};
 
-      Created by "new" so that $self or __PACKAGE__ is defined
+      Created by "new" so that $self is in scope
 
          $INT = qr{\G(\d+)}gc; $WS = qr{{\G(\s*) (?{  $self->tokenline($1 =~ tr{\n}{}) }) }gxc; etc.
 
       tokens can be "defined" with:
 
-          %token DOTDOT /(\.\.)/
+          %token DOTDOT /(\.\.)/ 
+          %token INT /(\d+)/ 
 
       The parser will define $DOTDOT = qr{/\G(\.\.)/;
       and then:
 
-      m{$PERLWS}gc; # No need to update the line number
+      PERLWS(); # No need to update the line number
 
       m{\Gtype\b}gic           and return ('TYPE', 'TYPE'); # old way
 
       m{$ID}gc                 and return ('ID',  $1);
 
-      m{$INT}gc                and return ('NUM', $1);
+      INT()                    and return ('NUM', $1);
 
-      m{$DOTDOT}gc             and return ('DOTDOT',  '..');
+      DOTDOT()                 and return ('DOTDOT',  $DOTDOT);
 
       m{\G(.)}gc               and return ($1,    $1);
 
@@ -72,10 +76,6 @@
 
   * the #line directive in Parse.yp for %lexer is prone to be buggy (worst practice)
 
-  * Lexical Analyzer generation:
-      * Lexer automatic construction
-      * lexer must support a sub name
-         %lexer mylexer
 
   * Dynamic conflict resolution: test YYSetShift
         The case where the default is a reduction is not solved. Investigate
