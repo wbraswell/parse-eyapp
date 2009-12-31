@@ -1,4 +1,5 @@
   *  While %lexer provides $self, %conflict does not. Be consistent.
+  *  Line numbers seem to be in a buggy state
   * Error message when a conflict handler isn't used is inaccurate:
 
       ~/LEyapp/examples/debuggingtut$ eyapp dynamicgrammar.eyp 

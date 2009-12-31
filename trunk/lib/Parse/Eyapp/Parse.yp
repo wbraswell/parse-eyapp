@@ -499,6 +499,15 @@ decl:  '\n'                 #default action
             {
               my ($name, $code) = @_[2,3];
               my ($cn, $line) = @$name;
+
+
+              my ($c, $li) = @$code;
+
+              # TODO: this must be in Output
+              $c =~ s/^/  my \$self = \$_[0];\n#line $li "$filename"\n/; 
+
+              $c =~ s/$/\n################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################\n/;
+              $code->[0] = $c;
               push @conflict, [$name, $code];
 
               $$syms{$cn} = $line;

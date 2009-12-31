@@ -13,26 +13,37 @@ Run with:
 
     $ ./dynamicgrammar.pm -f input_for_dynamicgrammar.txt 
 
+The file C<input_for_dynamicgrammar.txt> contains:
+
+            2-1-1 # left: 0
+            RIGHT
+            2-1-1 # right: 2
+            LEFT
+            3-1-1 # left: 1
+            RIGHT
+            3-1-1 # right: 3
+
 =cut
 
 my $reduce = 1;
 %}
 %lexer {
-      m{\G(\s+)(?:#.*)?}gc and $self->tokenline($1 =~ tr{\n}{});
+      m{\G(\s+)(?:#.*)?\s*}gc and $self->tokenline("$1$3" =~ tr{\n}{});
       m{\G(LEFT|RIGHT)\b}gic         and return (uc($1), uc($1));
       m{\G([0-9]+)}gc                and return ('NUM', $1);
       m{\G(.)}gc                     and return ($1,    $1);
   }
 
 %conflict leftORright {
-          my $parser = shift;
-          if ($reduce && ${$parser->input} =~ m{\G(?=-)}gc) {
-              $parser->YYSetReduce('-', 'MINUS' );
+          if ($reduce && ${$self->input} =~ m{\G(?=-)}gc) {
+              $self->YYSetReduce('-', 'MINUS' );
             }
             else {
-              $parser->YYSetShift('-');
+              $self->YYSetShift('-');
             }
       }
+
+%expect 1
 
 %%
 p:  
