@@ -1,5 +1,6 @@
 Revision history for Perl extension Eyapp.
 1.155
+  * -B prompt eyapp option added
   *  While %lexer provides $self, %conflict did not. Now consistent. $self is 
      $_[0] (but the arg isn't shifted)
   *  #line in dynamic conflict handlers
