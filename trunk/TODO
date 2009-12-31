@@ -1,5 +1,3 @@
-  *  While %lexer provides $self, %conflict does not. Be consistent.
-  *  Line numbers seem to be in a buggy state
   * Error message when a conflict handler isn't used is inaccurate:
 
       ~/LEyapp/examples/debuggingtut$ eyapp dynamicgrammar.eyp 
@@ -16,6 +14,8 @@
   * -B prompt eyapp option
     -%modulino directive 
 
+  *  Line numbers seem to be in a buggy state
+
   * Provide a module providing regexp for most common non destructive lexing: NUMs, IDs, etc
 
       use Parse::Eyapp::LexSupport qw{INT PERLWS ID};
@@ -26,22 +26,20 @@
 
           %token DOTDOT /(\.\.)/
 
-      The parser will defined $DOTDOT = qr{/\G(\.\.)/gc;
+      The parser will define $DOTDOT = qr{/\G(\.\.)/;
       and then:
 
-      m{$WS}; # No need to update the line number
+      m{$PERLWS}gc; # No need to update the line number
 
       m{\Gtype\b}gic           and return ('TYPE', 'TYPE'); # old way
 
-      m{$ID}                   and return ('ID',  $1);
+      m{$ID}gc                 and return ('ID',  $1);
 
-      m{$INT}                  and return ('NUM', $1);
+      m{$INT}gc                and return ('NUM', $1);
 
-      m{$DOTDOT}               and return ('DOTDOT',  '..');
+      m{$DOTDOT}gc             and return ('DOTDOT',  '..');
 
       m{\G(.)}gc               and return ($1,    $1);
-
-  * Make ambiguous calc example: exp: exp '-' exp with precedences dynamically changed by the user (left, right)
 
   * Article: rewrite, both research and divulgation
 

@@ -1,4 +1,11 @@
 Revision history for Perl extension Eyapp.
+1.155
+  *  While %lexer provides $self, %conflict did not. Now (almost) consistent.
+  *  #line in dynamic conflict handlers
+  * Ambiguous calc example: exp: exp '-' exp with precedences dynamically changed by the user (LEFT, RIGHT).
+    See file: examples/debuggintut/dynamicgrammar.eyp
+
+
 1.154
   * option to define the info function (for array and plain scalars)
 1.153

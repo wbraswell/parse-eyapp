@@ -35,13 +35,11 @@ my $reduce = 1;
   }
 
 %conflict leftORright {
-          if ($reduce && ${$self->input} =~ m{\G(?=-)}gc) {
-              $self->YYSetReduce('-', 'MINUS' );
-            }
-            else {
-              $self->YYSetShift('-');
-            }
-      }
+  # if reduce and next token is '-'
+  if ($reduce && ${$self->input} =~ m{\G(?=-)}gc) 
+       { $self->YYSetReduce('-', 'MINUS' ); }
+  else { $self->YYSetShift('-'); }
+}
 
 %expect 1
 

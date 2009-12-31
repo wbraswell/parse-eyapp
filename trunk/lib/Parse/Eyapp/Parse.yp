@@ -250,7 +250,7 @@ sub make_lexer {
 my $lexertemplate = << 'ENDOFLEXER';
 __PACKAGE__->YYLexer( 
   sub { # lexical analyzer
-    my $self = shift; 
+    my $self = $_[0]; 
     for (${$self->input()}) {  # contextualize
 #line <<line>> "<<filename>>"
       <<code>>       
