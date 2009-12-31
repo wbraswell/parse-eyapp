@@ -4,4 +4,4 @@ RIGHT
 LEFT
 3-1-1 # left: 1
 RIGHT
-3-1-1 # right: 3
+3-1+1 # right: 3
