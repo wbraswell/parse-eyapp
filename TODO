@@ -14,11 +14,15 @@
   * -B prompt eyapp option
     -%modulino directive 
 
-  *  Line numbers seem to be in a buggy state
+  *  Line numbers seem to be in a buggy state.
+     There is a "bug" with tokenline and the static attribute approach: tokenline
+     attribute is defined to 1 while the static/attribute approach searches while "undef"
 
   * Provide a module providing regexp for most common non destructive lexing: NUMs, IDs, etc
 
       use Parse::Eyapp::LexSupport qw{INT PERLWS ID};
+
+      Created by "new" so that $self or __PACKAGE__ is defined
 
          $INT = qr{\G(\d+)}gc; $WS = qr{{\G(\s*) (?{  $self->tokenline($1 =~ tr{\n}{}) }) }gxc; etc.
 
@@ -66,7 +70,7 @@
         Directive: %output="filename"
 
 
-  * the #line directive in Parse.yp for %lexer is buggy (worst practice)
+  * the #line directive in Parse.yp for %lexer is prone to be buggy (worst practice)
 
   * Lexical Analyzer generation:
       * Lexer automatic construction
