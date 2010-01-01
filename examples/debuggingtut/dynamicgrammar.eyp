@@ -7,7 +7,7 @@ at the programmer's command.
 
 Compile it with:
 
-    eyapp -n -b '' -B '' dynamicgrammar.eyp 
+    eyapp -b '' -B '' dynamicgrammar.eyp 
 
 Run with:
 
@@ -29,16 +29,16 @@ my $reduce = 1;
 %}
 
 %lexer {
-      m{\G(\s*)(?:#.*)?(\s*)}gc and $self->tokenline("$1$2" =~ tr{\n}{});
-      m{\G(LEFT|RIGHT)\b}gic         and return (uc($1), uc($1));
-      m{\G([0-9]+)}gc                and return ('NUM', $1);
-      m{\G(.)}gc                     and return ($1,    $1);
-  }
+    m{\G(\s*)(?:#.*)?(\s*)}gc and $self->tokenline("$1$2" =~ tr{\n}{});
+    m{\G(LEFT|RIGHT)\b}gic         and return (uc($1), uc($1));
+    m{\G([0-9]+)}gc                and return ('NUM', $1);
+    m{\G(.)}gc                     and return ($1,    $1);
+}
 
 %conflict leftORright {
   # if reduce and next token is '-'
   if ($reduce && ${$self->input} =~ m{\G(?=-)}gc) 
-       { $self->YYSetReduce('-', 'MINUS' ); }
+       { $self->YYSetReduce('-', ':MINUS' ); }
   else { $self->YYSetShift('-'); }
 }
 
@@ -59,7 +59,7 @@ c:
 
 expr: 
       '(' $expr ')'  { $expr } 
-    | %name MINUS
+    | %name :MINUS
       expr.left                         %PREC leftORright
                 '-' expr.right          %PREC leftORright
          { $left -$right }
