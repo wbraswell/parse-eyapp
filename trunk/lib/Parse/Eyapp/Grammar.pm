@@ -189,7 +189,12 @@ sub classname {
   }
 
   my $naming_scheme = $self->{GRAMMAR}{NAMINGSCHEME};
-  $name = $naming_scheme->($self, $index, $lhs, $rhs) unless $name;
+  if (!$name) {
+    $name = $naming_scheme->($self, $index, $lhs, $rhs);
+  }
+  elsif ($name =~ /^:/) { # it is a label only
+    $name = $naming_scheme->($self, $index, $lhs, $rhs).$name;
+  }
 
   return $name;
 }

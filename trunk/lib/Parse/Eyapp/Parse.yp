@@ -281,6 +281,7 @@ ENDOFLEXER
 %token EXPECT        /* is %expect */
 %token HEADCODE      /* is %{ Perl code ... %} */
 %token IDENT         /* is [A-Za-z_][A-Za-z0-9_]* */
+%token LABEL         /* is :[A-Za-z0-9_]+ */
 %token LITERAL       /* is a string literal like 'hello' */
 %token METATREE      /* is %metatree */
 %token NAME          /* is %name */             
@@ -796,7 +797,13 @@ optname: /* empty */
 
            $_[2] 
          }
-       ;
+       | NAME LABEL
+         {  # LABELs are used for dynamic conflict resolution
+                      # save bypass status
+           $_[2][2] = $_[1][0];
+           $_[2] 
+         }
+;
 
 prec: PREC symbol
         {
@@ -1029,12 +1036,14 @@ sub _Lexer {
             # like in <%name LIST_of_STH *>
             # like in <%name LIST_of_STH +>
             # like in <%name OPT_STH ?>
+            # returns STAR or PLUS or OPTION
             $$input=~/\G(?:<\s*%name\s*($ID)\s*)?([*+?])\s*>/gc
         and return($listtoken{$2},[ $1, $lineno[0] ]);
 
             # like in %name LIST_of_STH *
             # like in %name LIST_of_STH +
             # like in %name OPT_STH ?
+            # returns STAR or PLUS or OPTION
             $$input=~/\G(?:%name\s*($ID)\s*)?([*+?])/gc
         and return($listtoken{$2},[ $1, $lineno[0] ]);
 

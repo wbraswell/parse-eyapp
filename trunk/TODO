@@ -1,3 +1,9 @@
+  * Documentation
+     - Simpler intro
+     - Separate parsing from tree transformation
+
+  * Article: rewrite, both research and divulgation
+
   * Error message when a conflict handler isn't used is inaccurate:
 
       ~/LEyapp/examples/debuggingtut$ eyapp dynamicgrammar.eyp 
@@ -21,6 +27,9 @@
       * Lexer automatic construction
       * lexer must support a sub name
          %lexer mylexer
+
+  * Lars request (see dir contributions): allow AST classes to be Moose or any other OOP framework
+
   * Provide a module providing regexp for most common non destructive lexing: NUMs, IDs, etc
 
       use Parse::Eyapp::LexSupport qw{INT PERLWS ID};
@@ -49,15 +58,8 @@
 
       m{\G(.)}gc               and return ($1,    $1);
 
-  * Article: rewrite, both research and divulgation
-
   * Parse::Eyapp::Driver::main 
-     - option to dump YAML instead
      - option to send output to a file
-
-  * Documentation
-     - Simpler intro
-     - Separate parsing from tree transformation
 
   * bison directives: 
 
@@ -80,9 +82,7 @@
   * Dynamic conflict resolution: test YYSetShift
         The case where the default is a reduction is not solved. Investigate
 
-  * C interface with YAML
-
-  * Lars request (see dir contributions): allow AST classes to be Moose or any other OOP framework
+  * Further study YAML (class preservation)
 
   * Provide debugging support for standalone modules: currently skipped
 
