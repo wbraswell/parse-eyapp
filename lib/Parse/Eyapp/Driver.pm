@@ -365,8 +365,13 @@ sub YYSetReduce {
 
   # Action can be given using the name of the production
   unless (looks_like_number($action)) {
+    if ($action =~ /^:/) {
+      ($action) = grep { /$action/ } $self->YYNames;
+    }
     my $actionnum = $self->YYIndex($action);
-    croak "YYSetReduce error: can't find production '$action'. Did you forget to name it?" unless looks_like_number($actionnum);
+    unless (looks_like_number($actionnum)) {
+      croak "YYSetReduce error: can't find production '$action'. Did you forget to name it?";
+    }
     $action = -$actionnum;
   }
 
