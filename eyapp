@@ -180,7 +180,7 @@ use Parse::Eyapp;
 
 use strict;
 
-our ( $opt_n, $opt_m, $opt_V, $opt_v, $opt_o, $opt_h, $opt_s, $opt_t, $opt_b, $opt_c, $opt_B);
+our ( $opt_n, $opt_m, $opt_V, $opt_v, $opt_o, $opt_h, $opt_s, $opt_t, $opt_b, $opt_c, $opt_B, $opt_C);
 
 sub Usage {
 	my($prog)=(fileparse($0,'\..*'))[0];
@@ -204,6 +204,7 @@ Usage:	$prog [options] grammar[.eyp]
     -b shebang  Adds '#!<shebang>' as the very first line of the output file
     -B prompt   Adds a modulino call '__PACKAGE->main(<prompt>) unless caller();' 
                 as the very last line of the output file
+    -C          An abbreviation for the combined use of -b ''  -B ''
     -c grammar  Displays the "clean" grammar without actions     
     -V          Display current version of Parse::Eyapp and gracefully exits
     -h          Display this help screen
@@ -216,7 +217,7 @@ EOF
 
 my($nbargs)=@ARGV;
 
-	getopts('Vhvsnc:b:B:m:t:o:')
+	getopts('CVhvsnc:b:B:m:t:o:')
 or	Usage;
 
    (  ($opt_V and $nbargs > 1)
@@ -307,6 +308,11 @@ $opt_n = $opt_n ? 0 : 1;
 
 	open(OUT,">$outfile")
 or	die "Cannot open $outfile for writing.\n";
+
+    defined($opt_C) and do {
+      $opt_b = '' unless defined $opt_b;
+      $opt_B = '' unless defined $opt_B;
+    };
 
     defined($opt_b)
 and do {
