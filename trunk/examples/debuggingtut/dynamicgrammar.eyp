@@ -36,8 +36,8 @@ my $reduce = 1;
 }
 
 %conflict leftORright {
-  # if reduce and next token is '-'
-  if ($reduce && ${$self->input} =~ m{\G(?=-)}gc) 
+  # reduce if $reduce and next token is '-'
+  if ($reduce && m{\G(?=-)}gc) 
        { $self->YYSetReduce('-', ':MINUS' ); }
   else { $self->YYSetShift('-'); }
 }
