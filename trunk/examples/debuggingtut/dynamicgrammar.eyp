@@ -7,7 +7,7 @@ at the programmer's command.
 
 Compile it with:
 
-    eyapp -b '' -B '' dynamicgrammar.eyp 
+    eyapp -C dynamicgrammar.eyp 
 
 Run with:
 
