@@ -1,5 +1,6 @@
 Revision history for Perl extension Eyapp.
 1.155
+  * Labels only after %name accepted
   * -B prompt eyapp option added
   *  -yml option in Parse::Eyapp::Driver::main to dump YAML 
   *  While %lexer provides $self, %conflict did not. Now consistent. $self is 
