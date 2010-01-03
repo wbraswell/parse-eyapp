@@ -62,7 +62,7 @@ expr:
     | %name :MINUS
       expr.left                         %PREC leftORright
                 '-' expr.right          %PREC leftORright
-         { $left -$right }
+         { $left - $right }
 
     | NUM
 ;
