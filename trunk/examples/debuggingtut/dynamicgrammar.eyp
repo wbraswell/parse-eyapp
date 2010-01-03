@@ -23,6 +23,11 @@ The file C<input_for_dynamicgrammar.txt> contains:
             RIGHT
             3-1-1 # right: 3
 
+=head1 SEE ALSO
+
+File C<examples/debuggingtut/dynamicgrammar0.eyp> is similar
+to this grammar, but the shift-reduce conflict is left unsolved
+
 =cut
 
 my $reduce = 1;
