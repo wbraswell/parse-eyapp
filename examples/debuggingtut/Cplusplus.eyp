@@ -11,7 +11,6 @@ my $PUN    = qr{\G([-+*/=();,])};
 my $ISDEC  = qr{\G(?=
                       [)\s]*  # closing parenthesis, s.t. like: ') ) )'
                       [;=]\   # followed by semicolon or '='
-                      s*      # these are needed to guarantee that the next token is ')'
                   )
                }x;
 %}
