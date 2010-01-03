@@ -6,7 +6,7 @@ Compile it with:
     eyapp -C dynamicgrammar0.eyp 
 
 and see the C<dynamicgrammar.output> file. 
-By default, right associativity is chosen. Run it with
+By default, right associativity is always chosen. Run it with
 
     $ ./dynamicgrammar0.pm -f input_for_dynamicgrammar.txt 
 
