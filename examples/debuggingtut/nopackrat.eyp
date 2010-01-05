@@ -45,16 +45,12 @@ my $count = 0;
   $count++;
   # nested parsing of the remain of the input ...
   my $r = substr($_, pos($_));
-  my $nrx = ($r =~ tr/x//);
+  my $nrx = ($r =~ tr/x//); # count the number of remaining 'x'
+  # just for debugging ...
   print "count = $count r = $r nrx = $nrx pos = ".pos($_)."\n";
 
-  if ($count == $nrx+1) { 
-     $self->YYSetReduce('x', 'MIDx' ) 
-  }
-  else { 
-    $self->YYSetShift('x') 
-  }
-}
+  if ($count == $nrx+1) { $self->YYSetReduce('x', 'MIDx' ) }
+  else { $self->YYSetShift('x') } }
 
 %expect 1
 
