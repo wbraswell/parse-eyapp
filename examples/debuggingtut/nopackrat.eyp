@@ -1,0 +1,73 @@
+%{
+=head1 SYNOPSIS
+
+Packrat parsers cannot recognize some unambiguous grammars, such as the following 
+Example taken from Bryan Ford (2002): 
+I<Functional Pearl: Packrat Parsing: Simple, Powerful, Lazy, Linear Time>
+
+    S : x' S 'x' | 'x'
+
+In fact, neither LL(k) nor LR(k) parsing algorithms are capable of recognizing this example.
+
+Compile it with:
+
+        eyapp -C nopackrat.eyp
+
+Run the program with s.t. like:
+
+        ./nopackrat.pm -t -c 'xx   x   x x     xx'
+
+=head1 SEE ALSO
+
+
+=over 2 
+
+=item *  http://en.wikipedia.org/wiki/Parsing_expression_grammar,
+         entry 'Parsing expression grammar' in the Wikipedia
+
+=item * Bryan Ford (2002). Functional Pearl: Packrat Parsing: Simple, Powerful, Lazy, Linear Time
+        http://pdos.csail.mit.edu/~baford/packrat/icfp02/packrat-icfp02.pdf
+
+=back
+
+=cut
+
+my $count = 0;
+
+%}
+
+%lexer {
+  m{\G\s*}gc;
+  m{\G(.)}gc  and return ($1, $1);
+}
+
+%conflict isInTheMiddle {
+  $count++;
+  # nested parsing of the remain of the input ...
+  my $r = substr($_, pos($_));
+  my $nrx = ($r =~ tr/x//);
+  print "count = $count r = $r nrx = $nrx pos = ".pos($_)."\n";
+
+  if ($count == $nrx+1) { 
+     $self->YYSetReduce('x', 'MIDx' ) 
+  }
+  else { 
+    $self->YYSetShift('x') 
+  }
+}
+
+%expect 1
+
+%tree 
+
+%%
+
+S: 
+    %name xSx
+    'x'               %PREC isInTheMiddle
+        S 'x'  
+  | %name MIDx
+    'x'               %PREC isInTheMiddle
+;
+
+%%
