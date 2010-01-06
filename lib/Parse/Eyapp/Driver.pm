@@ -1214,6 +1214,7 @@ sub main {
     "slurp!"         => \$slurp,         # read until EOF or CR is reached
     "argfile!"       => \$inputfromfile, # take input string from @_
     "yaml"           => \$yaml,          # dumps YAML for $tree: YAML must be installed
+    "margin=i"       => \$Parse::Eyapp::Node::INDENT,      
   );
 
   pod2usage() if $help;
