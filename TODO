@@ -1,3 +1,5 @@
+  * - eyapp option namingscheme
+    - eyapp option -TREE: same as %tree
   * Documentation
      - Simpler intro
      - Separate parsing from tree transformation
