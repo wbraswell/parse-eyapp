@@ -31,6 +31,10 @@ Run the program with s.t. like:
 =item * Bryan Ford (2002). Functional Pearl: Packrat Parsing: Simple, Powerful, Lazy, Linear Time
         http://pdos.csail.mit.edu/~baford/packrat/icfp02/packrat-icfp02.pdf
 
+=item * "Packrat Parsers Can Support Left Recursion". PEPM '08.
+        January 2008. http://www.vpri.org/pdf/tr2007002_packrat.pdf. Retrieved
+        2009-08-04.
+
 =back
 
 =cut
