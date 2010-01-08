@@ -48,8 +48,8 @@ my(%known_options)= (
         1       =>  "Create a standalone parser"
     },
     buildingtree   =>  {
-        0       =>  "Not building AST",
-        1       =>  "Building AST"
+        0       =>  "Not building AST (for lists)",
+        1       =>  "Building AST (for lists)"
     },
     input       =>  {
         ''      =>  "Input text of grammar"
@@ -62,6 +62,10 @@ my(%known_options)= (
     },
     modulino   =>  {
         ''      =>  "Produce modulino code at the end of the generated module"
+    },
+    tree  =>  {
+        0       =>  "don't build AST",
+        1       =>  "build AST"
     },
 );
 
@@ -78,6 +82,7 @@ my(%default_options)= (
     shebang => undef,
     prefixname => '',
     modulino => undef,
+    tree => undef,
 );
 
 my(%actions)= (

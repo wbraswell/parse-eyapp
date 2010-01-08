@@ -183,8 +183,7 @@ sub process_production {
   for my $s (0..$#$rhs) {
       my($what,$value)=@{$$rhs[$s]};
 
-          $what eq 'CODE'
-      and do { # TODO: modify name scheme: RULE_POSITION
+      $what eq 'CODE' and do { # TODO: modify name scheme: RULE_POSITION
           my($tmplhs)='@'.$position."-$s";
 
           if ($value) {
@@ -1174,6 +1173,8 @@ sub _AddRules {
     and _SyntaxError(0,"More than one empty rule for symbol $lhs",$lineno);
 }
 
+#                0        1         2       3
+# Args: object, input, fistline, filename, tree
 sub Parse {
     my($self)=shift;
 
@@ -1188,6 +1189,16 @@ sub Parse {
     my $firstline = $_[1];
     $filename = $_[2] or croak "Unknown input file";
     @lineno= $firstline? ($firstline, $firstline) : (1,1);
+
+    $tree = $_[3];
+    if ($tree) { # factorize!
+      $buildingtree = 1;
+      $bypass = 0;
+      $alias = 0;
+      $defaultaction = [ ' goto &Parse::Eyapp::Driver::YYBuildAST ', 0]; 
+      $namingscheme = [ '\&give_rhs_name', 0];
+    }
+
     $nberr=0;
     $prec=0;
     $labelno=0;
