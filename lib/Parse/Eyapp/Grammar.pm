@@ -385,76 +385,6 @@ sub RulesTable {
     $text;
 }
 
-###############################################################
-# Method to produce conflict information
-# to be used by dynamic conflict solving, e.g. 
-# YYSetReduce(token, 'rule_name')
-# YYSetShift(token)
-# 
-# Rules:
-# ------
-# 0:	$start -> s $end
-# 1:	s -> /* empty */
-# 2:	s -> s ws
-# 3:	s -> s ns
-# 4:	ns -> /* empty */
-# 5:	ns -> ns NUM
-# 6:	ws -> /* empty */
-# 7:	ws -> ws ID
-# 
-#   DB<3> x $self->{CONFLICTS}{FORCED}
-# 0  HASH(0x88e2998)
-#    'DETAIL' => HASH(0x88a7d0c)
-#       1 => HASH(0x88dbe98)
-#          'LIST' => ARRAY(0x88dbeb0)
-#             0  ARRAY(0x88dbec8)
-#                0  'NUM'
-#                1  '-6' 3 
-#             1  ARRAY(0x88dbab4)
-#                0  'ID'
-#                1  '-6'
-#             2  ARRAY(0x88dba90)
-#                0  "\c@"
-#                1  '-4'
-#             3  ARRAY(0x88dbf58)
-#                0  "\c@"
-#                1  '-6'
-#          'TOTAL' => ARRAY(0x88e235c)
-#             0  1
-#             1  3
-#       2 => HASH(0x88dbfac)
-#          'LIST' => ARRAY(0x88dbfd0)
-#             0  ARRAY(0x88dbfe8)
-#                0  'NUM'
-#                1  '-3'
-#          'TOTAL' => ARRAY(0x88dbd3c)
-#             0  1
-#       4 => HASH(0x88dbdd8)
-#          'LIST' => ARRAY(0x88dbe38)
-#             0  ARRAY(0x88dbe50)
-#                0  'ID'
-#                1  '-2'
-#          'TOTAL' => ARRAY(0x88dbdb4)
-#             0  1
-#    'TOTAL' => ARRAY(0x88e238c)
-#       0  3
-#       1  3
-# 
-###############################################################
-sub _Conflicts {
-  my $self = shift;
-  my $conflicts = $self->{CONFLICTS}{FORCED}{DETAIL};
-
-  # Just while developping
-  require Data::Dumper;
-  Data::Dumper->import;
-  local $Data::Dumper::Indent = 0;
-  local $_ = Dumper($conflicts);
-
-  s/^\$VAR\d*\s*=\s*//;
-  $_
-}
-
 ################################
 # Methods to get HEAD and TAIL #
 ################################
@@ -633,6 +563,7 @@ sub _ReduceGrammar {
                    PREFIX         => $values->{PREFIX},   # yyprefix
                    NAMINGSCHEME   => $values->{NAMINGSCHEME}, # added to allow programmable production naming schemes (%name)
                    NOCOMPACT      => $values->{NOCOMPACT}, # Do not compact action tables. No DEFAULT field for "STATES"
+                   CONFLICT       => $values->{CONFLICT},  # list of conflict handlers
                    TOKENNAMES     => {},
                  }, __PACKAGE__;
 
