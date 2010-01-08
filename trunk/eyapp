@@ -23,6 +23,13 @@ eyapp - A Perl front-end to the Parse::Eyapp module
 
   eyapp -vc grammar.eyp  # Strip comments also
 
+  eyapp  -b shebang grammar.eyp #  Adds '#!<shebang>' as the very first line of the output file
+
+  eyapp  -B prompt grammar.eyp  #  Adds a modulino call at the end
+
+  eyapp -C grammar.eyp          # An abbreviation for the combined use of -b ''  -B ''
+
+  eyapp  -T grammar.eyp         #  Equivalent to %tree
 
 =head1 DESCRIPTION
 
@@ -181,6 +188,7 @@ use Parse::Eyapp;
 use strict;
 
 our ( $opt_n, $opt_m, $opt_V, $opt_v, $opt_o, $opt_h, $opt_s, $opt_t, $opt_b, $opt_c, $opt_B, $opt_C);
+our $opt_T;
 
 sub Usage {
 	my($prog)=(fileparse($0,'\..*'))[0];
@@ -205,7 +213,9 @@ Usage:	$prog [options] grammar[.eyp]
     -B prompt   Adds a modulino call '__PACKAGE->main(<prompt>) unless caller();' 
                 as the very last line of the output file
     -C          An abbreviation for the combined use of -b ''  -B ''
+    -T          Equivalent to %tree
     -c grammar  Displays the "clean" grammar without actions     
+    -vc grammar Displays the "clean" grammar without actions. Strip comments also
     -V          Display current version of Parse::Eyapp and gracefully exits
     -h          Display this help screen
 
@@ -217,7 +227,7 @@ EOF
 
 my($nbargs)=@ARGV;
 
-	getopts('CVhvsnc:b:B:m:t:o:')
+	getopts('CTVhvsnc:b:B:m:t:o:')
 or	Usage;
 
    (  ($opt_V and $nbargs > 1)
@@ -280,12 +290,14 @@ or	do {
 	or	die "Cannot open $filename for reading.\n";
 };
 
-my($parser)=new Parse::Eyapp(inputfile => $filename);
+my @args = (inputfile => $filename, );
+push @args, (tree => 1) if $opt_T;
+
+my($parser)=new Parse::Eyapp(@args);
 
 my($warnings)=$parser->Warnings();
 
-	$warnings !~ m{^\s*$} 
-and	print STDERR "$warnings\n";
+$warnings !~ m{^\s*$} and print STDERR "$warnings\n";
 
 $parser->outputtables($path, $base) if $opt_v or $warnings;
 

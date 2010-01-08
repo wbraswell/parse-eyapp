@@ -1,5 +1,11 @@
-  * - eyapp option namingscheme
+  * EBNF (a|b|c)*
     - eyapp option -TREE: same as %tree
+  * - eyapp option namingscheme
+    - eyapp option -start (defines the start symbol)
+       Eyapp -> Lalr -> Grammar -> Options
+                            `----> Parse
+  * intermediate actions in give_rhs_name? check, test
+    
   * Documentation
      - Simpler intro
      - Separate parsing from tree transformation
