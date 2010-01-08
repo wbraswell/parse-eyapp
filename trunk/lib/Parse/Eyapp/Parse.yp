@@ -1196,7 +1196,7 @@ sub Parse {
       $bypass = 0;
       $alias = 0;
       $defaultaction = [ ' goto &Parse::Eyapp::Driver::YYBuildAST ', 0]; 
-      $namingscheme = [ '\&give_rhs_name', 0];
+      $namingscheme = [ '\&give_lhs_name', 0];
     }
 
     $nberr=0;
@@ -1232,6 +1232,7 @@ sub Parse {
               'PREFIX',
               'NAMINGSCHEME',
               'NOCOMPACT',
+              'CONFLICT',
             }
     =       (  $head,  $tail,  $rules,  $nterm,  $term,
                $nullable, $precterm, $syms, $start, $expect, 
@@ -1239,6 +1240,7 @@ sub Parse {
                $prefix,
                $namingscheme,
                $nocompact,
+               \@conflict,
             );
 
     undef($input);
