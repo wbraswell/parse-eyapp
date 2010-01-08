@@ -1,6 +1,12 @@
+  * @conflicts went to Parse::Eyapp:Grammar but it is staying there. We have to push it forward 
+    conflict handlers must be solved at the Output level.
+
   * EBNF (a|b|c)*
     - eyapp option -TREE: same as %tree
+      currently only give_lhs is used, but it has to be parametrized
+
   * - eyapp option namingscheme
+
     - eyapp option -start (defines the start symbol)
        Eyapp -> Lalr -> Grammar -> Options
                             `----> Parse
