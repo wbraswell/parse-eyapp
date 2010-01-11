@@ -1,3 +1,4 @@
+  * eyapp -b option: -b '' <=> #!/usr/bin/env perl -w
   * @conflicts went to Parse::Eyapp:Grammar but it is staying there. We have to push it forward 
     conflict handlers must be solved at the Output level.
 
