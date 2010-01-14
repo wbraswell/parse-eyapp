@@ -1,3 +1,36 @@
+  * Add option nocompact to eyapp.
+    The info about conflicts in the .output file isn't detailed enough. It does not describes in full detail which tokens 
+    and productions are involved!
+
+      File Cplusplus2.eyp in softwarepracticeandexperince/code
+      State 19:
+
+          expr -> ID .	(Rule 5)
+          declarator -> ID . spec	(Rule 12)
+
+          ')'	[reduce using rule 14 (spec)]
+          '['	reduce using rule 14 (spec)
+          $default	reduce using rule 5 (expr)
+
+          spec	go to state 18
+
+      with %nocompact:
+        State 19:
+
+            expr -> ID .	(Rule 5)
+            declarator -> ID . spec	(Rule 12)
+
+            ')'	[reduce using rule 14 (spec)]
+            ')'	reduce using rule 5 (expr)
+            '+'	reduce using rule 5 (expr)
+            '='	reduce using rule 5 (expr)
+            '['	reduce using rule 14 (spec)
+
+            spec	go to state 18
+
+
+  Here the conflict is with ')' 
+
   * overload =~ 
   * eyapp -b option: -b '' <=> #!/usr/bin/env perl -w
   * @conflicts went to Parse::Eyapp:Grammar but it is staying there. We have to push it forward 
