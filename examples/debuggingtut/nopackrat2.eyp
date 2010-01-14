@@ -9,7 +9,7 @@ I<Functional Pearl: Packrat Parsing: Simple, Powerful, Lazy, Linear Time>
 
 In fact, neither LL(k) nor LR(k) parsing algorithms are capable of recognizing this example.
 
-This example is more complex than the former. 
+This grammar is a more complex variant of  the former. 
 
 Compile this grammar with:
 
