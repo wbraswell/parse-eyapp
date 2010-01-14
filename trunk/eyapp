@@ -15,21 +15,24 @@ eyapp - A Perl front-end to the Parse::Eyapp module
 
   eyapp [options] grammar[.yp]
 
-  eyapp -V               # Produce .output file
+  eyapp -V                      # Produce .output file
 
-  eyapp -h               # help
+  eyapp -h                      # help
 
-  eyapp -c grammar.eyp   # Strip semantic actions
+  eyapp -c grammar.eyp          # Strip semantic actions
 
-  eyapp -vc grammar.eyp  # Strip comments also
+  eyapp -vc grammar.eyp         # Strip comments also
 
   eyapp  -b shebang grammar.eyp #  Adds '#!<shebang>' as the very first line of the output file
 
   eyapp  -B prompt grammar.eyp  #  Adds a modulino call at the end
 
-  eyapp -C grammar.eyp          # An abbreviation for the combined use of -b ''  -B ''
+  eyapp  -C grammar.eyp         # An abbreviation for the combined use of -b ''  -B ''
 
   eyapp  -T grammar.eyp         #  Equivalent to %tree
+
+  eyapp  -N grammar.eyp         # Equivalent to %nocompact. Do not compact action tables. 
+                                  Use to have more accurate information when there are conflicts
 
 =head1 DESCRIPTION
 
@@ -111,6 +114,21 @@ of I<$Config{perlpath}> will be used instead.
 
 Adds a modulino call '__PACKAGE->main(<prompt>) unless caller();' 
 as the very last line of the output file. The argument is mandatory.
+
+
+=item  I<-C grammar.eyp>         
+
+An abbreviation for the combined use of I<-b ''> and  I<-B ''>
+
+=item I<-T grammar.eyp>         
+
+Equivalent to C<%tree>.
+
+
+=item I<-N grammar.eyp>         
+
+Equivalent to %nocompact. Do not compact action tables. 
+Use to have more accurate information when there are conflicts
 
 =item I<grammar>
 
