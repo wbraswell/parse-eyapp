@@ -33,6 +33,7 @@ sub new {
                              $self->Option('firstline'),  # Line where the grammar source starts
                              $self->Option('inputfile'),  # The file or program containing the grammar
                              $self->Option('tree'),       # %tree activated
+                             $self->Option('nocompact'),  # %nocompact
                              #$self->Option('prefixname'),  # yyprefix
                              #$self->Option('buildingtree')  # If building AST
                             );

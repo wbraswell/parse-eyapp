@@ -67,6 +67,10 @@ my(%known_options)= (
         0       =>  "don't build AST",
         1       =>  "build AST"
     },
+    nocompact  =>  {
+        0       =>  "Do not compact action tables. No DEFAULT field for 'STATES'",
+        1       =>  "Compact action tables"
+    },
 );
 
 my(%default_options)= (
@@ -83,6 +87,7 @@ my(%default_options)= (
     prefixname => '',
     modulino => undef,
     tree => undef,
+    nocompact => 0,
 );
 
 my(%actions)= (

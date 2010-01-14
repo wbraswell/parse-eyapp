@@ -1173,8 +1173,9 @@ sub _AddRules {
     and _SyntaxError(0,"More than one empty rule for symbol $lhs",$lineno);
 }
 
-#                0        1         2       3
-# Args: object, input, fistline, filename, tree
+# This sub is called fro Parse::Eyapp::Grammar::new
+#                0        1         2       3    4
+# Args: object, input, fistline, filename, tree, nocompact
 sub Parse {
     my($self)=shift;
 
@@ -1198,6 +1199,8 @@ sub Parse {
       $defaultaction = [ ' goto &Parse::Eyapp::Driver::YYBuildAST ', 0]; 
       $namingscheme = [ '\&give_lhs_name', 0];
     }
+
+    $nocompact = $_[4];
 
     $nberr=0;
     $prec=0;
