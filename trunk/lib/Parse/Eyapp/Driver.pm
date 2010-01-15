@@ -676,16 +676,20 @@ sub YYBuildAST {
   for(my $i = 0; $i < @right; $i++) {
     local $_ = $right[$i]; # The symbol
     my $ch = $_[$i]; # The attribute/reference
-    if ($self->YYIssemantic($_)) {
-      my $class = $PREFIX.'TERMINAL';
-      my $node = bless { token => $_, attr => $ch, children => [] }, $class;
-      push @children, $node;
-      next;
-    }
 
-    if ($self->YYIsterm($_)) {
-      TERMINAL::save_attributes($ch, $node) if UNIVERSAL::can($PREFIX."TERMINAL", "save_attributes");
-      next;
+    # is $ch already a Parse::Eyapp::Node. May be a terminal and a syntax variable share the same name?
+    unless (UNIVERSAL::isa($ch, 'Parse::Eyapp::Node')) {
+      if ($self->YYIssemantic($_)) {
+        my $class = $PREFIX.'TERMINAL';
+        my $node = bless { token => $_, attr => $ch, children => [] }, $class;
+        push @children, $node;
+        next;
+      }
+
+      if ($self->YYIsterm($_)) {
+        TERMINAL::save_attributes($ch, $node) if UNIVERSAL::can($PREFIX."TERMINAL", "save_attributes");
+        next;
+      }
     }
 
     if (UNIVERSAL::isa($ch, $PREFIX."_PAREN")) { # Warning: weak code!!!
