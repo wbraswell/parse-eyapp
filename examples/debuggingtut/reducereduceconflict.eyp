@@ -31,9 +31,9 @@ name_list:
 
 Compile it with:
 
-            eyapp -C reducereduceconflict.eyp
+            eyapp -NC reducereduceconflict.eyp
 
-run it with this options:
+See the C<.output> file. Run it with this options:
 
             ./reducereduceconflict.pm -d -c 'a,b:c d:e,'
 
