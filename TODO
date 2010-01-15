@@ -1,3 +1,9 @@
+  * Article: rewrite, both research and divulgation
+
+  * Documentation
+     - Simpler intro
+     - Separate parsing from tree transformation
+
   * @conflicts went to Parse::Eyapp:Grammar but it is staying there. We have to push it forward 
     conflict handlers must be solved at the Output level.
 
@@ -12,12 +18,6 @@
                             `----> Parse
   * intermediate actions in give_rhs_name? check, test
     
-  * Documentation
-     - Simpler intro
-     - Separate parsing from tree transformation
-
-  * Article: rewrite, both research and divulgation
-
   * Error message when a conflict handler isn't used is inaccurate:
 
       ~/LEyapp/examples/debuggingtut$ eyapp dynamicgrammar.eyp 
