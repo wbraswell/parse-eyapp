@@ -1,3 +1,4 @@
+/* a token and a syntactic with the same name: "type" */
 %{
 my $ID = qr{[A-Za-z][A-Za-z0-9_]*};
              # Identifiers separated by commas
@@ -24,13 +25,10 @@ my $RESTOFLIST = qr{$IDLIST \) \s* ; }x;
 %strict
 
 %token ID NUM 
-#%syntactic token TYPE
 %left   '-' '+'
 %left   '*' '/'
 
-%tree
-
-#%expect-rr 1
+%expect-rr 1
 
 %%
 
@@ -63,7 +61,7 @@ expr : '(' expr ')'   { $_[2] } /* bypass */
 %%
 
 unless (caller()) {
-  $Parse::Eyapp::Node::INDENT = 1;
+  #$Parse::Eyapp::Node::INDENT = 1;
   my $prompt = << 'EOP';
 Try this input:
     type 
