@@ -1320,10 +1320,12 @@ sub _Error {
     }
   }
 
-  my @expected = map { "'$_'" } $parser->YYExpect();
+  my @expected = map { ($_ ne '')? "'$_'" : q{'end of input'}} $parser->YYExpect();
   my $expected = '';
-    $expected = "Expected one of these terminals: @expected"
-  if @expected;
+  if (@expected) {
+    $expected = (@expected >1) ? "Expected one of these terminals: @expected" 
+                              : "Expected terminal: @expected"
+  }
 
   my $tline = '';
   if (blessed($attr) && $attr->can('line')) {
