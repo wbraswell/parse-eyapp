@@ -133,6 +133,12 @@ sub give_token_name {
   return $name;
 }
 
+sub camelize
+{
+    my $s = shift;
+    join('', map{ ucfirst $_ } split(/(?<=[A-Za-z])_(?=[A-Za-z])|\b/, $s));
+}
+
 sub give_rhs_name {
   my ($self, $index, $lhs, $rhs) = @_;
 
@@ -140,27 +146,31 @@ sub give_rhs_name {
   $rhs = '';
 
   unless (@rhs) { # Empty RHS
-    return $lhs.'_is_empty';
+    return camelize($lhs).'_is_empty';
   }
 
   my $names = $self->{GRAMMAR}{TOKENNAMES} || {};
   for (@rhs) {
     if ($self->is_token($_)) { 
+      # remove apostrophes
       s/^'(.*)'$/$1/;
+
+      # explicit name given ?
       my $name = $names->{$_} || '';
+
+      # no name was given, use symbol if is an ID
       unless ($name) {
         $name = $_ if /^\w+$/;
       }
       $rhs .= "_$name" if $name;
     }
     else {
-      s/\W/_/g;
-      $rhs .= "_$_";
+      $rhs .= '_'.camelize($_) if /^\w*$/;
     }
   }
 
   # check if another production with such name exists?
-  my $name = $lhs.'_is'.$rhs;
+  my $name = camelize($lhs).'_is'.$rhs;
   return $name;
 }
 

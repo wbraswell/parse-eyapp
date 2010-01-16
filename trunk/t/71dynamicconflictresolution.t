@@ -23,34 +23,34 @@ SKIP: {
   my $eyapppath = shift @INC; # Supress ~/LEyapp/lib from search path
   eval {
 
-    $r = qx{t/dynamicresolution/persvd.pl -t -c 'type r = (x+2)*3 ..  y/2 ;'};
+    $r = qx{t/dynamicresolution/persvd.pl -t -c 'Type r = (x+2)*3 ..  y/2 ;'};
   };
 
   ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
 
-  my $expected = qr{type_decl_is_TYPE_ID_type\(\s+TERMINAL,\s+TERMINAL,\s+RANGE\(\s+expr_is_expr_TIMES_expr\(\s+expr_is_LP_expr_RP\(\s+expr_is_expr_PLUS_expr\(\s+ID\(\s+TERMINAL\s+\),\s+expr_is_NUM\(\s+TERMINAL\s+\)\s+\)\s+\),\s+expr_is_NUM\(\s+TERMINAL\s+\)\s+\),\s+TERMINAL,\s+expr_is_expr_DIV_expr\(\s+ID\(\s+TERMINAL\s+\),\s+expr_is_NUM\(\s+TERMINAL\s+\)\s+\)\s+\)\s+\)\s+};
+  my $expected = qr{TypeDecl_is_TYPE_ID_Type\(\s+TERMINAL,\s+TERMINAL,\s+RANGE\(\s+Expr_is_Expr_TIMES_Expr\(\s+Expr_is_LP_Expr_RP\(\s+Expr_is_Expr_PLUS_Expr\(\s+ID\(\s+TERMINAL\s+\),\s+Expr_is_NUM\(\s+TERMINAL\s+\)\s+\)\s+\),\s+Expr_is_NUM\(\s+TERMINAL\s+\)\s+\),\s+TERMINAL,\s+Expr_is_Expr_DIV_Expr\(\s+ID\(\s+TERMINAL\s+\),\s+Expr_is_NUM\(\s+TERMINAL\s+\)\s+\)\s+\)\s+\)\s+};
 
-  like($r, $expected,'AST for type r = (x+2)*3 ..  y/2 ;');
+  like($r, $expected,'AST for Type r = (x+2)*3 ..  y/2 ;');
 
   eval {
-    $r = qx{t/dynamicresolution/persvd.pl -t -c 'type e = (x, y, z);'};
+    $r = qx{t/dynamicresolution/persvd.pl -t -c 'Type e = (x, y, z);'};
   };
 
   ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
 
-  $expected = qr{type_decl_is_TYPE_ID_type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+id_list_is_id_list_COMMA_ID\(\s+id_list_is_id_list_COMMA_ID\(\s+ID\(\s+TERMINAL\s+\),\s+TERMINAL\s+\),\s+TERMINAL\s+\)\s+\)\s+\)};
+  $expected = qr{TypeDecl_is_TYPE_ID_Type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+IdList_is_IdList_COMMA_ID\(\s+IdList_is_IdList_COMMA_ID\(\s+ID\(\s+TERMINAL\s+\),\s+TERMINAL\s+\),\s+TERMINAL\s+\)\s+\)\s+\)};
 
-  like($r, $expected,'AST for type e = (x, y, z);');
+  like($r, $expected,'AST for Type e = (x, y, z);');
 
   eval {
-    $r = qx{t/dynamicresolution/persvd.pl -t -c 'type e = (x);'};
+    $r = qx{t/dynamicresolution/persvd.pl -t -c 'Type e = (x);'};
   };
 
   ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
 
-  $expected = qr{type_decl_is_TYPE_ID_type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+ID\(\s+TERMINAL\s+\)\s+\)\s+\)};
+  $expected = qr{TypeDecl_is_TYPE_ID_Type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+ID\(\s+TERMINAL\s+\)\s+\)\s+\)};
 
-  like($r, $expected,'AST for type e = (x);');
+  like($r, $expected,'AST for Type e = (x);');
 
   unlink 't/dynamicresolution/persvd.pl';
 
