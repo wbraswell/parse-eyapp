@@ -1382,6 +1382,16 @@ sub _DBLoad {
   }
 }
 
+### Receives a negative index for the parsing stack: -1 is the top
+### Returns the symbol associated with the state $index
+sub YYSymbol {
+  my $self = shift;
+  my $index = shift;
+  
+  croak "YYSymbol error: index argument must be negative" unless $index < 0;
+  return $self->{STACK}[$index][2];
+}
+
 #Note that for loading debugging version of the driver,
 #this file will be parsed from 'sub _Parse' up to '}#_Parse' inclusive.
 #So, DO NOT remove comment at end of sub !!!
@@ -1409,7 +1419,7 @@ sub _Parse {
   $$errstatus=0;
   $$nberror=0;
   ($$token,$$value)=(undef,undef);
-  @$stack=( [ 0, undef ] );
+  @$stack=( [ 0, undef, undef ] );
   $$check='';
 
     while(1) {
@@ -1422,9 +1432,9 @@ sub _Parse {
 #DBG>   $debug & 0x2
 #DBG> and print STDERR "In state $stateno:\n";
 #DBG>   $debug & 0x08
-#DBG> and print STDERR "Stack:[".
-#DBG>          join(',',map { $$_[0] } @$stack).
-#DBG>          "]\n";
+#DBG> and print STDERR "Stack: ".
+#DBG>          join('->',map { $$_[2]? "$$_[2]->$$_[0]" : $$_[0] } @$stack).
+#DBG>          "\n";
 
 
         if  (exists($$actions{ACTIONS})) {
@@ -1474,7 +1484,7 @@ sub _Parse {
         };
 
 
-                push(@$stack,[ $act, $$value ]);
+                push(@$stack,[ $act, $$value, $$token ]);
 
           $$token ne '' #Don't eat the eof
         and $$token=$$value=undef;
@@ -1556,7 +1566,7 @@ sub _Parse {
 #DBG>     };
 
           push(@$stack,
-                     [ $$states[$$stack[-1][0]]{GOTOS}{$lhs}, $semval ]);
+                     [ $$states[$$stack[-1][0]]{GOTOS}{$lhs}, $semval, $lhs ]);
                 $$check='';
                 $self->{CURRENT_LHS} = undef;
                 next;
@@ -1637,7 +1647,7 @@ sub _Parse {
 #DBG>            $$states[$$stack[-1][0]]{ACTIONS}{error}.
 #DBG>            ".\n";
 
-    push(@$stack, [ $$states[$$stack[-1][0]]{ACTIONS}{error}, undef ]);
+    push(@$stack, [ $$states[$$stack[-1][0]]{ACTIONS}{error}, undef, 'error' ]);
 
     }
 
