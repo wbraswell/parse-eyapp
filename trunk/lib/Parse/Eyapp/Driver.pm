@@ -328,6 +328,12 @@ sub YYTopState {
   $self->{STACK}[$length];
 }
 
+sub YYStack {
+  my $self = shift;
+
+  return $self->{STACK};
+}
+
 # To dynamically set syntactic actions
 # Change it to state, token, action
 # it is more natural

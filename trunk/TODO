@@ -1,8 +1,9 @@
   *  - Save in the stack the transition symbol
-     - Make it an option of eyapp and a directive
+     - Make it an option of eyapp and a directive ?
      - Provide YYSymbol API. $self->YYSymbol(-2) returns the symbol 2 places to the left
      - Use it to solve conflicts
      - Use it for debug info (to build the right sentencial form)
+     - fix tests t/65 and t/66
 
   * Article: rewrite, both research and divulgation
 
