@@ -1,6 +1,12 @@
 Revision history for Perl extension Eyapp.
 1.155
-  * There was a bug in the tree directive whne there were a token 
+  *  - Now YYSymbol(-k) provides the symbol associated with the k-th state
+       from the top of the parsing stack 
+     - The debug format (yydebug activated) shows the transition symbols in the stack
+     - The parsing stack stores the transition symbols
+     - Se file code/reducereduceconflictPPCR.eyp for a way to use it when solving conflicts
+
+  * There was a bug in the tree directive when there was a token 
     with name 'something' and a syntax variable with the same name 
     something. Seems fixed. See t/75tokenandvariablewiththesamename.t
 
