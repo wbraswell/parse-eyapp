@@ -220,6 +220,7 @@ Usage:	$prog [options] grammar[.eyp]
     -m module   Give your parser module the name <module>
                 default is <grammar>
     -v          Create a file <grammar>.output describing your parser
+                Implies option -N
     -s          Create a standalone module in which the driver is included
     -n          Disable source file line numbering embedded in your parser
     -o outfile  Create the file <outfile> for your parser module
@@ -311,8 +312,9 @@ or	do {
 };
 
 my @args = (inputfile => $filename, );
+
 push @args, (tree => 1) if $opt_T;
-push @args, (nocompact => 1) if $opt_N;
+push @args, (nocompact => 1) if ($opt_N or $opt_v);
 
 my ($parser) = Parse::Eyapp->new(@args);
 
