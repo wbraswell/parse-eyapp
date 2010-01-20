@@ -1,4 +1,9 @@
 
+  * eyapp -v option implies -N option
+
+  * YYSymbolStack(0,-k) string with symbols from 0 to last-k
+    YYSymbolStack(-k-2,-k) string with symbols from last-k-2 to last-k
+
   * Article: rewrite, both research and divulgation
 
   * Documentation
