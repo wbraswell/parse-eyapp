@@ -1,5 +1,7 @@
 Revision history for Perl extension Eyapp.
 1.155
+  * eyapp -v option implies -N option
+
   *  - Now YYSymbol(-k) provides the symbol associated with the k-th state
        from the top of the parsing stack 
      - The debug format (yydebug activated) shows the transition symbols in the stack
