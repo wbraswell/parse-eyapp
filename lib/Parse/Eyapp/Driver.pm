@@ -1388,14 +1388,23 @@ sub _DBLoad {
   }
 }
 
-### Receives a negative index for the parsing stack: -1 is the top
+### Receives an  index for the parsing stack: -1 is the top
 ### Returns the symbol associated with the state $index
 sub YYSymbol {
   my $self = shift;
   my $index = shift;
   
-  croak "YYSymbol error: index argument must be negative" unless $index < 0;
   return $self->{STACK}[$index][2];
+}
+
+# YYString(0,-k) string with symbols from 0 to last-k
+# YYString(-k-2,-k) string with symbols from last-k-2 to last-k
+sub YYString {
+  my $self = shift;
+  my ($a, $b) = @_;
+  
+  $a = -@{$self->{STACK}}+$a if $a >= 0;
+  return map { $self->YYSymbol($_) or '' } $a..$b;
 }
 
 #Note that for loading debugging version of the driver,
