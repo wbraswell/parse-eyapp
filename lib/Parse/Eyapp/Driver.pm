@@ -1439,7 +1439,7 @@ sub _Parse {
 #DBG> and print STDERR "In state $stateno:\n";
 #DBG>   $debug & 0x08
 #DBG> and print STDERR "Stack: ".
-#DBG>          join('->',map { $$_[2]? "$$_[2]->$$_[0]" : $$_[0] } @$stack).
+#DBG>          join('->',map { $$_[2]? $$_[2]."->".$$_[0] : $$_[0] } @$stack).
 #DBG>          "\n";
 
 

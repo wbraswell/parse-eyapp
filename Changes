@@ -4,7 +4,7 @@ Revision history for Perl extension Eyapp.
        from the top of the parsing stack 
      - The debug format (yydebug activated) shows the transition symbols in the stack
      - The parsing stack stores the transition symbols
-     - Se file code/reducereduceconflictPPCR.eyp for a way to use it when solving conflicts
+     - See file code/reducereduceconflictPPCR.eyp for a way to use it when solving conflicts
 
   * There was a bug in the tree directive when there was a token 
     with name 'something' and a syntax variable with the same name 
