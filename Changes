@@ -2,6 +2,11 @@ Revision history for Perl extension Eyapp.
 1.155
   * eyapp -v option implies -N option
 
+  * YYSymbolStack(0,-k) string with symbols from 0 to last-k
+    YYSymbolStack(-k-2,-k) string with symbols from last-k-2 to last-k
+    YYSymbolStack(-k-2,-k, filter) string with symbols from last-k-2 to last-k
+                                   where filter can be code, regexp or string
+
   *  - Now YYSymbol(-k) provides the symbol associated with the k-th state
        from the top of the parsing stack 
      - The debug format (yydebug activated) shows the transition symbols in the stack
