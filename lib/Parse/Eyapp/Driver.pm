@@ -1399,12 +1399,19 @@ sub YYSymbol {
 
 # YYString(0,-k) string with symbols from 0 to last-k
 # YYString(-k-2,-k) string with symbols from last-k-2 to last-k
+# YYString(-k-2,-k, regexp) string with symbols from last-k-2 to last-k that match with regexp
 sub YYString {
   my $self = shift;
-  my ($a, $b) = @_;
+  my ($a, $b, $filter) = @_;
   
   $a = -@{$self->{STACK}}+$a if $a >= 0;
-  return map { $self->YYSymbol($_) or '' } $a..$b;
+  
+  my @a = map { $self->YYSymbol($_) or '' } $a..$b;
+   
+  return @a                          unless defined $filter;          # no filter
+  return (grep { $filter->{$_} } @a) if reftype($filter) && (reftype($filter) eq 'CODE');   # sub
+  return (grep  /$filter/, @a)       if reftype($filter) && (reftype($filter) eq 'SCALAR'); # regexp
+  return (grep { $_ eq $filter } @a);                                  # string
 }
 
 #Note that for loading debugging version of the driver,
