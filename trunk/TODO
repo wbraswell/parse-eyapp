@@ -1,6 +1,7 @@
-
-  * YYSymbolStack(0,-k) string with symbols from 0 to last-k
-    YYSymbolStack(-k-2,-k) string with symbols from last-k-2 to last-k
+  * -%modulino directive 
+      %modulino perlinterpreter prompt
+      Equivalent to eyapp -b 'perlinterpreter' and __PACKAGE__->main(prompt) 
+      %modulino '/usr/local/lib/perl/5.10.1/bin/perl5.10.1' 'Try input "type e = (x);": '
 
   * Article: rewrite, both research and divulgation
 
@@ -34,8 +35,6 @@
           rangeORenum -> 
 
       1 shift/reduce conflict and 0 reduce/reduce conflicts
-
-  * -%modulino directive 
 
   *  Line numbers seem to be in a buggy state.
      There is also a "bug" with tokenline and the static attribute approach: tokenline
