@@ -1397,14 +1397,29 @@ sub YYSymbol {
   return $self->{STACK}[$index][2];
 }
 
-# YYString(0,-k) string with symbols from 0 to last-k
-# YYString(-k-2,-k) string with symbols from last-k-2 to last-k
-# YYString(-k-2,-k, regexp) string with symbols from last-k-2 to last-k that match with regexp
-sub YYString {
+# YYSymbolStack(0,-k) string with symbols from 0 to last-k
+# YYSymbolStack(-k-2,-k) string with symbols from last-k-2 to last-k
+# YYSymbolStack(-k-2,-k, filter) string with symbols from last-k-2 to last-k that match with filter
+# YYSymbolStack('SYMBOL',-k, filter) string with symbols from the last occurrence of SYMBOL to last-k
+#                                    where filter can be code, regexp or string
+sub YYSymbolStack {
   my $self = shift;
   my ($a, $b, $filter) = @_;
   
-  $a = -@{$self->{STACK}}+$a if $a >= 0;
+  my $stack = $self->{STACK};
+  my $bottom = -@{$stack};
+  unless (looks_like_number($a)) {
+    # $a is a string: search from the top to the bottom for $a. Return empty list if not found
+    my $p = -1;
+    while ($p >= $bottom) {
+      last if (defined($stack->[$p][2]) && ($stack->[$p][2] eq $a));
+      $p--;
+    }
+    return () if $p < $bottom;
+    $a = $p;
+  }
+  # If positive, $a is an offset from the bottom of the stack 
+  $a = -$bottom+$a if $a >= 0;
   
   my @a = map { $self->YYSymbol($_) or '' } $a..$b;
    
