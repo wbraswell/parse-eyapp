@@ -6,6 +6,8 @@ Revision history for Perl extension Eyapp.
     YYSymbolStack(-k-2,-k) string with symbols from last-k-2 to last-k
     YYSymbolStack(-k-2,-k, filter) string with symbols from last-k-2 to last-k
                                    where filter can be code, regexp or string
+    YYSymbolStack('SYMBOL',-k, filter) string with symbols from the last occurrence of SYMBOL to last-k
+                                   where filter can be code, regexp or string
 
   *  - Now YYSymbol(-k) provides the symbol associated with the k-th state
        from the top of the parsing stack 
