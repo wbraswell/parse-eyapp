@@ -1406,11 +1406,16 @@ sub YYSymbolStack {
   my $self = shift;
   my ($a, $b, $filter) = @_;
   
+  # $b must be negative
+  croak "Error: Second index in YYSymbolStack must be negative\n" unless $b < 0;
+
   my $stack = $self->{STACK};
   my $bottom = -@{$stack};
   unless (looks_like_number($a)) {
     # $a is a string: search from the top to the bottom for $a. Return empty list if not found
-    my $p = -1;
+    # $b must be a negative number
+    # $b must be a negative number
+    my $p = $b;
     while ($p >= $bottom) {
       last if (defined($stack->[$p][2]) && ($stack->[$p][2] eq $a));
       $p--;
