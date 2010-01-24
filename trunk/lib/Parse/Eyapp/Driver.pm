@@ -361,8 +361,26 @@ sub YYRestoreLRAction {
   }
 }
 
+# Fools the lexer to get a new token
+sub YYLookahead {
+  my $self = shift;
+
+  my $pos = pos(${$self->input});
+  my ($nextToken, $val) = $self->YYLexer->($self);
+  # restore pos
+  pos(${$self->input}) = $pos;
+  return $nextToken;
+}
+
 sub YYSetReduce {
   my ($self, $token, $action) = @_;
+
+  $token = [ $token ] unless ref($token);
+  
+  # The reduction action must be performed only if
+  # the next token is inside the $token set
+  my $lookahead = $self->YYLookahead();
+  return unless (grep { $_ eq $lookahead } @$token);
 
   croak "YYSetReduce error: specify a production" unless defined($action);
 
@@ -380,8 +398,6 @@ sub YYSetReduce {
     }
     $action = -$actionnum;
   }
-
-  $token = [ $token ] unless ref($token);
 
   my $conflictname = $self->YYLhs;
   for (@$token) {
