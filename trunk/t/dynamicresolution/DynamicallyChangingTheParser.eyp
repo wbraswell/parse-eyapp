@@ -28,9 +28,9 @@ our $VERSION = '0.01';
 
 %token D S
 %lexer {
-    s{^(\s+)}{} and $self->tokenline($1 =~ tr{\n}{});
+    m{\G(\s+)}gc and $self->tokenline($1 =~ tr{\n}{});
     
-    return ($1,$1) if s/^(.)//;
+    return ($1,$1) if m{\G(.)}gc;
 }
 
 %tree bypass
@@ -41,7 +41,7 @@ our $VERSION = '0.01';
 %conflict ISLAST {
         my $self = shift;
 
-        if (${$self->input()} =~ m{^\s*;\s*S}) {
+        if (${$self->input()} =~ m{(?=\G\s*;\s*S)}) {
           $self->YYSetReduce(';', 'D1' )
         }
         else {
