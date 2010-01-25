@@ -381,16 +381,42 @@ sub YYLookaheads {
   my $pos = pos(${$self->input});
   my @r; # list of lookahead tokens
 
-  for my $i (1..$spec) { 
-    my ($t, $v) = $self->YYLexer->($self);
-    push @r, $t;
-    last if $t eq '';
+  my ($t, $v);
+  if (looks_like_number($spec)) {
+    for my $i (1..$spec) { 
+      ($t, $v) = $self->YYLexer->($self);
+      push @r, $t;
+      last if $t eq '';
+    }
+  }
+  else { # if string
+    do {
+      ($t, $v) = $self->YYLexer->($self);
+      push @r, $t;
+    } while ($t ne $spec && $t ne '');
   }
 
   # restore pos
   pos(${$self->input}) = $pos;
 
   return @r;
+}
+
+sub YYLookBothWays {
+  my $self = shift;
+  my $stackFirst = shift;
+  my $inputLast  = shift;
+
+  my @stackTokens = $self->YYSymbolStack($stackFirst,-1);
+  my @inputTokens = $self->YYLookaheads($inputLast);
+
+  if (wantarray) {
+    return (@stackTokens, @inputTokens);
+  }
+  else {
+    local $" = shift || '';
+    return "@stackTokens@inputTokens";
+  }
 }
 
 sub YYSetReduce {
