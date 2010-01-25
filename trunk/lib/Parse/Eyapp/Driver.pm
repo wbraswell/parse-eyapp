@@ -362,6 +362,7 @@ sub YYRestoreLRAction {
 }
 
 # Fools the lexer to get a new token
+# without modifying the parsing position (pos)
 sub YYLookahead {
   my $self = shift;
 
@@ -370,6 +371,26 @@ sub YYLookahead {
   # restore pos
   pos(${$self->input}) = $pos;
   return $nextToken;
+}
+
+# Fools the lexer to get $spec new tokens
+sub YYLookaheads {
+  my $self = shift;
+  my $spec = shift || 1; # a number
+
+  my $pos = pos(${$self->input});
+  my @r; # list of lookahead tokens
+
+  for my $i (1..$spec) { 
+    my ($t, $v) = $self->YYLexer->($self);
+    push @r, $t;
+    last if $t eq '';
+  }
+
+  # restore pos
+  pos(${$self->input}) = $pos;
+
+  return @r;
 }
 
 sub YYSetReduce {
