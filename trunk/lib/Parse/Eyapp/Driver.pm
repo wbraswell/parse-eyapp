@@ -1131,13 +1131,13 @@ sub line {
   my $self = shift;
 
   if (ref($self)) {
-    $self->{tokenline} = shift if @_;
+    $self->{TOKENLINE} = shift if @_;
 
-    return $self->static_attribute('tokenline', @_,) unless defined($self->{tokenline}); # class/static method 
-    return $self->{tokenline};
+    return $self->static_attribute('TOKENLINE', @_,) unless defined($self->{TOKENLINE}); # class/static method 
+    return $self->{TOKENLINE};
   }
   else { # class/static method
-    return $self->static_attribute('tokenline', @_,); # class/static method 
+    return $self->static_attribute('TOKENLINE', @_,); # class/static method 
   }
 }
 
@@ -1146,13 +1146,13 @@ sub tokenline {
   my $self = shift;
 
   if (ref($self)) {
-    $self->{tokenline} += shift if @_;
+    $self->{TOKENLINE} += shift if @_;
 
-    return $self->static_attribute('tokenline', @_,) unless defined($self->{tokenline}); # class/static method 
-    return $self->{tokenline};
+    return $self->static_attribute('TOKENLINE', @_,) unless defined($self->{TOKENLINE}); # class/static method 
+    return $self->{TOKENLINE};
   }
   else { # class/static method
-    return $self->static_attribute('tokenline', @_,); # class/static method 
+    return $self->static_attribute('TOKENLINE', @_,); # class/static method 
   }
 }
 

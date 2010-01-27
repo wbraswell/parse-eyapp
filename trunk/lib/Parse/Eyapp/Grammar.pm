@@ -14,6 +14,7 @@ use strict;
 use Parse::Eyapp::Options;
 use Parse::Eyapp::Parse;
 use Scalar::Util qw{reftype};
+use Data::Dumper;
 
 ###############
 # Constructor #
@@ -260,8 +261,6 @@ sub Terms {
 
 sub conflictHandlers {
   my $self = shift;
-
-  use Data::Dumper;
 
   my $t = Dumper $self->{GRAMMAR}{CONFLICTHANDLERS};
   $t =~ s/^\$VAR\d*\s*=\s*//;

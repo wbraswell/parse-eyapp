@@ -1,7 +1,9 @@
   * Warning Grammar.pm 
-      sub conflictHandlers  rewrite!
+      sub conflictHandlers  rewrite! or use Data::Dumper forever?
 
   * There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
+
+  * %package directive: equvalent to eyapp -m option 
 
   * -%modulino directive 
       %modulino perlinterpreter prompt
@@ -19,7 +21,7 @@
 
   * EBNF (a|b|c)*
     - eyapp option -TREE: same as %tree
-      currently only give_lhs is used, but it has to be parametrized
+      currently only give_rhs is used, but it has to be parametrized
 
   * - eyapp option namingscheme
 
