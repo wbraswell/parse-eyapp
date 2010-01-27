@@ -42,6 +42,7 @@ my (%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
        YYTERMS    => 'HASH',
        YYBUILDINGTREE  => '',
        YYACCESSORS => 'HASH',
+       YYCONFLICTHANDLERS => 'HASH',
        ); 
 my (%newparams) = (%params, YYPREFIX => '',);
 
