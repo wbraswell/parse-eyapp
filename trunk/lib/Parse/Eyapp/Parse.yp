@@ -208,7 +208,7 @@ sub process_production {
       }
       elsif ($what eq 'CONFLICTHANDLER') {
         my $ch = $value->[0];
-        push @{$conflict{$ch}{production}{$position}}, $s; 
+        push @{$conflict{$ch}{production}{-$position}}, $s; 
          
       }
       

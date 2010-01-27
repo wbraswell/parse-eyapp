@@ -28,7 +28,41 @@ SKIP: {
 
   ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
 
-  my $expected = qr{TypeDecl_is_TYPE_ID_Type\(\s+TERMINAL,\s+TERMINAL,\s+RANGE\(\s+Expr_is_Expr_TIMES_Expr\(\s+Expr_is_LP_Expr_RP\(\s+Expr_is_Expr_PLUS_Expr\(\s+ID\(\s+TERMINAL\s+\),\s+Expr_is_NUM\(\s+TERMINAL\s+\)\s+\)\s+\),\s+Expr_is_NUM\(\s+TERMINAL\s+\)\s+\),\s+TERMINAL,\s+Expr_is_Expr_DIV_Expr\(\s+ID\(\s+TERMINAL\s+\),\s+Expr_is_NUM\(\s+TERMINAL\s+\)\s+\)\s+\)\s+\)\s+};
+  my $expected =  q{
+  typeDecl_is_TYPE_ID_type(TERMINAL,
+    TERMINAL,
+    RANGE(
+      expr_is_expr_TIMES_expr(
+        expr_is_LP_expr_RP(
+          expr_is_expr_PLUS_expr(
+            ID(
+              TERMINAL
+            ),
+            expr_is_NUM(
+              TERMINAL
+            )
+          )
+        ),
+        expr_is_NUM(
+          TERMINAL
+        )
+      ),
+      TERMINAL,
+      expr_is_expr_DIV_expr(
+        ID(
+          TERMINAL
+        ),
+        expr_is_NUM(
+          TERMINAL
+        )
+      )
+    )
+  )};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
 
   like($r, $expected,'AST for Type r = (x+2)*3 ..  y/2 ;');
 
@@ -38,7 +72,29 @@ SKIP: {
 
   ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
 
-  $expected = qr{TypeDecl_is_TYPE_ID_Type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+IdList_is_IdList_COMMA_ID\(\s+IdList_is_IdList_COMMA_ID\(\s+ID\(\s+TERMINAL\s+\),\s+TERMINAL\s+\),\s+TERMINAL\s+\)\s+\)\s+\)};
+  $expected = q{
+    typeDecl_is_TYPE_ID_type(
+      TERMINAL,
+      TERMINAL,
+      ENUM(
+        idList_is_idList_COMMA_ID(
+          idList_is_idList_COMMA_ID(
+            ID(
+              TERMINAL
+            ),
+            TERMINAL
+          ),
+          TERMINAL
+        )
+      )
+    )
+    };
+
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
 
   like($r, $expected,'AST for Type e = (x, y, z);');
 
@@ -48,7 +104,22 @@ SKIP: {
 
   ok(!$@,'pascalenumeratedvsrangesolvedviadyn executed as standalone modulino');
 
-  $expected = qr{TypeDecl_is_TYPE_ID_Type\(\s+TERMINAL,\s+TERMINAL,\s+ENUM\(\s+ID\(\s+TERMINAL\s+\)\s+\)\s+\)};
+  $expected = q{
+typeDecl_is_TYPE_ID_type(
+  TERMINAL,
+  TERMINAL,
+  ENUM(
+    ID(
+      TERMINAL
+    )
+  )
+)
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
 
   like($r, $expected,'AST for Type e = (x);');
 
