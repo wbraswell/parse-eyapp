@@ -28,7 +28,19 @@ SKIP: {
 
   ok(!$@,'t/pascalenumeratedvsrangesolvedviadyn_bug.eyp executed as standalone modulino');
 
-  my $expected = qr{\QTypeDecl_is_type_ID_Type(TERMINAL[r],RANGE(TIMES(PLUS(ID(TERMINAL[x]),NUM(TERMINAL[2])),NUM(TERMINAL[3])),DIV(ID(TERMINAL[y]),NUM(TERMINAL[2]))))};
+  my $expected = q{
+typeDecl_is_type_ID_type(
+    TERMINAL[r],
+    RANGE(
+      TIMES(PLUS(ID(TERMINAL[x]),NUM(TERMINAL[2])),NUM(TERMINAL[3])),
+      DIV(ID(TERMINAL[y]),NUM(TERMINAL[2]))))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
 
   like($r, $expected,'AST for "type r = (x+2)*3 ..  y/2 ;"');
 
