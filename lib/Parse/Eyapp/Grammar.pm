@@ -137,7 +137,11 @@ sub give_token_name {
 sub camelize
 {
     my $s = shift;
-    join('', map{ ucfirst $_ } split(/(?<=[A-Za-z])_(?=[A-Za-z])|\b/, $s));
+
+    my @a = split(/(?<=[A-Za-z])_(?=[A-Za-z])|\b/, $s);
+    my $a = shift @a;
+    @a = map { ucfirst $_ } @a;
+    join('', ($a, @a));
 }
 
 sub give_rhs_name {

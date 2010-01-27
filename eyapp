@@ -322,7 +322,7 @@ my($warnings)=$parser->Warnings();
 
 $warnings !~ m{^\s*$} and print STDERR "$warnings\n";
 
-$parser->outputtables($path, $base) if $opt_v or $warnings;
+$parser->outputtables($path, $base) if $opt_v;
 
 my($outfile)="$path$base.pm";
 my($package)="$base";

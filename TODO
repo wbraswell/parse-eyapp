@@ -1,7 +1,7 @@
+  * There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
+
   * Warning Grammar.pm 
       sub conflictHandlers  rewrite! or use Data::Dumper forever?
-
-  * There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
 
   * %package directive: equvalent to eyapp -m option 
 
@@ -16,8 +16,10 @@
      - Simpler intro
      - Separate parsing from tree transformation
 
-  * @conflicts went to Parse::Eyapp:Grammar but it is staying there. We have to push it forward 
-    conflict handlers must be solved at the Output level.
+  * Lexical Analyzer generation:
+      * Trival lexer automatic construction: it returns the strings that appear in the grammar (for debugging only)
+      * lexer must support a sub name
+         %lexer mylexer
 
   * EBNF (a|b|c)*
     - eyapp option -TREE: same as %tree
@@ -46,11 +48,6 @@
   *  Line numbers seem to be in a buggy state.
      There is also a "bug" with tokenline and the static attribute approach: tokenline
      attribute is defined to 1 while the static/attribute approach searches while "undef"
-
-  * Lexical Analyzer generation:
-      * Lexer automatic construction
-      * lexer must support a sub name
-         %lexer mylexer
 
   * Lars request (see dir contributions): allow AST classes to be Moose or any other OOP framework
 
