@@ -1,4 +1,8 @@
+  * Warning Grammar.pm 
+      sub conflictHandlers  rewrite!
+
   * There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
+
   * -%modulino directive 
       %modulino perlinterpreter prompt
       Equivalent to eyapp -b 'perlinterpreter' and __PACKAGE__->main(prompt) 

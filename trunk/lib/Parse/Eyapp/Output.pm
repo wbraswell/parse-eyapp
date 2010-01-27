@@ -85,7 +85,7 @@ MODULINO
     $modulino = '';
   }
 
-  my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix);
+  my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix, $conflict_handlers);
   my($version)=$Parse::Eyapp::Driver::VERSION;
   my($datapos);
   my $makenodeclasses = '';
@@ -108,6 +108,8 @@ MODULINO
   ($GRAMMAR, $PACKAGES) = $self->Rules();
   $bypass = $self->Bypass;
   $prefix = $self->Prefix;
+
+  $conflict_handlers = $self->conflictHandlers;
 
   $buildingtree = $self->Buildingtree;
   $accessors = $self->Accessors;
@@ -201,6 +203,7 @@ sub new {
     yybuildingtree => <<$buildingtree>>,
     yyprefix       => '<<$prefix>>',
     yyaccessors    => <<$accessors_hash>>,
+    yyconflicthandlers => <<$conflict_handlers>>,
     @_,
   );
   bless($self,$class);

@@ -164,7 +164,8 @@ sub give_rhs_name {
       }
       $rhs .= "_$name" if $name;
     }
-    else {
+    else { # syntactic variable
+      next if exists $self->{GRAMMAR}{CONFLICTHANDLERS}{$_};
       $rhs .= '_'.camelize($_) if /^\w*$/;
     }
   }
@@ -255,6 +256,17 @@ sub Terms {
                          # Warning! bug. Before: map { $_ eq chr(0) ? "'\$end' => 0" : "$_ => $semantic{$_}"} @terms);
                          map { $_ eq chr(0) ? "'' => { ISSEMANTIC => 0 }" : "$_ => { ISSEMANTIC => $semantic{$_} }"} @terms); 
     $text .= ",\n\terror => { ISSEMANTIC => 0 },\n}";
+}
+
+sub conflictHandlers {
+  my $self = shift;
+
+  use Data::Dumper;
+
+  my $t = Dumper $self->{GRAMMAR}{CONFLICTHANDLERS};
+  $t =~ s/^\$VAR\d*\s*=\s*//;
+  $t =~s/;$//;
+  $t;
 }
 
 #####################################
@@ -567,14 +579,14 @@ sub _ReduceGrammar {
                    TAIL => $values->{TAIL},
                    EXPECT => $values->{EXPECT},
                    # Casiano modifications
-                   SEMANTIC       => $values->{SEMANTIC}, # added to simplify AST
-                   BYPASS         => $values->{BYPASS},   # added to simplify AST
-                   BUILDINGTREE   => $values->{BUILDINGTREE},   # influences the semantic of lists * + ?
-                   ACCESSORS      => $values->{ACCESSORS}, # getter-setter for %tree and %metatree
-                   PREFIX         => $values->{PREFIX},   # yyprefix
-                   NAMINGSCHEME   => $values->{NAMINGSCHEME}, # added to allow programmable production naming schemes (%name)
-                   NOCOMPACT      => $values->{NOCOMPACT}, # Do not compact action tables. No DEFAULT field for "STATES"
-                   CONFLICT       => $values->{CONFLICT},  # list of conflict handlers
+                   SEMANTIC          => $values->{SEMANTIC}, # added to simplify AST
+                   BYPASS            => $values->{BYPASS},   # added to simplify AST
+                   BUILDINGTREE      => $values->{BUILDINGTREE},   # influences the semantic of lists * + ?
+                   ACCESSORS         => $values->{ACCESSORS}, # getter-setter for %tree and %metatree
+                   PREFIX            => $values->{PREFIX},   # yyprefix
+                   NAMINGSCHEME      => $values->{NAMINGSCHEME}, # added to allow programmable production naming schemes (%name)
+                   NOCOMPACT         => $values->{NOCOMPACT}, # Do not compact action tables. No DEFAULT field for "STATES"
+                   CONFLICTHANDLERS  => $values->{CONFLICTHANDLERS},  # list of conflict handlers
                    TOKENNAMES     => {},
                  }, __PACKAGE__;
 
