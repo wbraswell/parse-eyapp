@@ -1498,47 +1498,6 @@ sub YYSymbolStack {
   return (grep { $_ eq $filter } @a);                                  # string
 }
 
-# makes a trivial lexer
-sub makeLexer {
-  my $class = shift;
-
-  my $self = $class->new;
-  my $WHITES = '\G(\s+)';
-  my %term = %{$self->YYTerms};
-  delete $term{''};
-  delete $term{error};
-
-  my @term = keys %term;
-
-  @term = sort { length($b) <=> length($a) } @term;
-  @term = map { quotemeta } @term;
-
-  my $TERM = join '|', @term;
-  $TERM = "\\G($TERM)";
- 
-  my $frame = lexerFrame();
-  $frame =~ s/<<WHITES>>/$WHITES/;
-  $frame =~ s/<<TERM>>/$TERM/;
-
-  return eval $frame;
-}
-
-sub lexerFrame {
-  return << 'EOLEXER';
-  sub {
-    my $self = shift;
-
-    for (${$self->input}) {
-      m{<<WHITES>>}gc  and $self->tokenline($1 =~ tr{\n}{});
-
-      m{<<TERM>>}gc and return ($1, $1);
-
-      return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
-    }
-  }
-EOLEXER
-}
-
 #Note that for loading debugging version of the driver,
 #this file will be parsed from 'sub _Parse' up to '}#_Parse' inclusive.
 #So, DO NOT remove comment at end of sub !!!
