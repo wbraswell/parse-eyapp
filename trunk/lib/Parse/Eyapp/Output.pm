@@ -24,6 +24,45 @@ use List::Util qw(first);
 
 use Carp;
 
+# builds a trivial lexer
+sub makeLexer {
+  my $self = shift;
+
+  my $WHITES = '\G(\s+)';
+  my %term = %{$self->{GRAMMAR}{TERM}};
+  delete $term{"\c@"};
+
+  my @term = map { s/'$//; s/^'//; $_ } keys %term;
+
+  @term = sort { length($b) <=> length($a) } @term;
+  @term = map { quotemeta } @term;
+
+  my $TERM = join '|', @term;
+  $TERM = "\\G($TERM)";
+ 
+  my $frame = _lexerFrame();
+  $frame =~ s/<<WHITES>>/$WHITES/;
+  $frame =~ s/<<TERM>>/$TERM/;
+
+  return $frame;
+}
+
+sub _lexerFrame {
+  return << 'EOLEXER';
+  sub {
+    my $self = shift;
+
+    for (${$self->input}) {
+      m{<<WHITES>>}gc  and $self->tokenline($1 =~ tr{\n}{});
+
+      m{<<TERM>>}gc and return ($1, $1);
+
+      return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
+    }
+  }
+EOLEXER
+}
+
 ####################################################################
 # Returns    : The string '{\n file contents }\n'  with pre and post comments
 # Parameters : a file name
@@ -84,6 +123,8 @@ MODULINO
   else {
     $modulino = '';
   }
+
+  my $defaultLexer = $self->makeLexer();
 
   my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix, $conflict_handlers);
   my($version)=$Parse::Eyapp::Driver::VERSION;
@@ -176,7 +217,7 @@ push @<<$package>>::ISA, 'Parse::Eyapp::Driver';
 <<$driver>>
 
 # Built default lexical analyzer
-our $LEX = __PACKAGE__->makeLexer();
+our $LEX = <<$defaultLexer>>;
 
 sub unexpendedInput { substr($_, pos $_) }
 
