@@ -1,4 +1,12 @@
-  * make_lexer (default lexer) must be done during the compilation not at run time
+  * lexer generation. Do the computation only if no %lexer directive was found!!!
+  * %whites (for lexer)
+
+  * What if the input comes from a stream? then $parser->input is undef
+    Shall I support interactive streams?
+      - YYLookaheads assumes that input comes from $parser->input
+      - The default lexer assumes that input comes from $parser->input
+      Change it to use an input stack
+
   * There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
 
   * Warning Grammar.pm 

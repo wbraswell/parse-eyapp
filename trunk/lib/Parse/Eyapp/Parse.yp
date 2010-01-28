@@ -261,7 +261,7 @@ __PACKAGE__->YYLexer(
       <<code>>       
 <<end_user_code>>
       return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
-      die("Error at the end of lexical analyzer. Line: <<errline>>. File: <<filename>>. No regexp matched.\n");
+      die("Error inside the lexical analyzer. Line: <<errline>>. File: <<filename>>. No regexp matched.\n");
     } 
   } # end lexical analyzer
 );
