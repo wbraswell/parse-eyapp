@@ -364,6 +364,10 @@ sub YYRestoreLRAction {
 
 # Fools the lexer to get a new token
 # without modifying the parsing position (pos)
+# Warning, warning! this and YYLookaheads assume
+# that the input comes from the string
+# referenced by $self->input.
+# It will not work for a stream 
 sub YYLookahead {
   my $self = shift;
 
