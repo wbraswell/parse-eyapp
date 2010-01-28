@@ -1,3 +1,4 @@
+  * make_lexer (default lexer) must be done during the compilation not at run time
   * There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
 
   * Warning Grammar.pm 

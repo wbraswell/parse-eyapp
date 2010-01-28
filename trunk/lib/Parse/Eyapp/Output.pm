@@ -175,6 +175,11 @@ push @<<$package>>::ISA, 'Parse::Eyapp::Driver';
 
 <<$driver>>
 
+# Built default lexical analyzer
+our $LEX = __PACKAGE__->makeLexer();
+
+sub unexpendedInput { substr($_, pos $_) }
+
 <<$head>>
 ################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################
 
