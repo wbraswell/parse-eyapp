@@ -23,10 +23,12 @@ my $syms;
 my $head;    # list of texts inside header sections
 my $tail;
 my $token;
-my $term;
+my $term;    # hash ref. key: token, value: an array describing the assoc and priority { '-' => [ 'LEFT' 1 ], '*' => [ 'LEFT' 2 ], }
+my $termdef; # token definitions. key is token, value is regexp
+my $whites;  # string with the code for white spaces (when automatic generated lexer)
 my $nterm;
 my $rules;
-my $precterm;
+my $precterm; # hash ref. key token used in %prec. value: priority
 my $start;
 my $nullable;
 my $semantic;
@@ -362,10 +364,10 @@ decls:  decls decl  #default action
 ;
 
 decl:  '\n'                 #default action
-    |   SEMANTIC typedecl symlist '\n'
+    |   SEMANTIC typedecl toklist '\n'
             {
                 for (@{$_[3]}) {
-                    my($symbol,$lineno)=@$_;
+                    my($symbol,$lineno, $def)=@$_;
 
                         exists($$token{$symbol})
                     and do {
@@ -381,7 +383,7 @@ decl:  '\n'                 #default action
                 }
                 undef
             }
-    |   SYNTACTIC typedecl symlist '\n'
+    |   SYNTACTIC typedecl toklist '\n'
             {
                 for (@{$_[3]}) {
                     my($symbol,$lineno)=@$_;
@@ -400,10 +402,10 @@ decl:  '\n'                 #default action
                 }
                 undef
             }
-    |   TOKEN typedecl symlist '\n'
+    |   TOKEN typedecl toklist '\n'
             {
                 for (@{$_[3]}) {
-                    my($symbol,$lineno)=@$_;
+                    my($symbol,$lineno, $def)=@$_;
 
                         exists($$token{$symbol})
                     and do {
@@ -415,6 +417,7 @@ decl:  '\n'                 #default action
                     };
                     $$token{$symbol}=$lineno;
                     $$term{$symbol} = [ ];
+                    $$termdef{$symbol} = $def if $def;
                 }
                 undef
             }
@@ -447,6 +450,16 @@ decl:  '\n'                 #default action
               # TODO: Instead of ident has to be a prefix!!!
               $prefix=$_[1][0]; 
               undef 
+            }
+    |   WHITES CODE '\n'                
+            {
+              push @{$_[2]}, 'CODE';
+              $whites = $_[2]; 
+            }
+    |   WHITES REGEXP '\n'                
+            {
+              push @{$_[2]}, 'REGEXP';
+              $whites = $_[2]; 
             }
     |   NAMINGSCHEME CODE '\n'
             {
@@ -546,6 +559,14 @@ typedecl:   #empty
 
 symlist:    symlist symbol  { push(@{$_[1]},$_[2]); $_[1] }
     |       symbol          { [ $_[1] ] }
+;
+
+toklist:    toklist symboldef        { push(@{$_[1]},$_[2]); $_[1] }
+    |       symboldef                { [ $_[1] ] }
+;
+
+symboldef:  symbol '=' REGEXP    { push @{$_[1]}, $_[3]; $_[1] } 
+    |       symbol               
 ;
 
 identlist:  identlist ident { push(@{$_[1]},$_[2]); $_[1] }
@@ -896,6 +917,7 @@ my %headertoken = (
   metatree => 'METATREE',
   nocompact => 'NOCOMPACT',
   conflict => 'CONFLICT',
+  whites    => 'WHITES',
 );
 
 # Used for <%name LIST_of_STH +>, <%name OPT_STH ?>
@@ -933,6 +955,16 @@ my $BODYWHITESPACES = qr{
     | \#[^\n]*   # Perl like comments
     |  /\*.*?\*/ # C like comments
   )+
+}xs;
+
+my $REGEXP = qr{
+   /             # opening slash
+   (?:[^/\\]|    # an ordinary character
+        \\\\|    # escaped \ i.e. \\
+         \\/|    # escaped slash i.e. \/
+          \\     # escape i.e. \
+  )*?            # non greedy repetitions
+  /              # closing slash
 }xs;
 
 sub _Lexer {
@@ -1032,6 +1064,9 @@ sub _Lexer {
         $$input=~/\G%expect-rr/gc and return('EXPECTRR',[ undef, $lineno[0] ]);
 
         $$input=~/\G%($ID)/gc     and return($headertoken{$1},[ undef, $lineno[0] ]);
+
+        $$input=~/\G($REGEXP)/gc  and return('REGEXP',[ $1, $lineno[0] ]);
+
     }
     else {  # In rule section
 
@@ -1221,6 +1256,7 @@ sub Parse {
     $syms={};
     $token={};
     $term={};
+    $termdef={};
     $nterm={};
     $rules=[ undef ];   #reserve slot 0 for start rule
     $precterm={};
@@ -1245,6 +1281,8 @@ sub Parse {
               'NAMINGSCHEME',
               'NOCOMPACT',
               'CONFLICTHANDLERS',
+              'TERMDEF',
+              'WHITES',
             }
     =       (  $head,  $tail,  $rules,  $nterm,  $term,
                $nullable, $precterm, $syms, $start, $expect, 
@@ -1253,6 +1291,8 @@ sub Parse {
                $namingscheme,
                $nocompact,
                \%conflict,
+               $termdef,
+               $whites,
             );
 
     undef($input);
@@ -1268,6 +1308,8 @@ sub Parse {
     undef($syms);
     undef($token);
     undef($term);
+    undef($termdef);
+    undef($whites);
     undef($nterm);
     undef($rules);
     undef($precterm);
