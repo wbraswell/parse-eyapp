@@ -1,5 +1,11 @@
-  * lexer generation. Do the computation only if no %lexer directive was found!!!
-  * %whites (for lexer)
+  * Lexical Analyzer generation:
+      * error line numbers-> source code
+      * Trival lexer automatic construction: it returns the strings that appear in the grammar (for debugging only)
+      * lexer generation. Do the computation only if no %lexer directive was found!!!
+      * %whites (for lexer)
+      * %token = { code } syntax
+      * lexer must support a sub name
+         %lexer mylexer
 
   * What if the input comes from a stream? then $parser->input is undef
     Shall I support interactive streams?
@@ -7,10 +13,18 @@
       - The default lexer assumes that input comes from $parser->input
       Change it to use an input stack
 
-  * There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
+  * PPCR:
+     - The whole implementation approach seems wrong. Make actions an array. Associate the handler with the state.
+       That allows a syntax like:
+                          %conflict handler {... } 
+                          %shift-reduce prod1 [token1, token2, ...] prod2 [tokens] handler
+                          %reduce-reduce prod3 [token1, token2, ...] prod4 [tokens] otherhandler
+                          ....
 
-  * Warning Grammar.pm 
-      sub conflictHandlers  rewrite! or use Data::Dumper forever?
+     - There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
+
+     - Warning Grammar.pm 
+         sub conflictHandlers  rewrite! or use Data::Dumper forever?
 
   * %package directive: equvalent to eyapp -m option 
 
@@ -25,10 +39,6 @@
      - Simpler intro
      - Separate parsing from tree transformation
 
-  * Lexical Analyzer generation:
-      * Trival lexer automatic construction: it returns the strings that appear in the grammar (for debugging only)
-      * lexer must support a sub name
-         %lexer mylexer
 
   * EBNF (a|b|c)*
     - eyapp option -TREE: same as %tree

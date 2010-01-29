@@ -582,15 +582,17 @@ sub _ReduceGrammar {
                    TAIL => $values->{TAIL},
                    EXPECT => $values->{EXPECT},
                    # Casiano modifications
-                   SEMANTIC          => $values->{SEMANTIC}, # added to simplify AST
-                   BYPASS            => $values->{BYPASS},   # added to simplify AST
-                   BUILDINGTREE      => $values->{BUILDINGTREE},   # influences the semantic of lists * + ?
-                   ACCESSORS         => $values->{ACCESSORS}, # getter-setter for %tree and %metatree
-                   PREFIX            => $values->{PREFIX},   # yyprefix
-                   NAMINGSCHEME      => $values->{NAMINGSCHEME}, # added to allow programmable production naming schemes (%name)
-                   NOCOMPACT         => $values->{NOCOMPACT}, # Do not compact action tables. No DEFAULT field for "STATES"
+                   SEMANTIC          => $values->{SEMANTIC},          # added to simplify AST
+                   BYPASS            => $values->{BYPASS},            # added to simplify AST
+                   BUILDINGTREE      => $values->{BUILDINGTREE},      # influences the semantic of lists * + ?
+                   ACCESSORS         => $values->{ACCESSORS},         # getter-setter for %tree and %metatree
+                   PREFIX            => $values->{PREFIX},            # yyprefix
+                   NAMINGSCHEME      => $values->{NAMINGSCHEME},      # added to allow programmable production naming schemes (%name)
+                   NOCOMPACT         => $values->{NOCOMPACT},         # Do not compact action tables. No DEFAULT field for "STATES"
                    CONFLICTHANDLERS  => $values->{CONFLICTHANDLERS},  # list of conflict handlers
-                   TOKENNAMES     => {},
+                   TERMDEF           => $values->{TERMDEF},           # token => associated regular expression (for lexical analyzer)
+                   WHITES            => $values->{WHITES},            # string with the code to skip whites (for lexical analyzer)
+                   TOKENNAMES     => {},                              # for naming schemes
                  }, __PACKAGE__;
 
     my($rules,$nterm,$term) =  @$values {'RULES', 'NTERM', 'TERM'};
