@@ -561,11 +561,12 @@ symlist:    symlist symbol  { push(@{$_[1]},$_[2]); $_[1] }
     |       symbol          { [ $_[1] ] }
 ;
 
-toklist:    toklist symboldef        { push(@{$_[1]},$_[2]); $_[1] }
-    |       symboldef                { [ $_[1] ] }
+toklist:    toklist tokendef        { push(@{$_[1]},$_[2]); $_[1] }
+    |       tokendef                { [ $_[1] ] }
 ;
 
-symboldef:  symbol '=' REGEXP    { push @{$_[1]}, $_[3]; $_[1] } 
+tokendef:   symbol '=' REGEXP    { push @{$_[1]}, $_[3], 'CODE'; $_[1] } 
+    |       symbol '=' CODE      { push @{$_[1]}, $_[3], 'REGEXP'; $_[1] } 
     |       symbol               
 ;
 

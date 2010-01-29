@@ -63,11 +63,16 @@ sub makeLexer {
 
   my $DEFINEDTOKENS = '';
   for my $t (@termdef) {
-    my $reg = $termdef{$t}[0];
-    $reg =~ s{^/}{/\\G};
-    $DEFINEDTOKENS .= << "EORT";
+    if ($termdef{$t}[2] eq 'REGEXP') {
+      my $reg = $termdef{$t}[0];
+      $reg =~ s{^/}{/\\G};
+      $DEFINEDTOKENS .= << "EORT";
       ${reg}gc and return ('$t', \$1);
 EORT
+    }
+    else { # token definition is code
+      $DEFINEDTOKENS .= $termdef{$t}[0];
+    }
   }
 
   my $frame = _lexerFrame();
