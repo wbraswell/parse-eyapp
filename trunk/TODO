@@ -1,4 +1,6 @@
+  *  Debugging: set breakpoints in the code from yydebug=> 1
   * Lexical Analyzer generation:
+      * %token ID =  CODE
       * error line numbers-> source code
       * Trival lexer automatic construction: it returns the strings that appear in the grammar (for debugging only)
       * lexer generation. Do the computation only if no %lexer directive was found!!!
@@ -24,7 +26,7 @@
      - There is a bug: I have to check that reductions in PPCR only occur inside the conflictive states
 
      - Warning Grammar.pm 
-         sub conflictHandlers  rewrite! or use Data::Dumper forever?
+         sub Parse::Eyapp::Grammar::conflictHandlers  rewrite! or use Data::Dumper forever?
 
   * %package directive: equvalent to eyapp -m option 
 
