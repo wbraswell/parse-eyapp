@@ -1,3 +1,4 @@
+  * STRINGS treatment of escapes and lexical analizer are incosistent
   *  Debugging: set breakpoints in the code from yydebug=> 1
   * Lexical Analyzer generation:
       * error line numbers-> source code
