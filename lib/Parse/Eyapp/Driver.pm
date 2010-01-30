@@ -1086,6 +1086,7 @@ sub static_attribute {
       # push those that aren't already there
       push @classes, grep { !exists $classes{$_} } @{$c.'::ISA'};
     }
+    return undef;
 }
 
 *Parse::Eyapp::Driver::lexer = \&Parse::Eyapp::Driver::YYLexer;
@@ -1207,12 +1208,21 @@ sub slurp_file {
   }
 }
 
+our $INPUT = \undef;
 sub input {
   my $self = shift;
 
   $self->line(1) if @_; # used as setter
   if (ref $self) { # instance method
-    $self->{INPUT} = shift if @_;
+    if (@_) {
+      if (ref $_[0]) {
+        $self->{INPUT} = shift;
+      }
+      else {
+        my $input = shift;
+        $self->{INPUT} = \$input;
+      }
+    }
 
     return $self->static_attribute('INPUT', @_,) unless defined($self->{INPUT}); # class/static method 
     return $self->{INPUT};
@@ -1544,7 +1554,7 @@ sub _Parse {
 #DBG> and print STDERR "In state $stateno:\n";
 #DBG>   $debug & 0x08
 #DBG> and print STDERR "Stack: ".
-#DBG>          join('->',map { $$_[2]? $$_[2]."->".$$_[0] : $$_[0] } @$stack).
+#DBG>          join('->',map { defined($$_[2])? "'$$_[2]'->".$$_[0] : $$_[0] } @$stack).
 #DBG>          "\n";
 
 

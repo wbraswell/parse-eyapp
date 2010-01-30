@@ -42,6 +42,7 @@ sub makeLexer {
   }
   my %term = %{$self->{GRAMMAR}{TERM}};
   delete $term{"\c@"};
+  delete $term{'error'};
 
   my %termdef = %{$self->{GRAMMAR}{TERMDEF}}; 
 
@@ -85,7 +86,8 @@ EORT
 
 sub _lexerFrame {
   return << 'EOLEXER';
-  sub {
+# Default lexical analyzer
+our $LEX = sub {
     my $self = shift;
 
     for (${$self->input}) {
@@ -103,6 +105,7 @@ sub _lexerFrame {
           .". File: '".$self->YYFilename()."'. No match found.\n");
     }
   }
+;
 EOLEXER
 }
 
@@ -167,7 +170,7 @@ MODULINO
     $modulino = '';
   }
 
-  my $defaultLexer = $self->makeLexer();
+  my $defaultLexer = $self->{GRAMMAR}{LEXERISDEFINED} ? q{} : $self->makeLexer();
 
   my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix, $conflict_handlers);
   my($version)=$Parse::Eyapp::Driver::VERSION;
@@ -259,8 +262,7 @@ push @<<$package>>::ISA, 'Parse::Eyapp::Driver';
 
 <<$driver>>
 
-# Built default lexical analyzer
-our $LEX = <<$defaultLexer>>;
+<<$defaultLexer>>
 
 sub unexpendedInput { substr($_, pos $_) }
 

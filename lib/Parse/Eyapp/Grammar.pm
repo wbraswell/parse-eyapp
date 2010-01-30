@@ -592,6 +592,7 @@ sub _ReduceGrammar {
                    CONFLICTHANDLERS  => $values->{CONFLICTHANDLERS},  # list of conflict handlers
                    TERMDEF           => $values->{TERMDEF},           # token => associated regular expression (for lexical analyzer)
                    WHITES            => $values->{WHITES},            # string with the code to skip whites (for lexical analyzer)
+                   LEXERISDEFINED    => $values->{LEXERISDEFINED},    # true if %lexer was used
                    TOKENNAMES     => {},                              # for naming schemes
                  }, __PACKAGE__;
 
