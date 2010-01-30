@@ -1,11 +1,7 @@
   *  Debugging: set breakpoints in the code from yydebug=> 1
   * Lexical Analyzer generation:
-      * %token ID =  CODE
       * error line numbers-> source code
-      * Trival lexer automatic construction: it returns the strings that appear in the grammar (for debugging only)
       * lexer generation. Do the computation only if no %lexer directive was found!!!
-      * %whites (for lexer)
-      * %token = { code } syntax
       * lexer must support a sub name
          %lexer mylexer
 
@@ -34,6 +30,8 @@
       %modulino perlinterpreter prompt
       Equivalent to eyapp -b 'perlinterpreter' and __PACKAGE__->main(prompt) 
       %modulino '/usr/local/lib/perl/5.10.1/bin/perl5.10.1' 'Try input "type e = (x);": '
+      
+      avoid repetitive __PACKAGE->main when using options -C and -b
 
   * Article: rewrite, both research and divulgation
 

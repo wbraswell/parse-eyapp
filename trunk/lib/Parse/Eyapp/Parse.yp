@@ -26,6 +26,7 @@ my $token;
 my $term;    # hash ref. key: token, value: an array describing the assoc and priority { '-' => [ 'LEFT' 1 ], '*' => [ 'LEFT' 2 ], }
 my $termdef; # token definitions. key is token, value is regexp
 my $whites;  # string with the code for white spaces (when automatic generated lexer)
+my $lexer;   # boolean: true if %lexer was used
 my $nterm;
 my $rules;
 my $precterm; # hash ref. key token used in %prec. value: priority
@@ -461,6 +462,16 @@ decl:  '\n'                 #default action
               push @{$_[2]}, 'REGEXP';
               $whites = $_[2]; 
             }
+    |   WHITES '=' CODE '\n'                
+            {
+              push @{$_[3]}, 'CODE';
+              $whites = $_[3]; 
+            }
+    |   WHITES '=' REGEXP '\n'                
+            {
+              push @{$_[3]}, 'REGEXP';
+              $whites = $_[3]; 
+            }
     |   NAMINGSCHEME CODE '\n'
             {
               $namingscheme = $_[2];
@@ -472,6 +483,7 @@ decl:  '\n'                 #default action
     |   LEXER CODE '\n'                 { 
                                            my ($code, $line) = @{$_[2]};
                                            push @$head, [ make_lexer($code, $line), $line]; 
+                                           $lexer = 1;
                                            undef 
                                          } 
     |   TREE '\n'    
@@ -565,8 +577,16 @@ toklist:    toklist tokendef        { push(@{$_[1]},$_[2]); $_[1] }
     |       tokendef                { [ $_[1] ] }
 ;
 
-tokendef:   symbol '=' REGEXP    { push @{$_[1]}, $_[3], 'CODE'; $_[1] } 
-    |       symbol '=' CODE      { push @{$_[1]}, $_[3], 'REGEXP'; $_[1] } 
+tokendef:   symbol '=' REGEXP    { 
+                                    push @{$_[3]}, 'REGEXP';
+                                    push @{$_[1]}, $_[3]; 
+                                    $_[1] 
+                                 } 
+    |       symbol '=' CODE      { 
+                                    push @{$_[3]}, 'CODE';
+                                    push @{$_[1]}, $_[3]; 
+                                    $_[1] 
+                                 } 
     |       symbol               
 ;
 
@@ -1284,6 +1304,7 @@ sub Parse {
               'CONFLICTHANDLERS',
               'TERMDEF',
               'WHITES',
+              'LEXERISDEFINED',
             }
     =       (  $head,  $tail,  $rules,  $nterm,  $term,
                $nullable, $precterm, $syms, $start, $expect, 
@@ -1294,6 +1315,7 @@ sub Parse {
                \%conflict,
                $termdef,
                $whites,
+               $lexer,
             );
 
     undef($input);
