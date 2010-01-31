@@ -1,8 +1,17 @@
-  * STRINGS treatment of escapes and lexical analizer are incosistent
+  * Tests
+     - tests all examples/*/*yp for syntax checking
+     - test for yyfilename
+     - Add tests to check .output tables: actions and gotos against yacc. 
+        I am not confident that some modifications I introduced in Grammar.pm were error free
+     - Automatic naming scheme: tests!
+     - Some rules can be optimized away. Then the name dissapears!!
+     - tests with syntax errors
+     - Debug mode and standalone works?
+
   *  Debugging: set breakpoints in the code from yydebug=> 1
+
   * Lexical Analyzer generation:
       * error line numbers-> source code
-      * lexer generation. Do the computation only if no %lexer directive was found!!!
       * lexer must support a sub name
          %lexer mylexer
 
@@ -50,7 +59,7 @@
     - eyapp option -start (defines the start symbol)
        Eyapp -> Lalr -> Grammar -> Options
                             `----> Parse
-  * intermediate actions in give_rhs_name? check, test
+    - intermediate actions in give_rhs_name? check, test
     
   * Error message when a conflict handler isn't used is inaccurate:
 
@@ -137,9 +146,6 @@
     with reduce-reduce conflicts. In at least one case is reducing by the second production rule instead 
     of the first.  It appears in the C++ parser (t/99Cplusplusgrammar.t). Confirm
 
-  * Add tests to check .output tables: actions and gotos against yacc. 
-    I am not confident that some modifications I introduced in Grammar.pm were error free
-
   * There is a bug with &give_rhs_name in Parse::Eyapp::Grammar and lists *, +, etc. see the example
       examples/debuggintut/SemanticInfoInTokens.eyp
 
@@ -153,7 +159,6 @@
   * Language generation example examples/generator
      -- Return a Test::LectroTest::Generator? 
 
-  * Automatic naming scheme: tests!
 
   * Check that all the production names (given with %name directives) are different. May be not
 
@@ -245,7 +250,6 @@
     It may influence optimizations like the PARENTHESIS one?
   * bypass method for YATW and Node objects
 
-  * test for yyfilename
   * Fix the yyprefix consistency problem between new and YYParse (args)
   * What is YYFilename in Driver.pm
 
@@ -255,12 +259,6 @@
 
 - Treereg Tree grammars and tree walkers
  
-  * Tests
-     - Some rules can be optimized away. Then the name dissapears!!
-     - When a token is in uppercase then it does not agree with the string?
-     - tests with syntax errors
-     - Standalone works?
-     - Debug mode works?
 
   * Uniformize 
      - Lower case in new_grammar, uppercase in Treeregexp new, etc.

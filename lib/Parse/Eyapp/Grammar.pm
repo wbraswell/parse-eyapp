@@ -594,6 +594,7 @@ sub _ReduceGrammar {
                    WHITES            => $values->{WHITES},            # string with the code to skip whites (for lexical analyzer)
                    LEXERISDEFINED    => $values->{LEXERISDEFINED},    # true if %lexer was used
                    MODULINO          => $values->{MODULINO},          # hash perlpath => path, prompt => question
+                   STRICT            => $values->{STRICT},            # true if %stric
                    TOKENNAMES     => {},                              # for naming schemes
                  }, __PACKAGE__;
 

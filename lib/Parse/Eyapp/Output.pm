@@ -24,6 +24,33 @@ use List::Util qw(first);
 
 use Carp;
 
+# Remove tokens that not appear in the right hand side
+# of any production
+# Check if not quote tokens aren't defined
+sub deleteNotUsedTokens {
+  my ($self, $term, $termDef) = @_;
+  
+  my $rules = $self->{GRAMMAR}{RULES};
+  my @usedSymbols = map { @{$_->[1]} } @$rules;
+  my %usedSymbols;
+  @usedSymbols{@usedSymbols} = ();
+
+  for my $token (keys %$term) {
+    delete $term->{$token} unless exists $usedSymbols{$token};
+  }
+
+  # Emit a warning if exists a non '' token in %usedSymbols that is not in %termdef
+  if ($self->{GRAMMAR}{STRICT}) {
+    my @undefined = grep { ! exists $termDef->{$_} } grep { m{^[^']} } keys %$term;
+    if (@undefined) {
+      @undefined = map { "Warning: may be you forgot to define token '$_'?: %token $_ = /someRegExp/" } @undefined;
+
+      local $" = "\n";
+      warn "@undefined\n";
+    }
+  }
+}
+
 # builds a trivial lexer
 sub makeLexer {
   my $self = shift;
@@ -46,6 +73,9 @@ sub makeLexer {
 
   my %termdef = %{$self->{GRAMMAR}{TERMDEF}}; 
 
+  $self->deleteNotUsedTokens(\%term, \%termdef);
+
+
   # remove from %term the tokens that were explictly defined
   my @index = grep { !(exists $termdef{$_}) } keys %term;
   %term = map { ($_, $term{$_}) } @index;
@@ -54,6 +84,8 @@ sub makeLexer {
 
   @term = sort { length($b) <=> length($a) } @term;
   @term = map { quotemeta } @term;
+  # Keep escape characters as \n \r, etc.
+  @term = map { s/\\\\(.)/\\$1/g; $_ } @term;
 
   my $TERM = join '|', @term;
   $TERM = "\\G($TERM)";
