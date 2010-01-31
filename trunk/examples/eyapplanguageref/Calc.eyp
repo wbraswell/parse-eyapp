@@ -2,7 +2,6 @@
 %whites    =  /([ \t]*(?:#.*)?)/
 %token NUM =  /([0-9]+(?:\.[0-9]+)?)/
 %token VAR =  /([A-Za-z][A-Za-z0-9_]*)/
-%token CR  =  /\n/
 
 %right  '='
 %left   '-' '+'
@@ -23,9 +22,12 @@ input: line *
 ;
 
 line:       
-    CR       { undef }
-  | exp CR   { print "$_[1]\n" if defined($_[1]); $_[1] }
-  | error  CR
+    '\n'       { undef }
+  | exp '\n'   { 
+                  print "$_[1]\n" if defined($_[1]); 
+                  $_[1] 
+               }
+  | error  '\n'
       { 
         $_[0]->YYErrok; 
         undef 
