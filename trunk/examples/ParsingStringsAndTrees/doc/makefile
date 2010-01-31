@@ -12,12 +12,13 @@ pdf: addressassign.tex codegeneration.tex introduction.tex lexicalanalysis.tex m
 html: dvi
 	latex2html theperlreview
 
-public: html ps pdf
+public: html ps pdf tar
 	cp theperlreview/* /home/pl/public_html/eyapsimple/
 	cp theperlreview.dvi /home/pl/public_html/eyapsimple/eyapsimple.dvi
 	cp theperlreview.ps /home/pl/public_html/eyapsimple/eyapsimple.ps
 	cp theperlreview.pdf /home/pl/public_html/eyapsimple/eyapsimple.pdf
 	cp theperlreview.pdf /home/pl/public_html/perlexamples/eyapptut.pdf
+	cp /tmp/source.tgz  /home/pl/public_html/eyapsimple/
 	chmod a+r /home/pl/public_html/eyapsimple/*
 
 clean:
@@ -27,8 +28,7 @@ cleanall:
 	rm -f *.log *.dvi *.aux *.bbl *.blg *~ *.pdf *.ps
 
 tar:
-	tar cvzf /tmp/theperlreview07_casiano.tar.gz *.dvi *.tex *.bbl *.sty *.pdf makefile src/*
-	chmod a+r /tmp/theperlreview07_casiano.tar.gz
+	cd ..; make tar
 
 link:
 	ln -s ${HOME}/Lbook/perlbib/perl.bib

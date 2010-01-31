@@ -2,25 +2,38 @@ Lexical Analysis decomposes the input stream in a
 sequence of lexical units called \emph{tokens}.
 Associated with each token is its \emph{attribute}
 which carries the corresponding information.
-In the code example below
-the attribute associated with token \verb|NUM|
-is its numerical value and the attribute associated with 
-token \verb|VAR| is the actual string.
 Each time the \emph{parser}
 requires a new token, the lexer returns
 the couple \code{(token, attribute)} that matched.
-Some tokens - like \verb|PRINT| -  do not carry any special
-information. In such cases, just to keep the protocol
-simple, the lexer returns the couple \verb|(token, token)|.
-Using Eyapp terminology such tokens are called \emph{syntactic tokens}.
-On the other side, \emph{Semantic tokens} are those tokens - like \verb|VAR|
-or \verb|NUM| - whose attributes transport 
-useful information. When the end of input is reached the lexer
+When the end of input is reached the lexer
 returns the couple \verb|('', undef)|.
-The lexical analyzer can be specified
+You don't have to write a lexical analyzer:
+\cpan{Parse::Eyapp} automatically generates one
+for you using your \verb|%token| definitions
+(file \verb|examples/ParsingStringsAndTrees/Infix.eyp|):
+
+
+\begin{verbatim}
+%token NUM   = /([0-9]+(?:\.[0-9]+)?)/
+%token PRINT = /print\b/
+%token VAR   = /([A-Za-z_][A-Za-z0-9_]*)/
+\end{verbatim}
+
+Here the order is important. The regular expression
+for \verb|PRINT| will be tried before the regular expression
+fo \verb|VAR|. The parenthesis are also important. The 
+lexical analyzer built from the regular expression 
+for \verb|VAR| returns \verb|('VAR'. $1)|. Be sure your first memory
+parenthesis holds the desired attribute.
+
+The lexical analyzer can also be specified
 through the \verb|%lexer| directive (see
-the head section in file \verb|examples/ParsingStringsAndTrees/Infix.eyp|of the 
-\verb|Parse::Eyapp| distribution):
+the head section in file \verb|examples/ParsingStringsAndTrees/InfixWithLexerDirective.eyp| of the 
+\verb|Parse::Eyapp| distribution).
+The directive \verb|%lexer| is followed by the code of the lexical analyzer.
+Inside such code the variable \verb|$_| contains the input string. The special
+variable \verb|$self| refers to the parser object. The pair \verb|('', undef)|
+is returned by the generated lexer when the end of input is detected.
 
 \begin{verbatim}
 %lexer  {
@@ -32,11 +45,18 @@ the head section in file \verb|examples/ParsingStringsAndTrees/Infix.eyp|of the
     m{\G(.)}gc                      and return ($1,      $1);
   }
 \end{verbatim}
+In the code example above
+the attribute associated with token \verb|NUM|
+is its numerical value and the attribute associated with 
+token \verb|VAR| is the actual string.
+Some tokens - like \verb|PRINT| -  do not carry any special
+information. In such cases, just to keep the protocol
+simple, the lexer returns the couple \verb|(token, token)|.
 
-The directive \verb|%lexer| is followed by the code of the lexical analyzer.
-Inside such code the variable \verb|$_| contains the input string. The special
-variable \verb|$self| refers to the parser object. The pair \verb|('', undef)|
-is returned by the generated lexer when the end of input is detected.
+%Using Eyapp terminology such tokens are called \emph{syntactic tokens}.
+%On the other side, \emph{Semantic tokens} are those tokens - like \verb|VAR|
+%or \verb|NUM| - whose attributes transport 
+%useful information. 
 
 When feed it with input \verb|b = 1| the lexer
 will produce the sequence 
