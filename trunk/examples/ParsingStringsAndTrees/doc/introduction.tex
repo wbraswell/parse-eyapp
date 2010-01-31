@@ -89,11 +89,11 @@ Change to the directory:
 \begin{verbatim}
 cd src
 \end{verbatim}
-and compile the grammar with \verb|eyapp|:
+and compile the grammar with \cpan{eyapp}:
 \begin{verbatim}
 eyapp Infix.eyp
 \end{verbatim}
-Compile also the set of tree transformations using \verb|treereg|:
+Compile also the set of tree transformations using \cpan{treereg}:
 \begin{verbatim}
 treereg -m main I2PIR.trg
 \end{verbatim}
@@ -103,9 +103,9 @@ nereida:/tmp/src> ls -ltr |tail -2
 -rw-rw----  1 pl users   Infix.pm
 -rw-rw----  1 pl users   I2PIR.pm
 \end{verbatim}
-Module \verb|Infix.pm| contains the parser for the grammar described in \verb|Infix.eyp|.
+Module \verb|Infix.pm| contains the parser for the grammar described in \prog{Infix.eyp}.
 Module \verb|I2PIR.pm| contains the collection of tree transformations described
-in \verb|I2PIR.trg|. Now we can run the script \verb|infix2pir.pl| which makes use of these
+in \prog{I2PIR.trg}. Now we can run the script \verb|infix2pir.pl| which makes use of these
 two modules:
 \begin{verbatim}
 $ ./infix2pir.pl input1.inf > input1.pir

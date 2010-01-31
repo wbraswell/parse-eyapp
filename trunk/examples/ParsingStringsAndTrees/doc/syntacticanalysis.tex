@@ -1,5 +1,5 @@
 The code below shows the body of the grammar (file 
-\code{Infix.eyp}).
+\prog{Infix.eyp}).
 Eyapp syntax very much resembles the syntax of
 old cherished \code{yacc} \cite{yacc}.
 An Eyapp program has three parts: \I{head}, \I{body} and \I{tail}.
@@ -14,7 +14,8 @@ The tail section includes Perl code that gives support
 to the semantic actions. Commonly 
 the lexical analyzer and error diagnostic subroutines
 go there. In the case of \verb|eyapp| the lexical analyzer 
-is usually defined through a \verb|%lexer| directive inside 
+is usually automatically generated from the token definitions 
+or defined through a \verb|%lexer| directive inside 
 the head section.  Also,
 for most cases, there is no need to overwrite the provided default
 \verb|error| diagnostic method.
@@ -193,7 +194,7 @@ priority than \verb|'-'| the first interpretation
 will win.
 
 \subsection{Building the AST}
-\verb|Parse::Eyapp| facilitates the construction of 
+\cpan{Parse::Eyapp} facilitates the construction of 
 abstract syntax trees (AST) through the \verb|%tree|
 directive. 
 Nodes in the AST are blessed in the production
@@ -311,7 +312,7 @@ the node in the name of the production}\footnote{If the production has an
 explicit name. Otherwise there is no re-blessing}. 
 
 Changing the line \verb|%tree| by \verb|%tree bypass|
-in file \verb|Infix.eyp| we get a more suitable 
+in file \prog{Infix.eyp} we get a more suitable 
 AST for input \verb|2*(a+1)|:
  
 \begin{verbatim}
@@ -378,5 +379,5 @@ in the rule and are executed each time a \I{reduction}
 by that rule occurs. When running under the \verb|%tree| directive
 this provides a mechanism to influence the shape of the AST.
 Observe however that the grammar in the example is \underline{clean} of actions:
-\I{Parse::Eyapp allowed us to produce a suitable AST without writing 
+\I{\cpan{Parse::Eyapp} allowed us to produce a suitable AST without writing 
 any explicit actions}.

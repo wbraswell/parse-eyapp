@@ -1,5 +1,5 @@
 The code below 
-(file \verb|src/infix2pir.pl|) %
+(file \prog{infix2pir.pl}) %
 displays
 the stages of the translator: \emph{Lexical
 and syntax analysis, tree transformations
@@ -44,7 +44,7 @@ output_code(\$t->{tr}, \$dec);
 \end{verbatim}
 
 The compiler uses the parser for infix expressions
-that was generated from the Eyapp grammar  \verb|Infix.eyp|
+that was generated from the Eyapp grammar  \prog{Infix.eyp}
 (see section \ref{section:syntacticanalysis})
 using the command:
 \begin{verbatim}
@@ -53,7 +53,7 @@ $ ls -tr | tail -1
 Infix.pm
 \end{verbatim}
 It also uses the module containing different families of tree
-transformations that are described in the \verb|I2PIR.trg| file 
+transformations that are described in the \prog{I2PIR.trg} file 
 (explained in 
 sections \ref{section:machineindependentoptimizations} and \ref{section:codegeneration}): 
 \begin{verbatim}
