@@ -65,7 +65,7 @@ my $RESTOFLIST = qr{$IDLIST \) \s* ; }x;
   \&give_rhs_name;
 }
 
-%strict
+#%strict
 
 %token ID NUM DOTDOT TYPE
 %left   '-' '+'

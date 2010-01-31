@@ -10,7 +10,7 @@ returns the couple \verb|('', undef)|.
 You don't have to write a lexical analyzer:
 \cpan{Parse::Eyapp} automatically generates one
 for you using your \verb|%token| definitions
-(file \verb|examples/ParsingStringsAndTrees/Infix.eyp|):
+(file \prog{Infix.eyp}):
 
 
 \begin{verbatim}
@@ -28,7 +28,7 @@ parenthesis holds the desired attribute.
 
 The lexical analyzer can also be specified
 through the \verb|%lexer| directive (see
-the head section in file \verb|examples/ParsingStringsAndTrees/InfixWithLexerDirective.eyp| of the 
+the head section in file \prog{InfixWithLexerDirective.eyp} of the 
 \verb|Parse::Eyapp| distribution).
 The directive \verb|%lexer| is followed by the code of the lexical analyzer.
 Inside such code the variable \verb|$_| contains the input string. The special
@@ -37,13 +37,13 @@ is returned by the generated lexer when the end of input is detected.
 
 \begin{verbatim}
 %lexer  {
-    m{\G[ \t]*}gc;
-    m{\G(\n)+}gc                    and $self->tokenline($1 =~ tr/\n//);
-    m{\G([0-9]+(?:\.[0-9]+)?)}gc    and return ('NUM',   $1);
-    m{\Gprint}gc                    and return ('PRINT', 'PRINT');
-    m{\G([A-Za-z_][A-Za-z0-9_]*)}gc and return ('VAR',   $1);
-    m{\G(.)}gc                      and return ($1,      $1);
-  }
+ m{\G[ \t]*}gc;
+ m{\G(\n)+}gc                    and $self->tokenline($1 =~ tr/\n//);
+ m{\G([0-9]+(?:\.[0-9]+)?)}gc    and return ('NUM',   $1);
+ m{\Gprint}gc                    and return ('PRINT', 'PRINT');
+ m{\G([A-Za-z_][A-Za-z0-9_]*)}gc and return ('VAR',   $1);
+ m{\G(.)}gc                      and return ($1,      $1);
+}
 \end{verbatim}
 In the code example above
 the attribute associated with token \verb|NUM|
