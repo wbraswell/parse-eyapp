@@ -4,8 +4,6 @@ Parse::Eyapp - Bottom up parser generator
  
 =head1 SYNOPSIS
  
-[%- #PROCESS synopsiswithtransformations 
--%]
 [% PROCESS synopsis %]
   
 =head1 INTRODUCTION
