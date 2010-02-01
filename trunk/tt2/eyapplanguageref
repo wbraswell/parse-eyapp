@@ -665,8 +665,8 @@ containing the next token and its associated attribute.
 The fact that is a method of the parser object means that the parser
 methods are accessible inside the lexical analyzer.
 
-I<When the lexical analyzer reaches the end of input, it must return the
-pair> C<('', undef)>
+When the lexical analyzer reaches the end of input, it must return the
+pair C<('', undef)>
 
 
 =head2 The Error Report Subroutine
