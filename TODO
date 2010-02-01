@@ -15,6 +15,11 @@
   *  Debugging: set breakpoints in the code from yydebug=> 1
 
   * Lexical Analyzer generation:
+      * given explicit precedence to tokens
+           %token LASTSEMICOLON /(;)(?=S)/
+           %token ';' 
+        use the place where the token is placed for the lexical analyzer. This is compatible with 
+        explicit scanners.
       * error line numbers-> source code
       * lexer must support a sub name
          %lexer mylexer
