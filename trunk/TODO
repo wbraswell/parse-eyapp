@@ -1,3 +1,7 @@
+  * %tree: 
+     - info  clause (autobuild ::info for TERMINAL) 
+     - naming scheme clause
+
   * Tests
      - tests all examples/*/*yp for syntax checking
      - test for yyfilename

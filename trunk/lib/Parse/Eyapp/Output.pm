@@ -40,7 +40,7 @@ sub deleteNotUsedTokens {
   }
 
   # Emit a warning if exists a non '' token in %usedSymbols that is not in %termdef
-  if ($self->{GRAMMAR}{STRICT}) {
+  if ($self->{GRAMMAR}{STRICT} && %$termDef) {
     my @undefined = grep { ! exists $termDef->{$_} } grep { m{^[^']} } keys %$term;
     if (@undefined) {
       @undefined = map { "Warning: may be you forgot to define token '$_'?: %token $_ = /someRegExp/" } @undefined;
