@@ -1,7 +1,3 @@
-# Test for defaultaction in Yapp
-# Infixtree2.yp
-# 
-
 %{
 use Data::Dumper;
 my %tree_name = ('=' => 'eq', '+' => 'plus', '-' => 'minus', '*' => 'times', '/' => 'divide');
@@ -34,7 +30,6 @@ exp:        NUM
 ;
 
 %%
-
 
 sub _Error {
         exists $_[0]->YYData->{ERRMSG}
