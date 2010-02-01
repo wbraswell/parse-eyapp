@@ -4,7 +4,9 @@ Parse::Eyapp - Bottom up parser generator
  
 =head1 SYNOPSIS
  
-[% PROCESS synopsiswithtransformations %]
+[%- #PROCESS synopsiswithtransformations 
+-%]
+[% PROCESS synopsis %]
   
 =head1 INTRODUCTION
 
@@ -17,10 +19,11 @@ The documentation is distributed among several files:
 =over
 
 =item * To get familiar with  C<eyapp> read L<Parse::Eyapp::eyappintro>
-and  L<Parse::Eyapp::debuggingtut>.
 It assumes a reader familiar with parsing techniques.
 Familiarity with C<yacc> or C<yapp>, C<RecDescent>, C<ANTLR> or
 similar tools will help but it is not indispensable.
+
+=item * To master conflict resolution read L<Parse::Eyapp::debuggingtut>.
 
 =item *  The document L<Parse::Eyapp::defaultactionsintro> describes the use of
 default actions and how to deal with I<grammar reuse> and factorization.
