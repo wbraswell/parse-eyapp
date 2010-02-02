@@ -1105,6 +1105,13 @@ sub YYLexer {
   }
 }
 
+sub YYEndOfInput {
+   my $self = shift;
+
+   for (${$self->input}) {
+     return !defined($_) || ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
+   }
+}
 
 #################
 # Private stuff #

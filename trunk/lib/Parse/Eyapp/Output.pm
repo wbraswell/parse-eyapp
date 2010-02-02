@@ -129,7 +129,7 @@ our $LEX = sub {
 
 <<DEFINEDTOKENS>>
 
-      return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
+      return ('', undef) if !defined($_) || ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
       /\G\s*(\S+)/;
       my $near = substr($1,0,10); 
       die( "Error inside the lexical analyzer near '". $near

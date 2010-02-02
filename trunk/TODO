@@ -20,6 +20,7 @@
            %token ';' 
         use the place where the token is placed for the lexical analyzer. This is compatible with 
         explicit scanners.
+      * support streams: see lexer in examples/Eyapp/Lhs1.yp
       * error line numbers-> source code
       * lexer must support a sub name
          %lexer mylexer
