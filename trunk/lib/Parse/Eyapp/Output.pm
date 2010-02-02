@@ -84,6 +84,7 @@ sub makeLexer {
 
   @term = sort { length($b) <=> length($a) } @term;
   @term = map { quotemeta } @term;
+
   # Keep escape characters as \n \r, etc.
   @term = map { s/\\\\(.)/\\$1/g; $_ } @term;
 
@@ -103,7 +104,15 @@ sub makeLexer {
       ${reg}gc and return ('$t', \$1);
 EORT
     }
-    else { # token definition is code
+    elsif ($termdef{$t}[2] eq 'LITERAL') { # %token without regexp or code definition
+      my $reg = $termdef{$t}[0];
+      $reg =~ s{^'}{/\\G(};
+      $reg =~ s{'$}{)/};
+      $DEFINEDTOKENS .= << "EORT";
+      ${reg}gc and return (\$1, \$1);
+EORT
+    }
+    elsif ($termdef{$t}[2] eq 'CODE') { # token definition is code
       $DEFINEDTOKENS .= $termdef{$t}[0];
     }
   }
@@ -129,7 +138,7 @@ our $LEX = sub {
 
 <<DEFINEDTOKENS>>
 
-      return ('', undef) if !defined($_) || ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
+      return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
       /\G\s*(\S+)/;
       my $near = substr($1,0,10); 
       die( "Error inside the lexical analyzer near '". $near
