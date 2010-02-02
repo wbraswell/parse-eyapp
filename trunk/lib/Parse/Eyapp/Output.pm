@@ -106,8 +106,8 @@ EORT
     }
     elsif ($termdef{$t}[2] eq 'LITERAL') { # %token without regexp or code definition
       my $reg = $termdef{$t}[0];
-      $reg =~ s{^'}{/\\G(};
-      $reg =~ s{'$}{)/};
+      $reg =~ s{^'?}{/\\G(};
+      $reg =~ s{'?$}{)/};
       $DEFINEDTOKENS .= << "EORT";
       ${reg}gc and return (\$1, \$1);
 EORT
@@ -211,7 +211,8 @@ MODULINO
     $modulino = '';
   }
 
-  my $defaultLexer = $self->{GRAMMAR}{LEXERISDEFINED} ? q{} : $self->makeLexer();
+  my $lexerisdefined = $self->Option('lexerisdefined') || $self->{GRAMMAR}{LEXERISDEFINED}; 
+  my $defaultLexer = $lexerisdefined ? q{} : $self->makeLexer();
 
   my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix, $conflict_handlers);
   my($version)=$Parse::Eyapp::Driver::VERSION;
