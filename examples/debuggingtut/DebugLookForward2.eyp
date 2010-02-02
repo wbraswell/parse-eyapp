@@ -33,13 +33,13 @@ our $VERSION = '0.01';
        return ('',undef) unless $_;
 
        return ($1,$1) if s/^([sSDd])//;
-       return ('SEMICOLOND', 'SEMICOLOND') if s/^;\s*D/D/;
        return ('SEMICOLONS', 'SEMICOLONS') if s/^;\s*S/S/;
+       return (';', ';') if s/^;//;
        die "Syntax error at line num ${$self->line()}: ${substr($_,0,10)}\n";
     }
 
 %token D S
-%syntactic token SEMICOLONS SEMICOLOND
+%syntactic token SEMICOLONS 
 
 %tree
 
@@ -53,7 +53,7 @@ p:
 
 ds:
     %name D2
-      D SEMICOLOND ds   
+      D ';' ds   
   | %name D1
       D       
 ;

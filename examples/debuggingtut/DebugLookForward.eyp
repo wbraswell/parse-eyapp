@@ -12,7 +12,7 @@ This grammar fixes the conflicts an bugs in Debug.eyp and Debug1.eyp
 Be sure C<DebugTail.pm> is reachable
 compile it with 
 
-      eyapp -b '' DebugLookForward.eyp
+      eyapp -C DebugLookForward.eyp
 
 execute the generated modulino with:
 
@@ -20,7 +20,7 @@ execute the generated modulino with:
 
 =head1 See also
 
-    Debug.eyp Debug1.eyp Debug2.eyp 
+    Debug.eyp Debug1.eyp Debug2.eyp DebugLookForward2.eyp
 
 =cut
 
@@ -60,6 +60,4 @@ ss:
 ;
 
 %%
-
-__PACKAGE__->main('Provide a statement like "D; D; S" and press <CR><CTRL-D>: ') unless caller;
 
