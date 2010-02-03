@@ -6,7 +6,7 @@ Parse::Eyapp::eyappintro - An introduction to Parse::Eyapp
  
 [% PROCESS synopsis %]
 
-[% PROCESS introduccion %]
+[% PROCESS introduction %]
 
 =head1 SEE ALSO
 
