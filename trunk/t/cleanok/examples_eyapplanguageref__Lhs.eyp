@@ -1,4 +1,4 @@
-# examples/eyapplanguageref/Lhs.eyp
+# examples/Eyapplanguageref/Lhs.eyp
 %right '=' 
 %left '-' '+' 
 %left '*' '/' 
