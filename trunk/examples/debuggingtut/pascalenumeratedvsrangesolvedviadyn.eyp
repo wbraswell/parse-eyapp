@@ -1,4 +1,50 @@
-%{
+%conflict rangeORenum {
+  my $s = $self->YYLookBothWays('type', ';');
+  if ($s =~ /^type ID = \( ID ( , ID )* \) ;$/x) 
+       { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
+  else { $self->YYSetReduce([',', ')'], 'ID:RANGE' ); }
+}
+
+%token ID  = /([A-Za-z]\w*)/
+%token NUM = /(\d+)/
+
+%left   ','
+%left   '-' '+'
+%left   '*' '/'
+
+%expect-rr 2
+
+%%
+
+type_decl : 'type' ID '=' type ';'
+;
+
+type : 
+      %name ENUM
+      '(' id_list ')'
+    | %name RANGE
+      expr '..' expr
+;
+
+id_list : 
+      %name ID:ENUM
+      ID                      %PREC rangeORenum
+    | id_list ',' ID
+;
+
+expr : '(' expr ')'   { $_[2] } /* bypass */
+    | %name PLUS     expr '+' expr
+    | %name MINUS    expr '-' expr
+    | %name TIMES    expr '*' expr
+    | %name DIV      expr '/' expr
+    | %name COMMA    expr ',' expr
+    | %name ID:RANGE
+      ID                     %PREC rangeORenum
+    | %name NUM      NUM
+;
+
+%%
+
 =head1 SYNOPSIS
 
 See 
@@ -11,142 +57,22 @@ See
 
 =back
 
-Compile it with:
+Compile it with something like:
 
-            eyapp -b '' pascalenumeratedvsrangesolvedviadyn.eyp
+      eyapp -TC pascalenumeratedvsrangePPCR.eyp
 
-run it with this options:
+Run it with this options:
 
-            ./pascalenumeratedvsrangesolvedviadyn.pm -t
+    $ ./pascalenumeratedvsrangePPCR.pm -t -i -m 1 -c 'type e = (x, y, z);'
 
-Try these inputs:
+Try also these inputs:
 
+                type e = (x) .. (y);
                 type r = (x) ..  y ;
                 type r = (x+2)*3 ..  y/2 ;
                 type e = (x, y, z);
                 type e = (x);
+                type e = (x, y, z) .. (u+v);
 
 =cut
 
-my $ID = qr{[A-Za-z][A-Za-z0-9_]*};
-             # Identifiers separated by commas
-my $IDLIST = qr{ \s*(?:\s*,\s* $ID)* \s* }x;
-             # list followed by a closing par and a semicolon 
-my $RESTOFLIST = qr{$IDLIST \) \s* ; }x;
-%}
-
-%conflict rangeORenum {
-          my $parser = shift;
-          if (${$parser->input()} =~ m{\G(?= $RESTOFLIST)}gcx) {
-              $parser->YYSetReduce(')', 'ID:ENUM' );
-            }
-            else {
-              $parser->YYSetReduce(')', 'ID:RANGE' );
-            }
-      }
-
-%namingscheme {
-  #Receives a Parse::Eyapp object describing the grammar
-  my $self = shift;
-
-  $self->tokennames(
-    '(' => 'LP',
-    '..' => 'DOTDOT',
-    ',' => 'COMMA',
-    ')' => 'RP',
-    '+' => 'PLUS',
-    '-' => 'MINUS',
-    '*' => 'TIMES',
-    '/' => 'DIV',
-  );
-
-  # returns the handler that will give names
-  # to the right hand sides
-  \&give_rhs_name;
-}
-
-%strict
-
-%token ID NUM DOTDOT TYPE
-%left   '-' '+'
-%left   '*' '/'
-
-%expect 0 1
-
-%tree
-
-%%
-
-type_decl : TYPE ID '=' type ';'
-;
-
-type : 
-      %name ENUM
-      '(' id_list ')'
-    | %name RANGE
-      expr DOTDOT expr
-;
-
-id_list : 
-      %name ID:ENUM
-      ID                      %PREC rangeORenum
-    | id_list ',' ID
-;
-
-expr : '(' expr ')'
-    | expr '+' expr
-    | expr '-' expr
-    | expr '*' expr
-    | expr '/' expr
-    | %name ID:RANGE
-      ID                     %PREC rangeORenum
-    | NUM
-;
-
-%%
-
-__PACKAGE__->lexer(
-  sub {
-    my $parser = shift;
-
-    for (${$parser->input()}) {    # contextualize
-      m{\G(\s*)}gc;
-      $parser->tokenline($1 =~ tr{\n}{});
-
-      m{\Gtype\b}gic                 and return ('TYPE', 'TYPE');
-
-      m{\G($ID)}gc                   and return ('ID',  $1);
-
-      m{\G([0-9]+)}gc                and return ('NUM', $1);
-
-      m{\G\.\.}gc                    and return ('DOTDOT',  '..');
-
-      m{\G(.)}gc                     and return ($1,    $1);
-
-      return('',undef);
-    }
-  }
-);
-
-unless (caller()) {
-  $Parse::Eyapp::Node::INDENT = 1;
-  my $prompt = << 'EOP';
-Try this input:
-    type 
-    r
-    =
-    (x)
-    ..
-    y
-    ;
-
-Here are other inputs you can try:
-
-    type r = (x+2)*3 ..  y/2 ;
-    type e = (x, y, z);
-    type e = (x);
-
-Press CTRL-D (CTRL-W in windows) to produce the end-of-file
-EOP
-  __PACKAGE__->main($prompt); 
-}
