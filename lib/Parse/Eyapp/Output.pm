@@ -306,7 +306,7 @@ push @<<$package>>::ISA, 'Parse::Eyapp::Driver';
 
 <<$defaultLexer>>
 
-sub unexpendedInput { substr($_, pos $_) }
+sub unexpendedInput { defined($_) ? substr($_, (defined(pos $_) ? pos $_ : 0)) : '' }
 
 <<$head>>
 ################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################
