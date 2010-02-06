@@ -1,22 +1,16 @@
+%whites /([ \t]+)/
+%token NUM = /([0-9]+(?:\.[0-9]+)?)/
+%token VAR = /([A-Za-z][A-Za-z0-9_]*)/
+
 %right '='
 %left   '-' '+'
 %left   '*' '/'
 %left   NEG
 
 %defaultaction { "$_[1] $_[3] $_[2]" }
+
 # example of incremental lexer
-%lexer {
-    if ($self->YYEndOfInput) {
-      print "Asking for more input: ";
-      my $file = $self->YYInputFile;
-      $_ = <$file>;
-      return ('', undef) unless $_;
-    }
-    m/\G[ \t]/gc;
-    m/\G([0-9]+(?:\.[0-9]+)?)/gc and return('NUM',$1);
-    m/\G([A-Za-z][A-Za-z0-9_]*)/gc and return('VAR',$1);
-    m/\G(.)/gcs and return($1,$1);
-}
+%incremental lexer  'Write an arithmetic expression: '
 
 %%
 input:                  {}
