@@ -1372,7 +1372,9 @@ sub main {
 
         if (defined($TERMINALinfo)) {
           $showtree = 1;
-          *TERMINAL::info = sub {  (ref($_[0]->attr) eq 'ARRAY')? $_[0]->attr->[0] : $_[0]->attr };
+          my $prefix = ($parser->YYPrefix || '');
+          no strict 'refs';
+          *{$prefix.'TERMINAL::info'} = sub {  (ref($_[0]->attr) eq 'ARRAY')? $_[0]->attr->[0] : $_[0]->attr };
         }
 
           print $tree->str()."\n";
