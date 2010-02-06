@@ -1,4 +1,8 @@
 Revision history for Perl extension Eyapp.
+1.56
+  * given explicit precedence to tokens
+       %token LASTSEMICOLON /(;)(?=S)/
+       %token ';' 
 1.155
   * A default lexer is built that can be used when no lexer is provided
   * eyapp -v option implies -N option

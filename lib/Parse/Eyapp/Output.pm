@@ -67,6 +67,9 @@ sub makeLexer {
       $WHITES = $w.'gc and $self->tokenline($1 =~ tr{\n}{});';
     }
   }
+
+  my $INCREMENTAL = defined($self->{GRAMMAR}{INCREMENTAL}) ? _incrementalLexerText() : '';
+
   my %term = %{$self->{GRAMMAR}{TERM}};
   delete $term{"\c@"};
   delete $term{'error'};
@@ -118,11 +121,24 @@ EORT
   }
 
   my $frame = _lexerFrame();
+  $frame =~ s/<<INCREMENTAL>>/$INCREMENTAL/;
   $frame =~ s/<<WHITES>>/$WHITES/;
   $frame =~ s/<<TERM>>/$TERM/;
   $frame =~ s/<<DEFINEDTOKENS>>/$DEFINEDTOKENS/;
 
   return $frame;
+}
+
+sub _incrementalLexerText {
+
+  return << 'ENDOFINCREMENTAL';
+if ($self->YYEndOfInput) {
+          print $a if defined($a = $self->YYPrompt);
+          my $file = $self->YYInputFile;
+          $_ = <$file>;
+          return ('', undef) unless $_;
+        }
+ENDOFINCREMENTAL
 }
 
 sub _lexerFrame {
@@ -132,6 +148,8 @@ our $LEX = sub {
     my $self = shift;
 
     for (${$self->input}) {
+      <<INCREMENTAL>>
+
       <<WHITES>>;
 
       m{<<TERM>>}gc and return ($1, $1);
@@ -228,6 +246,8 @@ MODULINO
   $states=$self->DfaTable();
   $tail= $self->Tail();
 
+  my $prompt = $self->Prompt();
+
   # In case the file ends with documentation and without a 
   # =cut
   #
@@ -301,6 +321,8 @@ package <<$package>>;
 use strict;
 
 push @<<$package>>::ISA, 'Parse::Eyapp::Driver';
+
+<<$prompt>>
 
 <<$driver>>
 
