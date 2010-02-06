@@ -1,3 +1,4 @@
+  * bug: YYPrefix and main method (info methods will not work if YYPrefix is active)
   * %tree: 
      - info  clause (autobuild ::info for TERMINAL) 
      - naming scheme clause
