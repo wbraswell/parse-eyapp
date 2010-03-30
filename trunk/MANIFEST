@@ -73,6 +73,7 @@ examples/Driver/use_aSb.pl
 examples/Driver/userule3.pl
 examples/Eyapp/foldand0rule9_4.pl
 examples/eyappintro/Postfix.eyp
+examples/eyappintro/InputFromStream.eyp
 examples/eyapplanguageref/15treewithsyntactictoken.pl
 examples/eyapplanguageref/alias_and_yyprefix.pl
 examples/eyapplanguageref/bugyapp2.eyp
