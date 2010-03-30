@@ -1,4 +1,16 @@
-  * bug: YYPrefix and main method (info methods will not work if YYPrefix is active)
+  * Lexical Analyzer generation:
+      * incremental lexer also influences the way the directive
+         %lexer 
+         must behave. because a lexer written by hand can be incremental
+      * support streams: see lexer in examples/Eyapp/Lhs1.yp
+        - Parse::Eyapp::Driver::input called as a setter receives an open file handler :
+                  prompt!
+        - if the input string is finished it reads from the file handler (controled by $/)
+          otherwise returns the current string
+      * error line numbers-> source code
+      * lexer must support a sub name
+         %lexer mylexer
+
   * %tree: 
      - info  clause (autobuild ::info for TERMINAL) 
      - naming scheme clause
@@ -14,16 +26,6 @@
      - Debug mode and standalone works?
 
   *  Debugging: set breakpoints in the code from yydebug=> 1
-
-  * Lexical Analyzer generation:
-      * support streams: see lexer in examples/Eyapp/Lhs1.yp
-        - Parse::Eyapp::Driver::input called as a setter receives an open file handler :
-                  prompt!
-        - if the input string is finished it reads from the file handler (controled by $/)
-          otherwise returns the current string
-      * error line numbers-> source code
-      * lexer must support a sub name
-         %lexer mylexer
 
   * What if the input comes from a stream? then $parser->input is undef
     Shall I support interactive streams?
