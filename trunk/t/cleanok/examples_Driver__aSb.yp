@@ -1,4 +1,4 @@
-%lexer 
+%incremental lexer 'Try aaabbb: ' 
 
 %%
 
