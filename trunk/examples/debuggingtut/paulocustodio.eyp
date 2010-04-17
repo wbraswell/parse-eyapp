@@ -25,8 +25,9 @@ sub my_lexer {
 sub my_error {
   my($self) = @_;
   my $t = $self->YYCurval || "eof";
-  my @expected = $self->YYExpect();
-  die("Statement $stmt: Syntax error at $t. Expected @expected.\n");
+  my @expected = map { $_ eq "\n"? q{'\\n'} : qq{'$_'} } $self->YYExpect();
+  local $" = ', ';
+  die("Statement $stmt: Syntax error at $t. Expected (@expected).\n");
 }
 
 sub main {
