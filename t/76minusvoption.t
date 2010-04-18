@@ -40,7 +40,7 @@ SKIP: {
 
   unlink 't/minusvoption/minusv.pl';
 
-  my $r = system(q{perl -I./lib/ eyapp -v -b '' -o t/minusvoption/minusv.pl t/minusvoption/paulocustodio.eyp});
+  $r = system(q{perl -I./lib/ eyapp -v -b '' -o t/minusvoption/minusv.pl t/minusvoption/paulocustodio.eyp});
   
   ok(!$r, "minus v compiled");
 
@@ -54,7 +54,7 @@ SKIP: {
 
   ok(!$@,'minusv.pl executed as standalone modulino');
 
-  my $expected =  q{
+  $expected =  q{
   Statement 1: Syntax error at org. Expected ('nop', '\n').
   };
   $expected =~ s/\s+//g;
