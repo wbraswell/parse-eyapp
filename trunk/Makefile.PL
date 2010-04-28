@@ -1,3 +1,4 @@
+## checking google-code
 use warnings;
 use strict;
 use ExtUtils::MakeMaker;
