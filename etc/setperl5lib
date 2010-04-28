@@ -2,7 +2,7 @@
 # Execute:
 # source setperl5lib
 export PATH=`pwd`:${PATH}:/home/pp2/src/perl/GRID_Machine/scripts
-export PERL5LIB=`pwd`/lib/:/home/pp2/src/perl/GRID_Machine/lib
+export PERL5LIB=`pwd`/lib/:/home/pp2/src/perl/GRID_Machine/lib:$PERL5LIB
 export TEST_FAST=1
 export DEVELOPER=casiano
 export SVNR=svn+ssh://casiano@orion.pcg.ull.es/var/svn/casiano/PL/YappWithDefaultAction/trunk
