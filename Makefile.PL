@@ -1,3 +1,4 @@
+# Somehting is going wrong with google-code
 use warnings;
 use strict;
 use ExtUtils::MakeMaker;
@@ -192,6 +193,9 @@ publichtml: htmls
 	cp ${HTMLS} eyapp.html treereg.html vgg.html <<PUBLIC_PLACE>>
 	chmod a+r <<PUBLIC_PLACE>>/*.html
 	
+commit:
+	svn commit -mm --username casiano.rodriguez.leon
+
 .PHONY: tags
 tags: 
 	${PLTAGS} eyapp treereg vgg lib/Parse/Eyapp/*.pm lib/Parse/Eyapp/*.yp lib/Parse/Eyapp.pm 
