@@ -142,7 +142,6 @@ examples/Eyapp/uselhs1.pl
 examples/Eyapp/usepostfix.pl
 examples/Eyapp/userule3.pl
 examples/Eyapp/useruleandshift.pl
-examples/Eyapp/TailModule.pm
 examples/generator/Generator.eyp
 examples/generator/GenSupport.pm
 examples/languages/C/ansic.eyp
