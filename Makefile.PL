@@ -1,4 +1,3 @@
-# Somehting is going wrong with google-code
 use warnings;
 use strict;
 use ExtUtils::MakeMaker;
