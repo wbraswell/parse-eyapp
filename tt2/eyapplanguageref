@@ -647,14 +647,7 @@ An example of this is in
 files C<examples/eyapplanguageref/List3_tree_d_sem.yp> (the grammar)
 and C<use_list3_tree_d_dem.pl> (the client).
 
-=head2 The Lexical Analyzer
-
-By default a lexical analyzer is built from your 
-token definitions
-
-    %token NUM = /([0-9]+(?:\.[0-9]+)?)/
-
-you can, however write it explicitly.
+=head1 THE LEXICAL ANALYZER
 
 The Lexical Analyzer 
 is called each time the parser needs a new token.
@@ -668,8 +661,42 @@ methods are accessible inside the lexical analyzer.
 When the lexical analyzer reaches the end of input, it must return the
 pair C<('', undef)>
 
+=head2 AUTOMATIC GENERATION OF LEXICAL ANALYZERS
 
-=head2 The Error Report Subroutine
+By default a lexical analyzer is built.
+When no token definitions are given in the head section, 
+the default lexical analyzer simply assumes
+that the token is the string literal. See this example in 
+file C<examples/lexergeneration/simple.yp>:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat simple.yp
+  %%
+  A:    a
+      | A d
+  ;
+  %%
+
+
+The grammar does not describes the lexical analyzer nor the error default subroutine.
+Eyapp will generate default lexical and error suborutines:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ eyapp -o simple.pl -TC simple.yp
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ls -ltr | tail -2
+  -rw-r--r-- 1 pl pl   27 2010-06-29 10:28 simple.yp
+  -rwxr-xr-x 1 pl pl 3245 2010-06-29 10:35 simple.pl
+
+The default lexical analyzer accepts tokens C<a> and  C<d>:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ./simple.pl -i -t -c 'a d d'
+  A_is_A_d(A_is_A_d(A_is_a(TERMINAL[a]),TERMINAL[d]),TERMINAL[d])
+
+If we try to feed it with an illegal input, the default error subroutine is called:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ./simple.pl -i -t -c 'a e d'
+  Error inside the lexical analyzer near 'e'. Line: 1. File: 'simple.yp'. No match found.
+
+
+=head1 THE ERROR REPORT SUBROUTINE
 
 The Error Report subroutine is also a parser attribute, 
 and must be defined. By default C<Parse::Eyapp>
