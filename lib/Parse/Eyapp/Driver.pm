@@ -29,7 +29,6 @@ use Carp;
 use Scalar::Util qw{blessed reftype looks_like_number};
 
 use Getopt::Long;
-use Pod::Usage;
 
 #Known parameters, all starting with YY (leading YY will be discarded)
 my (%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
@@ -1340,7 +1339,7 @@ sub main {
     "margin=i"       => \$Parse::Eyapp::Node::INDENT,      
   );
 
-  pod2usage() if $help;
+  _help() if $help;
 
   $debug = 0x1F if $debug;
   $file = shift if !$file && @ARGV; # file is taken from the @ARGS unless already defined
@@ -1408,6 +1407,23 @@ sub main {
 
     return $tree
   }
+}
+
+sub _help {
+  print << 'AYUDA';
+Available options:
+    "debug!"                  # sets yydebug on
+    "file=s"                  # read input from that file
+    "commandinput=s"          # read input from command line arg
+    "tree!"                   # prints $tree->str
+    "info"                    # prints $tree->str and provides default TERMINAL::info
+    "help"                    # shows SYNOPSIS section from the script pod
+    "slurp!"                  # read until EOF or CR is reached
+    "argfile!"                # take input string from @_
+    "yaml"                    # dumps YAML for $tree: YAML must be installed
+    "margin=i"                # \$Parse::Eyapp::Node::INDENT,      
+AYUDA
+   exit(0);
 }
 
 # Generic error handler
