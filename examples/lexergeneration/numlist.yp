@@ -1,0 +1,7 @@
+%token NUM = /\d+/
+%token ID  = /\w+/
+%%
+A:    NUM
+    | A NUM
+;
+%%
