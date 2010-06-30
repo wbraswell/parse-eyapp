@@ -774,6 +774,34 @@ See the behavior of the former program:
 
 =head3 Token Definitions via Semantic Actions
 
+An alternative way to define a token is via Perl code:
+
+      %token TOKENID = { ... }
+
+in such case the code defining C<TOKENID> will be inserted
+verbatim in the corresponding place of the generated lexical 
+analyzer. When the code is executed, the variable C<$_> 
+contains the input being parsed.
+The following example is equivalent to the one used in the previous
+section:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n tokensemdef.eyp
+     1  %token NUM = /(\d+)/
+     2  %token ID  = { /\G(\w+)/gc and return ('ID', $1); }
+     3
+     4  %%
+     5  A:
+     6        B
+     7      | A B
+     8  ;
+     9
+    10  B:
+    11        ID
+    12      | a
+    13      | NUM
+    14  ;
+    15  %%
+
 =head3 Token Definitions: Controling whites
 
 =head1 THE ERROR REPORT SUBROUTINE
