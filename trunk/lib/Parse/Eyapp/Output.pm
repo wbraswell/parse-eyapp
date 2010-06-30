@@ -91,8 +91,11 @@ sub makeLexer {
   # Keep escape characters as \n \r, etc.
   @term = map { s/\\\\(.)/\\$1/g; $_ } @term;
 
-  my $TERM = join '|', @term;
-  $TERM = "\\G($TERM)";
+  my $TERM = '';
+  if (@term) {
+    $TERM = join '|', @term;
+    $TERM = "\\G($TERM)";
+  }
  
   # Translate defined tokens
   # sort by line number
@@ -123,7 +126,14 @@ EORT
   my $frame = _lexerFrame();
   $frame =~ s/<<INCREMENTAL>>/$INCREMENTAL/;
   $frame =~ s/<<WHITES>>/$WHITES/;
-  $frame =~ s/<<TERM>>/$TERM/;
+
+  if (@term) {
+    $frame =~ s/<<TERM>>/m{$TERM}gc and return (\$1, \$1);/ 
+  }
+  else {
+    $frame =~ s/<<TERM>>//
+  }
+
   $frame =~ s/<<DEFINEDTOKENS>>/$DEFINEDTOKENS/;
 
   return $frame;
@@ -152,7 +162,7 @@ our $LEX = sub {
 
       <<WHITES>>;
 
-      m{<<TERM>>}gc and return ($1, $1);
+      <<TERM>>
 
 <<DEFINEDTOKENS>>
 
