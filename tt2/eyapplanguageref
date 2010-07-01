@@ -843,7 +843,7 @@ The lexical analyzer returned C<NUM> and not C<ID> when C<4> was processed,
 also it returned C<a> and not C<ID> when C<'a'> was 
 processed.
 
-=head3 Token Definitions via Semantic Actions
+=head3 Token Definitions via Code
 
 An alternative way to define a token is via Perl code:
 
@@ -851,7 +851,8 @@ An alternative way to define a token is via Perl code:
 
 in such case the code defining C<TOKENID> will be inserted
 verbatim in the corresponding place of the generated lexical 
-analyzer. When the code is executed, the variable C<$_> 
+analyzer. When the code C<{ ... }>
+is executed, the variable C<$_> 
 contains the input being parsed.
 The following example is equivalent to the one used in the previous
 section:
