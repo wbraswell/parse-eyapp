@@ -10,6 +10,17 @@
       * error line numbers-> source code
       * lexer must support a sub name
          %lexer mylexer
+      *  Document:
+            =head3 $parser->input YYInput
+
+            =head3 $parser->YYInputFile
+
+            =head3 $parser->YYPrompt
+
+            =head3 $parser->main
+
+            =head3 $parser->Run
+
 
   * %tree: 
      - info  clause (autobuild ::info for TERMINAL) 
