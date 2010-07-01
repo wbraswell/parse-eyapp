@@ -1420,10 +1420,12 @@ Available options:
     --notree                  # does not print $tree->str
     --info                    # When printing $tree->str shows the value of TERMINALs
     --help                    # shows this help
-    --slurp!                  # read until EOF or CR is reached
-    --argfile!                # take input string from @_
-    --yaml                    # dumps YAML for $tree: YAML must be installed
-    --margin=i                # \$Parse::Eyapp::Node::INDENT,      
+    --slurp                   # read until EOF reached
+    --noslurp                 # read until CR is reached
+    --argfile                 # main() will take the input string from its @_
+    --noargfile               # main() will not take the input string from its @_
+    --yaml                    # dumps YAML for $tree: YAML module must be installed
+    --margin=i                # controls the indentation of $tree->str (i.e. $Parse::Eyapp::Node::INDENT)      
 AYUDA
    exit(0);
 }
