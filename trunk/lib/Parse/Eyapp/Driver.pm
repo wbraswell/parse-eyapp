@@ -21,7 +21,7 @@ our ( $VERSION, $COMPATIBLE, $FILENAME );
 
 
 # $VERSION is also in Parse/Eyapp.pm
-$VERSION = "1.161";
+$VERSION = "1.162";
 $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
@@ -1224,6 +1224,7 @@ sub slurp_file {
 }
 
 our $INPUT = \undef;
+*Parse::Eyapp::Driver::YYInput = \&input;
 sub input {
   my $self = shift;
 
@@ -1308,9 +1309,11 @@ sub Run {
     yydebug => $yydebug, # 0xF
   );
 }
+*Parse::Eyapp::Driver::YYRun = \&run;
 
 # args: class, prompt, file, optionally input (ref or not)
 # return the abstract syntax tree (or whatever was returned by the parser)
+*Parse::Eyapp::Driver::YYMain = \&main;
 sub main {
   my $package = shift;
   my $prompt = shift;

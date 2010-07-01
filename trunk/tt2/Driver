@@ -444,6 +444,40 @@ of use can be found in C<examples/Eyapp/Lhs1.yp>:
 
   %defaultaction { print $_[0]->YYLhs,"\n" }
 
+=head2  $parser->YYMain
+
+alias is also C<main>.
+
+This method provides a default C<main> for testing the generated parser.
+It parses the commandline searching for a number of options. See
+an example of use:
+
+  pl@nereida:~/LEyapp/examples/eyapplanguageref$ cat use_list2.pl
+  #!/usr/bin/env perl
+  use warnings;
+  use strict;
+  use List2;
+
+  unshift @ARGV, '--noslurp';
+  List2->new->main("Try input 'aacbb': ");
+  pl@nereida:~/LEyapp/examples/eyapplanguageref$ ./use_list2.pl --help
+  Available options:
+      --debug                    sets yydebug on
+      --nodebug                  sets yydebug off
+      --file filepath            read input from filepath
+      --commandinput string      read input from string
+      --tree                     prints $tree->str
+      --notree                   does not print $tree->str
+      --info                     When printing $tree->str shows the value of TERMINALs
+      --help                     shows this help
+      --slurp                    read until EOF reached
+      --noslurp                  read until CR is reached
+      --argfile                  main() will take the input string from its @_
+      --noargfile                main() will not take the input string from its @_
+      --yaml                     dumps YAML for $tree: YAML module must be installed
+      --margin=i                 controls the indentation of $tree->str (i.e. $Parse::Eyapp::Node::INDENT)
+
+
 =head2  $parser->YYName
 
 Returns the name of the current rule (The production whose reduction
@@ -671,7 +705,7 @@ See the examples in C<examples/debuggingtut/> in files
 
 =back
 
-=head1 $parser->YYSetShift($token)
+=head2 $parser->YYSetShift($token)
 
 Also:
 
@@ -730,3 +764,4 @@ rule of C<type> we are in state 13).
 If C<$length> is zero or not provided 
 it returns the state on top of the stack.
 Otherwise, returns the state C<$length> units deep in the stack.
+
