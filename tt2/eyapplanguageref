@@ -690,14 +690,26 @@ Eyapp will generate default lexical and error subroutines:
 
   pl@nereida:~/LEyapp/examples/lexergeneration$ eyapp -o simple.pl -TC simple.yp
 
-The option C<-T> is equivalent to insert the C<%tree> directive in the head section.
-Option C<-C> instructs the C<eyapp> compiler to produce an executable by inserting
-the apropriate directives and to call to the package C<main> subroutine 
-(if none was provided, C<eyapp> will provide one):
-
   pl@nereida:~/LEyapp/examples/lexergeneration$ ls -ltr | tail -2
   -rw-r--r-- 1 pl pl   27 2010-06-29 10:28 simple.yp
   -rwxr-xr-x 1 pl pl 3245 2010-06-29 10:35 simple.pl
+
+The option C<-T> is equivalent to insert the C<%tree> directive in the head section.
+Option C<-C> instructs the C<eyapp> compiler to produce an executable by inserting
+the appropriate directives 
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ head simple.pl | head -1
+  #!/usr/bin/perl
+
+and a call to the package C<main> subroutine at the end of the generated parser:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ tail -6 simple.pl
+  unless (caller) {
+    exit !__PACKAGE__->main('');
+  }
+
+
+If no C<main> was provided, C<eyapp> will provide one.
 
 Tokens C<a> and C<d> are assumed to represent strings C<'a'>
 and C<'d'> respectively.

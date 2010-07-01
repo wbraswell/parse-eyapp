@@ -1412,16 +1412,18 @@ sub main {
 sub _help {
   print << 'AYUDA';
 Available options:
-    "debug!"                  # sets yydebug on
-    "file=s"                  # read input from that file
-    "commandinput=s"          # read input from command line arg
-    "tree!"                   # prints $tree->str
-    "info"                    # prints $tree->str and provides default TERMINAL::info
-    "help"                    # shows SYNOPSIS section from the script pod
-    "slurp!"                  # read until EOF or CR is reached
-    "argfile!"                # take input string from @_
-    "yaml"                    # dumps YAML for $tree: YAML must be installed
-    "margin=i"                # \$Parse::Eyapp::Node::INDENT,      
+    --debug                   # sets yydebug on
+    --nodebug                 # sets yydebug off
+    --file filepath           # read input from filepath
+    --commandinput string     # read input from string
+    --tree                    # prints $tree->str
+    --notree                  # does not print $tree->str
+    --info                    # When printing $tree->str shows the value of TERMINALs
+    --help                    # shows this help
+    --slurp!                  # read until EOF or CR is reached
+    --argfile!                # take input string from @_
+    --yaml                    # dumps YAML for $tree: YAML must be installed
+    --margin=i                # \$Parse::Eyapp::Node::INDENT,      
 AYUDA
    exit(0);
 }
