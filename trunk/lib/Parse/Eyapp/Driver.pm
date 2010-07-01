@@ -1339,7 +1339,7 @@ sub main {
     "margin=i"       => \$Parse::Eyapp::Node::INDENT,      
   );
 
-  _help() if $help;
+  $package->_help() if $help;
 
   $debug = 0x1F if $debug;
   $file = shift if !$file && @ARGV; # file is taken from the @ARGS unless already defined
@@ -1410,24 +1410,29 @@ sub main {
 }
 
 sub _help {
+  my $package = shift;
+
   print << 'AYUDA';
 Available options:
-    --debug                   # sets yydebug on
-    --nodebug                 # sets yydebug off
-    --file filepath           # read input from filepath
-    --commandinput string     # read input from string
-    --tree                    # prints $tree->str
-    --notree                  # does not print $tree->str
-    --info                    # When printing $tree->str shows the value of TERMINALs
-    --help                    # shows this help
-    --slurp                   # read until EOF reached
-    --noslurp                 # read until CR is reached
-    --argfile                 # main() will take the input string from its @_
-    --noargfile               # main() will not take the input string from its @_
-    --yaml                    # dumps YAML for $tree: YAML module must be installed
-    --margin=i                # controls the indentation of $tree->str (i.e. $Parse::Eyapp::Node::INDENT)      
+    --debug                    sets yydebug on
+    --nodebug                  sets yydebug off
+    --file filepath            read input from filepath
+    --commandinput string      read input from string
+    --tree                     prints $tree->str
+    --notree                   does not print $tree->str
+    --info                     When printing $tree->str shows the value of TERMINALs
+    --help                     shows this help
+    --slurp                    read until EOF reached
+    --noslurp                  read until CR is reached
+    --argfile                  main() will take the input string from its @_
+    --noargfile                main() will not take the input string from its @_
+    --yaml                     dumps YAML for $tree: YAML module must be installed
+    --margin=i                 controls the indentation of $tree->str (i.e. $Parse::Eyapp::Node::INDENT)      
 AYUDA
-   exit(0);
+
+  $package->help() if $package->can("help");
+
+  exit(0);
 }
 
 # Generic error handler
