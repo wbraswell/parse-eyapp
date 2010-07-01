@@ -829,7 +829,8 @@ Since it appears first, it will be tried first:
      /\G(\w+)/gc and return ('ID', $1);
 
 Also observe that token C<'a'> (line 12) is contained
-in token C<ID>. However, any implicit token like this that was not 
+in token C<ID>. However, any implicit token like this that appears in the
+body section and was not 
 declared using an explicit C<%token> directive in the
 head section takes priority over the ones declared.
 See the behavior of the former program:
@@ -837,6 +838,10 @@ See the behavior of the former program:
   pl@nereida:~/LEyapp/examples/lexergeneration$ eyapp -TC numlist
   pl@nereida:~/LEyapp/examples/lexergeneration$ ./numlist.pm -t -i -c '4 a b'
   A_is_A_B(A_is_A_B(A_is_B(B_is_NUM(TERMINAL[4])),B_is_a(TERMINAL[a])),B_is_ID(TERMINAL[b]))
+
+The lexical analyzer returned C<NUM> and not C<ID> when C<4> was processed,
+also it returned C<a> and not C<ID> when C<'a'> was 
+processed.
 
 =head3 Token Definitions via Semantic Actions
 
