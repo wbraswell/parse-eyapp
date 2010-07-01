@@ -55,7 +55,7 @@ sub deleteNotUsedTokens {
 sub makeLexer {
   my $self = shift;
 
-  my $WHITES = 'm{\G(\s+)}gc and $self->tokenline($1 =~ tr{\n}{});';
+  my $WHITES = 'm{\G(\s+)}gc and $self->tokenline($1 =~ tr{\n}{})';
   my $w = $self->{GRAMMAR}{WHITES}[0];
   if (defined $w)  {
     # if CODE then literally
@@ -64,7 +64,7 @@ sub makeLexer {
     }
     else {
       $w =~ s{^/}{/\\G};
-      $WHITES = $w.'gc and $self->tokenline($1 =~ tr{\n}{});';
+      $WHITES = $w.'gc and $self->tokenline($1 =~ tr{\n}{})';
     }
   }
 

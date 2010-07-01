@@ -856,7 +856,8 @@ in such case the code defining C<TOKENID> will be inserted
 verbatim in the corresponding place of the generated lexical 
 analyzer. When the code C<{ ... }>
 is executed, the variable C<$_> 
-contains the input being parsed.
+contains the input being parsed and
+the special variable C<$self> refers to the parser object.
 The following example is equivalent to the one used in the previous
 section:
 
@@ -886,6 +887,42 @@ Follows an example of compilation and execution:
 
 
 =head3 Token Definitions: Controling whites
+
+By default, the generated lexical analyzer skips 
+white spaces, defined as C</\s*/>. The programmer
+can change this behavior using the C<%whites> directive.
+The following example permits Perl-like comments 
+in the input:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n simplewithwhites.eyp
+     1  %whites  /(\s*(?:#.*)?\s*)/
+     2  %%
+     3  A:    a
+     4      | A d
+     5  ;
+     6  %%
+
+Follows an example of execution:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -nA input
+       1  a # 1$
+       2  $
+       3  d ^I#2$
+  pl@nereida:~/LEyapp/examples/lexergeneration$ eyapp -TC simplewithwhites.eyp
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ./simplewithwhites.pm -t -i -f input
+  A_is_A_d(A_is_a(TERMINAL[a]),TERMINAL[d])
+
+The C<%white> directive can be followed by some Perl
+code defining the white spaces:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n simplewithwhitescode.eyp
+     1  %whites  { /\G(\s*(?:#.*)?\s*)/gc and $self->tokenline($1 =~ tr{\n}{}) }
+     2  %%
+     3  A:    a
+     4      | A d
+     5  ;
+     6  %%
+
 
 =head1 THE ERROR REPORT SUBROUTINE
 
