@@ -757,6 +757,36 @@ In the example above we have taken advantage of the C<main> method provided by E
 If we want to keep in control of the parsing process, we can write a client program that 
 makes use of the generated modulino:
 
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n usesimple.pl
+     1  #!/usr/bin/env perl
+     2  use warnings;
+     3  use strict;
+     4
+     5  use simple;
+     6
+     7  # build a parser object
+     8  my $parser = simple->new();
+     9
+    10  # take the input from the command line arguments
+    11  # or from STDIN
+    12  my $input = join ' ',@ARGV;
+    13  $input = <> unless $input;
+    14
+    15  # set the input
+    16  $parser->input($input);
+    17
+    18  # parse the input and get the AST
+    19  my $tree = $parser->YYParse();
+    20
+    21  print $tree->str()."\n";
+
+Here is an example of execution:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ eyapp -T simple.yp
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ./usesimple.pl a d d
+  A_is_A_d(A_is_A_d(A_is_a(TERMINAL),TERMINAL),TERMINAL)
+
+
 =head3 Token Definitions: Regular Expressions
 
 Eyapp extends the C<%token> directive with the syntax:
