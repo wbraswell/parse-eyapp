@@ -12,7 +12,6 @@
          %lexer mylexer
       *  Document:
             =head3 $parser->input YYInput
-
             =head3 $parser->YYInputFile
 
             =head3 $parser->YYPrompt
