@@ -446,7 +446,12 @@ of use can be found in C<examples/Eyapp/Lhs1.yp>:
 
 =head2  $parser->YYMain
 
-alias is also C<main>.
+Alias is also C<main>.
+
+Other than the package, it has as optional arguments the C<prompt> 
+(shown each time it ask for input), the name of the input file
+(if it wasn't specified in the command line using C<--file filename>)
+and also the input string.
 
 This method provides a default C<main> for testing the generated parser.
 It parses the commandline searching for a number of options. See

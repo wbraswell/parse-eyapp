@@ -1345,7 +1345,7 @@ sub main {
   $package->_help() if $help;
 
   $debug = 0x1F if $debug;
-  $file = shift if !$file && @ARGV; # file is taken from the @ARGS unless already defined
+  $file = shift if !$file && @ARGV; # file is taken from the @ARGV unless already defined
   $slurp = "\n" if defined($slurp);
 
   my $parser = $package->new();
