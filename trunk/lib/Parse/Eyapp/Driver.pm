@@ -1430,7 +1430,7 @@ Available options:
     --margin=i                 controls the indentation of $tree->str (i.e. $Parse::Eyapp::Node::INDENT)      
 AYUDA
 
-  $package->help() if $package->can("help");
+  $package->help() if ($package & $package->can("help"));
 
   exit(0);
 }

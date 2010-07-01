@@ -695,13 +695,13 @@ Eyapp will generate default lexical and error subroutines:
   -rwxr-xr-x 1 pl pl 3245 2010-06-29 10:35 simple.pl
 
 The option C<-T> is equivalent to insert the C<%tree> directive in the head section.
-Option C<-C> instructs the C<eyapp> compiler to produce an executable by inserting
-the appropriate directives 
+Option C<-C> instructs the C<eyapp> compiler to produce an executable by setting the execution permits
+(see C<simple.pl> permits above), inserting the appropriate she bang directive:
 
   pl@nereida:~/LEyapp/examples/lexergeneration$ head simple.pl | head -1
   #!/usr/bin/perl
 
-and a call to the package C<main> subroutine at the end of the generated parser:
+and inserting a call to the package C<main> subroutine at the end of the generated parser:
 
   pl@nereida:~/LEyapp/examples/lexergeneration$ tail -6 simple.pl
   unless (caller) {
@@ -728,10 +728,34 @@ The C<main> method provided by C<eyapp> accepts several options in the command l
 =item * C<-c string> Indicates that the input is given by the C<string> that follows the option
 
 =back
+
+You can get the set of available options using C<--help>:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ./simple.pl -h
+  Available options:
+    --debug                    sets yydebug on
+    --nodebug                  sets yydebug off
+    --file filepath            read input from filepath
+    --commandinput string      read input from string
+    --tree                     prints $tree->str
+    --notree                   does not print $tree->str
+    --info                     When printing $tree->str shows the value of TERMINALs
+    --help                     shows this help
+    --slurp                    read until EOF reached
+    --noslurp                  read until CR is reached
+    --argfile                  main() will take the input string from its @_
+    --noargfile                main() will not take the input string from its @_
+    --yaml                     dumps YAML for $tree: YAML module must be installed
+    --margin=i                 controls the indentation of $tree->str (i.e. $Parse::Eyapp::Node::INDENT)
+
 If we try to feed it with an illegal input, an error message is emitted:
 
   pl@nereida:~/LEyapp/examples/lexergeneration$ ./simple.pl -i -t -c 'a e d'
   Error inside the lexical analyzer near 'e'. Line: 1. File: 'simple.yp'. No match found.
+
+In the example above we have taken advantage of the C<main> method provided by Eyapp.
+If we want to keep in control of the parsing process, we can write a client program that 
+makes use of the generated modulino:
 
 =head3 Token Definitions: Regular Expressions
 
