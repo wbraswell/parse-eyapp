@@ -695,7 +695,7 @@ Eyapp will generate default lexical and error subroutines:
   -rwxr-xr-x 1 pl pl 3245 2010-06-29 10:35 simple.pl
 
 The option C<-T> is equivalent to insert the C<%tree> directive in the head section.
-Since no names were explicitly given to the productions, the names are built using
+Since no names were explicitly given to the productions, the names of the productions are built using
 the pattern C<Lhs_is_RHS>.
 
 Option C<-C> instructs the C<eyapp> compiler to produce an executable by setting the execution permits
