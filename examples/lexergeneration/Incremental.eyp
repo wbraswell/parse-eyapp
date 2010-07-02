@@ -2,11 +2,12 @@
 %left   '-' '+'
 %left   '*' '/'
 %left   NEG
-%defaultaction { print $_[0]->YYLhs,"\n" }
+
+%tree
 
 %%
 input:                
-        |   input line 
+        |   input $line  { print $line->str."\n" }
 ;
 
 line:     '\n'      

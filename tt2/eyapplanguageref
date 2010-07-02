@@ -661,7 +661,7 @@ methods are accessible inside the lexical analyzer.
 When the lexical analyzer reaches the end of input, it must return the
 pair C<('', undef)>
 
-=head2 AUTOMATIC GENERATION OF LEXICAL ANALYZERS
+=head2 Automatic Generation of Lexical Analyzers
 
 By default a lexical analyzer is built.
 The C<eyapp> option C<-l>
@@ -923,6 +923,79 @@ code defining the white spaces:
      5  ;
      6  %%
 
+=head2 Incremental Lexical Analyzers
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n Incremental.eyp                    
+     1  %right  '='                                                                     
+     2  %left   '-' '+'                                                                 
+     3  %left   '*' '/'                                                                 
+     4  %left   NEG                                                                     
+     5                                                                                  
+     6  %tree                                                                           
+     7                                                                                  
+     8  %%                                                                              
+     9  input:                                                                          
+    10          |   input $line  { print $line->str."\n" }                              
+    11  ;                                                                               
+    12                                                                                  
+    13  line:     '\n'                                                                  
+    14          | exp '\n'
+    15          | error '\n'
+    16  ;
+    17
+    18  exp:        NUM
+    19          |   VAR
+    20          |   VAR '=' exp
+    21          |   exp '+' exp
+    22          |   exp '-' exp
+    23          |   exp '*' exp
+    24          |   exp '/' exp
+    25          |   '-' exp %prec NEG
+    26          |   '(' exp ')'
+    27  ;
+    28
+    29  %%
+    30
+    31  sub _Lexer {
+    32      my($parser)=shift;
+    33
+    34      if ($parser->YYEndOfInput) {
+    35        my $input = <STDIN>;
+    36        return('', undef) unless $input;
+    37        $parser->input($input);
+    38      };
+    39
+    40      for (${$parser->YYInput}) {
+    41          m/\G[ \t]/gc;
+    42          m/\G([0-9]+(?:\.[0-9]+)?)/gc and return('NUM',$1);
+    43          m/\G([A-Za-z][A-Za-z0-9_]*)/gc and return('VAR',$1);
+    44          m/\G(.)/gcs and return($1,$1);
+    45          return('', undef);
+    46      }
+    47  }
+    48
+    49  __PACKAGE__->lexer(\&_Lexer);
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat inputforincremental
+  a = 2
+  a+3
+  b=4
+  b*2+a
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat useincremental.pl
+  #!/usr/bin/perl -w
+  use Incremental;
+
+  Incremental->new->YYParse;
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat inputforincremental
+  a = 2
+  a+3
+  b=4
+  b*2+a
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ./useincremental.pl < inputforincremental
+  line_4(exp_8(TERMINAL,exp_6(TERMINAL)))
+  line_4(exp_9(exp_7(TERMINAL),exp_6(TERMINAL)))
+  line_4(exp_8(TERMINAL,exp_6(TERMINAL)))
+  line_4(exp_9(exp_11(exp_7(TERMINAL),exp_6(TERMINAL)),exp_7(TERMINAL)))
 
 =head1 THE ERROR REPORT SUBROUTINE
 
