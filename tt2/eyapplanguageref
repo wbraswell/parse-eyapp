@@ -923,7 +923,19 @@ code defining the white spaces:
      5  ;
      6  %%
 
-=head2 Incremental Lexical Analyzers
+=head2 Huge input and Incremental Lexical Analyzers
+
+If your input is huge, try to make use of an incremental
+lexical analyzer. In an incremental lexer the input
+is read and parsed in chunks. Read up to a 
+point where  it is safe to parse.
+In the example below, the lexer reads a new line
+each time we reach the end of the input string C<${$parser-E<gt>YYInput}>.
+In the case of the arithmetic expressions grammar below,
+by reading up to C<'\n'>, we are sure that the input is not
+broken in the middle of a token.
+Instead of having the whole huge input in memory,
+we only keep a small substring.
 
   pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n Incremental.eyp                    
      1  %right  '='                                                                     
@@ -976,26 +988,52 @@ code defining the white spaces:
     48
     49  __PACKAGE__->lexer(\&_Lexer);
 
-  pl@nereida:~/LEyapp/examples/lexergeneration$ cat inputforincremental
-  a = 2
-  a+3
-  b=4
-  b*2+a
+Here follows an example of execution. 
+This is the client program:
+
   pl@nereida:~/LEyapp/examples/lexergeneration$ cat useincremental.pl
   #!/usr/bin/perl -w
   use Incremental;
 
   Incremental->new->YYParse;
+
+This is a small test input file:
+
   pl@nereida:~/LEyapp/examples/lexergeneration$ cat inputforincremental
   a = 2
   a+3
   b=4
   b*2+a
+
+Finally, see the results of the execution:
+
   pl@nereida:~/LEyapp/examples/lexergeneration$ ./useincremental.pl < inputforincremental
   line_4(exp_8(TERMINAL,exp_6(TERMINAL)))
   line_4(exp_9(exp_7(TERMINAL),exp_6(TERMINAL)))
   line_4(exp_8(TERMINAL,exp_6(TERMINAL)))
   line_4(exp_9(exp_11(exp_7(TERMINAL),exp_6(TERMINAL)),exp_7(TERMINAL)))
+
+The numbers in the output refer to the production number:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ eyapp -v Incremental.eyp
+  pl@nereida:~/LEyapp/examples/lexergeneration$ sed -ne '/Rules:/,/^$/p' Incremental.output
+  Rules:
+  ------
+  0:      $start -> input $end
+  1:      input -> /* empty */
+  2:      input -> input line
+  3:      line -> '\n'
+  4:      line -> exp '\n'
+  5:      line -> error '\n'
+  6:      exp -> NUM
+  7:      exp -> VAR
+  8:      exp -> VAR '=' exp
+  9:      exp -> exp '+' exp
+  10:     exp -> exp '-' exp
+  11:     exp -> exp '*' exp
+  12:     exp -> exp '/' exp
+  13:     exp -> '-' exp
+  14:     exp -> '(' exp ')'
 
 =head1 THE ERROR REPORT SUBROUTINE
 
