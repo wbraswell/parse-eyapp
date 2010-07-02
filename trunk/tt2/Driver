@@ -190,6 +190,11 @@ and C<examples/recycle/icalcu_and_ipost.pl>
 in the Parse::Eyapp distribution
 
 =head2 
+          $parser->YYEndOfInput
+
+True if the C<pos()> of the input being scanned in C<${$parser-E<gt>input}> is at the end 
+
+=head2 
           $parser->YYErrok 
 
 Works as yacc/bison C<yyerrok>. 
