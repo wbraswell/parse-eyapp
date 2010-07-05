@@ -1,4 +1,5 @@
   * Lexical Analyzer generation:
+      * sensitive to lexer changes? How to make it efficient?
       * incremental lexer also influences the way the directive
          %lexer 
          must behave. because a lexer written by hand can be incremental
