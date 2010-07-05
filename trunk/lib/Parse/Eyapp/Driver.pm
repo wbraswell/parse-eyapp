@@ -1194,6 +1194,7 @@ sub error {
 # is a reference to the actual input
 # slurp_file. 
 # Parameters: object or class, filename, prompt messagge, mode (interactive or not: undef or "\n")
+*YYSlurpFile = \&slurp_file;
 sub slurp_file {
   my $self = shift;
   my $fn = shift;
@@ -1628,8 +1629,9 @@ sub _Parse {
 
         defined($$token)
             or  do {
-        #($$token,$$value)=&$lex($self);
-        ($$token,$$value)=$self->$lex;
+        ($$token,$$value)=&$lex($self); # original line
+        #($$token,$$value)=$self->$lex;   # to make it a method call
+        #($$token,$$value) = $self->{LEX}->($self); # sensitive to the lexer changes
 #DBG>       $debug & 0x01
 #DBG>     and do { 
 #DBG>       print STDERR "Need token. Got ".&$ShowCurToken."\n";

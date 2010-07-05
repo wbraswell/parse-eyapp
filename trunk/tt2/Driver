@@ -379,6 +379,12 @@ We can specify a list of names:
   DB<3> x $parser->YYIndex(qw{exp_4})
   0  4
 
+=head2  $parser->YYInput
+
+Alias C<input>. If an argument is provided, sets the input for the parser object.
+The argument is a string or a reference to a string.
+It returns a reference to the input string or C<undef> if not set.
+
 
 =head2  $parser->YYIsterm
 
@@ -737,6 +743,16 @@ See the examples in C<examples/debuggingtut/> in files
 =item * C<DynamicallyChangingTheParser.eyp>
 
 =back
+
+=head2 $parser->YYSlurpFile
+
+Receives the name of the file, reads its contents
+and stores it in C<$parser-E<gt>input>.
+
+If the file does not exists, it proceeds to read from C<STDIN>.
+If a prompt was set with C<$parser-E<gt>YYPrompt>, it will be shown.
+The additional optional parameter C<$mode> is used in such case to set 
+C<$/>.
 
 =head2 $parser->YYState
 

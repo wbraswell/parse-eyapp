@@ -923,6 +923,47 @@ code defining the white spaces:
      5  ;
      6  %%
 
+=head2 Reading Input from File
+
+You can use the method C<YYSlurpFile> to read the input from a file
+and set the input for the parser to its contents.
+Yo can also use the C<YYInput> method to set the input.
+
+See the example below:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n usesimplefromfile.pl
+     1  #!/usr/bin/env perl
+     2  use warnings;
+     3  use strict;
+     4
+     5  use simplewithwhites;
+     6
+     7  my $parser = simplewithwhites->new();
+     8
+     9  # take the input from the specified file
+    10  my $fn = shift;
+    11
+    12  $parser->YYSlurpFile($fn);
+    13
+    14  # parse the input and get the AST
+    15  my $tree = $parser->YYParse();
+    16
+    17  print $tree->str()."\n";
+
+First, compile the grammar C<simplewithwhites.eyp> presented above:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ eyapp -T simplewithwhites
+
+And then run it:
+
+  pl@nereida:~/LEyapp/examples/lexergeneration$ cat -n  input
+     1  a # 1
+     2
+     3  d       #2
+  pl@nereida:~/LEyapp/examples/lexergeneration$ ./usesimplefromfile.pl input
+  A_is_A_d(A_is_a(TERMINAL),TERMINAL)
+
+
 =head2 Huge input and Incremental Lexical Analyzers
 
 If your input is huge, try to make use of an incremental
@@ -978,7 +1019,7 @@ we only keep a small substring.
     38      };
     39
     40      for (${$parser->YYInput}) {
-    41          m/\G[ \t]/gc;
+    41          m/\G[ \t]*/gc;
     42          m/\G([0-9]+(?:\.[0-9]+)?)/gc and return('NUM',$1);
     43          m/\G([A-Za-z][A-Za-z0-9_]*)/gc and return('VAR',$1);
     44          m/\G(.)/gcs and return($1,$1);
@@ -987,6 +1028,10 @@ we only keep a small substring.
     47  }
     48
     49  __PACKAGE__->lexer(\&_Lexer);
+
+This approach has limitations. The code will get more tangled if some token
+can take more than one line. For example, if we extend this language to accept 
+C-like comments C</* ... */> which expands over several lines.
 
 Here follows an example of execution. 
 This is the client program:
