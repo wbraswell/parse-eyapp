@@ -746,13 +746,17 @@ See the examples in C<examples/debuggingtut/> in files
 
 =head2 $parser->YYSlurpFile
 
+alias:
+
+ $parser->slurp_file($filename[,$prompt[,$mode]])
+
 Receives the name of the file, reads its contents
 and stores it in C<$parser-E<gt>input>.
 
 If the file does not exists, it proceeds to read from C<STDIN>.
 If a prompt was set with C<$parser-E<gt>YYPrompt>, it will be shown.
 The additional optional parameter C<$mode> is used in such case to set 
-C<$/>.
+C<$/>. It can also be used as a class method.
 
 =head2 $parser->YYState
 
