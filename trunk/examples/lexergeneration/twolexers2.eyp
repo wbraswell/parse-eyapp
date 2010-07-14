@@ -14,18 +14,6 @@ second:
 
 %%
 
-sub Lexer1 {
-    my($parser)=shift;
-
-    print "In Lexer 1 \n";
-    for (${$parser->YYInput}) {
-        m/\G\s*/gc;
-        m/\G(%%)/gc and return ($1, undef);
-        m/\G(.)/gcs and return($1,$1);
-        return('', undef);
-    }
-}
-
 sub Lexer2 {
     my($parser)=shift;
 
@@ -38,5 +26,4 @@ sub Lexer2 {
     return('', undef);
 }
 
-__PACKAGE__->lexer(\&Lexer1);
 
