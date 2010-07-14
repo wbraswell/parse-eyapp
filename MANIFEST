@@ -170,6 +170,8 @@ examples/lexergeneration/simplewithwhites.eyp
 examples/lexergeneration/simple.yp
 examples/lexergeneration/tokensemdef.eyp
 examples/lexergeneration/tokensemdefwithwhites.eyp
+examples/lexergeneration/twolexers.eyp
+examples/lexergeneration/twolexers2.eyp
 examples/lexergeneration/useincremental.pl
 examples/lexergeneration/usesimple.pl
 examples/MatchingTrees/m2.pl
