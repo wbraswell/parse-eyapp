@@ -26,7 +26,7 @@ SKIP: {
 }
 
 SKIP: {
-  skip "t/syntactictoken.eyp not found", $nt unless ($ENV{DEVELOPER} && -r "t/syntactictoken.eyp" && -x "./eyapp");
+  skip "t/syntactictoken.eyp not found", $nt+2 unless ($ENV{DEVELOPER} && -r "t/syntactictoken.eyp" && -x "./eyapp");
 
   unlink 't/syntactictoken.pl';
 
