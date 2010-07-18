@@ -365,3 +365,4 @@ t/pascal.yp
 t/SemanticInfoInTokens.eyp
 t/syntactictoken.eyp
 t/quotemeta.eyp
+t/quotemeta2.eyp
