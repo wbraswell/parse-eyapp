@@ -1,7 +1,31 @@
+%{
+my $enum = 0;
+
+sub rangeORenum {
+  my $self = shift; # Goal: $self->YYPreParse('enum');
+  for (${$self->input()}) {
+    if (m{(?=             # look forward 
+              \G\s*\(     # open parenthesis
+                       \s*\w+             # ID
+                             (\s*,\s*\w+)*
+                 \s*\)\s* # closing parenthesis
+                 ;        # semicolon
+          )
+         }x) { 
+      $enum = 1;
+    }
+    else {
+      $enum = 0;
+    }
+  }
+}
+
+%}
+
 %conflict rangeORenum {
   if ($enum) { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
   else { $self->YYSetReduce([',', ')'], 'ID:RANGE' ); }
-}
+} 
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
@@ -19,13 +43,18 @@ type_decl : 'type' ID '=' type ';'
 
 type : 
       %name ENUM
+      # %code rangeORenum
       PRErangeORenum '(' id_list ')'
     | %name RANGE
+      # %code rangeORenum
       PRErangeORenum expr '..' expr
 ;
 
 PRErangeORenum:
-   /* empty */  {}
+   /* empty */  
+     {
+       goto &rangeORenum;
+     }
 ;
 
 id_list : 
