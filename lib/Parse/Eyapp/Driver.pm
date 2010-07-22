@@ -104,7 +104,7 @@ sub YYParse {
 
   unless($self->{LEX}) {
     $self->{LEX} = $self->YYLexer;
-    croak "Missing mandatory parameter 'yylex' " unless $self->{LEX} && reftype($self->{LEX}) eq 'CODE';
+    croak "Missing parameter 'yylex' " unless $self->{LEX} && reftype($self->{LEX}) eq 'CODE';
   }
 
   if($$self{DEBUG}) {

@@ -1,3 +1,6 @@
+  * Remove pushing the token values in the stack. Keep it only while debugging
+  * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
+
   * Generation of Several Parsers
       - The accept state must change
           A$ -> A
