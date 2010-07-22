@@ -1,0 +1,101 @@
+%token NUM = /(\d+)/
+%token OP  = /([-+*\/])/
+
+%{
+use feature 'state';
+
+my $nxr = 0;
+my $regforxs = do {
+  use Regexp::Grammars;
+  qr{
+     \G(<x> (?{ $nxr++ }))+
+
+     <rule: x>    \d+ ([-+*/] \d+)*
+  }x
+};
+
+sub countX {
+  my $self = shift; 
+  # Goal. Towrite this code as: 
+  #           $self->YYPreParse('xlist');
+  #  Will parse using as start symbol 'enum', without changing the 
+  #  parsing position. Returns true if it matches. Has the same effect
+  #  than the following code:
+  }
+}
+
+
+%}
+
+%conflict isInTheMiddle {
+
+  state $cached = 0;
+  state $nxs = 0;
+  unless ($cached) {
+    
+    my $parser = shift;
+    my $s = ${$parser->input()};
+    $s =~ $regforxs;
+    $nxr = int ($nxr/2);
+    $nxs = 0;
+    #print "Number of x's = $nxr\n";
+
+    $cached = 1;
+  } 
+
+  $nxs++;
+
+  if ($nxs == $nxr+1) { 
+    #print "Reducing by :MIDx\n";
+    $self->YYSetReduce(['NUM','', 'OP'], ':MIDx' );
+    
+    $nxr = $nxs = $cached = 0; 
+  }
+  else { $self->YYSetShift('NUM') } 
+}
+
+%%
+
+T: countX S
+;
+
+countX:
+;
+
+xlist: 
+    x       { $nxr ++ }
+  | xlist x { $nxr++ }
+;
+
+S:
+     x  %PREC isInTheMiddle S x  
+  |  %name :MIDx 
+     x  %PREC isInTheMiddle 
+;
+
+x:
+     NUM
+  |  x OP NUM
+;
+%%
+
+=head1 SYNOPSIS
+
+This grammar is similar to the one in file C<nopackrat.eyp>.
+It can't be parsed by LR(k) nor LL(k) algorithms.
+Backtracking LR and GLR algorithms can but will perform poorly.
+
+Compile it with:
+
+   $ eyapp -TC noPackratPPCR.eyp.eyp
+
+Run it with:
+
+   $ ./noPackratPPCR.eyp.pm -t -i -c '2-3 3*4 5+2'
+
+=head1 SEE ALSO
+
+Files C<nopackrat.eyp>, C<noLRk_exp.eyp>, C<noLRk_expSolved.eyp>
+
+=cut
+
