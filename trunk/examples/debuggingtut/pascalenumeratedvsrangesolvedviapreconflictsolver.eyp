@@ -52,7 +52,7 @@ type :
       PRErangeORenum '(' id_list ')'
     | %name RANGE
       # %code rangeORenum
-        PRErangeORenum expr '..' expr
+      PRErangeORenum expr '..' expr
 ;
 
 enum:
