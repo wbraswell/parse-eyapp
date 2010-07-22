@@ -2,7 +2,12 @@
 my $enum = 0;
 
 sub rangeORenum {
-  my $self = shift; # Goal: $self->YYPreParse('enum');
+  my $self = shift; 
+  # Goal. Towrite this code as: 
+  #           $enum = $self->YYPreParse('enum');
+  #  Will parse using as start symbol 'enum', without changing the 
+  #  parsing position. Returns true if it matches. Has the same effect
+  #  than the following code:
   for (${$self->input()}) {
     if (m{(?=             # look forward 
               \G\s*\(     # open parenthesis
@@ -47,7 +52,11 @@ type :
       PRErangeORenum '(' id_list ')'
     | %name RANGE
       # %code rangeORenum
-      PRErangeORenum expr '..' expr
+        PRErangeORenum expr '..' expr
+;
+
+enum:
+      '(' id_list ')'
 ;
 
 PRErangeORenum:
@@ -90,11 +99,11 @@ See
 
 Compile it with something like:
 
-      eyapp -TC pascalenumeratedvsrangePPCR.eyp
+      eyapp -TC pascalenumeratedvsrangesolvedviapreconflictsolver.eyp
 
 Run it with this options:
 
-    $ ./pascalenumeratedvsrangePPCR.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalenumeratedvsrangesolvedviapreconflictsolver.pm -t -i -m 1 -c 'type e = (x, y, z);'
 
 Try also these inputs:
 
