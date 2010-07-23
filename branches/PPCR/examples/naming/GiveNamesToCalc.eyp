@@ -1,0 +1,83 @@
+%{
+# GiveNamesToCalc.eyp
+=head1 SYNOPSIS
+
+This example illustrates a way to set a naming scheme for
+the grammar productions.
+
+Compile it with:
+
+  $ eyapp -b '' GiveNamesToCalc.eyp 
+
+and execute it with:
+
+  $ ./GiveNamesToCalc.pm -t -c 'a=2*3'
+
+It will produce an output like:
+
+  line_is_exp(var_is_VAR[a],exp_is_TIMES(exp_is_NUM[2],exp_is_NUM[3]))
+
+=cut
+%}
+
+%right  '='
+%left   '-' '+'
+%left   '*' '/'
+%left   NEG
+%right  '^'
+
+%tree bypass
+
+%namingscheme { 
+  #Receives a Parse::Eyapp object describing the grammar
+  my $self = shift;
+
+  $self->tokennames(
+    '=' => 'ASSIGN',
+    '+' => 'PLUS',
+    '*' => 'TIMES',
+    '-' => 'MINUS',
+    '/' => 'DIV',
+    '^' => 'EXP',
+  );
+
+  # returns the handler that will give names 
+  # to the right hand sides
+  \&give_token_name; 
+}
+%%
+
+line:       
+    exp 
+;
+
+exp:
+    NUM                
+  | VAR                
+  | var '=' exp        
+  | exp '+' exp        
+  | exp '-' exp        
+  | exp '*' exp        
+  | exp '/' exp        
+  | %no bypass exp_is_NEG
+     '-' exp %prec NEG  
+  | exp '^' exp        
+  | '(' exp ')'        
+;
+
+var:
+    VAR
+;
+%%
+
+use Tail;
+__PACKAGE__->lexer(\&Tail::lex);
+
+unless (caller) {
+  {
+    no warnings 'once';
+    *exp_is_VAR::info = *var_is_VAR::info = *exp_is_NUM::info = sub { $_[0]->{attr}[0] };
+  }
+
+  __PACKAGE__->main() 
+}

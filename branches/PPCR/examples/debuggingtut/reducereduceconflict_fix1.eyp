@@ -1,0 +1,33 @@
+%lexer {
+      m{\G([ \t\n]*(\#.*)?\s*)}gc and $self->tokenline($1 =~ tr/\n//);
+
+      m{\G([A-Za-z][A-Za-z0-9_]*)}gc and return ('ID', $1);
+      m{\G(.)}gc                     and return ($1,    $1);
+}
+
+%namingscheme { \&give_rhs_name }
+
+%tree
+
+
+%%
+def:    param_spec return_spec ','
+        ;
+param_spec:
+             type
+        |    name_list ':' type
+        ;
+return_spec:
+             type
+         |   name ':' type
+         |   ID BOGUS
+         ;
+type:        ID
+        ;
+name:        ID
+        ;
+name_list:
+             name
+        |    name ',' name_list
+        ;
+%%

@@ -1,0 +1,73 @@
+# examples/Eyapplanguageref/Lhs.eyp
+
+%right  '='
+%left   '-' '+'
+%left   '*' '/'
+%left   NEG
+
+%defaultaction { 
+  my $self = shift;
+  my $name = $self->YYName();
+  bless { children => [ grep {ref($_)} @_] }, $name; 
+}
+
+%%
+input:    
+            /* empty */
+              { [] }
+        |   input line  
+              { 
+                push @{$_[1]}, $_[2] if defined($_[2]);
+                $_[1]
+              } 
+;
+
+line:     '\n'       { } 
+        | exp '\n'   {  $_[1] } 
+;
+
+exp:        
+            NUM   { $_[1] } 
+        |   VAR   { $_[1] } 
+        |   %name ASSIGN
+            VAR '=' exp         
+        |   %name PLUS
+            exp '+' exp         
+        |   %name MINUS
+            exp '-' exp        
+        |   %name TIMES
+            exp '*' exp       
+        |   %name DIV
+            exp '/' exp      
+        |   %name UMINUS
+            '-' exp %prec NEG 
+        |  '(' exp ')'  { $_[2] }
+;
+
+%%
+
+use Data::Dumper;
+
+__PACKAGE__->lexer(sub {
+    my $parser = shift;
+
+    for (${$parser->input}) {
+      s/^[ \t]+//;
+
+      s/^([0-9]+(?:\.[0-9]+)?)//   and return(NUM => bless { attr => $1}, 'NUM');
+      s/^([A-Za-z][A-Za-z0-9_]*)// and return(VAR => bless {attr => $1}, 'VAR');
+      s/^(.)//s                    and return($1,$1);
+      $_ eq ''                     and return('',undef);
+    }
+  }
+);
+
+sub MAIN {
+  my $tree = __PACKAGE__->main;
+  $Data::Dumper::Indent = 1;
+  if (defined($tree)) { print Dumper($tree); }
+  else { print "Error: invalid input\n"; }
+}
+
+# Modulino
+__PACKAGE__->MAIN() unless caller();

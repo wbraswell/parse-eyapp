@@ -1,0 +1,63 @@
+%token NUM VAR
+%right  '='
+%left   '-' '+'
+%left   '*' '/'
+%left   NEG
+%right  '^'
+
+%{
+use base q{Math::Tail};
+my %s; # symbol table
+our $VERSION = '1.1';
+%}
+
+%%
+start: 
+    input { \%s }
+;
+
+input: line * 
+;
+
+line:       
+  '\n'         { undef }
+  | exp '\n'   { print "$_[1]\n" if defined($_[1]); $_[1] }
+  | error  '\n'
+    {
+      $_[0]->YYErrok; # error recovery
+      undef
+    }
+
+;
+
+exp:
+    $NUM            { $NUM->[0] }
+  | $VAR                   
+     { 
+       my $id = $VAR->[0];
+       my $val = $s{$id};
+       $_[0]->semantic_error("Accesing undefined variable $id at line $VAR->[1].\n") 
+       unless defined($val);
+       return $val;
+     }
+  | $VAR '=' $exp   { $s{$VAR->[0]} = $exp }
+  | exp.x '+' exp.y { $x + $y }
+  | exp.x '-' exp.y { $x - $y }
+  | exp.x '*' exp.y { $x * $y }
+  | exp.x '/'.barr exp.y         
+    {
+       return($x/$y) if $y;
+       $_[0]->semantic_error("Illegal division by zero at line $barr->[1].\n");
+       undef
+    }
+  | '-' $exp %prec NEG  { -$exp }
+  | exp.x '^' exp.y     { $x ** $y }
+  | '(' $exp ')'        { $exp }
+;
+
+%%
+
+__PACKAGE__->lexer( \&Math::Tail::lex );
+
+# In case is compiled with eyapp option -b
+__PACKAGE__->main unless caller;

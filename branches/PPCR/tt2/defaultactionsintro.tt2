@@ -1,0 +1,160 @@
+=head1 NAME
+ 
+Parse::Eyapp::defaultactionsintro - Introduction to Default Actions and Grammar Reuse
+ 
+=head1 Introduction
+
+The examples used in this tutorial can be found in the
+directory C<examples/recycle> accompanying this distribution
+
+=head1 Default Actions
+
+[% PROCESS defaultactions %]
+
+=head1 Grammar Reuse
+
+Terence Parr in his talk "Reuse of Grammars with Embedded Semantic Actions"
+(see L<http://www.cs.vu.nl/icpc2008/docs/Parr.pdf>)
+explains the problem:
+
+ "Because many applications deal with the same language, the reuse of a common
+syntax specification with different semantics provides a number of advantages.
+While the advantages are obvious, the mechanism for grammar reuse is not so
+clear.  To go beyond syntax checking, grammars must have some way to specify
+the translation or interpretation logic (the semantics). Unfortunately, the act
+of specifying the semantics can lock a grammar into one specific application
+since the grammar is often modified to suit (e.g., programmers often want to
+embed unrestricted semantic actions)." 
+
+The incoming sections deal with different solutions to the problem.
+
+=head2 An Action Method for each Production
+
+Default actions provide a way to write reusable
+grammars.  Here is one solution:
+
+  pl@europa:~/LEyapp/examples/recycle$ cat -n Noactions.eyp
+     1  %left   '+'
+     2  %left   '*'
+     3
+     4  %defaultaction {
+     5    my $self = shift;
+     6
+     7    my $class = $self->YYPrefix;
+     8    $class .=  $self->YYName;
+     9
+    10    $class->action(@_);
+    11  }
+    12
+    13  %%
+    14  exp:        %name NUM
+    15                NUM
+    16          |   %name PLUS
+    17                exp '+' exp
+    18          |   %name TIMES
+    19                exp '*' exp
+    20          |   '(' exp ')'
+    21                { $_[2] }
+    22  ;
+    23
+    24  %%
+    25
+    26  sub _Error {
+    27    my($token)=$_[0]->YYCurval;
+    28    my($what)= $token ? "input: '$token'" : "end of input";
+    29    my @expected = $_[0]->YYExpect();
+    30
+    31    local $" = ', ';
+    32    die "Syntax error near $what. Expected one of these tokens: @expected\n";
+    33  }
+    34
+    35
+    36  my $x = '';
+    37
+    38  sub _Lexer {
+    39    my($parser)=shift;
+    40
+    41    for ($x) {
+    42      s/^\s+//;
+    43      $_ eq '' and return('',undef);
+    44
+    45      s/^([0-9]+(?:\.[0-9]+)?)//   and return('NUM',$1);
+    46      s/^([A-Za-z][A-Za-z0-9_]*)// and return('VAR',$1);
+    47      s/^(.)//s                    and return($1,$1);
+    48    }
+    49  }
+    50
+    51  sub Run {
+    52    my($self)=shift;
+    53    $x = shift;
+    54    my $debug = shift;
+    55
+    56    $self->YYParse(
+    57      yylex    => \&_Lexer,
+    58      yyerror  => \&_Error,
+    59      yydebug  => $debug,
+    60    );
+    61  }
+
+
+This grammar is reused by the following program to implement a calculator:
+and a translator from infix to postfix:
+
+  pl@europa:~/LEyapp/examples/recycle$ cat -n calcu_and_post.pl
+     1  #!/usr/bin/perl
+     2  use warnings;
+     3  use Noactions;
+     4
+     5  sub Calc::NUM::action {
+     6    return $_[1];
+     7  }
+     8
+     9  sub Calc::PLUS::action {
+    10    $_[1]+$_[3];
+    11  }
+    12
+    13  sub Calc::TIMES::action {
+    14    $_[1]*$_[3];
+    15  }
+    16
+    17  sub Post::NUM::action {
+    18    return $_[1];
+    19  }
+    20
+    21  sub Post::PLUS::action {
+    22    "$_[1] $_[3] +";
+    23  }
+    24
+    25  sub Post::TIMES::action {
+    26    "$_[1] $_[3] *";
+    27  }
+    28
+    29  my $debug = shift || 0;
+    30  my $pparser = Noactions->new( yyprefix => 'Post::');
+    31  print "Write an expression: ";
+    32  my $x = <STDIN>;
+    33  my $t = $pparser->Run($x, $debug);
+    34
+    35  print "$t\n";
+    36
+    37  my $cparser = Noactions->new(yyprefix => 'Calc::');
+    38  my $e = $cparser->Run($x, $debug);
+    39
+    40  print "$e\n";
+
+=head2 Reusing Grammars Using Inheritance
+
+[% PROCESS grammarreuseviainheritance %]
+
+
+=head2 Reusing Grammars by Dynamic Substitution of Semantic Actions
+
+[% PROCESS grammarreuseviayyaction %]
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]
+
+

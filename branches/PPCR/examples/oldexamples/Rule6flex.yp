@@ -1,0 +1,50 @@
+%{
+use Data::Dumper;
+use flex2;
+%}
+%right ASSIGN
+%left  MINUS PLUS
+%left  TIMES DIV
+%nonassoc NEG
+
+%tree
+
+%%
+line: exp  { $_[1] } 
+;
+
+exp:      %name NUM   
+          NUM 
+        | %name VAR  
+          VAR 
+        | %name PLUS       
+          exp PLUS exp 
+        | %name ASSIGN        
+          VAR ASSIGN exp 
+        | %name MINUS       
+          exp MINUS exp 
+        | %name TIMES       
+          exp TIMES exp 
+        | %name DIV     
+          exp DIV exp 
+        |   LP exp RP  { $_[2] } /* Let us simplify a bit the tree */
+        | %name NEG
+           MINUS exp %prec NEG 
+;
+
+%%
+
+sub _Error { die "Syntax error.\n"; }
+
+my $yylex;
+
+sub _lex {
+  my ($t, $v) =  $yylex->();
+  return ($t, [$v, yyget_lineno()]);
+}
+
+sub Run {
+  my($self)=shift;
+  $yylex = gen_walker('data.txt');
+  $self->YYParse( yylex => \&_lex, yyerror => \&_Error );
+}

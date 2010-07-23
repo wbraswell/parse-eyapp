@@ -1,0 +1,103 @@
+=head1 NAME
+ 
+Parse::Eyapp::TokenGen - Support for Using Parse::Eyapp as a Data Generator 
+ 
+=head1 INTRODUCTION
+
+For a introduction to data generation using L<Parse::Eyapp> see
+L<Parse::Eyapp::datagenerationtut>.
+
+=head1 METHODS
+
+=head2 set_tokengens
+
+Receives the parser object and the pairs 
+
+    token => generator
+
+Sets the generator attribute of the tokens.
+Though not strictly necessary, the generator is
+a L<Test::LectroTest::Generator> object.
+
+=head2 set_weights
+
+Receives the parser object and the pairs 
+
+    token => weight
+
+Sets the weight attribute of the tokens.
+The weight is a floating number.
+
+=head2 set_tokenweightsandgenerators
+
+Receives the parser object and the pairs 
+
+    token => [weight, generator]
+
+or
+
+    token => weight
+
+and sets the weight and generator attributes of the tokens.
+An example can be found in C<examples/generator/GenSupport.pm>:
+
+  $parser->set_tokenweightsandgenerators(
+    NUM => [ 2, Int(range=>[0, 9], sized=>0)],
+    VAR => [
+              0,  # At the beginning, no variables are defined
+              Gen {
+                return  Elements(keys %st)->generate if keys %st;
+                return Int(range=>[0, 9], sized=>0)->generate;
+              },
+            ],
+    VARDEF => [ 
+                2,  
+                String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
+              ],
+    '=' => 2, '-' => 1, '+' => 2, 
+    '*' => 4, '/' => 2, '^' => 0.5, 
+    ';' => 1, '(' => 1, ')' => 2, 
+    ''  => 2, 'error' => 0,
+  );
+
+
+=head2 token_weight
+
+Receives the parser object and the token and returns the weight.
+If an additional weight is provided the weight for the token is set.
+
+=head2 token_generator
+
+Receives the parser object and the token and returns the generator.
+If an additional generator is provided the generator for the token is set.
+
+=head2 deltaweight
+
+Has the syntax:
+
+  $parser->deltaweight(TOKEN1 => deltaweight1, TOKEN2 => deltaweight2, ...)
+
+increases the weight of the respective token by the associated amount.
+
+=head2 pushdeltaweight
+
+As C<deltaweight> but the current weights of the involved tokens
+are saved in a stack
+
+=head2 popweight
+
+Restores the weights of the tokens that were previously saved
+with C<pushdeltaweight>
+
+=head1 SEE ALSO
+
+=over
+
+=item * L<Parse::Eyapp::datagenerationtut>
+
+[% PROCESS seealsodatageneration %]
+
+=back
+
+[% PROCESS authorandcopyright %]
+

@@ -1,0 +1,22 @@
+%token FLOAT INTEGER 
+%token NAME
+
+%metatree
+
+%%
+Dl: 
+    /* empty right hand side */ 
+  | $D ';' Dl 
+;
+
+D : $T { $L->{t} = $T->{t} } $L 
+;
+
+T : FLOAT    { $lhs->{t} = "FLOAT" } 
+  | INTEGER  { $lhs->{t} = "INTEGER" } 
+;
+
+L : $NAME { $NAME->{t} = $lhs->{t};  }
+  | $NAME { $NAME->{t} = $lhs->{t}; $L->{t} = $lhs->{t} } ',' $L  
+;
+%%
