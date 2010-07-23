@@ -753,6 +753,21 @@ sub _FirstSfx {
 #                             epsilon in FIRST(beta) and
 #                             q in PRED(p,alpha)
 
+# >> x $firstset
+# 0  HASH(0x1f7af60)
+#    '$start' => "\cG"
+#    'a' => "\cB"
+#    'b' => "\cH"
+#    's' => "\cC"
+# >> x $firstset->{'a'} # firstset es una string compactada de 0 y 1 que es trratada como un conjunto
+# 0  "\cB"
+# >> x unpack ("b*", $firstset->{'a'})
+# 0  01000000
+# >> x unpack ("b*", $firstset->{'b'})
+# 0  00010000
+# >> x unpack ("b*", $firstset->{'s'})
+# 0  11000000
+
 sub _ComputeFollows {
 	my($grammar,$states,$termlst)=@_;
 	my($firstset,$terminx);
