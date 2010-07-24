@@ -40,6 +40,9 @@ my(%known_options)= (
     inputfile   =>  {
         ''      =>  "Input file name: will automagically fills input"
     },
+    start       =>  {
+        ''      =>  "Start symbol for the grammar"
+    },
     classname   =>  {
         ''      =>  "Class name of parser object (Perl and C++)"
     },
