@@ -64,6 +64,17 @@ sub new {
     $self->_Compile();
     $self->_DynamicConflicts(); # call it only if dynamic conflict handlers
 
+    if ($self->Option('start')) {
+      # weak accept for nested parsing
+      # substitute End Of Input by DEFAULT for each state
+      for (@{$self->{STATES}}) {
+        if (exists($_->{ACTIONS}{"\c@"})) {
+          $_->{ACTIONS}{''} = $_->{ACTIONS}{"\c@"};
+          delete($_->{ACTIONS}{"\c@"});
+        }
+      }
+    }
+
     bless($self,$class);
 }
 ###########
