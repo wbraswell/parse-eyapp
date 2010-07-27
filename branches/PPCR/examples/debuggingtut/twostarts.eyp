@@ -15,7 +15,7 @@
           .". File: '".$self->YYFilename()."'. No match found.\n");
 }
 
-%start a
+%start s
 %%
 s: /* empty */ | a b | C
 ;

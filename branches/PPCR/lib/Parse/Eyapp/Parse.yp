@@ -447,7 +447,7 @@ decl:  '\n'                 #default action
             }
     |   START ident '\n'                
             { 
-              $start=$_[2][0]; 
+              $start=$_[2][0] unless $start; 
               undef 
             }
     |   PREFIX '\n'                
@@ -1256,8 +1256,8 @@ sub _AddRules {
 }
 
 # This sub is called fro Parse::Eyapp::Grammar::new
-#                0        1         2       3    4
-# Args: object, input, fistline, filename, tree, nocompact
+#                0        1         2       3    4          5               6
+# Args: object, input, fistline, filename, tree, nocompact, lexerisdefined, start
 sub Parse {
     my($self)=shift;
 
@@ -1300,6 +1300,8 @@ sub Parse {
     $precterm={};
 
     $start="";
+    $start = $_[6] if ($_[6]); 
+
     $nullable={};
     $expect=0;
     $semantic = {};

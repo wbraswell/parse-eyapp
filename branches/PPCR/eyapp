@@ -371,7 +371,9 @@ my ($parser) = Parse::Eyapp->new(@args);
 
 my($warnings)=$parser->Warnings();
 
-$warnings !~ m{^\s*$} and print STDERR "$warnings\n";
+unless ($opt_S) {
+  $warnings !~ m{^\s*$} and print STDERR "$warnings\n";
+}
 
 $parser->outputtables($path, $base) if $opt_v;
 
