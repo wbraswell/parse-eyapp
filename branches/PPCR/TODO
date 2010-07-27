@@ -1,3 +1,6 @@
+  * Bug/limitation: When using -m and -o the output file still uses the orignial grammar name.
+    It seems more convenient to rename it to the output file suffixed with .output
+
   * Remove pushing the token values in the stack. Keep it only while debugging
   * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 
