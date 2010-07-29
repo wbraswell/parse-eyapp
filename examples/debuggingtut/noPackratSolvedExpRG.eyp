@@ -14,17 +14,6 @@ my $regforxs = do {
   }x
 };
 
-sub countX {
-  my $self = shift; 
-  # Goal. Towrite this code as: 
-  #           $self->YYPreParse('xlist');
-  #  Will parse using as start symbol 'enum', without changing the 
-  #  parsing position. Returns true if it matches. Has the same effect
-  #  than the following code:
-  }
-}
-
-
 %}
 
 %conflict isInTheMiddle {
@@ -38,7 +27,7 @@ sub countX {
     $s =~ $regforxs;
     $nxr = int ($nxr/2);
     $nxs = 0;
-    #print "Number of x's = $nxr\n";
+    print "Number of x's = $nxr\n";
 
     $cached = 1;
   } 
@@ -46,7 +35,7 @@ sub countX {
   $nxs++;
 
   if ($nxs == $nxr+1) { 
-    #print "Reducing by :MIDx\n";
+    print "Reducing by :MIDx\n";
     $self->YYSetReduce(['NUM','', 'OP'], ':MIDx' );
     
     $nxr = $nxs = $cached = 0; 
@@ -55,17 +44,6 @@ sub countX {
 }
 
 %%
-
-T: countX S
-;
-
-countX:
-;
-
-xlist: 
-    x       { $nxr ++ }
-  | xlist x { $nxr++ }
-;
 
 S:
      x  %PREC isInTheMiddle S x  
