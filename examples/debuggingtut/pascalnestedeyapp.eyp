@@ -1,26 +1,24 @@
 %{
-use Range;
-my $rp = Range->new( yyerror => sub {});
-my $enum = 0;
+use feature 'state';
+my $is_enum = 0;
 
 sub rangeORenum {
   my $self = shift; 
 
+  require Range;
+  state $rp = Range->new( yyerror => sub {});
+
   my $pos = pos(${$self->input});
   $rp->input($self->input);
   my $t = $rp->Run;
-  if ($rp->YYNberr) {
-    $enum = 1;
-  } else {
-    $enum = 0;
-  }
+  $is_enum = $rp->YYNberr;
   pos(${$self->input}) = $pos;
 }
 
 %}
 
 %conflict rangeORenum {
-  if ($enum) { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
+  if ($is_enum) { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
   else { $self->YYSetReduce([',', ')'], 'ID:RANGE' ); }
 } 
 
