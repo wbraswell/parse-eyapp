@@ -1,6 +1,6 @@
 %{
 use Range;
-my $rp = Range->new();
+my $rp = Range->new( yyerror => sub {});
 my $enum = 0;
 
 sub rangeORenum {
@@ -10,7 +10,6 @@ sub rangeORenum {
   $rp->input($self->input);
   my $t = $rp->Run;
   if ($rp->YYNberr) {
-    print "There were errors\n";
     $enum = 1;
   } else {
     $enum = 0;
@@ -79,6 +78,8 @@ See
 =over 2
 
 =item * File C<userange.pl>.
+
+=item * File C<Range.eyp>.
 
 =item * File pascalenumeratedvsrange.eyp in examples/debuggintut/
 

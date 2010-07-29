@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Range;
 
-my $parser = Range->new();
+my $parser = Range->new( yyerror => sub {});
 $parser->YYPrompt(<<'EOM');
 Try one of these inputs:
 
