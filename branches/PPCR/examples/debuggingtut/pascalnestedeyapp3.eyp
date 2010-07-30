@@ -9,8 +9,10 @@
     { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
 } 
 {
+%%
 Range: expr '..' expr ';'
 ;
+%%
 }
 
 %token ID  = /([A-Za-z]\w*)/
