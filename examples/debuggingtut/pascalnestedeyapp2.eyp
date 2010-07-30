@@ -28,11 +28,7 @@ type :
       PRErangeORenum expr '..' expr
 ;
 
-PRErangeORenum: /* empty */  
-     {
-        my $self = shift; 
-        $is_enum = $self->YYPreParse('Range');
-     }
+PRErangeORenum: /* empty */  { $is_enum = $_[0]->YYPreParse('Range'); }
 ;
 
 id_list : 
