@@ -1,7 +1,5 @@
 %{
 my $is_enum = 0;
-
-
 %}
 
 %conflict rangeORenum {
@@ -30,8 +28,7 @@ type :
       PRErangeORenum expr '..' expr
 ;
 
-PRErangeORenum:
-   /* empty */  
+PRErangeORenum: /* empty */  
      {
         my $self = shift; 
         $is_enum = $self->YYPreParse('Range');
@@ -76,12 +73,12 @@ See
 Compile it with:
 
       eyapp Range.eyp
-      eyapp -TC pascalnestedeyapp.eyp
+      eyapp -TC pascalnestedeyapp2.eyp
 
 Run it with this options:
 
-    $ ./pascalnestedeyapp.pm -t -i -m 1 -c 'type e = (x, y, z);'
-    $ perl5.10.0 ./pascalnestedeyapp.pm -t -i -m 1 -c 'type e = (x, @, z);'
+    $ ./pascalnestedeyapp2.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyapp2.pm -t -i -m 1 -c 'type e = (x, @, z);'
 
 Try also these inputs:
 
