@@ -1,5 +1,5 @@
 %{
-my $is_enum = 0;
+  my $is_enum = 0;
 %}
 
 %conflict rangeORenum {
