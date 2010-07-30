@@ -5,6 +5,7 @@
   * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 
   * Generation of Several Parsers
+      - %PREC conflict does not check that a conflict handler has been previously declared
       - The lexer must be the one of the main parser
       - The accept state must change
           A$ -> A
