@@ -1,4 +1,5 @@
 %{
+use 5.0010;
 use feature 'state';
 my $is_enum = 0;
 
@@ -11,6 +12,7 @@ sub rangeORenum {
   my $pos = pos(${$self->input});
   $rp->input($self->input);
   my $t = $rp->Run;
+  print "After nested parsing\n";
   $is_enum = $rp->YYNberr;
   pos(${$self->input}) = $pos;
 }
@@ -93,6 +95,7 @@ Compile it with:
 Run it with this options:
 
     $ ./pascalnestedeyapp.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ perl5.10.0 ./pascalnestedeyapp.pm -t -i -m 1 -c 'type e = (x, @, z);'
 
 Try also these inputs:
 
