@@ -16,7 +16,7 @@ expr : '(' expr ')'
     | %name DIV      expr '/' expr
     | %name COMMA    expr ',' expr
     | %name ID:RANGE
-      ID                     %PREC rangeORenum
+      ID                     
     | %name NUM      NUM
 ;
 
