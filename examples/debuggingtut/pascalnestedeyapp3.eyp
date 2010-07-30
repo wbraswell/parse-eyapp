@@ -9,7 +9,7 @@
     { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
 } 
 {
-rangeORenum: expr '..' expr ';'
+Range: expr '..' expr ';'
 ;
 }
 
@@ -34,7 +34,7 @@ type :
       PRErangeORenum expr '..' expr
 ;
 
-PRErangeORenum: /* empty */  { $is_range = $_[0]->YYPreParse('rangeORenum'); }
+PRErangeORenum: /* empty */  { $is_range = $_[0]->YYPreParse('Range'); }
 ;
 
 id_list : 
