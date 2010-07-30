@@ -426,7 +426,7 @@ sub YYPreParse {
 
   pos(${$self->input}) = $pos;
 
-  return (wantarray ? ($t, $ne) : $ne);
+  return (wantarray ? ($t) : !$ne);
 }
 
 

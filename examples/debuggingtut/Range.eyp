@@ -9,7 +9,7 @@
 range: expr '..' expr ';'
 ;
 
-expr : '(' expr ')'   { $_[2] } /* bypass */
+expr : '(' expr ')'   
     | %name PLUS     expr '+' expr
     | %name MINUS    expr '-' expr
     | %name TIMES    expr '*' expr
