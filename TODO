@@ -5,13 +5,13 @@
   * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 
   * Generation of Several Parsers
+      - The lexer must be the one of the main parser
       - The accept state must change
           A$ -> A
           A$ -> A.b where b is in the follow of A, means acceptation
           Where are the follows?. They have been computed somewhere
       - Avoid warnings: rule not used, rule not used, etc. How?
         Shall I use a subgrammar that is the closure of the syntactic variable
-      - The lexer can be the same
 
   * Lexical Analyzer generation:
       * incremental lexer also influences the way the directive
