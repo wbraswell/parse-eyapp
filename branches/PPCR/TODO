@@ -1,4 +1,4 @@
-  * Bug/limitation: When using -m and -o the output file still uses the orignial grammar name.
+  * Bug/limitation: When using -m and -o the output file still uses the original grammar name.
     It seems more convenient to rename it to the output file suffixed with .output
 
   * Remove pushing the token values in the stack. Keep it only while debugging

@@ -406,6 +406,30 @@ sub YYLookaheads {
   return @r;
 }
 
+
+sub YYPreParse {
+  my $self = shift; 
+  my $parser = shift;
+
+  eval "require $parser";
+   
+  # optimize to state variable for 5.10
+  my $rp = $parser->new( yyerror => sub {});
+
+  my $pos = pos(${$self->input});
+  $rp->input($self->input);
+
+  my $t = $rp->Run;
+  my $ne = $rp->YYNberr;
+
+  print "After nested parsing\n";
+
+  pos(${$self->input}) = $pos;
+
+  return (wantarray ? ($t, $ne) : $ne);
+}
+
+
 sub YYLookBothWays {
   my $self = shift;
   my $stackFirst = shift;
