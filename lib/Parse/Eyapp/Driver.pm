@@ -1684,7 +1684,8 @@ sub _Parse {
         };
 
 
-                push(@$stack,[ $act, $$value, $$token ]);
+        push(@$stack,[ $act, $$value ]);
+#DBG>   push(@{$stack->[-1]},$$token);
 
           $$token ne '' #Don't eat the eof
         and $$token=$$value=undef;

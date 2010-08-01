@@ -1,3 +1,5 @@
+  * Make a test: test debug mode and output of "stack symbols"
+
   * Bug/limitation: When using -m and -o the output file still uses the original grammar name.
     It seems more convenient to rename it to the output file suffixed with .output
 

@@ -48,6 +48,9 @@ examples/debuggingtut/pascalenumeratedvsrangesolvedviadyn2.eyp
 examples/debuggingtut/pascalenumeratedvsrangesolvedviadyn3.eyp
 examples/debuggingtut/pascalenumeratedvsrangesolvedviadyn.eyp
 examples/debuggingtut/pascalenumeratedvsrangesolvedvialex.eyp
+examples/debuggingtut/pascalnestedeyapp.eyp
+examples/debuggingtut/pascalnestedeyapp2.eyp
+examples/debuggingtut/Range.eyp
 examples/debuggingtut/nolr_k_grammar.eyp
 examples/debuggingtut/nolr_k_grammarsolveddynamic.eyp
 examples/debuggingtut/nonslrgrammar.eyp
