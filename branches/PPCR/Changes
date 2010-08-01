@@ -1,5 +1,8 @@
 Revision history for Perl extension Eyapp.
-1.56
+1.165
+  * t/66yydebugstandaloneandpod.t: test debug mode and output of "stack symbols"
+  
+1.156
   * given explicit precedence to tokens
        %token LASTSEMICOLON /(;)(?=S)/
        %token ';' 
