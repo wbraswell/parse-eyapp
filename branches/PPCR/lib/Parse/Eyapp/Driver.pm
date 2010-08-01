@@ -430,22 +430,22 @@ sub YYPreParse {
 }
 
 
-sub YYLookBothWays {
-  my $self = shift;
-  my $stackFirst = shift;
-  my $inputLast  = shift;
-
-  my @stackTokens = $self->YYSymbolStack($stackFirst,-1);
-  my @inputTokens = $self->YYLookaheads($inputLast);
-
-  if (wantarray) {
-    return (@stackTokens, @inputTokens);
-  }
-  else {
-    local $" = shift || '';
-    return "@stackTokens@inputTokens";
-  }
-}
+# sub YYLookBothWays {
+#   my $self = shift;
+#   my $stackFirst = shift;
+#   my $inputLast  = shift;
+# 
+#   my @stackTokens = $self->YYSymbolStack($stackFirst,-1);
+#   my @inputTokens = $self->YYLookaheads($inputLast);
+# 
+#   if (wantarray) {
+#     return (@stackTokens, @inputTokens);
+#   }
+#   else {
+#     local $" = shift || '';
+#     return "@stackTokens@inputTokens";
+#   }
+# }
 
 sub YYSetReduce {
   my ($self, $token, $action) = @_;
