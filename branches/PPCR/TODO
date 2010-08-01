@@ -1,10 +1,20 @@
-  * Make a test: test debug mode and output of "stack symbols"
+  * Include %from directive. See examples/debuggingtut/Range2.eyp
+
+        %from pascalnestedeyapp2 import expr
+        # alternative syntax to include also semantic actions
+        #%from pascalnestedeyapp2 use expr
+
+        %%
+        range: expr '..' expr ';'
+        ;
+
+        %%
+
+
+  * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 
   * Bug/limitation: When using -m and -o the output file still uses the original grammar name.
     It seems more convenient to rename it to the output file suffixed with .output
-
-  * Remove pushing the token values in the stack. Keep it only while debugging
-  * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 
   * Generation of Several Parsers
       - %PREC conflict does not check that a conflict handler has been previously declared

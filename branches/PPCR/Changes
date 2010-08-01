@@ -1,6 +1,8 @@
 Revision history for Perl extension Eyapp.
 1.165
   * t/66yydebugstandaloneandpod.t: test debug mode and output of "stack symbols"
+  * Removed pushing the token values in the stack. Keep it only while debugging
+  * Removed (temporary) -S option from eyapp
   
 1.156
   * given explicit precedence to tokens

@@ -250,7 +250,7 @@ use Parse::Eyapp;
 
 use strict;
 
-our ( $opt_n, $opt_m, $opt_V, $opt_v, $opt_o, $opt_h, $opt_s, $opt_t, $opt_b, $opt_c, $opt_B, $opt_C, $opt_S);
+our ( $opt_n, $opt_m, $opt_V, $opt_v, $opt_o, $opt_h, $opt_s, $opt_t, $opt_b, $opt_c, $opt_B, $opt_C, );
 our $opt_l = 0;
 our $opt_T; # build AST
 our $opt_N; # Do not compact action tables. No DEFAULT field for "STATES"
@@ -269,7 +269,6 @@ Usage:  $prog [options] grammar[.eyp]
                 The LALR tables aren't compacted
     -vN         Create a file <grammar>.output describing your parser
                 LALR tables are compacted.
-    -S symbol   Defines the start symbol for the grammar         
     -s          Create a standalone module in which the driver is included
     -n          Disable source file line numbering embedded in your parser
     -o outfile  Create the file <outfile> for your parser module
@@ -298,7 +297,7 @@ EOF
 
 my($nbargs)=@ARGV;
 
-    getopts('CTVNhlvsnc:b:B:m:t:o:S:')
+    getopts('CTVNhlvsnc:b:B:m:t:o:')
 or  Usage;
 
    (  ($opt_V and $nbargs > 1)
@@ -365,15 +364,12 @@ my @args = (inputfile => $filename, );
 
 push @args, (tree => 1) if $opt_T;
 push @args, (nocompact => 1) if (($opt_N or $opt_v) and not($opt_N and $opt_v));
-push @args, (start => $opt_S) if $opt_S;
 
 my ($parser) = Parse::Eyapp->new(@args);
 
 my($warnings)=$parser->Warnings();
 
-unless ($opt_S) {
-  $warnings !~ m{^\s*$} and print STDERR "$warnings\n";
-}
+$warnings !~ m{^\s*$} and print STDERR "$warnings\n";
 
 $parser->outputtables($path, $base) if $opt_v;
 
