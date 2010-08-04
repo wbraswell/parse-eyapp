@@ -3,6 +3,10 @@ Revision history for Perl extension Eyapp.
   * t/66yydebugstandaloneandpod.t: test debug mode and output of "stack symbols"
   * Removed pushing the token values in the stack. Keep it only while debugging
   * Removed (temporary) -S option from eyapp
+  * Test t/80ppcr.t checks PPCR with YYPreParse
+  * Original API for PPCR deprecated:
+      - # sub YYLookBothWays {
+      - # sub YYSymbolStack {
   
 1.156
   * given explicit precedence to tokens

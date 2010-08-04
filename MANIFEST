@@ -361,6 +361,10 @@ t/simplewithwhites.eyp
 t/inputfor77
 t/tokensemdef.eyp
 t/input2for77
+t/80ppcr.t
+t/pascalnestedeyapp2.eyp
+t/Range.eyp
+t/ExpList.eyp
 #t/97podcoverage.t
 t/98nopm.t
 t/99Cplusplusgrammar.t

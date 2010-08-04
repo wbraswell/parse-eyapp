@@ -1,8 +1,10 @@
+  * Merge PPCR branch with trunk
   * Include %from directive. See examples/debuggingtut/Range2.eyp
 
         %from pascalnestedeyapp2 import expr
         # alternative syntax to include also semantic actions
         #%from pascalnestedeyapp2 use expr
+        #%from pascalnestedeyapp2 use expr, TAIL 
 
         %%
         range: expr '..' expr ';'
