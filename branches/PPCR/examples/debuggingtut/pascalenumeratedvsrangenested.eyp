@@ -1,3 +1,4 @@
+#obsolete
 %{
   my $ID = qr{[A-Za-z][A-Za-z0-9_]*};         
   my ($PREFIX, $POSTFIX);
