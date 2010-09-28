@@ -2,42 +2,35 @@
 %token OP  = /([-+*\/])/
 
 %{
+use feature 'state';
 
 my $nxr = 0;
-my $nxs = 0;
 %}
 
 %conflict isInTheMiddle {
 
+  state $nxs = 0;
 
-  return if $self->YYCurtok eq 'other';
   $nxs++;
 
-  warn "nxr = $nxr nxs = $nxs\n";
   if ($nxs == $nxr+1) { 
-    warn "Reducing by :MIDx nxs = $nxs nxr = $nxr remaining input: ".unexpendedInput()."\n";
-    $self->YYSetReduce(['NUM', ], ':MIDx' );
+    print "Reducing by :MIDx\n";
+    $self->YYSetReduce(['NUM','', 'OP'], ':MIDx' );
     
-    #$nxr = $nxs = 0; 
+    $nxr = $nxs = 0; 
   }
-  else { 
-     warn "Shifting remaining input: ".unexpendedInput()."\n";
-     #my $pos = pos(${$self->input});
-     #$self->YYSetShift(['NUM', ]  ) 
-  } 
+  else { $self->YYSetShift('NUM') } 
+}  
+
+%explorer isInTheMiddle {
+   ($nxr) = $self->YYPreParse('ExpList'); 
+   $nxr = int ($nxr/2);
+   print "Number of x's = $nxr\n";
 }
 
 %%
 
-T: preproc S 'other' 'things'
-;
-
-preproc: /* empty */
-   {
-     ($nxr) = $_[0]->YYPreParse('ExpList'); 
-     warn "Number of x's = $nxr\n";
-     $nxr = int ($nxr/2);
-   }
+T: %isInTheMiddle? S
 ;
 
 S:

@@ -1,7 +1,7 @@
 %{
 =head1 SYNOPSIS
 
-This example shows how the dynamic conlfict resolution
+This example shows how the dynamic conflict resolution
 technique makes possible to change the behavior of the parser
 at the programmer's command.
 
@@ -33,27 +33,17 @@ to this grammar, but the shift-reduce conflict is left unsolved
 my $reduce = 1;
 %}
 
-%lexer {
-    m{\G(\s*)(?:#.*)?(\s*)}gc and $self->tokenline("$1$2" =~ tr{\n}{});
-    m{\G(LEFT|RIGHT)\b}gic         and return (uc($1), uc($1));
-    m{\G([0-9]+)}gc                and return ('NUM', $1);
-    m{\G(.)}gc                     and return ($1,    $1);
-}
+%whites /(\s*(?:#.*)?\s*)/
+%token NUM = /(\d+)/
 
 %conflict leftORright {
-  # reduce if $reduce and next token is '-'
-  if ($reduce && m{\G(?=-)}gc) 
-       { $self->YYSetReduce('-', ':MINUS' ); }
-  else { $self->YYSetShift('-'); }
+  if ($reduce) { $self->YYSetReduce('-', ':M') } else { $self->YYSetShift('-') }
 }
 
 %expect 1
 
 %%
-p:  
-      /* empty */     {}
-    | p c             {}
-;
+p: c * {} ; 
 
 c:
       $expr { print "$expr\n" }
@@ -64,7 +54,7 @@ c:
 
 expr: 
       '(' $expr ')'  { $expr } 
-    | %name :MINUS
+    | %name :M
       expr.left                         %PREC leftORright
                 '-' expr.right          %PREC leftORright
          { $left - $right }

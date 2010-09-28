@@ -1,3 +1,23 @@
-b 378
+#source deb
+#source deb
+f noPackratSolvedExpRG2.eyp 
+l
+b 13
 c
+x $value
+s $self->{VALUE}
+x $self->{VALUE}
+n
+#save deb
+n
+n
+n
+n
+n
+c
+#save deb
+n
+n
+n
+n
 #save deb
