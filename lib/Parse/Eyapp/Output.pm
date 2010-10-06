@@ -168,8 +168,11 @@ our $LEX = sub {
 <<DEFINEDTOKENS>>
 
       return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
-     # /\G\s*(\S+)/;
-     # my $near = substr($1,0,10); 
+      /\G\s*(\S+)/;
+      my $near = substr($1,0,10); 
+
+      return($near, $near);
+
      # die( "Error inside the lexical analyzer near '". $near
      #     ."'. Line: ".$self->line()
      #     .". File: '".$self->YYFilename()."'. No match found.\n");

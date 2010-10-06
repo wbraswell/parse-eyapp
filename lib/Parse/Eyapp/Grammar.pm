@@ -36,7 +36,7 @@ sub new {
                              $self->Option('tree'),       # 4 %tree activated
                              $self->Option('nocompact'),  # 5 %nocompact
                              $self->Option('lexerisdefined'),    # 6 lexer is defined
-                             $self->Option('start'),             # 7 start symbol
+                             $self->Option('prefix'),            # 7 accept prefix
                              #$self->Option('prefixname'),  # yyprefix
                              #$self->Option('buildingtree')  # If building AST
                             );

@@ -12,25 +12,30 @@ my $nxs = 0;
 
   $nxs++;
 
+  warn "nxr = $nxr nxs = $nxs\n";
   if ($nxs == $nxr+1) { 
-    print "Reducing by :MIDx\n";
-    $self->YYSetReduce(['NUM','', 'OP'], ':MIDx' );
+    warn "Reducing by :MIDx nxs = $nxs nxr = $nxr\n";
+    $self->YYSetReduce(['NUM', 'OP', 'other'], ':MIDx' );
     
     $nxr = $nxs = 0; 
   }
-  else { $self->YYSetShift('NUM') } 
+  else { 
+     warn "Shifting\n";
+     $self->YYSetShift(['NUM', 'OP', 'other']  ) 
+     ##$self->YYSetShift(['NUM',]  ) 
+  } 
 }
 
 %%
 
-T: preproc S
+T: preproc S 'other' 'things'
 ;
 
 preproc: /* empty */
    {
      ($nxr) = $_[0]->YYPreParse('ExpList'); 
+     warn "Number of x's = $nxr\n";
      $nxr = int ($nxr/2);
-     print "Number of x's = $nxr\n";
    }
 ;
 
@@ -59,7 +64,7 @@ Compile it with:
 
 Run it with:
 
-   $ ./noPackratSolvedExpRG2.pm -t -i -m 1 -c '2-3 3*4 5+2'
+   $ ./noPackratSolvedExpRG2.pm -t -i -m 1 -c '2-3 3*4 5+2 other things'
 
 =head1 SEE ALSO
 
