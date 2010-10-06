@@ -53,12 +53,12 @@ Backtracking LR and GLR algorithms can but will perform poorly.
 
 Compile it with:
 
-   $ eyapp ExpList.eyp 
-   $ eyapp -TC noPackratSolvedExpRG2.eyp
+   $ eyapp -P ExpList.eyp 
+   $ eyapp -TC noPackratSolvedExpRGconcept.eyp
 
 Run it with:
 
-   $ ./noPackratSolvedExpRG2.pm -t -i -m 1 -c '2-3 3*4 5+2'
+   $ ./noPackratSolvedExpRGconcept.pm -t -i -m 1 -c '2-3 3*4 5+2'
 
 =head1 SEE ALSO
 

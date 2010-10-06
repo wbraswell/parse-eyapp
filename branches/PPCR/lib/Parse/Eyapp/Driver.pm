@@ -257,6 +257,7 @@ sub YYNextState {
     my $length = $self->YYRHSLength;
 
     my $state = $self->YYTopState($length);
+    #print "state = $$state[0]\n";
     $self->YYGoto($state, $lhs);
   }
   else { # shift: a token must be provided as argument

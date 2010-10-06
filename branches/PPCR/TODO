@@ -1,3 +1,14 @@
+  * the two examples 
+       noPackratSolvedExpRGconcept.eyp
+    work because they run up to the end of the input!!
+    Make a test
+
+  * Lalr 
+      # substitute End Of Input by DEFAULT for each state
+      # Will it give a false acceptance? 
+      # I think I shall use an option in eyapp?
+      # make a test
+
   * Merge PPCR branch with trunk
   * Include %from directive. See examples/debuggingtut/Range2.eyp
 
@@ -11,7 +22,16 @@
         ;
 
         %%
+   * Syntax for conflicts must include an explorer (pre-parser/nested parsing)
 
+        T: %isInTheMiddle? S
+        ;
+
+        S:
+             x  %PREC isInTheMiddle S x  
+          |  %name :MIDx 
+             x  %PREC isInTheMiddle 
+        ;
 
   * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 

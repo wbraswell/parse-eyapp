@@ -64,11 +64,13 @@ sub new {
     $self->_Compile();
     $self->_DynamicConflicts(); # call it only if dynamic conflict handlers
 
-    if ($self->Option('start')) {
-      # weak accept for nested parsing
+    if ($self->Option('prefix')) {
+      # weak accept for nested parsing !!!!!!!!!!!!
       # substitute End Of Input by DEFAULT for each state
       for (@{$self->{STATES}}) {
         if (exists($_->{ACTIONS}{"\c@"})) {
+          # what if DEFAULT action already exists ?
+          # Shall I have to use an option in eyapp????
           $_->{ACTIONS}{''} = $_->{ACTIONS}{"\c@"};
           delete($_->{ACTIONS}{"\c@"});
         }
