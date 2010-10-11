@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 use strict;
 my $nt;
-my $skips = 5;
+my $skips;
 
-BEGIN { $nt = 5 }
+BEGIN { $nt = 5; $skips = 5; }
 use Test::More tests=> $skips*$nt+1;
 
 SKIP: {
