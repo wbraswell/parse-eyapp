@@ -126,17 +126,20 @@ SKIP: {
 
   eval {
 
-    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -m 1 -c '2-3 3*4 5+2 other things'};
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -m 1 -c '2-3 3*4 5+2 other things' 2>&1};
 
   };
 
   ok(!$@,'t/noPackratSolvedExpRG2.eyp executed as modulino');
 
   my $expected = q{
-Number of x's = 1
-Reducing by :MIDx
+Number of x's = 3
+nxr = 1 nxs = 1
+Shifting
+nxr = 1 nxs = 2
+Reducing by :MIDx nxs = 2 nxr = 1
 
-T_is_preproc_S(
+T_is_preproc_S_other_things(
   S_is_x_S_x(
     x_is_x_OP_NUM(
       x_is_NUM(
