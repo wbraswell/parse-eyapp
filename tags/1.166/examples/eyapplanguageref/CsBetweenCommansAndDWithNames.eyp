@@ -1,0 +1,31 @@
+%semantic token 'c' 'd' 
+
+%{
+sub TERMINAL::info {
+  $_[0]->attr;
+}
+%}
+%tree
+%%
+Start: S      
+;
+S: 
+    ('c' <%name Cs * ','> 'd') %name Cs_and_d *   
+      { 
+         print "\nNode\n";
+         print $_[1]->str."\n"; 
+         print "\nChild 0\n";
+         print $_[1]->child(0)->str."\n"; 
+         print "\nChild 1\n";
+         print $_[1]->child(1)->str."\n"; 
+         $_[1] 
+      }
+;
+
+%%
+
+use base 'Tail';
+__PACKAGE__->lexer(\&Tail::lex);
+
+# modulino code: compile with: eyapp -b '' CsBetweenCommansAndDWithNames.eyp
+__PACKAGE__->new()->main("Try 'c,c, d': ") unless caller();

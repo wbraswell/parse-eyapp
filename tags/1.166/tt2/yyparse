@@ -1,0 +1,190 @@
+The C<YYParse> methods implements the generic LR parsing algorithm.
+It very much works C<Parse::Yapp::YYParse> and as yacc/bison C<yyparse>.
+It accepts almost the same arguments as C<Class-E<gt>new> (Being C<Class> the name 
+of the generated class).
+
+The parser uses two tables and a stack. The two tables
+are called the I<action> table and the I<goto> table.
+The stack is used to keep track of the states visited.
+
+At each step the generated parser consults the 
+C<action> table and takes one decision:
+To shift to a new state consuming one token (and pushing 
+the current state in the stack) or to reduce by some
+production rule. In the last case the parser pops
+from its stack as many states as symbols are on the right hand side
+of the production rule. Here is a Perl/C like pseudocode
+summarizing the activity of C<YYParse>:
+
+     1   my $parser = shift; # The parser object
+     2   push(@stack, $parser->{startstate});
+     3   $b = $parser->YYLexer(); # Get the first token
+     4   FOREVER: {
+     5     $s = top(0);  # Get the state on top of the stack
+     6     $a = $b;
+     7     switch ($parser->action[$s->state][$a]) {
+     8       case "shift t" : 
+     9         my $t;
+    10         $t->{state} = t;
+    11         $t->{attr}  = $a->{attr};
+    12         push($t); 
+    13         $b = $parser->YYLexer(); # Call the lexical analyzer
+    14         break;
+    15       case "reduce A->alpha" : 
+    16         # Call the semantic action with the attributes of the rhs as args
+    17         my $semantic  = $parser->Semantic{A ->alpha}; # The semantic action
+    18         my $r;
+    19         $r->{attr} = $semantic->($parser, top(|alpha|-1)->attr, ... , top(0)->attr); 
+    20  
+    21         # Pop as many states as symbols on the rhs of A->alpha
+    22         pop(|alpha|);  
+    23  
+    24         # Goto next state 
+    25         $r->{state} = $parser->goto[top(0)][A]; 
+    26         push($r); 
+    27         break;
+    28       case "accept" : return (1); 
+    29       default : $parser->YYError("syntax error"); 
+    30     }
+    31     redo FOREVER;
+    32   }
+
+Here C<|alpha|> stands for the length of C<alpha>. Function C<top(k)> returns
+the state in position C<k> from the top of the stack, i.e. the state at depth C<k>.
+Function C<pop(k)> extracts C<k> states from the stack. The call C<$state-E<gt>attr>
+returns the attribute associated with C<$state>. The call C<$parser-E<gt>Semantic{A -E<gt>alpha}>
+returns the semantic action associated with production C<A -E<gt>alpha>.
+
+Let us see a trace for the small grammar in C<examples/debuggingtut/aSb.yp>:
+
+  pl@nereida:~/LEyapp/examples$ /usr/local/bin/paste.pl aSb.yp aSb.output | head -5
+  %%                                             | Rules:
+  S:                 { print "S -> epsilon\n" }  | ------
+      |   'a' S 'b'  { print "S -> a S b\n" }    | 0:    $start -> S $end
+  ;                                              | 1:    S -> /* empty */
+  %%                                             | 2:    S -> 'a' S 'b'
+
+
+
+The tables in file C<aSb.output> describe the 
+actions and transitions to take:
+
+  pl@nereida:~/LEyapp/examples$ cat -n aSb.output
+     .  .........................................
+     7  States:
+     8  -------
+     9  State 0:
+    10
+    11          $start -> . S $end      (Rule 0)
+    12
+    13          'a'     shift, and go to state 2
+    14
+    15          $default        reduce using rule 1 (S)
+    16
+    17          S       go to state 1
+    18
+    19  State 1:
+    20
+    21          $start -> S . $end      (Rule 0)
+    22
+    23          $end    shift, and go to state 3
+    24
+    25  State 2:
+    26
+    27          S -> 'a' . S 'b'        (Rule 2)
+    28
+    29          'a'     shift, and go to state 2
+    30
+    31          $default        reduce using rule 1 (S)
+    32
+    33          S       go to state 4
+    34
+    35  State 3:
+    36
+    37          $start -> S $end .      (Rule 0)
+    38
+    39          $default        accept
+    40
+    41  State 4:
+    42
+    43          S -> 'a' S . 'b'        (Rule 2)
+    44
+    45          'b'     shift, and go to state 5
+    46
+    47  State 5:
+    48
+    49          S -> 'a' S 'b' .        (Rule 2)
+    50
+    51          $default        reduce using rule 2 (S)
+    52
+    53
+    54  Summary:
+    55  --------
+    56  Number of rules         : 3
+    57  Number of terminals     : 3
+    58  Number of non-terminals : 2
+    59  Number of states        : 6
+
+When executed with C<yydebug> set and input C<aabb>  we obtain the following 
+output:
+
+  pl@nereida:~/LEyapp/examples/debuggingtut$ eyapp -b '' -o use_aSb.pl aSb
+  pl@nereida:~/LEyapp/examples/debuggingtut$ ./use_aSb.pl -d
+  Provide a statement like "a a b b" and press <CR><CTRL-D>: aabb
+  ----------------------------------------                       
+  In state 0:                                                    
+  Stack:[0]                                                      
+  Need token. Got >a<                                            
+  Shift and go to state 2.                                       
+  ----------------------------------------                       
+  In state 2:                                                    
+  Stack:[0,2]                                                    
+  Need token. Got >a<
+  Shift and go to state 2.
+  ----------------------------------------
+  In state 2:
+  Stack:[0,2,2]
+  Need token. Got >b<
+  Reduce using rule 1 (S --> /* empty */): S -> epsilon
+  Back to state 2, then go to state 4.
+  ----------------------------------------
+  In state 4:
+  Stack:[0,2,2,4]
+  Shift and go to state 5.
+  ----------------------------------------
+  In state 5:
+  Stack:[0,2,2,4,5]
+  Don't need token.
+  Reduce using rule 2 (S --> a S b): S -> a S b
+  Back to state 2, then go to state 4.
+  ----------------------------------------
+
+As a result of reducing by rule 2 
+the three last
+visited states are popped
+from the stack, and the stack becomes C<[0,2]>. But 
+that means that we are now in state 2 seeing a C<S>. 
+If you look at the table above being in state 2 and seeing a C<S>
+we go to state 4.
+
+  In state 4:
+  Stack:[0,2,4]
+  Need token. Got >b<
+  Shift and go to state 5.
+  ----------------------------------------
+  In state 5:
+  Stack:[0,2,4,5]
+  Don't need token.
+  Reduce using rule 2 (S --> a S b): S -> a S b
+  Back to state 0, then go to state 1.
+  ----------------------------------------
+  In state 1:
+  Stack:[0,1]
+  Need token. Got ><
+  Shift and go to state 3.
+  ----------------------------------------
+  In state 3:
+  Stack:[0,1,3]
+  Don't need token.
+  Accept.
+

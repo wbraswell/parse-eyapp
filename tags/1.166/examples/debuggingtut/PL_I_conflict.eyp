@@ -1,0 +1,93 @@
+%{
+=head1 SYNOPSIS
+
+This grammar deals with the famous ambiguous PL/I phrase:
+
+                if then=if then if=then
+
+The (partial) solution uses C<YYExpect> in the lexical analyzer to predict the token
+that fulfills the parser expectatives.
+
+Compile it with:
+
+               eyapp -b '' PL_I_conflict.eyp
+
+Run it with;
+
+               ./PL_I_conflict.pm -t
+
+or
+
+               ./PL_I_conflict.pm -d -t
+
+=cut
+
+use base q{DebugTail}; 
+use List::Util qw{first};
+
+%}
+
+%strict
+
+%token ID 
+
+%tree bypass
+%%
+stmt: 
+    ifstmt 
+  | assignstmt
+;
+
+# Exercise: change this production 
+#     for 'if' expr 'then' stmt
+# and check with input 'if then=if then if=then'. The problem arises again
+ifstmt: 
+     %name IF
+    'if' expr 'then' expr 
+;
+
+assignstmt: 
+    id '=' expr
+;
+
+expr:
+    %name EQ
+    id '=' id
+  | id
+;
+
+id: 
+    %name ID
+    ID
+;
+
+%%
+
+# Adaptative lexer
+__PACKAGE__->lexer(
+  sub {
+    my $parser = shift;
+
+    for (${$parser->input()}) {    # contextualize
+      m{\G\s*(\#.*)?}gc;
+
+      m{\G([a-zA-Z_]\w*)}gc and do {
+        my $id = $1;
+
+        return ('if',   'if')   if ($id eq 'if')   && $parser->expects('if');
+        return ('then', 'then') if ($id eq 'then') && $parser->expects('then');
+        
+        return ('ID', $id);
+      };
+
+      m{\G(.)}gc and return ($1, $1);
+
+      return('',undef);
+    }
+  }
+);
+
+my $prompt = 'Try input "if then=if then if=then" '.
+             '(press <CR><CTRL-D> to finish): ';
+__PACKAGE__->main($prompt) unless caller();
+

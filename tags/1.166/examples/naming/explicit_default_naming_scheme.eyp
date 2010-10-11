@@ -1,0 +1,55 @@
+%{
+=head1 SYNOPSIS
+
+This file is almost equal to C<default_naming_scheme.eyp>
+but the (default) naming scheme is set explictly.
+
+Compile it with:
+
+
+to run it, write:
+
+ $ ./explicit_default_naming_scheme.pm -t -c '*a=b'
+
+
+It will produce the same output than C<default_naming_scheme.eyp>:
+
+  s_1(l_3(TERMINAL,r_5(l_4(TERMINAL))),TERMINAL,r_5(l_4(TERMINAL)))
+
+=cut
+%}
+%strict
+%token VAR ASSIGN POINTER
+
+%namingscheme { \&give_default_name; }
+%tree
+
+%{
+use base q{Tail};
+Tail->set_lexemename(
+  '=' => 'ASSIGN',
+  '*' => 'POINTER',
+);
+%}
+
+%%
+s:
+    l ASSIGN r
+  | r
+;
+
+l:
+    POINTER r
+  | VAR
+;
+
+r:
+    l
+;
+
+%%
+
+__PACKAGE__->lexer(\&Tail::lex);
+
+__PACKAGE__->main unless caller;
+

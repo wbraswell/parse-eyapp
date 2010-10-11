@@ -1,0 +1,74 @@
+=head1 NAME 
+
+Parse::Eyapp::Scope - Support for Scope Analysis
+ 
+=head1 SYNOPSIS
+ 
+  # Fragment of the grammar lib/Simple/Types.eyp
+  # in examples/typechecking/Simple-Types-XXX.tar.gz 
+  funcDef:
+      $ID 
+         { 
+           $ids->begin_scope(); 
+         }
+      '('  $params  ')' 
+        $block
+      {
+         my $st = $block->{symboltable}; 
+         my @decs = $params->children(); 
+         $block->{parameters} = [];
+         while (my ($bt, $id, $arrspec) = splice(@decs, 0, 3)) {
+             $bt = ref($bt); # The string 'INT', 'CHAR', etc.
+             my $name = $id->{attr}[0];
+             my $type = build_type($bt, $arrspec);
+             $type{$type} = Parse::Eyapp::Node->hnew($type); 
+
+             # control duplicated declarations
+               die "Duplicated declaration of $name at line $id->{attr}[1]\n" 
+             if exists($st->{$name});
+
+             $st->{$name}->{type} = $type;
+             $st->{$name}->{param} = 1;
+             $st->{$name}->{line} = $id->{attr}[1];
+             push @{$block->{parameters}}, $name;
+         }
+         $block->{function_name} = $ID;
+         $block->type("FUNCTION");
+
+         my ($nodec, $dec) = $ids->end_scope($st, $block, 'type');
+
+         # Type checking: add a direct pointer to the data-structure
+         # describing the type
+         $_->{t} = $type{$_->{type}} for @$dec;
+
+         return $block;
+      }
+  ;
+ 
+  ...
+
+  Primary:
+      %name INUM
+      INUM 
+    | %name CHARCONSTANT
+      CHARCONSTANT
+    | $Variable 
+        { 
+          $ids->scope_instance($Variable); 
+          return $Variable 
+        }
+    | '(' expression ')' { $_[2] }
+    | $function_call 
+        { 
+          $ids->scope_instance($function_call); 
+          return $function_call  # bypass
+        }
+  ;
+    
+[% PROCESS Scope %]
+
+=head1 SEE ALSO
+  
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]

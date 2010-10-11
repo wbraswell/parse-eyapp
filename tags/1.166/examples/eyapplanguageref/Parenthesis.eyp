@@ -1,0 +1,12 @@
+%%
+S:   
+      ('a' S ) 'b'  { shift; [ @_ ] }
+    | 'c'   
+;
+%%
+
+use base 'Tail';
+__PACKAGE__->lexer(\&Tail::lex);
+
+# modulino code: compile with: eyapp -b '' Parenthesis.eyp
+__PACKAGE__->new()->main("Try 'acb': ") unless caller();

@@ -1,0 +1,9 @@
+%conflict L {
+  /(?=\G\s*;\s*S)/ ?  $self->YYSetReduce(';', ':L') :  $self->YYSetShift(';') 
+}
+%expect 1
+%%
+p:  ds ';' ss          | ss ; 
+ds: D  %PREC L ';' ds  | %name :L D %PREC L ;
+ss: S  ';' ss          | S  ;
+%%

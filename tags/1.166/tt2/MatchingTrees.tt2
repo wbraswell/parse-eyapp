@@ -1,0 +1,16 @@
+=head1 NAME
+
+Parse::Eyapp::treematchingtut - Tree Matching and Tree substitution: an introduction
+
+=head1 TREE MATCHING AND TREE SUBSTITUTION
+
+Most of the examples in this section can be found in the directory
+C<examples/MatchingTrees> that comes with the distribution of L<Parse::Eyapp>.
+
+[% PROCESS MatchingTrees %]
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]

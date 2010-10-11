@@ -1,0 +1,72 @@
+The code below 
+(file \prog{infix2pir.pl}) %
+displays
+the stages of the translator: \emph{Lexical
+and syntax analysis, tree transformations
+and decorations,
+address assignments, code generation
+and peephole optimization}. The simplicity of the 
+considered language (no types, no control structures) 
+permits the skipping of 
+\emph{context handling} (also called \emph{semantic analysis}).
+Context handling includes jobs like \emph{type checking}, 
+\emph{live analysis}, etc.
+Don't get overflowed for so much terminology:
+The incoming sections will
+explain in more detail each of these phases.
+\begin{verbatim}
+my $filename = shift;
+my $parser = Infix->new(); 
+
+# read input
+$parser->slurp_file($filename);
+
+# lexical and syntax analysis
+my $t = $parser->YYParse();
+
+# tree transformations:
+# machine independent optimizations
+$t->s(our @algebra);  
+
+# Address Assignment 
+our $reg_assign;
+$reg_assign->s($t);
+
+# Translate to PARROT
+$t->bud(our @translation);
+
+# variable declarations
+my $dec = build_dec();
+
+peephole_optimization($t->{tr});
+
+output_code(\$t->{tr}, \$dec);
+\end{verbatim}
+
+The compiler uses the parser for infix expressions
+that was generated from the Eyapp grammar  \prog{Infix.eyp}
+(see section \ref{section:syntacticanalysis})
+using the command:
+\begin{verbatim}
+$ eyapp Infix.eyp
+$ ls -tr | tail -1
+Infix.pm
+\end{verbatim}
+It also uses the module containing different families of tree
+transformations that are described in the \prog{I2PIR.trg} file 
+(explained in 
+sections \ref{section:machineindependentoptimizations} and \ref{section:codegeneration}): 
+\begin{verbatim}
+$ treereg -m main I2PIR.trg
+$ ls -tr | tail -1
+I2PIR.pm
+$ head -1 I2PIR.pm
+package main;
+\end{verbatim}
+The option \verb|-m main| tells \verb|treereg|
+to place the generated tree transformations inside the \verb|main|
+namespace. Is in this file that the variables 
+\verb|@algebra|, \verb|@translation| and 
+\verb|$reg_assign| used during the machine-independent optimization,
+code generation and register allocation phases are defined.
+
