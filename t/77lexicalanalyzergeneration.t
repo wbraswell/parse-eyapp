@@ -3,7 +3,7 @@ use strict;
 my $nt;
 my $skips;
 
-BEGIN { $nt = 5; $skips = 5; }
+BEGIN { $nt = 5; $skips = 4; }
 use Test::More tests=> $skips*$nt+1;
 
 SKIP: {
@@ -178,7 +178,7 @@ s_is_s(
 }
 
 SKIP: {
-  skip "t/quotemeta2.eyp not found", $nt unless ($ENV{DEVELOPER} && -r "t/quotemeta2.eyp" && -r "t/input2for77" && -x "./eyapp");
+  skip "t/quotemeta2.eyp not found", 1 unless ($ENV{DEVELOPER} && -r "t/quotemeta2.eyp" && -r "t/input2for77" && -x "./eyapp");
 
   unlink 't/quotemeta2.pl';
 
