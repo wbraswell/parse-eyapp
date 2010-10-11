@@ -354,7 +354,7 @@ t/74lalrdependanttest.t
 t/75tokenandvariablewiththesamename.t
 t/76minusvoption.t
 t/77lexicalanalyzergeneration.t
-#t/78twolexers.t
+t/78twolexers.t
 t/79syntactictokenwithdef.t
 t/numlist.eyp
 t/simplewithwhites.eyp
