@@ -1596,7 +1596,7 @@ my $lex;##!!##
 sub _Parse {
     my($self)=shift;
 
-  my $lex = $self->{LEX};
+  #my $lex = $self->{LEX};
 
   my($rules,$states,$error)
      = @$self{ 'RULES', 'STATES', 'ERROR' };
@@ -1644,7 +1644,7 @@ sub _Parse {
 
         defined($$token)
             or  do {
-        ($$token,$$value)=&$lex($self); # original line
+        ($$token,$$value)=$self->{LEX}->($self); # original line
         #($$token,$$value)=$self->$lex;   # to make it a method call
         #($$token,$$value) = $self->{LEX}->($self); # sensitive to the lexer changes
 #DBG>       $debug & 0x01
@@ -1870,7 +1870,7 @@ sub YYLexer {
 
   if (ref $self) { # instance method
     # The class attribute isn't changed, only the instance
-    $lex = $self->{LEX} = shift if @_;
+    $self->{LEX} = shift if @_;
 
     return $self->static_attribute('LEX', @_,) unless defined($self->{LEX}); # class/static method 
     return $self->{LEX};
