@@ -21,7 +21,7 @@ my $nxs = 0;
   }
   else { 
      warn "Shifting\n";
-     $self->YYSetShift(['NUM', 'OP', 'other']  ) 
+     $self->YYSetShift(['NUM', ]  ) 
      ##$self->YYSetShift(['NUM',]  ) 
   } 
 }
