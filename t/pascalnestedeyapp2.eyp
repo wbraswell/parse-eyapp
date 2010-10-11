@@ -1,11 +1,13 @@
-# obsolete
+%{
+  my $is_range = 0;
+%}
 
 %conflict rangeORenum {
-  my $s = $self->YYLookBothWays('type', ';');
-  if ($s =~ /^type ID = \( ID ( , ID )* \) ;$/x) 
-       { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
-  else { $self->YYSetReduce([',', ')'], 'ID:RANGE' ); }
-}
+  if ($is_range) 
+    { $self->YYSetReduce([',', ')'], 'ID:RANGE' ); }
+  else 
+    { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
+} 
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
@@ -18,14 +20,17 @@
 
 %%
 
-type_decl : 'type' ID '=' type ';'
+type_decl : 'type' ID '=' type ';' expr
 ;
 
 type : 
       %name ENUM
-      '(' id_list ')'
+      Lookahead '(' id_list ')'
     | %name RANGE
-      expr '..' expr
+      Lookahead expr '..' expr
+;
+
+Lookahead: /* empty */  { $is_range = $_[0]->YYPreParse('Range'); }
 ;
 
 id_list : 
@@ -53,19 +58,25 @@ See
 
 =over 2
 
+=item * File C<userange.pl>.
+
+=item * File C<Range.eyp>.
+
 =item * File pascalenumeratedvsrange.eyp in examples/debuggintut/
 
 =item * The Bison manual L<http://www.gnu.org/software/bison/manual/html_mono/bison.html>
 
 =back
 
-Compile it with something like:
+Compile it with:
 
-      eyapp -TC pascalenumeratedvsrangePPCR.eyp
+      eyapp Range.eyp
+      eyapp -TC pascalnestedeyapp2.eyp
 
 Run it with this options:
 
-    $ ./pascalenumeratedvsrangePPCR.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyapp2.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyapp2.pm -t -i -m 1 -c 'type e = (x, @, z);'
 
 Try also these inputs:
 
@@ -75,6 +86,7 @@ Try also these inputs:
                 type e = (x, y, z);
                 type e = (x);
                 type e = (x, y, z) .. (u+v);
+
 
 =cut
 

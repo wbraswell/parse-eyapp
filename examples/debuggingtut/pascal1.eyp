@@ -1,36 +1,44 @@
+# Default lexical analyzer
+%lexer {
+      m{\G(\s+)}gc and $self->tokenline($1 =~ tr{\n}{});
+
+      m{\G(type|\.\.|\-|\+|\;|\/|\,|\=|\(|\*|\))}gc and return ($1, $1);
+
+      /\G([A-Za-z]\w*)/gc and return ('ID', $1);
+      /\G(\d+)/gc and return ('NUM', $1);
+
+
+      return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
+      /\G\s*(\S+)/;
+      my $near = substr($1,0,10); 
+      die( "Error inside the lexical analyzer near '". $near
+          ."'. Line: ".$self->line()
+          .". File: '".$self->YYFilename()."'. No match found.\n");
+}
+
 %{
 my $enum = 0;
 
 sub rangeORenum {
-  my $self = shift; 
   # Goal. Towrite this code as: 
   #           $enum = $self->YYPreParse('enum');
   #  Will parse using as start symbol 'enum', without changing the 
   #  parsing position. Returns true if it matches. Has the same effect
   #  than the following code:
+  use Enum;
 
-  # Use Regexp::Grammars. You have an attribute of $self: RGPATTERNS
-  # keys: the names of the syntactic variables involved in the conflict
-  #  %starts enum OR %nested enum
-  # The values are the Regexp::Grammar expressions describing
-  # the syntactic variable (including the FOLLOWS)
-  # Of course, this implies that the sub grammar can't be left recursive
+  my $self = shift;
 
-  for (${$self->input()}) {
-    if (m{(?=             # look forward 
-              \G\s*\(     # open parenthesis
-                       \s*\w+             # ID
-                             (\s*,\s*\w+)*
-                 \s*\)\s* # closing parenthesis
-                 ;        # semicolon
-          )
-         }x) { 
-      $enum = 1;
-    }
-    else {
-      $enum = 0;
-    }
-  }
+  my $np = Enum->new();
+
+  my $pos = pos(${$self->{INPUT}});
+  $np->input($self->input());
+
+  $enum = 1;
+  eval {
+    $np->YYParse( yyerror => sub { $enum = 0; });
+  };
+
 }
 
 %}
@@ -47,7 +55,7 @@ sub rangeORenum {
 %left   '-' '+'
 %left   '*' '/'
 
-%expect-rr 2
+#%expect-rr 2
 
 %%
 
@@ -64,8 +72,14 @@ type :
 ;
 
 enum:
-      '(' id_list ')'
+      '(' ids ')' ';'
 ;
+
+ids : 
+      ID       
+    | ids ',' ID
+;
+
 
 PRErangeORenum:
    /* empty */  
@@ -92,6 +106,7 @@ expr : '(' expr ')'   { $_[2] } /* bypass */
 ;
 
 %%
+
 
 =head1 SYNOPSIS
 

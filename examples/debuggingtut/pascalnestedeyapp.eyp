@@ -1,11 +1,28 @@
-# obsolete
+%{
+use 5.0010;
+use feature 'state';
+my $is_enum = 0;
+
+sub rangeORenum {
+  my $self = shift; 
+
+  require Range;
+  state $rp = Range->new( yyerror => sub {});
+
+  my $pos = pos(${$self->input});
+  $rp->input($self->input);
+  my $t = $rp->Run;
+  print "After nested parsing\n";
+  $is_enum = $rp->YYNberr;
+  pos(${$self->input}) = $pos;
+}
+
+%}
 
 %conflict rangeORenum {
-  my $s = $self->YYLookBothWays('type', ';');
-  if ($s =~ /^type ID = \( ID ( , ID )* \) ;$/x) 
-       { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
+  if ($is_enum) { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
   else { $self->YYSetReduce([',', ')'], 'ID:RANGE' ); }
-}
+} 
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
@@ -23,9 +40,16 @@ type_decl : 'type' ID '=' type ';'
 
 type : 
       %name ENUM
-      '(' id_list ')'
+      PRErangeORenum '(' id_list ')'
     | %name RANGE
-      expr '..' expr
+      PRErangeORenum expr '..' expr
+;
+
+PRErangeORenum:
+   /* empty */  
+     {
+       goto &rangeORenum;
+     }
 ;
 
 id_list : 
@@ -53,19 +77,25 @@ See
 
 =over 2
 
+=item * File C<userange.pl>.
+
+=item * File C<Range.eyp>.
+
 =item * File pascalenumeratedvsrange.eyp in examples/debuggintut/
 
 =item * The Bison manual L<http://www.gnu.org/software/bison/manual/html_mono/bison.html>
 
 =back
 
-Compile it with something like:
+Compile it with:
 
-      eyapp -TC pascalenumeratedvsrangePPCR.eyp
+      eyapp Range.eyp
+      eyapp -TC pascalnestedeyapp.eyp
 
 Run it with this options:
 
-    $ ./pascalenumeratedvsrangePPCR.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyapp.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ perl5.10.0 ./pascalnestedeyapp.pm -t -i -m 1 -c 'type e = (x, @, z);'
 
 Try also these inputs:
 
@@ -75,6 +105,7 @@ Try also these inputs:
                 type e = (x, y, z);
                 type e = (x);
                 type e = (x, y, z) .. (u+v);
+
 
 =cut
 

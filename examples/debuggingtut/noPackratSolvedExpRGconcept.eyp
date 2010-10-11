@@ -5,7 +5,6 @@
 use feature 'state';
 
 my $nxr = 0;
-
 %}
 
 %conflict isInTheMiddle {
@@ -16,23 +15,22 @@ my $nxr = 0;
 
   if ($nxs == $nxr+1) { 
     print "Reducing by :MIDx\n";
-    $self->YYSetReduce(['NUM','OP'], ':MIDx' );
+    $self->YYSetReduce(['NUM','', 'OP'], ':MIDx' );
     
     $nxr = $nxs = 0; 
   }
   else { $self->YYSetShift('NUM') } 
+}  
+
+%explorer isInTheMiddle {
+   ($nxr) = $self->YYPreParse('ExpList'); 
+   $nxr = int ($nxr/2);
+   print "Number of x's = $nxr\n";
 }
 
 %%
-T: preproc S  'other'
-;
 
-preproc: /* empty */
-   {
-     ($nxr) = $_[0]->YYPreParse('ExpList'); 
-     warn "Number of x's = $nxr\n";
-     $nxr = int ($nxr/2);
-   }
+T: %isInTheMiddle? S
 ;
 
 S:
@@ -55,11 +53,12 @@ Backtracking LR and GLR algorithms can but will perform poorly.
 
 Compile it with:
 
-   $ eyapp -TC noPackratPPCR.eyp.eyp
+   $ eyapp -P ExpList.eyp 
+   $ eyapp -TC noPackratSolvedExpRGconcept.eyp
 
 Run it with:
 
-   $ ./noPackratPPCR.pm -t -i -c '2-3 3*4 5+2'
+   $ ./noPackratSolvedExpRGconcept.pm -t -i -m 1 -c '2-3 3*4 5+2'
 
 =head1 SEE ALSO
 

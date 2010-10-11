@@ -2,29 +2,34 @@
 %token OP  = /([-+*\/])/
 
 %{
-use feature 'state';
 
 my $nxr = 0;
-
+my $nxs = 0;
 %}
 
 %conflict isInTheMiddle {
 
-  state $nxs = 0;
 
+  return if $self->YYCurtok eq 'other';
   $nxs++;
 
+  warn "nxr = $nxr nxs = $nxs\n";
   if ($nxs == $nxr+1) { 
-    print "Reducing by :MIDx\n";
-    $self->YYSetReduce(['NUM','OP'], ':MIDx' );
+    warn "Reducing by :MIDx nxs = $nxs nxr = $nxr remaining input: ".unexpendedInput()."\n";
+    $self->YYSetReduce(['NUM', ], ':MIDx' );
     
-    $nxr = $nxs = 0; 
+    #$nxr = $nxs = 0; 
   }
-  else { $self->YYSetShift('NUM') } 
+  else { 
+     warn "Shifting remaining input: ".unexpendedInput()."\n";
+     #my $pos = pos(${$self->input});
+     #$self->YYSetShift(['NUM', ]  ) 
+  } 
 }
 
 %%
-T: preproc S  'other'
+
+T: preproc S 'other' 'things'
 ;
 
 preproc: /* empty */
@@ -55,11 +60,12 @@ Backtracking LR and GLR algorithms can but will perform poorly.
 
 Compile it with:
 
-   $ eyapp -TC noPackratPPCR.eyp.eyp
+   $ eyapp ExpList.eyp 
+   $ eyapp -TC noPackratSolvedExpRG2.eyp
 
 Run it with:
 
-   $ ./noPackratPPCR.pm -t -i -c '2-3 3*4 5+2'
+   $ ./noPackratSolvedExpRG2.pm -t -i -m 1 -c '2-3 3*4 5+2'
 
 =head1 SEE ALSO
 
