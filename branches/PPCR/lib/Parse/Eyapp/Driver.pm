@@ -1596,7 +1596,7 @@ my $lex;##!!##
 sub _Parse {
     my($self)=shift;
 
-  $lex = $self->{LEX};
+  my $lex = $self->{LEX};
 
   my($rules,$states,$error)
      = @$self{ 'RULES', 'STATES', 'ERROR' };
@@ -1620,7 +1620,9 @@ sub _Parse {
   $$errstatus=0;
   $$nberror=0;
   ($$token,$$value)=(undef,undef);
-  @$stack=( [ 0, undef, undef ] );
+  @$stack=( [ 0, undef, ] );
+#DBG>   push(@{$stack->[-1]}, undef);
+  #@$stack=( [ 0, undef, undef ] );
   $$check='';
 
     while(1) {
@@ -1769,7 +1771,9 @@ sub _Parse {
 #DBG>     };
 
           push(@$stack,
-                     [ $$states[$$stack[-1][0]]{GOTOS}{$lhs}, $semval, $lhs ]);
+                     [ $$states[$$stack[-1][0]]{GOTOS}{$lhs}, $semval, ]);
+                     #[ $$states[$$stack[-1][0]]{GOTOS}{$lhs}, $semval, $lhs ]);
+#DBG>     push(@{$stack->[-1]},$lhs);
                 $$check='';
                 $self->{CURRENT_LHS} = undef;
                 next;
