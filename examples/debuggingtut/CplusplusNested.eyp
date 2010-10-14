@@ -81,6 +81,7 @@ declarator:
 
 Compile it with
  
+   eyapp -P Decl.eyp
    eyapp -C Cplusplus
 
 Run it with:
