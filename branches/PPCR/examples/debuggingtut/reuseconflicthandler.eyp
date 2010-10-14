@@ -12,7 +12,7 @@ my $nxs = 0;
 
   if ($nxs == $nxr+1) { 
     print "Reducing by :MIDx input = '".unexpendedInput()."'\n";
-    $self->YYSetReduce(['NUM', 'OP', ';' ], ':MIDx' );
+    $self->YYSetReduce(['NUM', ';' ], ':MIDx' );
     
     $nxr = $nxs = 0; 
   }

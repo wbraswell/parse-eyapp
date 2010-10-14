@@ -2,20 +2,18 @@
 %token OP  = /([-+*\/])/
 
 %{
-use feature 'state';
 
+my $nxs = 0;
 my $nxr = 0;
 %}
 
 %conflict isInTheMiddle {
 
-  state $nxs = 0;
-
   $nxs++;
 
   if ($nxs == $nxr+1) { 
     print "Reducing by :MIDx\n";
-    $self->YYSetReduce(['NUM','', 'OP'], ':MIDx' );
+    $self->YYSetReduce(['NUM',], ':MIDx' );
     
     $nxr = $nxs = 0; 
   }
