@@ -12,12 +12,14 @@ my $NUM    = '(\d+)';
 %left '+'
 
 %%
+
 decl:
     %name DECLARATOR
-    declarator ';'
+    INT declarator ';'
   | %name DECLARATORINIT
-    declarator '=' expr ';'
+    INT declarator '=' expr ';'
 ;
+
 
 expr:
     %name ID:EXP

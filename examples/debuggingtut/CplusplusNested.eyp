@@ -14,18 +14,16 @@ my $ISDEC;
 %right '='
 %left '+'
 
-%conflict decORexp 
-      {
-        if ($ISDEC) {
-          $self->YYSetReduce(')', 'ID:DEC' );
-        }
-        else {
-          $self->YYSetReduce(')', 'ID:EXP' ); 
-        }
-      }
+%conflict decORexp {
+  if ($ISDEC) { $self->YYSetReduce(')', 'ID:DEC' ); }
+  else { $self->YYSetReduce(')', 'ID:EXP' ); }
+}
 
 %explorer decORexp {
-   $ISDEC = $self->YYPreParse('Decl'); 
+   #print "***********************\n";
+   $ISDEC = $self->YYPreParse('Decl', 
+      #0xF # debug
+   ); 
 }
 
 %expect-rr 1  # expect 1 reduce-reduce conflict
