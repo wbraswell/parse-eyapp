@@ -5,7 +5,13 @@
     idem for other options
 
   * add eyapp -Y option: equivalent to "%tree bypass"
+
   * Expected and language generation for article 
+
+  * There is s.t. wrong in reuseconflicthandler.eyp and 
+    noPackratSolvedExpRGconcept.eyp. why is it that we have to specify
+    a reduction by 'end of input' when there is no conflict for such 
+    token?????
 
   * Lalr 
       # substitute End Of Input by DEFAULT for each state
@@ -14,6 +20,7 @@
       # make a test
 
   * Merge PPCR branch with trunk
+
   * Include %from directive. See examples/debuggingtut/Range2.eyp
 
         %from pascalnestedeyapp2 import expr

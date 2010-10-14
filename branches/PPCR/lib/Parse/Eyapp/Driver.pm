@@ -457,7 +457,7 @@ sub YYSetReduce {
   # The reduction action must be performed only if
   # the next token is inside the $token set
   my $lookahead = $self->YYLookahead();
-  return unless (grep { $_ eq $lookahead } @$token);
+  #return unless (grep { $_ eq $lookahead } @$token);
 
   croak "YYSetReduce error: specify a production" unless defined($action);
 

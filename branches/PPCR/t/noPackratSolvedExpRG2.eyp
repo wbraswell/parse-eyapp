@@ -15,7 +15,7 @@ my $nxs = 0;
   warn "nxr = $nxr nxs = $nxs\n";
   if ($nxs == $nxr+1) { 
     warn "Reducing by :MIDx nxs = $nxs nxr = $nxr\n";
-    $self->YYSetReduce(['NUM', 'OP', 'other'], ':MIDx' );
+    $self->YYSetReduce(['NUM', ], ':MIDx' );
     
     $nxr = $nxs = 0; 
   }
