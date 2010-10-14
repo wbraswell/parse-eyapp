@@ -1,12 +1,12 @@
   * Clusplus example. Start from the documentation. For Luis
     see file tt2/cplusplus
 
-  * my $ID = qr{...};
-    token ID = /$ID/
+  * add to YYPreParse one option for debugging the preparsing.
+    idem for other options
 
-    the code for my $ID goes after the lexer. That is an error.
+  * add eyapp -Y option: equivalent to "%tree bypass"
+  * Expected and language generation for article 
 
-  * Expected for article 
   * Lalr 
       # substitute End Of Input by DEFAULT for each state
       # Will it give a false acceptance? 
