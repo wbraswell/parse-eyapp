@@ -14,15 +14,14 @@ Compile it with:
 
 Run it with;
 
-               ./PL_I_conflict.pm -t
+               ./PL_I_conflict.pm -t -c 'if then=if then if=then'
 
 or
 
-               ./PL_I_conflict.pm -d -t
+               ./PL_I_conflict.pm -t -d -c 'if then=if then if=then'
 
 =cut
 
-use base q{DebugTail}; 
 use List::Util qw{first};
 
 %}
@@ -87,7 +86,4 @@ __PACKAGE__->lexer(
   }
 );
 
-my $prompt = 'Try input "if then=if then if=then" '.
-             '(press <CR><CTRL-D> to finish): ';
-__PACKAGE__->main($prompt) unless caller();
 
