@@ -12,13 +12,18 @@ Compile it with:
 
                eyapp -b '' PL_I_conflict.eyp
 
-Run it with;
+Run it with:
 
                ./PL_I_conflict.pm -t -c 'if then=if then if=then'
 
 or
 
                ./PL_I_conflict.pm -t -d -c 'if then=if then if=then'
+Run it with:
+
+               ./PL_I_conflict.pm -t -c 'if then=if then if=then'
+
+The problem arises again
 
 =cut
 
@@ -55,15 +60,13 @@ stmt:
   | assignstmt
 ;
 
-# Exercise: change this production 
-#     for 'if' expr 'then' stmt
-# and check with input 'if then=if then if=then'. The problem arises again
 ifstmt: 
      %name IF
-    'if' expr 'then' expr 
+    'if' expr 'then' stmt
 ;
 
 assignstmt: 
+    %name ASSIGN
     id '=' expr
 ;
 
