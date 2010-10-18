@@ -16,7 +16,7 @@ Run it with:
 
                ./PL_I_conflict.pm -t -c 'if if=then then then=if'
 
-and also
+for more detail:
 
                ./PL_I_conflict.pm -d -t -c 'if if=then then then=if'
 
@@ -24,11 +24,11 @@ and also
 
                ./PL_I_conflict.pm -t -c 'if then=if then if=then'
 
-and also
+The problem arises again
+
+Also try:
 
                 ./PL_I_conflict.pm -t -c 'if then=if then if a=b then c=d'
-
-The problem arises again
 
 =cut
 
@@ -47,7 +47,7 @@ use List::Util qw{first};
       m{\G([a-zA-Z_]\w*)}gc and do {
         my $id = $1;
 
-        return ('if',   'if')   if ($id eq 'if')   && $self->expects('if');
+        return ('if',   'if')   if ($id eq 'if')   && $self->expects('if'); #  && /\G(?!\s*=)/;
         return ('then', 'then') if ($id eq 'then') && $self->expects('then');
         
         return ('ID', $id);
