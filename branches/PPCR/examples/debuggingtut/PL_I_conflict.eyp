@@ -30,6 +30,24 @@ use List::Util qw{first};
 
 %token ID 
 
+# Adaptative lexer
+%lexer {
+      m{\G\s*(\#.*)?}gc;
+
+      m{\G([a-zA-Z_]\w*)}gc and do {
+        my $id = $1;
+
+        return ('if',   'if')   if ($id eq 'if')   && $self->expects('if');
+        return ('then', 'then') if ($id eq 'then') && $self->expects('then');
+        
+        return ('ID', $id);
+      };
+
+      m{\G(.)}gc and return ($1, $1);
+
+      return('',undef);
+  }
+
 %tree bypass
 %%
 stmt: 
@@ -62,28 +80,5 @@ id:
 
 %%
 
-# Adaptative lexer
-__PACKAGE__->lexer(
-  sub {
-    my $parser = shift;
-
-    for (${$parser->input()}) {    # contextualize
-      m{\G\s*(\#.*)?}gc;
-
-      m{\G([a-zA-Z_]\w*)}gc and do {
-        my $id = $1;
-
-        return ('if',   'if')   if ($id eq 'if')   && $parser->expects('if');
-        return ('then', 'then') if ($id eq 'then') && $parser->expects('then');
-        
-        return ('ID', $id);
-      };
-
-      m{\G(.)}gc and return ($1, $1);
-
-      return('',undef);
-    }
-  }
-);
 
 
