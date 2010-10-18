@@ -10,18 +10,23 @@ that fulfills the parser expectatives.
 
 Compile it with:
 
-               eyapp -b '' PL_I_conflict.eyp
+               eyapp -C PL_I_conflict.eyp
 
 Run it with:
 
+               ./PL_I_conflict.pm -t -c 'if if=then then then=if'
+
+and also
+
+               ./PL_I_conflict.pm -d -t -c 'if if=then then then=if'
+
+and also
+
                ./PL_I_conflict.pm -t -c 'if then=if then if=then'
 
-or
+and also
 
-               ./PL_I_conflict.pm -t -d -c 'if then=if then if=then'
-Run it with:
-
-               ./PL_I_conflict.pm -t -c 'if then=if then if=then'
+                ./PL_I_conflict.pm -t -c 'if then=if then if a=b then c=d'
 
 The problem arises again
 
