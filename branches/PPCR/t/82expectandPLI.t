@@ -2,7 +2,7 @@
 use strict;
 my ($nt, );
 
-BEGIN { $nt = 8; 
+BEGIN { $nt = 10; 
 }
 use Test::More tests=> $nt;
 
@@ -18,8 +18,8 @@ SKIP: {
   my $r = system(q{perl -I./lib/ eyapp  -Po t/Assign.pm t/Assign.eyp});
   ok(!$r, "Auxiliary grammar Assign.yp compiled with option -P");
 
-  $r = system(q{perl -I./lib/ eyapp -TC -o t/pl1.pl t/PL_I_conflictNested.eyp});
-  ok(!$r, "Pascal conflict grammar compiled");
+  $r = system(q{perl -I./lib/ eyapp -C -o t/pl1.pl t/PL_I_conflictNested.eyp});
+  ok(!$r, "PL-I subgrammar compiled");
 
   ok(-s "t/pl1.pl", "modulino pl1 exists");
 
@@ -27,16 +27,23 @@ SKIP: {
 
   eval {
 
-    $r = qx{perl -Ilib -It t/pl1.pl -t -i -m 1 -c ''if if=then then then=if'};
+    $r = qx{perl -Ilib -It t/pl1.pl -t -i -m 1 -c 'if if=then then then=if'};
 
   };
 
   ok(!$@,'t/PL_I_conflictNested.eyp executed as modulino');
 
   my $expected = q{
-
+IF(
+  EQ(
+    ID[if],
+    ID[then]
+  ),
+  ASSIGN(
+    ID[then],
+    ID[if]
+  )
 )
-
 };
   $expected =~ s/\s+//g;
   $expected = quotemeta($expected);
@@ -45,37 +52,28 @@ SKIP: {
   $r =~ s/\s+//g;
 
 
-  like($r, $expected,'AST for "type r = (x) .. (y); 4"');
+  like($r, $expected,'AST for "if if=then then then=if"');
 
-  ############################
+#########################2 tests############################################
   eval {
 
-    $r = qx{perl -Ilib -It t/pl1.pl -t -i -m 1 -c 'type r = (x,y,z); 8'};
+    $r = qx{perl -Ilib -It t/pl1.pl -t -i -m 1 -c 'if if=then then if=then'};
 
   };
 
   ok(!$@,'t/PL_I_conflictNested.eyp executed as modulino');
 
   $expected = q{
-
-typeDecl_is_type_ID_type_expr(
-  TERMINAL[r],
-  ENUM(
-    idList_is_idList_ID(
-      idList_is_idList_ID(
-        ID(
-          TERMINAL[x]
-        ),
-        TERMINAL[y]
-      ),
-      TERMINAL[z]
-    )
+IF(
+  EQ(
+    ID[if],
+    ID[then]
   ),
-  NUM(
-    TERMINAL[8]
+  ASSIGN(
+    ID[if],
+    ID[then]
   )
 )
-
 };
   $expected =~ s/\s+//g;
   $expected = quotemeta($expected);
@@ -84,7 +82,45 @@ typeDecl_is_type_ID_type_expr(
   $r =~ s/\s+//g;
 
 
-  like($r, $expected,'AST for "type r = (x,y,z); 8"');
+  like($r, $expected,'AST for "if if=then then if=then"');
+############################################################################
+
+#########################2 tests############################################
+  eval {
+
+    $r = qx{perl -Ilib -It t/pl1.pl -t -i -m 1 -c 'if if=then then if if=then then if=then'};
+
+  };
+
+  ok(!$@,'t/PL_I_conflictNested.eyp executed as modulino');
+
+  $expected = q{
+IF(
+  EQ(
+    ID[if],
+    ID[then]
+  ),
+  IF(
+    EQ(
+      ID[if],
+      ID[then]
+    ),
+    ASSIGN(
+      ID[if],
+      ID[then]
+    )
+  )
+)
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "if if=then then if=then"');
+############################################################################
 
   unlink 't/pl1.pl';
   unlink 't/Assign.pm';
