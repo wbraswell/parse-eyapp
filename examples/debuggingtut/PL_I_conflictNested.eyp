@@ -11,6 +11,7 @@ that fulfills the parser expectatives.
 Compile it with:
 
                eyapp -C PL_I_conflictNested.eyp
+               eyapp -P Assign.eyp
 
 Run it with:
 
