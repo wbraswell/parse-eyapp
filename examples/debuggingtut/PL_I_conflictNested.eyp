@@ -41,16 +41,16 @@ Also try:
 
 # Adaptative lexer
 %lexer {
-      m{\G\s*(\#.*)?}gc;
+      m{\G\s*(\#.*)?\s*}gc;
 
       m{\G([a-zA-Z_]\w*)}gc and do {
         my $id = $1;
 
+        return ('then', 'then') if ($id eq 'then') && $self->expects('then');
+
         return ('if',   'if')   if ($id eq 'if')        && 
                                    $self->expects('if') && 
                                    !$self->YYPreParse('Assign');     #, 0xF # debug ); 
-
-        return ('then', 'then') if ($id eq 'then') && $self->expects('then');
         
         return ('ID', $id);
       };
