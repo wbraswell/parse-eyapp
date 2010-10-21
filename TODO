@@ -1,3 +1,4 @@
+  * add parsing strings and trees as a test
   * tag for 1.168 and test t/80 with Cplusplus
 
   * Update documentation
