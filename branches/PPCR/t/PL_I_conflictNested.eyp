@@ -45,10 +45,10 @@ Also try:
       m{\G([a-zA-Z_]\w*)}gc and do {
         my $id = $1;
 
-        return ('if',   'if')   if ($id eq 'if')   && $self->expects('if') 
+        return ('if',   'if')   if ($id eq 'if')   && $self->YYExpects('if') 
                && !$self->YYPreParse('Assign');     #, 0xF # debug ); 
 
-        return ('then', 'then') if ($id eq 'then') && $self->expects('then');
+        return ('then', 'then') if ($id eq 'then') && $self->YYExpects('then');
         
         return ('ID', $id);
       };

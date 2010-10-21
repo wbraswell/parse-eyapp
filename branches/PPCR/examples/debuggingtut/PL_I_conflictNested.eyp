@@ -46,7 +46,7 @@ Also try:
       m{\G([a-zA-Z_]\w*)}gc and do {
         my $id = $1;
 
-        return ('then', 'then') if ($id eq 'then') && $self->expects('then');
+        return ('then', 'then') if ($id eq 'then') && $self->YYExpects('then');
 
         return ('if',   'if')   if ($id eq 'if')        && 
                                    $self->expects('if') && 

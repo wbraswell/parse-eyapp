@@ -21,7 +21,7 @@ our ( $VERSION, $COMPATIBLE, $FILENAME );
 
 
 # $VERSION is also in Parse/Eyapp.pm
-$VERSION = "1.168";
+$VERSION = "1.169";
 $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
@@ -1043,21 +1043,8 @@ sub YYCurval {
     ${$$self{VALUE}};
 }
 
-#sub YYExpect {
-#  my($self)=shift;
-#  my $state = shift || $self->{STATES}[$self->{STACK}[-1][0]];
-#
-#  my %expected = %{$state->{ACTIONS}};
-#  if (exists($expected{"\c@"})) {
-#    $expected{''} = 1;
-#    delete($expected{"\c@"});
-#  }
-#  
-#  return keys %expected;
-#}
-
 {
-  my @STACK; # Used for symbolic simulation
+  my @STACK; # Used for symbolic simulation !!! reentrancy problem??
 
   sub YYSymbolicSim {
     my $self = shift;
@@ -1085,14 +1072,18 @@ sub YYCurval {
 
   sub YYExpected {
     my($self)=shift;
+
+    # The state in the top of the stack
     my $state = $self->{STATES}[$STACK[-1][0]];
 
     my %actions;
     %actions = %{$state->{ACTIONS}} if exists $state->{ACTIONS};
 
-    my (%expected, %reduce);
+    # The keys of %reduction are the -production numbers
+    # Use hashes and not lists to guarantee that no tokens are repeated
+    my (%expected, %reduce); 
     for (keys(%actions)) {
-      if ($actions{$_} > 0) {
+      if ($actions{$_} > 0) { # shift
         $expected{$_} = 1;
         next;
       }
@@ -1113,11 +1104,16 @@ sub YYCurval {
   }
 }
 
+# $self->expects($token) : returns true if the token is among the expected ones
 sub expects {
   my $self = shift;
   my $token = shift;
 
   return grep { $_ eq $token } $self->YYExpect;
+}
+
+BEGIN {
+*YYExpects = \&expects;
 }
 
 # Set/Get a static/class attribute for $class
