@@ -1046,21 +1046,22 @@ sub YYCurval {
 {
   sub YYSymbolicSim {
     my $self = shift;
+    my $stack = shift;
     my @reduce = @_;
     my @expected;
-    my $auxstack = $self->{AUXSTACK};
 
     while (@reduce) {
       my $index = shift @reduce;
       my ($lhs, $length) = @{$self->{RULES}[-$index]};
-      if (@$auxstack > $length) {
-        splice @$auxstack, -$length if $length;
+      my @auxstack = @$stack;
+      if (@auxstack > $length) {
+        splice @auxstack, -$length if $length;
 
-        my $state = $auxstack->[-1]->[0];
+        my $state = $auxstack[-1]->[0];
         my $nextstate = $self->{STATES}[$state]{GOTOS}{$lhs};
         if (defined($nextstate)) {
-          push @$auxstack, [$nextstate, undef];
-          @expected = $self->YYExpected;
+          push @auxstack, [$nextstate, undef];
+          push @expected, $self->YYExpected(\@auxstack);
         }
       }
       # else something went wrong!!! See Frank Leray report
@@ -1071,9 +1072,10 @@ sub YYCurval {
 
   sub YYExpected {
     my($self)=shift;
+    my $stack = shift;
 
     # The state in the top of the stack
-    my $state = $self->{STATES}[$self->{AUXSTACK}[-1][0]];
+    my $state = $self->{STATES}[$stack->[-1][0]];
 
     my %actions;
     %actions = %{$state->{ACTIONS}} if exists $state->{ACTIONS};
@@ -1091,17 +1093,14 @@ sub YYCurval {
     $reduce{$state->{DEFAULT}} = 1 if exists($state->{DEFAULT});
 
     if (keys %reduce) {
-      %expected = (%expected, $self->YYSymbolicSim(keys %reduce));
+      %expected = (%expected, $self->YYSymbolicSim($stack, keys %reduce));
     }
     
     return keys %expected;
   }
 
   sub YYExpect {
-    $_[0]->{AUXSTACK} = [ @{$_[0]->{STACK}} ];
-    my @expected = YYExpected(@_);
-    $_[0]->{AUXSTACK} = [];
-    return @expected;
+    return YYExpected(@_, [ @{$_[0]->{STACK}} ]);
   }
 }
 
