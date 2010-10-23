@@ -180,6 +180,29 @@ SKIP: {
 
   like($r, $expected,'Parrot code for fold');
 
+  ##################### compile simple4.inf 
+  eval {
+    $r = qx{perl -Ilib -I t/ParsingStringsAndTrees/ t/ParsingStringsAndTrees/infix2pir.pl t/ParsingStringsandTrees/simple4.inf 2>&1};
+  };
+
+  ok(!$@,'infix2pir.pl compiles simple4.inf');
+
+  $expected =  q{
+.sub 'main' :main
+    .local num a
+    $N1 = a + 1
+    $N2 = 2 * $N1
+.end
+
+  };
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+  like($r, $expected,'Parrot code for simple4');
+
   unlink 't/ParsingStringsAndTrees/Infix.pm';
   unlink 't/ParsingStringsAndTrees/I2PIR.pm';
 }
