@@ -1050,11 +1050,10 @@ sub YYCurval {
     my @reduce = @_;
     my @expected;
 
-    while (@reduce) {
-      my $index = shift @reduce;
+    for my $index (@reduce) {
       my ($lhs, $length) = @{$self->{RULES}[-$index]};
-      my @auxstack = @$stack;
-      if (@auxstack > $length) {
+      if (@$stack > $length) {
+        my @auxstack = @$stack;
         splice @auxstack, -$length if $length;
 
         my $state = $auxstack[-1]->[0];

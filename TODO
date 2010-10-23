@@ -1,3 +1,6 @@
+  *YYSymbolStack: there is no need to copy the stack each time. 
+   Saving the position is enough
+
   * add parsing strings and trees as a test
 
   * Update documentation
