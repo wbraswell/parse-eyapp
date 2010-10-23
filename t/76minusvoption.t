@@ -73,7 +73,7 @@ SKIP: {
 
 # Test YYExpected using the data generation program
 SKIP: {
-  skip "t/Generator.eyp not found", $nt2 unless ($ENV{DEVELOPER} 
+  skip "t/Generator.eyp not found", 3+2*$nt2 unless ($ENV{DEVELOPER} 
                                                && ($ENV{DEVELOPER} eq 'casiano') 
                                                && -r "t/Generator.eyp" 
                                                && -r "t/GenSupport.pm" 
