@@ -353,6 +353,8 @@ t/73dynamicshiftreduceconflictresolution.t
 t/74lalrdependanttest.t
 t/75tokenandvariablewiththesamename.t
 t/76minusvoption.t
+t/GenSupport.pm
+t/Generator.eyp
 t/77lexicalanalyzergeneration.t
 t/78twolexers.t
 t/79syntactictokenwithdef.t
