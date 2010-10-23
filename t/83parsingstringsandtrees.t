@@ -3,7 +3,7 @@ use strict;
 my ($nt, $nt2);
 
 BEGIN { 
-$nt = 10; 
+$nt = 21; 
 }
 use Test::More tests=>$nt;
 
@@ -202,6 +202,55 @@ SKIP: {
   $r =~ s/\s+//g;
 
   like($r, $expected,'Parrot code for simple4');
+
+  like($r, $expected,'Parrot code for fold');
+
+  ##################### compile simple5.inf 
+  eval {
+    $r = qx{perl -Ilib -I t/ParsingStringsAndTrees/ t/ParsingStringsAndTrees/infix2pir.pl t/ParsingStringsandTrees/simple5.inf 2>&1};
+  };
+
+  ok(!$@,'infix2pir.pl compiles simple5.inf');
+
+  $expected =  q{
+.sub 'main' :main
+    .local num a
+    $N1 = - a
+    $N2 = $N1 * 2
+.end
+
+  };
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+  like($r, $expected,'Parrot code for simple5');
+
+  ##################### compile simple6.inf 
+  eval {
+    $r = qx{perl -Ilib -I t/ParsingStringsAndTrees/ t/ParsingStringsAndTrees/infix2pir.pl t/ParsingStringsandTrees/simple6.inf 2>&1};
+  };
+
+  ok(!$@,'infix2pir.pl compiles simple6.inf');
+
+  $expected =  q{
+.sub 'main' :main
+    .local num a, b
+    $N1 = b * 2
+    a = 5 - $N1
+
+.end
+
+  };
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+  like($r, $expected,'Parrot code for simple6');
 
   unlink 't/ParsingStringsAndTrees/Infix.pm';
   unlink 't/ParsingStringsAndTrees/I2PIR.pm';
