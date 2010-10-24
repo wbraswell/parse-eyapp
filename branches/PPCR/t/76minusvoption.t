@@ -1,12 +1,13 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, $nt2);
+my ($nt, $nt2, $numop);
 
 BEGIN { 
 $nt = 10; 
 $nt2 = 100;
+$numop = 8;
 }
-use Test::More tests=>$nt+3+2*$nt2;
+use Test::More tests=>$nt+3+2*$nt2+$numop;
 
 SKIP: {
   skip "t/minusvoption/paulocustodio.eyp not found", $nt unless ($ENV{DEVELOPER} && ($ENV{DEVELOPER} eq 'casiano') && -r "t/minusvoption/paulocustodio.eyp" && -x "./eyapp");
@@ -120,6 +121,7 @@ SKIP: {
     $count{'--'}++ if $r =~ /--/;
   }
 
+  # Warning! There is a low probability that this tests may fail without significance
   for my $operator (qw{ + - * / ( ) ^ --}) {
     ok($count{$operator} > 0, "Some $operator appears in $nt2 random generations");
   }
