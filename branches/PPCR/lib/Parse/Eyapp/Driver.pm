@@ -1100,7 +1100,7 @@ sub YYCurval {
 
   sub YYExpect {
     my $self = shift;
-    $self->YYExpected([ @{$self->{STACK}} ], @_);
+    $self->YYExpected($self->{STACK}, @_);
   }
 }
 
