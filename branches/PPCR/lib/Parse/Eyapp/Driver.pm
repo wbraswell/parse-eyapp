@@ -1044,7 +1044,7 @@ sub YYCurval {
 }
 
 {
-  sub YYSymbolicSim {
+  sub YYSimStack {
     my $self = shift;
     my $stack = shift;
     my @reduce = @_;
@@ -1092,7 +1092,7 @@ sub YYCurval {
     $reduce{$state->{DEFAULT}} = 1 if exists($state->{DEFAULT});
 
     if (keys %reduce) {
-      %expected = (%expected, $self->YYSymbolicSim($stack, keys %reduce));
+      %expected = (%expected, $self->YYSimStack($stack, keys %reduce));
     }
     
     return keys %expected;
