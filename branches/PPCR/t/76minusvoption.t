@@ -4,7 +4,7 @@ my ($nt, $nt2);
 
 BEGIN { 
 $nt = 10; 
-$nt2 = 50;
+$nt2 = 100;
 }
 use Test::More tests=>$nt+3+2*$nt2;
 
@@ -79,6 +79,8 @@ SKIP: {
                                                && -r "t/GenSupport.pm" 
                                                && -x "./eyapp");
 
+  my %count;
+
   unlink 't/generator.pl';
 
   # First without -v
@@ -106,7 +108,20 @@ SKIP: {
     };
 
 
-    like($r, $expected,'arithmetic expressions generated');
+    like($r, $expected,'random arithmetic expression generated');
+
+    $count{'+'}++ if $r =~ /[+]/;
+    $count{'-'}++ if $r =~ /-/;
+    $count{'*'}++ if $r =~ /[*]/;
+    $count{'/'}++ if $r =~ m{/};
+    $count{'('}++ if $r =~ /[(]/;
+    $count{')'}++ if $r =~ /[)]/;
+    $count{'^'}++ if $r =~ /\^/;
+    $count{'--'}++ if $r =~ /--/;
+  }
+
+  for my $operator (qw{ + - * / ( ) ^ --}) {
+    ok($count{$operator} > 0, "Some $operator appears in $nt2 random generations");
   }
 
   unlink 't/generator.pl';
