@@ -44,7 +44,7 @@ exp:
     NUM                
   | VAR
   | exp  '+' exp        
-  | exp {} '-' exp        
+  | exp {} '-' exp        /* The {} is just for the test: to make the work of YYExpected() more difficult */
   | exp {}'*' exp        
   | exp {}'/' exp        
   | '-' { $_[0]->pushdeltaweight('-' => -1) } exp %prec NEG  
