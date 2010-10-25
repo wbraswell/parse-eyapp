@@ -1,0 +1,71 @@
+# file: GeneratorD.eyp
+# compile with: eyapp -C '' Generator.eyp
+# then run: ./Generator.pm
+# division checked
+/*
+%strict
+%token NUM VARDEF VAR
+
+%right  '='
+*/
+%left   '-' '+'
+%left   '*' '/'
+#%left   NEG
+%right  '^'
+
+%defaultaction {
+  my $parser = shift;
+
+  return Paste(@_);
+}
+
+%{
+use Test::LectroTest::Generator qw(:all);
+use base q{Parse::Eyapp::TokenGen};
+use base q{GenSupportD};
+%}
+
+%%
+
+stmts:
+    stmt
+  | stmts ';' { Unit("\n") } stmt 
+;
+
+stmt:
+     exp  
+;
+
+exp:
+    NUM                
+  | exp '+' exp        
+  | exp '-' exp        
+  | exp '*' exp        
+  | exp '/' exp 
+      {
+        my $n = $_[1];
+        my $d = $_[3];
+
+        Gen(
+          sub {
+            my ($denexp, $e);
+            do {
+              $denexp = $d->generate(); # generate an expression
+              $e = eval($denexp);          # evaluate it
+            } while ($e == 0);
+            return $n->generate()."/$denexp";
+          }
+        )
+      }
+  | exp '^' exp        
+  | '('   { $_[0]->pushdeltaweight('(' => -1, ')' => +1, '+' => +1, ); } 
+      exp 
+    ')'
+      {
+         $_[0]->popweight; 
+         Paste(Unit("("), $_[3], Unit(")"))
+      }
+;
+
+%%
+
