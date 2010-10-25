@@ -6,16 +6,6 @@ use Getopt::Long;
 use Test::LectroTest::Generator qw(:all);
 use Parse::Eyapp::TokenGen;
 
-sub _Error {
-  my $parser = shift;
-
-  my $t = $parser->YYCurval;
-  my @e = $parser->YYExpect();
-  my $attr = $parser->YYSemval(0);
-  local $" = " ";
-  warn "Error:\nCurrent attribute: <$attr>\nCurrent token: <$t>\nExpected: <@e>\n";
-}
-
 my %st; # Symbol Table
 sub defined_variable {
   my ($parser, $var) = @_;
@@ -111,7 +101,6 @@ sub main {
 
   my $exp = $parser->YYParse( 
       yylex => \&gen_lexer, 
-      yyerror => \&_Error,
       yydebug => $debug, # 0x1F
     );
 

@@ -123,7 +123,7 @@ SKIP: {
 
   # Warning! There is a low probability that this tests may fail without significance
   for my $operator (qw{ + - * / ( ) ^ --}) {
-    ok($count{$operator} > 0, "Some $operator appears in $nt2 random generations");
+    ok($count{$operator} > 0, "$operator appears $count{$operator} times in $nt2 random generations");
   }
 
   unlink 't/generator.pl';
