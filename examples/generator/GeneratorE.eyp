@@ -34,9 +34,12 @@ stmt:
     $VARDEF '=' $exp  
       {
         my $parser = shift;
+
         my $res = EVALUATE($exp);
         return '' if $res =~ /^error/;
+
         $parser->defined_variable($VARDEF, $exp, $res); 
+
         "$VARDEF=$exp";
       }
 ;
@@ -79,7 +82,7 @@ sub EVALUATE { # if possible
   $perlexp =~ s/\^/**/g;             # substitute power operator: ^ by **
 
   my $program = "$prefix$perlexp";
-  print "***program***\n$program\n****\n";
+  #print "***program***\n$program\n****\n";
   my $res = eval $program;
   if ($@) {
     $@ =~ m{(.{1,10})}; 
