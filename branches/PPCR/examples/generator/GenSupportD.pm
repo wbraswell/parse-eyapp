@@ -6,66 +6,6 @@ use Getopt::Long;
 use Test::LectroTest::Generator qw(:all);
 use Parse::Eyapp::TokenGen;
 
-my %st; # Symbol Table
-sub defined_variable {
-  my ($parser, $var) = @_;
-
-  $st{$var} = 1;
-}
-
-sub generate_token {
-  my $parser = shift;
-
-  my @token = $parser->YYExpect; # the list of token that can be expected 
-
-  # Generate on of those using the token_weight distribution
-  my $tokengen = Frequency( map { [$parser->token_weight($_), Unit($_)] } @token);
-
-  return $tokengen->generate;
-}
-
-# The attribute is the generator
-sub generate_attribute {
-  my $parser = shift;
-  my $token = shift;
-
-  my $gen = $parser->token_generator($token);
-  return $gen if defined($gen);
-  return Unit($token);
-}
-
-#my $WHITESPACES = String( length=>[0,1], charset=>" \t\n", size => 100 );
-
-sub gen_lexer {
-  my $parser = shift;
-
-  my $token = $parser->generate_token;
-  my $attr = $parser->generate_attribute($token);
-  #$attr = $WHITESPACES->generate.$attr;
-
-  return ($token, $attr);
-}
-
-sub evaluate_using_perl { # if possible
-  my $perlexp = shift;
-
-  $perlexp =~ s/\b([a-zA-Z])/\$$1/g; # substitute A by $A everywhere 
-  $perlexp =~ s/\^/**/g;             # substitute power operator: ^ by **
-
-  my $res = eval "no warnings; no strict;$perlexp";
-  if ($@ =~ /Illegal division/) {
-    $res = "error. Division by zero.";
-  }
-  elsif ($@) { # Our calc notation is incompatible with perl in a few gotchas
-    # Perl interprets -- in a different way
-    $@ =~ m{(.*)}; # Show only the first line of error message
-    $res = "Calculator syntax differs from Perl. Can't compute the result: $1"; 
-  }
-
-  $res;
-}
-
-
 sub main {
   my $package = shift;
 
@@ -83,13 +23,6 @@ sub main {
   # and sets the weight and generator attributes of the tokens.
   $parser->set_tokenweightsandgenerators(
     NUM => [ 2, Int(range=>[0, 9], sized=>0)],
-    VAR => [
-              0,  # At the beginning, no variables are defined
-              Gen {
-                return  Elements(keys %st)->generate if keys %st;
-                return Int(range=>[0, 9], sized=>0)->generate;
-              },
-            ],
     VARDEF => [ 
                 2,  
                 String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
@@ -105,11 +38,12 @@ sub main {
       yydebug => $debug, # 0x1F
     );
 
-  my $exp = $expg->generate();
+  for (1..1) {
+    my $exp = $expg->generate();
 
-  my $res = evaluate_using_perl($exp);
+    print "$exp\n";
 
-  print "\n# result: $res\n$exp\n";
+  }
 }
 
 1;
