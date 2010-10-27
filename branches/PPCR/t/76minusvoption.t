@@ -74,10 +74,13 @@ SKIP: {
 
 # Test YYExpected using the data generation program
 SKIP: {
-  skip "t/Generator.eyp not found", 3+2*$nt2 unless ($ENV{DEVELOPER} 
+  eval { require Test::LectroTest::Generator };
+  my $TLTinstalled = !$@;
+  skip "t/Generator.eyp not found", 3+2*$nt2+$numop unless ($ENV{DEVELOPER} 
                                                && ($ENV{DEVELOPER} eq 'casiano') 
                                                && -r "t/Generator.eyp" 
                                                && -r "t/GenSupport.pm" 
+                                               && $TLTinstalled
                                                && -x "./eyapp");
 
   my %count;

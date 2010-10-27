@@ -1,3 +1,7 @@
+  *TokenGen::generate 
+    Check for existence of arg yylex or set to reasonable defaults
+  * Write Test::LectroTest::Generator::Grammar
+
   *YYSymbolStack: there is no need to copy the stack each time. 
    Saving the position is enough
 
