@@ -36,13 +36,15 @@ sub generate {
   my %args = @_;
 
   #TODO: check for existence of arg yylex or set to reasonable defaults
+  die "Error. Specify 'yylex' argument." unless exists($args{yylex});
   my %lexargs = %{$args{yylex}};
   delete $args{yylex};
 
   my $lexer = $gen->LexerGen(%lexargs);
 
   my $exp = $gen->YYParse( 
-        yylex => $lexer, %args
+        yylex => $lexer, 
+        %args
       );
 
   return $exp;
