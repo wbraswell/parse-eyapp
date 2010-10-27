@@ -1,3 +1,4 @@
+  * GeneratorF.eyp forbid division by zero error in the generated expressions
   *TokenGen::generate 
     Check for existence of arg yylex or set to reasonable defaults
   * Write Test::LectroTest::Generator::Grammar
