@@ -3,7 +3,6 @@ use strict;
 use warnings;
 
 use Getopt::Long;
-use Test::LectroTest::Generator qw(:all);
 use Parse::Eyapp::TokenGen;
 
 my %st; # Symbol Table
@@ -13,37 +12,7 @@ sub defined_variable {
   $st{$var} = 1;
 }
 
-sub generate_token {
-  my $parser = shift;
-
-  my @token = $parser->YYExpect; # the list of token that can be expected 
-
-  # Generate on of those using the token_weight distribution
-  my $tokengen = Frequency( map { [$parser->token_weight($_), Unit($_)] } @token);
-
-  return $tokengen->generate;
-}
-
-sub generate_attribute {
-  my $parser = shift;
-  my $token = shift;
-
-  my $gen = $parser->token_generator($token);
-  return $gen->generate  if defined($gen);
-  return $token;
-}
-
 #my $WHITESPACES = String( length=>[0,1], charset=>" \t\n", size => 100 );
-
-sub gen_lexer {
-  my $parser = shift;
-
-  my $token = $parser->generate_token;
-  my $attr = $parser->generate_attribute($token);
-  #$attr = $WHITESPACES->generate.$attr;
-
-  return ($token, $attr);
-}
 
 sub evaluate_using_perl { # if possible
   my $perlexp = shift;
@@ -83,8 +52,8 @@ sub main {
   #   token => [weight, generator] or token => weight
   # and sets the weight and generator attributes of the tokens.
   for (1..$numtimes) {
-    my $exp = $gen->YYParse( 
-        yylex => $gen->LexerGen(
+    my $exp = $gen->generate( 
+        yylex => {
           NUM => [ 2, Int(range=>[0, 9], sized=>0)],
           VAR => [
                     0,  # At the beginning, no variables are defined
@@ -101,7 +70,7 @@ sub main {
           '*' => 4, '/' => 2, '^' => 0.5, 
           ';' => 1, '(' => 1, ')' => 2, 
           ''  => 2, 'error' => 0,
-        ),
+        },
         yydebug => $debug, # 0x1F
       );
 
