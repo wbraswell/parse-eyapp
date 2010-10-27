@@ -1,13 +1,12 @@
-# file: Generator.eyp
-# compile with: eyapp -C '' Generator.eyp
-# then run: ./Generator.pm
+# file: GeneratorE.eyp
+# compile with: eyapp -C '' GeneratorE.eyp
+# then run: ./GeneratorE.pm
 %strict
 %token NUM VARDEF VAR
 
 %right  '='
 %left   '-' '+'
 %left   '*' '/'
-#%left   NEG
 %right  '^'
 
 %defaultaction {
@@ -35,7 +34,9 @@ stmt:
     $VARDEF '=' $exp  
       {
         my $parser = shift;
-        $parser->defined_variable($VARDEF, $exp); 
+        my $res = EVALUATE($exp);
+        return '' if $res =~ /^error/;
+        $parser->defined_variable($VARDEF, $exp, $res); 
         "$VARDEF=$exp";
       }
 ;
@@ -58,23 +59,28 @@ exp:
 
 %%
 
+my $prefix = "no warnings; no strict;\n";
+
 use Getopt::Long;
 use Test::LectroTest::Generator qw(:all);
 
 my %st; # Symbol Table
 sub defined_variable {
-  my ($parser, $var, $value) = @_;
+  my ($parser, $var, $exp, $value) = @_;
 
-  $st{$var} = $value;
+  $st{$var} = { exp => $exp, value => $value};
+  $prefix .= '$'."$var = $value;\n";
 }
 
-sub evaluate_using_perl { # if possible
+sub EVALUATE { # if possible
   my $perlexp = shift;
 
   $perlexp =~ s/\b([a-zA-Z])/\$$1/g; # substitute A by $A everywhere 
   $perlexp =~ s/\^/**/g;             # substitute power operator: ^ by **
 
-  my $res = eval "no warnings; no strict;$perlexp";
+  my $program = "$prefix$perlexp";
+  print "***program***\n$program\n****\n";
+  my $res = eval $program;
   if ($@) {
     $@ =~ m{(.{1,10})}; 
     $res = "error. $1"; 
@@ -84,6 +90,7 @@ sub evaluate_using_perl { # if possible
 }
 
 
+use Data::Dumper;
 sub main {
   my $package = shift;
 
@@ -124,9 +131,10 @@ sub main {
         yydebug => $debug, # 0x1F
       );
 
-    my $res = evaluate_using_perl($exp);
+    my $res = EVALUATE($exp);
 
     print "\n# result: $res\n$exp\n";
+    #print "$_ = ".Dumper($st{$_})."\n" for keys(%st);
   }
 }
 
