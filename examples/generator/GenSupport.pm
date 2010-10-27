@@ -69,44 +69,46 @@ sub main {
   my $package = shift;
 
   my $debug = shift || 0;
+  my $numtimes = shift || 1;
   my $result = GetOptions (
     "debug!" => \$debug,  
+    "times=i" => \$numtimes,  
   );
 
   $debug = 0x1F if $debug;
 
-  my $parser = $package->new();
+  my $gen = $package->new();
 
   # set_tokenweightsandgenerators receives the parser object and the pairs 
   #   token => [weight, generator] or token => weight
   # and sets the weight and generator attributes of the tokens.
-  $parser->set_tokenweightsandgenerators(
-    NUM => [ 2, Int(range=>[0, 9], sized=>0)],
-    VAR => [
-              0,  # At the beginning, no variables are defined
-              Gen {
-                return  Elements(keys %st)->generate if keys %st;
-                return Int(range=>[0, 9], sized=>0)->generate;
-              },
-            ],
-    VARDEF => [ 
-                2,  
-                String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
-              ],
-    '=' => 2, '-' => 1, '+' => 2, 
-    '*' => 4, '/' => 2, '^' => 0.5, 
-    ';' => 1, '(' => 1, ')' => 2, 
-    ''  => 2, 'error' => 0,
-  );
+  for (1..$numtimes) {
+    my $exp = $gen->YYParse( 
+        yylex => $gen->LexerGen(
+          NUM => [ 2, Int(range=>[0, 9], sized=>0)],
+          VAR => [
+                    0,  # At the beginning, no variables are defined
+                    Gen {
+                      return  Elements(keys %st)->generate if keys %st;
+                      return Int(range=>[0, 9], sized=>0)->generate;
+                    },
+                  ],
+          VARDEF => [ 
+                      2,  
+                      String( length=>[1,2], charset=>"A-NP-Z", size => 100 )
+                    ],
+          '=' => 2, '-' => 1, '+' => 2, 
+          '*' => 4, '/' => 2, '^' => 0.5, 
+          ';' => 1, '(' => 1, ')' => 2, 
+          ''  => 2, 'error' => 0,
+        ),
+        yydebug => $debug, # 0x1F
+      );
 
-  my $exp = $parser->YYParse( 
-      yylex => \&gen_lexer, 
-      yydebug => $debug, # 0x1F
-    );
+    my $res = evaluate_using_perl($exp);
 
-  my $res = evaluate_using_perl($exp);
-
-  print "\n# result: $res\n$exp\n";
+    print "\n# result: $res\n$exp\n";
+  }
 }
 
 1;
