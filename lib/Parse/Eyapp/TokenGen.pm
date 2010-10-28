@@ -8,8 +8,13 @@ Test::LectroTest::Generator->import(qw(:all));
 
 use Scalar::Util qw{reftype looks_like_number};
 
+# Arguments: probabilities and generators
 sub LexerGen {
   my $parser = shift;
+
+  my $tg = sub {
+    Frequency( map { [$parser->token_weight($_), Unit($_)] } @_);
+  };
 
   $parser->set_tokenweightsandgenerators(@_);
 
@@ -19,7 +24,7 @@ sub LexerGen {
     my @token = $parser->YYExpect; # the list of token that can be expected 
 
     # Generate on of those using the token_weight distribution
-    my $tokengen = Frequency( map { [$parser->token_weight($_), Unit($_)] } @token);
+    my $tokengen = $tg->(@token);
 
     my $token = $tokengen->generate();
 
@@ -36,18 +41,12 @@ sub generate {
   my %args = @_;
 
   #TODO: check for existence of arg yylex or set to reasonable defaults
-  die "Error. Specify 'yylex' argument." unless exists($args{yylex});
-  my %lexargs = %{$args{yylex}};
-  delete $args{yylex};
+  if (exists($args{yylex}) && (reftype($args{yylex}) eq 'HASH')) {
+    my %lexargs = %{$args{yylex}};
+    $args{yylex} = $gen->LexerGen(%lexargs);
+  }
 
-  my $lexer = $gen->LexerGen(%lexargs);
-
-  my $exp = $gen->YYParse( 
-        yylex => $lexer, 
-        %args
-      );
-
-  return $exp;
+  return $gen->YYParse(%args);
 }
 
 sub set_tokengens {
