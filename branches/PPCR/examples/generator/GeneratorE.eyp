@@ -24,7 +24,7 @@ use base q{Parse::Eyapp::TokenGen};
 stmts:
     stmt
       {
-        $_[0]->deltaweight(VAR => +1); # At least one variable is defined now
+        $_[0]->deltaweight(VAR => +2); # At least one variable is defined now
         $_[1];
       }
   | stmts ';' { "\n" } stmt 
@@ -108,12 +108,10 @@ sub main {
 
   my $gen = $package->new();
 
-  # set_tokenweightsandgenerators receives the parser object and the pairs 
+  # LexerGen receives the parser object and the pairs 
   #   token => [weight, generator] or token => weight
-  # and sets the weight and generator attributes of the tokens.
-  for (1..$numtimes) {
-    my $exp = $gen->generate( 
-        yylex => {
+  # and returns a generator subroutine
+  my $lexergen = $gen->LexerGen(
           NUM => [ 2, Int(range=>[0, 9], sized=>0)],
           VAR => [
                     0,  # At the beginning, no variables are defined
@@ -128,9 +126,12 @@ sub main {
                     ],
           '=' => 2, '-' => 1, '+' => 2, 
           '*' => 4, '/' => 2, '^' => 0.5, 
-          ';' => 1, '(' => 1, ')' => 2, 
+          ';' => 3, '(' => 1, ')' => 2, 
           ''  => 2, 'error' => 0,
-        },
+  );
+  for (1..$numtimes) {
+    my $exp = $gen->generate( 
+        yylex => $lexergen,
         yydebug => $debug, # 0x1F
       );
 

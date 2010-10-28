@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Getopt::Long;
+use Test::LectroTest::Generator qw(:all);
 use Parse::Eyapp::TokenGen;
 
 my %st; # Symbol Table
