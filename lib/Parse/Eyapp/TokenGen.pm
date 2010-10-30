@@ -18,22 +18,23 @@ sub LexerGen {
 
   $parser->set_tokenweightsandgenerators(@_);
 
-  return sub {
-    my $parser = shift;
+  $parser->YYLexer(sub {
+      my $parser = shift;
 
-    my @token = $parser->YYExpect; # the list of token that can be expected 
+      my @token = $parser->YYExpect; # the list of token that can be expected 
 
-    # Generate on of those using the token_weight distribution
-    my $tokengen = $tg->(@token);
+      # Generate on of those using the token_weight distribution
+      my $tokengen = $tg->(@token);
 
-    my $token = $tokengen->generate();
+      my $token = $tokengen->generate();
 
-    my $gen = $parser->token_generator($token);
+      my $gen = $parser->token_generator($token);
 
-    my $attr = $gen->generate();
+      my $attr = $gen->generate();
 
-    return ($token, $attr);
-  }
+      return ($token, $attr);
+    }
+  );
 }
 
 sub generate {

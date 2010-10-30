@@ -106,12 +106,11 @@ sub main {
 
   $debug = 0x1F if $debug;
 
-  my $gen = $package->new();
-
   # LexerGen receives the parser object and the pairs 
   #   token => [weight, generator] or token => weight
   # and returns a generator subroutine
-  my $lexergen = $gen->LexerGen(
+  my $gen = $package->new(); 
+  $gen->LexerGen(
           NUM => [ 2, Int(range=>[0, 9], sized=>0)],
           VAR => [
                     0,  # At the beginning, no variables are defined
@@ -131,7 +130,6 @@ sub main {
   );
   for (1..$numtimes) {
     my $exp = $gen->generate( 
-        yylex => $lexergen,
         yydebug => $debug, # 0x1F
       );
 
