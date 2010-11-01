@@ -80,7 +80,7 @@ declarator:
 Compile it with
  
    eyapp -P Decl.eyp
-   eyapp -C Cplusplus
+   eyapp -C CplusplusNested
 
 Run it with:
 
