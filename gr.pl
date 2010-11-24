@@ -25,10 +25,12 @@ warn "$grammar\n";
 my %grammar = $grammar =~ m{(\d+):\s+(.*)}gx;
 
 # escape double quotes inside %grammar
-for (sort { $a <=> $b } keys %grammar) {
+$graph .= qq{"$grammar{0}" [shape = doubleoctagon, fontcolor=blue, color=blue ]\n};
+for (1 .. (keys %grammar)-1) {
+  $grammar{$_} =~ s/\\/\\\\/g;
   $grammar{$_} =~ s/"/\\"/g;
 
-  warn "$_ => $grammar{$_}\n";
+  #warn "$_ => $grammar{$_}\n";
 
   $graph .= qq{"$grammar{$_}" [shape = box, fontcolor=blue, color=blue ]\n};
 }
@@ -55,7 +57,9 @@ for (sort { $a <=> $b } keys %states) {
   # build digraph
   # ID  shift, and go to state 4
   while ($desc =~ m{\t(.*)\s+shift,\s+and\s+go\s+to\s+state\s+(\d+)}gx) {
-    $graph .=  qq{$_ -> $2 [label = "$1"]\n};
+    my ($label, $state)  = ($1, $2);
+    $label =~ s/\\(?!")/\\\\/g;
+    $graph .=  qq{$_ -> $state [label = "$label"]\n};
   }
 
   # decl    go to state 1
@@ -79,7 +83,13 @@ for (sort { $a <=> $b } keys %states) {
   warn "$_ => $desc\n";
   
 }
-print "digraph G {\n$graph}\n";
+print <<"EOGRAPH";
+digraph G {
+concentrate = true
+
+$graph
+}
+EOGRAPH
 
 
 sub error {
