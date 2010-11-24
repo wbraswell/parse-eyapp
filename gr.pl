@@ -60,19 +60,20 @@ for (sort { $a <=> $b } keys %states) {
 
   # decl    go to state 1
   while ($desc =~ m{\t(\S+)\s+go\s+to\s+state\s+(\d+)}gx) {
-    $graph .=  qq{$_ -> $2 [label = "$1", color = "red", fontcolor = "red"]\n};
+    $graph .=  qq{$_ -> $2 [label = "$1", arrowhead = odot, color = "red", fontcolor = "red"]\n};
   }
 
   # $default	reduce using rule 1 (prog)
   # ID	reduce using rule 15 (decORexp_explorer)
   while ($desc =~ m{\t(\S+)\s+reduce\s+using\s+rule\s+(\d+)}gx) {
-    $graph .=  qq{$_ -> "$grammar{$2}" [label = "$1", color = "blue", fontcolor = "blue"]\n};
+    $graph .=  qq{$_ -> "$grammar{$2}" [label = "$1", arrowhead=dot, color = "blue", fontcolor = "blue"]\n};
   }
 
 
   # $default    accept
   if ($desc =~ m{\t\$default\s+accept\s*}gx) {
     $graph .=  qq{$_ [shape = doublecircle]\n};
+    $graph .=  qq{$_ -> "$grammar{0}" [arrowhead = dot, color = blue]\n};
   }
 
   warn "$_ => $desc\n";
