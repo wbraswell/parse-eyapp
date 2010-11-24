@@ -4,9 +4,34 @@ use strict;
 use Getopt::Long;
 use Parse::Eyapp;
 
+my $graph = '';
+
 my $file = shift || usage();
 
-my $dfa = getOutput($file);
+my($parser)=new Parse::Eyapp(inputfile => $file);
+
+my($warnings)=$parser->Warnings();
+
+$warnings and warn $warnings;
+                               #path, base
+my $dfa = $parser->ShowDfa();
+
+my $grammar = $parser->ShowRules()."\n";
+
+warn "$grammar\n";
+
+# make an array from the grammar
+
+my %grammar = $grammar =~ m{(\d+):\s+(.*)}gx;
+
+# escape double quotes inside %grammar
+for (sort { $a <=> $b } keys %grammar) {
+  $grammar{$_} =~ s/"/\\"/g;
+
+  warn "$_ => $grammar{$_}\n";
+
+  $graph .= qq{"$grammar{$_}" [shape = box, fontcolor=blue, color=blue ]\n};
+}
 
 warn "$dfa\n";
 
@@ -22,7 +47,6 @@ my %states = ($dfa =~ m{State\s*(\d+)\s*:\n\s*
                         )
                        }gx);
 
-my $graph = '';
 for (sort { $a <=> $b } keys %states) {
   my $desc = $states{$_};
   $desc =~ s/.*->.*//g;     # remove productions
@@ -39,6 +63,13 @@ for (sort { $a <=> $b } keys %states) {
     $graph .=  qq{$_ -> $2 [label = "$1", color = "red", fontcolor = "red"]\n};
   }
 
+  # $default	reduce using rule 1 (prog)
+  # ID	reduce using rule 15 (decORexp_explorer)
+  while ($desc =~ m{\t(\S+)\s+reduce\s+using\s+rule\s+(\d+)}gx) {
+    $graph .=  qq{$_ -> "$grammar{$2}" [label = "$1", color = "blue", fontcolor = "blue"]\n};
+  }
+
+
   # $default    accept
   if ($desc =~ m{\t\$default\s+accept\s*}gx) {
     $graph .=  qq{$_ [shape = doublecircle]\n};
@@ -49,19 +80,6 @@ for (sort { $a <=> $b } keys %states) {
 }
 print "digraph G {\n$graph}\n";
 
-
-sub getOutput {
-
-  my $file = shift || error("Provide a file");
-
-  my($parser)=new Parse::Eyapp(inputfile => $file);
-
-  my($warnings)=$parser->Warnings();
-          $warnings
-  and warn $warnings;
-                               #path, base
-  return $parser->ShowDfa();
-}
 
 sub error {
   my $message = shift;
