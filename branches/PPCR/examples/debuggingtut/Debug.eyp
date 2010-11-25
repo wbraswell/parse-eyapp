@@ -28,13 +28,6 @@ Try input C<'D; D; S'>.
 
 %}
 
-%token D S
-
-%lexer {
-    /\G(\s+)/gc;
-    return ($1,$1) if /\G(.)/gc;
-}
-
 %%
 p:
     ds ';' ss  

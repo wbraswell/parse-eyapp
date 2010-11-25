@@ -1,21 +1,11 @@
-  * GeneratorF.eyp forbid division by zero error in the generated expressions
-  *TokenGen::generate 
-    Check for existence of arg yylex or set to reasonable defaults
-  * Write Test::LectroTest::Generator::Grammar
-
-  *YYSymbolStack: there is no need to copy the stack each time. 
-   Saving the position is enough
-
-  * add parsing strings and trees as a test
+  * .dot description of the LR automaton
+      - Option -W visualize with kernel items
+      - Option -w visualize without kernel items
+      - visualize conflicts
 
   * Update documentation
 
-  * add to YYPreParse one option for debugging the preparsing.
-    idem for other options
-
   * add eyapp -Y option: equivalent to "%tree bypass"
-
-  * Expected and language generation for article 
 
   * Lalr 
       # substitute End Of Input by DEFAULT for each state
