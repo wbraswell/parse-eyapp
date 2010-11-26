@@ -283,6 +283,8 @@ sub outputDot {
 
   my $dfa = $parser->ShowDfa();
 
+  #warn "$dfa\n";
+
   my $grammar = $parser->ShowRules()."\n";
 
   #warn "$grammar\n";
@@ -302,7 +304,17 @@ sub outputDot {
     $graph .= qq{"$grammar{$_}" [shape = box, fontcolor=blue, color=blue ]\n};
   }
 
-  #warn "$dfa\n";
+  my $conflicts = $parser->Conflicts();
+
+  warn $conflicts;
+  
+  # State 13 contains 5 shift/reduce conflicts
+  # State 23 contains 5 shift/reduce conflicts
+  my @conflictstates = $conflicts =~ m{State\s+(\d+)\s+contains\s+\d+\s+(?:shift|reduce)/reduce\s+conflicts?\s*}gx;
+
+  warn "(@conflictstates)\n";
+
+  $graph .= qq{$_ [shape = diamond, fontcolor=red, color=red]\n} for @conflictstates;
 
   my %states = ($dfa =~ m{State\s*(\d+)\s*:\n\s*
                           (
