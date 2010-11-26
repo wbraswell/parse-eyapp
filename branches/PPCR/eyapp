@@ -272,7 +272,9 @@ Usage:  $prog [options] grammar[.eyp]
                 The LALR tables aren't compacted
     -vN         Create a file <grammar>.output describing your parser
                 LALR tables are compacted.
-    -w          Create a file <grammar>.dot graph describing your parser
+    -w          Create a file <grammar>.dot graph describing your parser.
+                You can then generate a .png file using dot:
+                            dot -Tpng  grammar.dot -o grammar.png
     -W          Create a file <grammar>.dot graph describing your parser
                 Nodes are labelled with core LR-items
     -s          Create a standalone module in which the driver is included
