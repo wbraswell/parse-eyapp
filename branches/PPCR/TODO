@@ -1,7 +1,5 @@
-  * .dot description of the LR automaton
-      - Option -W visualize with kernel items
-      - Option -w visualize without kernel items
-      - visualize conflicts
+  * $t->str method to produce .dot descriptions of the AST tree
+    -- see removed vgg
 
   * Update documentation
 

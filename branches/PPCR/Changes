@@ -1,6 +1,10 @@
 Revision history for Perl extension Eyapp.
 1.171
-   * .dot file describing the LR tables generated with option -w
+   * .dot file describing the LR tables generated with options -w and -W
+      - Option -W visualize with kernel items
+      - Option -w visualize without kernel items
+      - visualize conflicts
+   * vgg removed
 1.170
 
   * Expected and language generation for article 
