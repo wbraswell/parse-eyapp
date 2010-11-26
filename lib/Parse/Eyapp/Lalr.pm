@@ -306,13 +306,13 @@ sub outputDot {
 
   my $conflicts = $parser->Conflicts();
 
-  warn $conflicts;
+  #warn $conflicts;
   
   # State 13 contains 5 shift/reduce conflicts
   # State 23 contains 5 shift/reduce conflicts
   my @conflictstates = $conflicts =~ m{State\s+(\d+)\s+contains\s+\d+\s+(?:shift|reduce)/reduce\s+conflicts?\s*}gx;
 
-  warn "(@conflictstates)\n";
+  #warn "(@conflictstates)\n";
 
   $graph .= qq{$_ [shape = diamond, fontcolor=red, color=red]\n} for @conflictstates;
 
