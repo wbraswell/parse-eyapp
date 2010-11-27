@@ -817,23 +817,23 @@ sub fdot {
 }
 
 BEGIN {
-  our @dotFormats = qw{bmp canon cgimage cmap cmapx cmapx_np dot eps exr fig gd gd2 gif gv imap imap_np ismap jp2 jpe jpeg jpg pct pdf pict plain plain-ext png ps ps2 psd sgi svg svgz tga tif tiff tk vml vmlz vrml wbmp x11 xdot xlib};
+  our @dotFormats = qw{bmp canon cgimage cmap cmapx cmapx_np eps exr fig gd gd2 gif gv imap imap_np ismap jp2 jpe jpeg jpg pct pdf pict plain plain-ext png ps ps2 psd sgi svg svgz tga tif tiff tk vml vmlz vrml wbmp x11 xdot xlib};
 
   for my $format (@Parse::Eyapp::Node::dotFormats) {
      
+    no strict 'refs';
     *{'Parse::Eyapp::Node::'.$format} = sub { 
-  #    my ($self, $file) = @_;
-  #
-  #    $file = $self->type() unless defined($file);
-  #
-  #    $self->fdot($file);
-  #
-  #    $file =~ s/\.(dot|$format)$//;
-  #    my $dotfile = $file.".dot";
-  #    my $pngfile = $file.$format;
-  #    my $err = qx{dot -T$format $dotfile -o $pngfile 2>&1};
-  #    return ($err, $?);
-  8
+       my ($self, $file) = @_;
+   
+       $file = $self->type() unless defined($file);
+   
+       $self->fdot($file);
+   
+       $file =~ s/\.(dot|$format)$//;
+       my $dotfile = "$file.dot";
+       my $pngfile = "$file.$format";
+       my $err = qx{dot -T$format $dotfile -o $pngfile 2>&1};
+       return ($err, $?);
     }
   }
 }
