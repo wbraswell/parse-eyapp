@@ -817,9 +817,9 @@ sub fdot {
 }
 
 BEGIN {
-  our @dotFormats = qw{bmp canon cgimage cmap cmapx cmapx_np eps exr fig gd gd2 gif gv imap imap_np ismap jp2 jpe jpeg jpg pct pdf pict plain plain-ext png ps ps2 psd sgi svg svgz tga tif tiff tk vml vmlz vrml wbmp x11 xdot xlib};
+  my @dotFormats = qw{bmp canon cgimage cmap cmapx cmapx_np eps exr fig gd gd2 gif gv imap imap_np ismap jp2 jpe jpeg jpg pct pdf pict plain plain-ext png ps ps2 psd sgi svg svgz tga tif tiff tk vml vmlz vrml wbmp x11 xdot xlib};
 
-  for my $format (@Parse::Eyapp::Node::dotFormats) {
+  for my $format (@dotFormats) {
      
     no strict 'refs';
     *{'Parse::Eyapp::Node::'.$format} = sub { 
