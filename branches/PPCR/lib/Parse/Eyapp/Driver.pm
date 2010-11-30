@@ -489,7 +489,7 @@ sub YYSetReduce {
   
   # The reduction action must be performed only if
   # the next token is inside the $token set
-  my $lookahead = $self->YYLookahead();
+  #my $lookahead = $self->YYLookahead();
   #return unless (grep { $_ eq $lookahead } @$token);
 
   croak "YYSetReduce error: specify a production" unless defined($action);
@@ -499,6 +499,7 @@ sub YYSetReduce {
 
   # Action can be given using the name of the production
   unless (looks_like_number($action)) {
+    # Improve this!! takes too much time
     if ($action =~ /^:/) {
       ($action) = grep { /$action/ } $self->YYNames;
     }

@@ -294,14 +294,14 @@ sub outputDot {
   my %grammar = $grammar =~ m{(\d+):\s+(.*)}gx;
 
   # escape double quotes inside %grammar
-  $graph .= qq{"$grammar{0}" [shape = doubleoctagon, fontcolor=blue, color=blue ]\n};
+  $graph .= qq{"$grammar{0}" [label="0: $grammar{0}", shape = doubleoctagon, fontcolor=blue, color=blue ]\n};
   for (1 .. (keys %grammar)-1) {
     $grammar{$_} =~ s/\\/\\\\/g;
     $grammar{$_} =~ s/"/\\"/g;
 
     #warn "$_ => $grammar{$_}\n";
 
-    $graph .= qq{"$grammar{$_}" [shape = box, fontcolor=blue, color=blue ]\n};
+    $graph .= qq{"$grammar{$_}" [label="$_: $grammar{$_}", shape = box, fontcolor=blue, color=blue ]\n};
   }
 
   my $conflicts = $parser->Conflicts();
@@ -365,7 +365,7 @@ sub outputDot {
     # ';'	[reduce using rule 4 (ds)]
     while ($desc =~ m{\t(\S+)\s+\[\s*reduce\s+using\s+rule\s+(\d+)}gx) {
       $graph .=  
-        qq{$_ -> "$grammar{$2}" [label = "$1", arrowhead=dot, style=dotted, color = "orange", fontcolor = "orange"]\n};
+        qq{$_ -> "$grammar{$2}" [label = "$1", arrowhead=dot, style=dotted, color = "red", fontcolor = "black"]\n};
     }
 
     # $default    accept
