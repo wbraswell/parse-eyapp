@@ -1,12 +1,7 @@
   * dynamicgrammar. There is a bug
-        check inside YYSetReduce if the next states is a truly conflict state
-
-        save the conflict states at compile time
-        and send them to the parser,
-        then inside YYsetReduce, check that the next state is inside
-        the listed conflict states
 
   * $t->str method to produce .dot descriptions of the AST tree
+    -- improve $t->png to include attribute info
 
   * Update documentation
 
