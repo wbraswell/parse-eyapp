@@ -42,6 +42,7 @@ my (%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
        YYBUILDINGTREE  => '',
        YYACCESSORS => 'HASH',
        YYCONFLICTHANDLERS => 'HASH',
+       YYLABELS => 'HASH',
        ); 
 my (%newparams) = (%params, YYPREFIX => '',);
 
@@ -487,15 +488,6 @@ sub YYSetReduce {
 
   $token = [ $token ] unless ref($token);
   
-  # The reduction action must be performed only if
-  # the next token is inside the $token set
-  #my $lookahead = $self->YYLookahead();
-  #return unless (grep { $_ eq $lookahead } @$token);
-  #$self->{CONFLICTHANDLERS}{leftORright}{states}
-  #     0  HASH(0x100b4e0f0)
-  #        15 => ARRAY(0x100b2
-  #          0  '\'-\''
-
 
   croak "YYSetReduce error: specify a production" unless defined($action);
 
@@ -503,18 +495,20 @@ sub YYSetReduce {
   my $conflictstate = $self->YYNextState();
 
   my $conflictName = $self->YYLhs;
+
+  #$self->{CONFLICTHANDLERS}{conflictName}{states}
+  # is a hash
+  #        statenumber => [ tokens, '\'-\'' ]
   my @conflictStates = @{$self->{CONFLICTHANDLERS}{$conflictName}{states}};
+
+  # Perform the action to change the LALR tables only if the next state 
+  # is listed as a conflictstate
   my ($cs) = (grep { exists $_->{$conflictstate}} @conflictStates); 
   return unless $cs;
-  ##my $lookahead = $self->YYLookahead();
 
   # Action can be given using the name of the production
   unless (looks_like_number($action)) {
-    # Improve this!! takes too much time
-    if ($action =~ /^:/) {
-      ($action) = grep { /$action/ } $self->YYNames;
-    }
-    my $actionnum = $self->YYIndex($action);
+    my $actionnum = $self->{LABELS}{$action};
     unless (looks_like_number($actionnum)) {
       croak "YYSetReduce error: can't find production '$action'. Did you forget to name it?";
     }

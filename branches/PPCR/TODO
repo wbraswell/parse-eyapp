@@ -1,4 +1,3 @@
-  * dynamicgrammar. There is a bug
 
   * $t->str method to produce .dot descriptions of the AST tree
     -- improve $t->png to include attribute info
