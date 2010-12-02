@@ -365,7 +365,7 @@ sub outputDot {
     # ';'	[reduce using rule 4 (ds)]
     while ($desc =~ m{\t(\S+)\s+\[\s*reduce\s+using\s+rule\s+(\d+)}gx) {
       $graph .=  
-        qq{$_ -> "$grammar{$2}" [label = "$1", arrowhead=dot, style=dotted, color = "red", fontcolor = "black"]\n};
+        qq{$_ -> "$grammar{$2}" [label = "$1", arrowhead=dot, style=dotted, color = "red", fontcolor = "red"]\n};
     }
 
     # $default    accept

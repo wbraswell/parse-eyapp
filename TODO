@@ -1,10 +1,14 @@
-
   * $t->str method to produce .dot descriptions of the AST tree
     -- option for main to produce .png version of the AST
+    -- parametrize call to dot program using file ~/.eyapprc
     -- improve $t->png to include attribute info
-       name of the file: the name of the grammar
-       order of the children must be respected
-       write help --dot 
+
+    -- name of the file: the name of the grammar. The extension
+       decides the type
+
+    -- order of the children must be respected
+    -- write help --dot 
+    -- png for .output also: options -w and -W
 
   * Update documentation
 
