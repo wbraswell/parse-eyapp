@@ -30,12 +30,13 @@ sub new {
         defined($self->Option('input'))
     or  croak "No input grammar";
 
-    $values = $parser->Parse($self->Option('input'), 
-                             $self->Option('firstline'),  # Line where the grammar source starts
-                             $self->Option('inputfile'),  # The file or program containing the grammar
-                             $self->Option('tree'),       # %tree activated
-                             $self->Option('nocompact'),  # %nocompact
-                             $self->Option('lexerisdefined'),    # lexer is defined
+    $values = $parser->Parse($self->Option('input'),      # 1 input
+                             $self->Option('firstline'),  # 2 Line where the grammar source starts
+                             $self->Option('inputfile'),  # 3 The file or program containing the grammar
+                             $self->Option('tree'),       # 4 %tree activated
+                             $self->Option('nocompact'),  # 5 %nocompact
+                             $self->Option('lexerisdefined'),    # 6 lexer is defined
+                             $self->Option('prefix'),            # 7 accept prefix
                              #$self->Option('prefixname'),  # yyprefix
                              #$self->Option('buildingtree')  # If building AST
                             );
@@ -225,17 +226,22 @@ sub classname {
 sub Rules { # TODO: find proper names
     my($self)=shift;
     my($rules)=$$self{GRAMMAR}{RULES};
-    my($text) = "[\n";
+    my($text) = "[#[productionNameAndLabel => lhs, [ rhs], bypass]]\n";
     my $packages = q{'TERMINAL', '_OPTIONAL', '_STAR_LIST', '_PLUS_LIST', };
 
     my $index = 0;
+    my $label = "{\n"; # To huild a reverse map label => production number
     for (@$rules) {
         my($lhs,$rhs,$prec,$name)=@$_;
 
         my $bypass = $name->[2];
         $bypass = $self->Bypass unless defined($bypass);
+
+        $label .= "  '$1' => $index,\n" if defined($name->[0]) and $name->[0] =~ /(:.*)/;
+
         # find an acceptable perl identifier as name
         $name = $self->classname($name, $index, $lhs, $rhs);
+        $label .= "  '$name' => $index,\n";
 
         $packages .= "\n".(" "x9)."'$name', ";
 
@@ -245,7 +251,8 @@ sub Rules { # TODO: find proper names
         $index++;
     }
     $text .= ']';
-    return ($text, $packages);
+    $label .= '}';
+    return ($text, $packages, $label);
 }
 
 # Added by Casiano

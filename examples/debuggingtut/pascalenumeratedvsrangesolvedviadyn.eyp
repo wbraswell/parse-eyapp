@@ -1,3 +1,5 @@
+# obsolete
+
 %conflict rangeORenum {
   my $s = $self->YYLookBothWays('type', ';');
   if ($s =~ /^type ID = \( ID ( , ID )* \) ;$/x) 

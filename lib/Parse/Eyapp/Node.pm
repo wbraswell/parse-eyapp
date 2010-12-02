@@ -785,6 +785,74 @@ sub _str {
   return $class;
 }
 
+sub _dot {
+  my ($root, $number) = @_;
+
+  my $type = $root->type();
+
+  my $information;
+  $information = $root->info if ($INDENT >= 0 && $root->can('info'));
+  my $class = $CLASS_HANDLER->($root);
+  $class = qq{$class<font color="red">$DELIMITER$information$pair</font>} if defined($information);
+
+  my $dot = qq{  $number [label = <$class>];\n};
+
+  my $k = 0;
+  my @dots = map { $k++; $_->_dot("$number$k") }  $root->children;
+
+  for($k = 1; $k <= $root->children; $k++) {;
+    $dot .= qq{  $number -> $number$k;\n};
+  }
+
+  return $dot.join('',@dots);
+}
+
+sub dot {
+  my $dot = $_[0]->_dot('0');
+  return << "EOGRAPH";
+digraph G {
+ordering=out
+
+$dot
+}
+EOGRAPH
+}
+
+sub fdot {
+  my ($self, $file) = @_;
+
+  if ($file) {
+    $file .= '.dot' unless $file =~ /\.dot$/;
+  }
+  else {
+    $file = $self->type().".dot";
+  }
+  open my $f, "> $file";
+  print $f $self->dot();
+  close($f);
+}
+
+BEGIN {
+  my @dotFormats = qw{bmp canon cgimage cmap cmapx cmapx_np eps exr fig gd gd2 gif gv imap imap_np ismap jp2 jpe jpeg jpg pct pdf pict plain plain-ext png ps ps2 psd sgi svg svgz tga tif tiff tk vml vmlz vrml wbmp x11 xdot xlib};
+
+  for my $format (@dotFormats) {
+     
+    no strict 'refs';
+    *{'Parse::Eyapp::Node::'.$format} = sub { 
+       my ($self, $file) = @_;
+   
+       $file = $self->type() unless defined($file);
+   
+       $self->fdot($file);
+   
+       $file =~ s/\.(dot|$format)$//;
+       my $dotfile = "$file.dot";
+       my $pngfile = "$file.$format";
+       my $err = qx{dot -T$format $dotfile -o $pngfile 2>&1};
+       return ($err, $?);
+    }
+  }
+}
 
 sub translation_scheme {
   my $self = CORE::shift; # root of the subtree

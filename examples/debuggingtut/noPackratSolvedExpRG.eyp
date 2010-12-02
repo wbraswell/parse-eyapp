@@ -5,66 +5,34 @@
 use feature 'state';
 
 my $nxr = 0;
-my $regforxs = do {
-  use Regexp::Grammars;
-  qr{
-     \G(<x> (?{ $nxr++ }))+
-
-     <rule: x>    \d+ ([-+*/] \d+)*
-  }x
-};
-
-sub countX {
-  my $self = shift; 
-  # Goal. Towrite this code as: 
-  #           $self->YYPreParse('xlist');
-  #  Will parse using as start symbol 'enum', without changing the 
-  #  parsing position. Returns true if it matches. Has the same effect
-  #  than the following code:
-  }
-}
-
 
 %}
 
 %conflict isInTheMiddle {
 
-  state $cached = 0;
   state $nxs = 0;
-  unless ($cached) {
-    
-    my $parser = shift;
-    my $s = ${$parser->input()};
-    $s =~ $regforxs;
-    $nxr = int ($nxr/2);
-    $nxs = 0;
-    #print "Number of x's = $nxr\n";
-
-    $cached = 1;
-  } 
 
   $nxs++;
 
   if ($nxs == $nxr+1) { 
-    #print "Reducing by :MIDx\n";
-    $self->YYSetReduce(['NUM','', 'OP'], ':MIDx' );
+    print "Reducing by :MIDx\n";
+    $self->YYSetReduce(['NUM','OP'], ':MIDx' );
     
-    $nxr = $nxs = $cached = 0; 
+    $nxr = $nxs = 0; 
   }
   else { $self->YYSetShift('NUM') } 
 }
 
 %%
-
-T: countX S
+T: preproc S  'other'
 ;
 
-countX:
-;
-
-xlist: 
-    x       { $nxr ++ }
-  | xlist x { $nxr++ }
+preproc: /* empty */
+   {
+     ($nxr) = $_[0]->YYPreParse('ExpList'); 
+     warn "Number of x's = $nxr\n";
+     $nxr = int ($nxr/2);
+   }
 ;
 
 S:
@@ -91,7 +59,7 @@ Compile it with:
 
 Run it with:
 
-   $ ./noPackratPPCR.eyp.pm -t -i -c '2-3 3*4 5+2'
+   $ ./noPackratPPCR.pm -t -i -c '2-3 3*4 5+2'
 
 =head1 SEE ALSO
 

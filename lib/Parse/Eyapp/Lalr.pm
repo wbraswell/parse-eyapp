@@ -64,6 +64,19 @@ sub new {
     $self->_Compile();
     $self->_DynamicConflicts(); # call it only if dynamic conflict handlers
 
+    if ($self->Option('prefix')) {
+      # weak accept for nested parsing !!!!!!!!!!!!
+      # substitute End Of Input by DEFAULT for each state
+      for (@{$self->{STATES}}) {
+        if (exists($_->{ACTIONS}{"\c@"})) {
+          # what if DEFAULT action already exists ?
+          # Shall I have to use an option in eyapp????
+          $_->{ACTIONS}{''} = $_->{ACTIONS}{"\c@"};
+          delete($_->{ACTIONS}{"\c@"});
+        }
+      }
+    }
+
     bless($self,$class);
 }
 ###########
@@ -258,6 +271,122 @@ sub outputtables {
   close($OUT);
 }
 
+sub outputDot {
+  my ($parser, $path, $base, $labelWithCore) = @_;
+
+  my ($output)=$base?"$path$base.dot":"STDOUT";
+
+          open(my $OUT,">$output")
+  or	die "Cannot create $base.dot for writing.\n";
+
+  my $graph = '';
+
+  my $dfa = $parser->ShowDfa();
+
+  #warn "$dfa\n";
+
+  my $grammar = $parser->ShowRules()."\n";
+
+  #warn "$grammar\n";
+
+  # make an array from the grammar
+
+  my %grammar = $grammar =~ m{(\d+):\s+(.*)}gx;
+
+  # escape double quotes inside %grammar
+  $graph .= qq{"$grammar{0}" [label="0: $grammar{0}", shape = doubleoctagon, fontcolor=blue, color=blue ]\n};
+  for (1 .. (keys %grammar)-1) {
+    $grammar{$_} =~ s/\\/\\\\/g;
+    $grammar{$_} =~ s/"/\\"/g;
+
+    #warn "$_ => $grammar{$_}\n";
+
+    $graph .= qq{"$grammar{$_}" [label="$_: $grammar{$_}", shape = box, fontcolor=blue, color=blue ]\n};
+  }
+
+  my $conflicts = $parser->Conflicts();
+
+  #warn $conflicts;
+  
+  # State 13 contains 5 shift/reduce conflicts
+  # State 23 contains 5 shift/reduce conflicts
+  my @conflictstates = $conflicts =~ m{State\s+(\d+)\s+contains\s+\d+\s+(?:shift|reduce)/reduce\s+conflicts?\s*}gx;
+
+  #warn "(@conflictstates)\n";
+
+  $graph .= qq{$_ [shape = diamond, fontcolor=red, color=red]\n} for @conflictstates;
+
+  my %states = ($dfa =~ m{State\s*(\d+)\s*:\n\s*
+                          (
+                          (?:
+                           .*->.*       | # a production line
+                           .*go\s+to.*  | # a shift or a goto line
+                           .*reduce.*   | # a reduce line
+                           .*accept.*   | # an accept line
+                           \s+          | # white lines
+                          )+
+                          )
+                         }gx);
+
+  for (sort { $a <=> $b } keys %states) {
+    my $desc = $states{$_};
+    my @LRitems = $desc =~ m{(\S.*->.*[^\s.])\s+\(Rule\s+\d+\)}g;     # remove productions
+
+    # label states with core LR-0 items
+    if ($labelWithCore) { # this is optional
+      local $" = "\\n";
+      $graph .= qq{$_ [shape = plaintext, label = "$_\\n@LRitems"]\n};
+    }
+
+    #warn "LRitems in $_:\n@LRitems\n";
+
+    $desc =~ s/\n\s*\n/\n/g;  # remove white lines
+
+    # build digraph
+    # ID  shift, and go to state 4
+    while ($desc =~ m{\t(.*)\s+shift,\s+and\s+go\s+to\s+state\s+(\d+)}gx) {
+      my ($label, $state)  = ($1, $2);
+      $label =~ s/\\(?!")/\\\\/g;
+      $graph .=  qq{$_ -> $state [label = "$label"]\n};
+    }
+
+    # decl    go to state 1
+    while ($desc =~ m{\t(\S+)\s+go\s+to\s+state\s+(\d+)}gx) {
+      $graph .=  qq{$_ -> $2 [label = "$1", arrowhead = odot, color = "red", fontcolor = "red"]\n};
+    }
+
+    # $default	reduce using rule 1 (prog)
+    # ID	reduce using rule 15 (decORexp_explorer)
+    while ($desc =~ m{\t(\S+)\s+reduce\s+using\s+rule\s+(\d+)}gx) {
+      $graph .=  qq{$_ -> "$grammar{$2}" [label = "$1", arrowhead=dot, color = "blue", fontcolor = "blue"]\n};
+    }
+
+    # shift-reduce conflicts
+    # ';'	[reduce using rule 4 (ds)]
+    while ($desc =~ m{\t(\S+)\s+\[\s*reduce\s+using\s+rule\s+(\d+)}gx) {
+      $graph .=  
+        qq{$_ -> "$grammar{$2}" [label = "$1", arrowhead=dot, style=dotted, color = "red", fontcolor = "red"]\n};
+    }
+
+    # $default    accept
+    if ($desc =~ m{\t\$default\s+accept\s*}gx) {
+      $graph .=  qq{$_ [shape = doublecircle]\n};
+      $graph .=  qq{$_ -> "$grammar{0}" [arrowhead = dot, color = blue]\n};
+    }
+
+    #warn "$_ => $desc\n";
+    
+  }
+  print $OUT <<"EOGRAPH";
+digraph G {
+concentrate = true
+
+$graph
+}
+EOGRAPH
+  close $OUT;
+}
+
 sub qtables {
   my ($parser) = @_;
 
@@ -440,19 +569,22 @@ sub _DynamicConflicts {
 
   my $co = $self->{CONFLICTS}{FORCED}{DETAIL};
 
-  my %C;
+  my %C; # keys: 
+         #     conflictive grammar productions. 
+         # Values: 
+         #     tokens for which there is a conflict with this production
   for my $state (keys %$co) {
     my @conList = @{$co->{$state}{LIST}};
 
     for my $c (@conList) {
       my ($token, $production) = @$c;
-      push @{$C{(0-$production)}{$state}}, $token;
+      push @{$C{($production)}{$state}}, $token;
     }
   }
 
   for my $c (keys %$ch) {                 # for each conflict handler
-    my $d = $ch->{$c}{production};        # list of productions managed by this handler
-    for my $p (keys %$d) {               # for each production
+    my $d = $ch->{$c}{production};        # hash ref of productions managed by this handler
+    for my $p (keys %$d) {                # for each production
   #    # if $p reduce or shift?
   #    # find the conflictive states where $p appears
   #    # if $p is reduce and appears in state $s as -$p it is a state of conflict (the other is in the action table)
@@ -752,6 +884,21 @@ sub _FirstSfx {
 #     (p,a) include (q,B) iff [ B -> alpha A . beta ] in KERNEL(GOTO(p,A),
 #                             epsilon in FIRST(beta) and
 #                             q in PRED(p,alpha)
+
+# >> x $firstset
+# 0  HASH(0x1f7af60)
+#    '$start' => "\cG"
+#    'a' => "\cB"
+#    'b' => "\cH"
+#    's' => "\cC"
+# >> x $firstset->{'a'} # firstset es una string compactada de 0 y 1 que es trratada como un conjunto
+# 0  "\cB"
+# >> x unpack ("b*", $firstset->{'a'})
+# 0  01000000
+# >> x unpack ("b*", $firstset->{'b'})
+# 0  00010000
+# >> x unpack ("b*", $firstset->{'s'})
+# 0  11000000
 
 sub _ComputeFollows {
 	my($grammar,$states,$termlst)=@_;
