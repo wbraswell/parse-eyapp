@@ -1377,6 +1377,7 @@ sub main {
   my $commandinput = '';
   my $quotedcommandinput = '';
   my $yaml = 0;
+  my $dot = 0;
 
   my $result = GetOptions (
     "debug!"         => \$debug,         # sets yydebug on
@@ -1388,6 +1389,7 @@ sub main {
     "slurp!"         => \$slurp,         # read until EOF or CR is reached
     "argfile!"       => \$inputfromfile, # take input string from @_
     "yaml"           => \$yaml,          # dumps YAML for $tree: YAML must be installed
+    "dot=s"          => \$dot,          # dumps YAML for $tree: YAML must be installed
     "margin=i"       => \$Parse::Eyapp::Node::INDENT,      
   );
 
@@ -1455,6 +1457,9 @@ sub main {
         YAML->import;
         print Dump($tree);
       }
+    }
+    if ($dot && blessed($tree)) {
+      $tree->$dot() if $tree->can($dot);
     }
 
     return $tree
