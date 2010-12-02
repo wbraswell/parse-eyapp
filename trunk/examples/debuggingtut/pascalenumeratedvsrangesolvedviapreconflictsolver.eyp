@@ -8,6 +8,14 @@ sub rangeORenum {
   #  Will parse using as start symbol 'enum', without changing the 
   #  parsing position. Returns true if it matches. Has the same effect
   #  than the following code:
+
+  # Use Regexp::Grammars. You have an attribute of $self: RGPATTERNS
+  # keys: the names of the syntactic variables involved in the conflict
+  #  %starts enum OR %nested enum
+  # The values are the Regexp::Grammar expressions describing
+  # the syntactic variable (including the FOLLOWS)
+  # Of course, this implies that the sub grammar can't be left recursive
+
   for (${$self->input()}) {
     if (m{(?=             # look forward 
               \G\s*\(     # open parenthesis

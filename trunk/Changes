@@ -1,5 +1,86 @@
 Revision history for Perl extension Eyapp.
-1.56
+1.173
+    -- option for main to produce .png version of the AST
+    -- png for .output also: options -w and -W
+    -- improved $t->png to include attribute info
+    -- $t->png: order of the children is respected
+1.171
+   * .dot file describing the LR tables generated with options -w and -W
+      - Option -W visualize with kernel items
+      - Option -w visualize without kernel items
+      - visualize conflicts
+   * vgg removed
+   * dynamicgrammar. There was a bug
+        check inside YYSetReduce if the next states is a truly conflict state
+
+        save the conflict states at compile time
+        and send them to the parser,
+        then inside YYsetReduce, check that the next state is inside
+        the listed conflict states
+
+    * $t->png etc. for trees implemented 
+1.170
+
+  * Expected and language generation for article 
+
+  * add to YYPreParse one option for debugging the preparsing.
+    idem for other options
+  * GeneratorF.eyp forbid division by zero error in the generated expressions
+  *TokenGen::generate 
+    Check for existence of arg yylex or set to reasonable defaults
+  * Write Test::LectroTest::Generator::Grammar
+
+  *YYSymbolStack: there is no need to copy the stack each time. 
+   Saving the position is enough
+
+  * add parsing strings and trees as a test
+
+  * An important bug while computing YYExpected was fixed
+  * Added data generation as a test
+
+1.169
+  * Clusplus example. Start from the documentation. For Luis
+    see file tt2/cplusplus
+
+  * This important bug was fixed: 
+    There is s.t. wrong in reuseconflicthandler.eyp and 
+    noPackratSolvedExpRGconcept.eyp. why is it that we have to specify
+    a reduction by 'end of input' when there is no conflict for such 
+    token?????
+
+  * test t/80 with Cplusplus
+
+1.167
+  Bug solved:
+    my $ID = qr{...};
+    token ID = /$ID/
+    the code for my $ID went after the lexer. That was an error.
+
+   * Syntax for conflicts include an explorer (pre-parser/nested parsing)
+
+        T: %isInTheMiddle? S
+        ;
+
+        S:
+             x  %PREC isInTheMiddle S x  
+          |  %name :MIDx 
+             x  %PREC isInTheMiddle 
+        ;
+
+1.165
+  * New syntax %explorer CONFLICTNAME { ... }
+    See examples in examples/debuggintut
+      noPackratSolvedExpRGconcept.eyp
+
+  * t/66yydebugstandaloneandpod.t: test debug mode and output of "stack symbols"
+  * Removed pushing the token values in the stack. Keep it only while debugging
+  * Removed (temporary) -S option from eyapp
+  * Test t/80ppcr.t checks PPCR with YYPreParse
+  * Original API for PPCR deprecated:
+      - # sub YYLookBothWays {
+      - # sub YYSymbolStack {
+  
+1.156
   * given explicit precedence to tokens
        %token LASTSEMICOLON /(;)(?=S)/
        %token ';' 

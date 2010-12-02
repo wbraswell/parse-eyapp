@@ -170,9 +170,12 @@ our $LEX = sub {
       return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
       /\G\s*(\S+)/;
       my $near = substr($1,0,10); 
-      die( "Error inside the lexical analyzer near '". $near
-          ."'. Line: ".$self->line()
-          .". File: '".$self->YYFilename()."'. No match found.\n");
+
+      return($near, $near);
+
+     # die( "Error inside the lexical analyzer near '". $near
+     #     ."'. Line: ".$self->line()
+     #     .". File: '".$self->YYFilename()."'. No match found.\n");
     }
   }
 ;
@@ -224,7 +227,7 @@ sub Output {
 
   $self->Options(@_);
 
-  my ($GRAMMAR, $TERMS, $FILENAME, $PACKAGES); # Cas
+  my ($GRAMMAR, $TERMS, $FILENAME, $PACKAGES, $LABELS); # Cas
   my($package)=$self->Option('classname');
 
   my $modulino = $self->Option('modulino'); # prompt or undef 
@@ -265,7 +268,7 @@ MODULINO
   $tail = $tail."\n\n=for None\n\n=cut\n\n" unless $tail =~ /\n\n=cut\n/;
   #local $Data::Dumper::Purity = 1;
 
-  ($GRAMMAR, $PACKAGES) = $self->Rules();
+  ($GRAMMAR, $PACKAGES, $LABELS) = $self->Rules();
   $bypass = $self->Bypass;
   $prefix = $self->Prefix;
 
@@ -337,11 +340,12 @@ push @<<$package>>::ISA, 'Parse::Eyapp::Driver';
 
 <<$driver>>
 
-<<$defaultLexer>>
-
 sub unexpendedInput { defined($_) ? substr($_, (defined(pos $_) ? pos $_ : 0)) : '' }
 
 <<$head>>
+
+<<$defaultLexer>>
+
 ################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################
 
 my $warnmessage =<< "EOFWARN";
@@ -357,6 +361,8 @@ sub new {
     yyversion => '<<$version>>',
     yyGRAMMAR  =>
 <<$GRAMMAR>>,
+    yyLABELS  =>
+<<$LABELS>>,
     yyTERMS  =>
 <<$TERMS>>,
     yyFILENAME  => <<$FILENAME>>,
@@ -460,7 +466,6 @@ sub new_grammar {
   $@ and die "Error while compiling your parser: $@\n";
   return $p;
 }
-
 
 1;
 

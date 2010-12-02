@@ -8,9 +8,9 @@ compile it with
 
 execute the generated modulino with:
 
-      ./Precedencia.pm -nos -c '2@3@4' -info line
+      ./Precedencia.pm -nos -c '2@3@4' -info 
 
-Try with inputs:
+Try also with inputs:
    
     4@3@5
     4@3&5
@@ -40,7 +40,10 @@ use base q{Math::Tail};
 list
     : /* empty */
     | list '\n' {}
-    | list e { print $_[2]->str."\n" }
+    | $list $e { print $e->str."\n"; 
+                 $e->png(); 
+                 $e; 
+               }
     ;
 
 e : %name NUM

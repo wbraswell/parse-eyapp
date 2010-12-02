@@ -10,26 +10,51 @@ that fulfills the parser expectatives.
 
 Compile it with:
 
-               eyapp -b '' PL_I_conflict.eyp
+               eyapp -C PL_I_conflict.eyp
 
-Run it with;
+Run it with:
 
-               ./PL_I_conflict.pm -t
+               ./PL_I_conflict.pm -t -c 'if if=then then then=if'
 
-or
+for more detail:
 
-               ./PL_I_conflict.pm -d -t
+               ./PL_I_conflict.pm -d -t -c 'if if=then then then=if'
+
+and also
+
+               ./PL_I_conflict.pm -t -i -c 'if then=if then if=then
+
+The problem arises again
+
+Also try:
+
+                ./PL_I_conflict.pm -t -c 'if then=if then if a=b then c=d'
 
 =cut
-
-use base q{DebugTail}; 
-use List::Util qw{first};
 
 %}
 
 %strict
 
 %token ID 
+
+# Adaptative lexer
+%lexer {
+      m{\G\s*(\#.*)?}gc;
+
+      m{\G([a-zA-Z_]\w*)}gc and do {
+        my $id = $1;
+
+        return ('if',   'if')   if ($id eq 'if')   && $self->expects('if') && /\G(?!\s*=)/;
+        return ('then', 'then') if ($id eq 'then') && $self->expects('then');
+        
+        return ('ID', $id);
+      };
+
+      m{\G(.)}gc and return ($1, $1);
+
+      return('',undef);
+  }
 
 %tree bypass
 %%
@@ -38,15 +63,13 @@ stmt:
   | assignstmt
 ;
 
-# Exercise: change this production 
-#     for 'if' expr 'then' stmt
-# and check with input 'if then=if then if=then'. The problem arises again
 ifstmt: 
      %name IF
-    'if' expr 'then' expr 
+    'if' expr 'then' stmt
 ;
 
 assignstmt: 
+    %name ASSIGN
     id '=' expr
 ;
 
@@ -63,31 +86,5 @@ id:
 
 %%
 
-# Adaptative lexer
-__PACKAGE__->lexer(
-  sub {
-    my $parser = shift;
 
-    for (${$parser->input()}) {    # contextualize
-      m{\G\s*(\#.*)?}gc;
-
-      m{\G([a-zA-Z_]\w*)}gc and do {
-        my $id = $1;
-
-        return ('if',   'if')   if ($id eq 'if')   && $parser->expects('if');
-        return ('then', 'then') if ($id eq 'then') && $parser->expects('then');
-        
-        return ('ID', $id);
-      };
-
-      m{\G(.)}gc and return ($1, $1);
-
-      return('',undef);
-    }
-  }
-);
-
-my $prompt = 'Try input "if then=if then if=then" '.
-             '(press <CR><CTRL-D> to finish): ';
-__PACKAGE__->main($prompt) unless caller();
 
