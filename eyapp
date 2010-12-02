@@ -387,8 +387,15 @@ my($warnings)=$parser->Warnings();
 $warnings !~ m{^\s*$} and print STDERR "$warnings\n";
 
 $parser->outputtables($path, $base) if $opt_v;
-$parser->outputDot($path, $base, 0) if $opt_w;
-$parser->outputDot($path, $base, 1) if $opt_W;
+
+if ($opt_w or $opt_W) { 
+  $parser->outputDot($path, $base, 0) if $opt_w;
+  $parser->outputDot($path, $base, 1) if $opt_W;
+
+  my ($pngfile)= "$path$base.png";
+  my ($dotfile)= "$path$base.dot";
+  system qq{dot -Tpng $dotfile -o $pngfile};
+}
 
 my($outfile)="$path$base.pm";
 my($package)="$base";

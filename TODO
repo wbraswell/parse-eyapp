@@ -1,3 +1,7 @@
+  * Merge PPCR branch with trunk
+
+  * GLR in eyapp
+  * eyapp and PPCR in the Wikipedia
   * $t->str method to produce .dot descriptions of the AST tree
     -- option for main to produce .png version of the AST
     -- parametrize call to dot program using file ~/.eyapprc
@@ -17,8 +21,6 @@
       # Will it give a false acceptance? 
       # I think I shall use an option in eyapp?
       # make a test
-
-  * Merge PPCR branch with trunk
 
   * Include %from directive. See examples/debuggingtut/Range2.eyp
 

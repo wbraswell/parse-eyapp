@@ -1,5 +1,6 @@
 Revision history for Perl extension Eyapp.
 1.173
+    -- png for .output also: options -w and -W
     -- improved $t->png to include attribute info
     -- $t->png: order of the children is respected
 1.171
