@@ -789,14 +789,20 @@ sub _dot {
   my ($root, $number) = @_;
 
   my $type = $root->type();
-  my $dot = qq{  $number [label = "$type"];\n};
+
+  my $information;
+  $information = $root->info if ($INDENT >= 0 && $root->can('info'));
+  my $class = $CLASS_HANDLER->($root);
+  $class = qq{$class<font color="red">$DELIMITER$information$pair</font>} if defined($information);
+
+  my $dot = qq{  $number [label = <$class>];\n};
 
   my $k = 0;
   my @dots = map { $k++; $_->_dot("$number$k") }  $root->children;
 
   for($k = 1; $k <= $root->children; $k++) {;
-     $dot .= qq{  $number -> $number$k;\n};
-   }
+    $dot .= qq{  $number -> $number$k;\n};
+  }
 
   return $dot.join('',@dots);
 }
@@ -805,6 +811,8 @@ sub dot {
   my $dot = $_[0]->_dot('0');
   return << "EOGRAPH";
 digraph G {
+ordering=out
+
 $dot
 }
 EOGRAPH

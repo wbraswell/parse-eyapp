@@ -1419,6 +1419,14 @@ sub main {
     }
   }
 
+  if (defined($TERMINALinfo)) {
+    my $prefix = ($parser->YYPrefix || '');
+    no strict 'refs';
+    *{$prefix.'TERMINAL::info'} = sub { 
+      (ref($_[0]->attr) eq 'ARRAY')? $_[0]->attr->[0] : $_[0]->attr 
+    };
+  }
+
   my $tree = $parser->Run( $debug, @_ );
 
   if (my $ne = $parser->YYNberr > 0) {
@@ -1428,13 +1436,6 @@ sub main {
   else {
     if ($showtree) {
       if ($tree && blessed $tree && $tree->isa('Parse::Eyapp::Node')) {
-
-        if (defined($TERMINALinfo)) {
-          $showtree = 1;
-          my $prefix = ($parser->YYPrefix || '');
-          no strict 'refs';
-          *{$prefix.'TERMINAL::info'} = sub {  (ref($_[0]->attr) eq 'ARRAY')? $_[0]->attr->[0] : $_[0]->attr };
-        }
 
           print $tree->str()."\n";
       }
@@ -1459,7 +1460,10 @@ sub main {
       }
     }
     if ($dot && blessed($tree)) {
-      $tree->$dot() if $tree->can($dot);
+      my ($sfile, $extension) = $dot =~ /^(.*)\.([^.]*)$/;
+      $extension = 'png' unless (defined($extension) and $tree->can($extension));
+      ($sfile) = $file =~ m{(.*[^.])} if !defined($sfile) and defined($file);
+      $tree->$extension($sfile);
     }
 
     return $tree
