@@ -1,5 +1,6 @@
 /*
-$ eyapp -C shiftreduceconflict_fixed.eyp MacBookdeCasiano:debuggingtut casiano$ ./shiftreduceconflict_fixed.pm -t -i --dot t.png -m 1 -c 'if e then if e then o else o'
+$ eyapp -C shiftreduceconflict_fixed.eyp 
+$ ./shiftreduceconflict_fixed.pm -t -i --dot t.png -m 1 -c 'if e then if e then o else o'
 
 IFTHEN(
   TERMINAL[e],
