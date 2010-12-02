@@ -1485,6 +1485,7 @@ Available options:
     --noargfile                main() will not take the input string from its @_
     --yaml                     dumps YAML for $tree: YAML module must be installed
     --margin=i                 controls the indentation of $tree->str (i.e. $Parse::Eyapp::Node::INDENT)      
+    --dot format               produces a .dot and .format file (png,jpg,bmp, etc.)
 AYUDA
 
   $package->help() if ($package & $package->can("help"));
