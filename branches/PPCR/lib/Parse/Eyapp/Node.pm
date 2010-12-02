@@ -786,15 +786,23 @@ sub _str {
 }
 
 sub _dot {
-  my $root = CORE::shift;
-  my @dots = map { $_->_dot() }  $root->children;
-  my $dot = '';
-  $dot .= $root->type()." -> ".$_->type()."\n" for $root->children;
-  return "$dot@dots";
+  my ($root, $number) = @_;
+
+  my $type = $root->type();
+  my $dot = qq{  $number [label = "$type"];\n};
+
+  my $k = 0;
+  my @dots = map { $k++; $_->_dot("$number$k") }  $root->children;
+
+  for($k = 1; $k <= $root->children; $k++) {;
+     $dot .= qq{  $number -> $number$k;\n};
+   }
+
+  return $dot.join('',@dots);
 }
 
 sub dot {
-  my $dot = $_[0]->_dot();
+  my $dot = $_[0]->_dot('0');
   return << "EOGRAPH";
 digraph G {
 $dot
