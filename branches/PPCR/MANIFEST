@@ -384,6 +384,10 @@ t/ParsingStringsAndTrees/simple5.inf
 t/ParsingStringsAndTrees/simple6.inf
 t/Assign.eyp
 t/PL_I_conflictNested.eyp
+t/84graphics.t
+t/AmbiguousCalc.eyp
+t/AmbiguousCalc.WWexpected
+t/AmbiguousCalc.wexpected
 #t/97podcoverage.t
 t/98nopm.t
 t/99Cplusplusgrammar.t

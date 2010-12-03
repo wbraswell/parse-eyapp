@@ -6,7 +6,7 @@
     -- parametrize call to dot program using file ~/.eyapprc
 
     -- name of the file: the name of the inputfile. The extension
-       decides the type
+       decides the type. But what name to choose for the default case?
 
     -- write help --dot 
     -- png for .output also: options -w and -W

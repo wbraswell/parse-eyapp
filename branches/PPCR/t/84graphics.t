@@ -41,7 +41,7 @@ SKIP: {
 
     ok(-s "t/AmbiguousCalc.dot", "AmbiguousCalc.dot generated");
 
-    $r = qx{diff t/AmbiguousCalc.dot t/AmbiguousCalc.Wexpected};
+    $r = qx{diff t/AmbiguousCalc.dot t/AmbiguousCalc.WWexpected};
 
     is($r, '', '.dot file as expected with W');
 
