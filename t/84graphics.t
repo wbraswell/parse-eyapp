@@ -19,8 +19,8 @@ SKIP: {
     unlink 't/AmbiguousCalc.dot';
     unlink 't/AmbiguousCalc.png';
 
-    my $r = system(q{perl -I./lib/ eyapp -w t/AmbiguousCalc.eyp});
-    ok(!$r, "compilation with -w of ambigous Calc grammar");
+    my $r = qx{perl -I./lib/ eyapp -w t/AmbiguousCalc.eyp 2>&1};
+    like($r, qr{35 shift.reduce conflicts}, "compilation with -w of ambiguous Calc grammar");
 
     ok(-s "t/AmbiguousCalc.dot", "AmbiguousCalc.dot generated");
 
@@ -35,13 +35,9 @@ SKIP: {
   }
 
   { # test -W
-    unlink 't/AmbiguousCalc.pm';
-    unlink 't/AmbiguousCalc.output';
-    unlink 't/AmbiguousCalc.dot';
-    unlink 't/AmbiguousCalc.png';
 
-    my $r = system(q{perl -I./lib/ eyapp -W t/AmbiguousCalc.eyp});
-    ok(!$r, "compilation with -W of AmbiguousCalc grammar");
+    my $r = qx{perl -I./lib/ eyapp -W t/AmbiguousCalc.eyp 2>&1};
+    like($r, qr{35 shift.reduce conflicts}, "compilation with -w of ambiguous Calc grammar");
 
     ok(-s "t/AmbiguousCalc.dot", "AmbiguousCalc.dot generated");
 
