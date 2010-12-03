@@ -388,6 +388,7 @@ t/84graphics.t
 t/AmbiguousCalc.eyp
 t/AmbiguousCalc.WWexpected
 t/AmbiguousCalc.wexpected
+t/Precedencia.eyp
 #t/97podcoverage.t
 t/98nopm.t
 t/99Cplusplusgrammar.t

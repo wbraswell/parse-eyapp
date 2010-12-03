@@ -1,12 +1,13 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, );
+my ($nt, $nt1,);
 
 BEGIN { $nt = 6; 
+$nt1 = 8;
 }
-use Test::More tests=> $nt;
+use Test::More tests=> $nt+$nt1;
 
-# test grammar.dot graphic description of .output and AST .dot files
+# test grammar.dot graphic description of .output files
 SKIP: {
   skip "t/AmbiguousCalc.eyp not found", $nt unless ($ENV{DEVELOPER} 
                                                         && -r "t/AmbiguousCalc.eyp" 
@@ -50,5 +51,59 @@ SKIP: {
     unlink 't/AmbiguousCalc.dot';
     unlink 't/AmbiguousCalc.png';
   }
+}
+
+# test grammar.dot graphic description of AST .dot files
+SKIP: {
+  skip "t/Precedencia.eyp not found", $nt1 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/Precedencia.eyp" 
+                                                        && -x "./eyapp");
+  { # test -w
+    unlink 't/Precedencia.pm';
+    unlink 'tree.png';
+    unlink 'tree.dot';
+    unlink 't.gif';
+
+    my $r = qx{perl -I./lib/ eyapp -C t/Precedencia.eyp 2>&1};
+    is($r, '', "compilation with -C of Precedencia.eyp grammar");
+
+    $r = qx{perl -Ilib/ t/Precedencia.pm -dot t.gif -i -t -c '1\@2\@3'};
+
+    my $expected = q{
+    AT(AT(NUM[1],NUM[2]),NUM[3])
+    AT(AT(NUM[1],NUM[2]),NUM[3])
+    };
+
+    $expected =~ s/\s+//g;
+    $expected = quotemeta($expected);
+    $expected = qr{$expected};
+
+    $r =~ s/\s+//g;
+
+    like($r, $expected, 'tree->str for 1@2@3');
+
+    ok(-r 'tree.png', 'tree.png generated');
+
+    ok(-r 't.gif', 't.gif generated');
+
+    ok(-r 'tree.dot', 'tree.dot generated');
+   
+    ok(-r 't.dot', 't.dot generated');
+
+    $r = qx{diff tree.dot t/tree.dot.expected 2>&1};
+
+    is($r, '', 'tree.dot as expected');
+
+    $r = qx{diff t.dot t/tree.dot.expected 2>&1};
+
+    is($r, '', 't.dot as expected');
+
+    unlink 'tree.png';
+    unlink 't.gif';
+    unlink 't.dot';
+    unlink 'tree.dot';
+    unlink 't/Precedencia.pm';
+  }
+
 }
 
