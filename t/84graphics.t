@@ -2,7 +2,7 @@
 use strict;
 my ($nt, );
 
-BEGIN { $nt = 5; 
+BEGIN { $nt = 6; 
 }
 use Test::More tests=> $nt;
 
@@ -26,7 +26,7 @@ SKIP: {
 
     $r = qx{diff t/AmbiguousCalc.dot t/AmbiguousCalc.wexpected};
 
-    is($r, '', '.dot file as expected');
+    is($r, '', '.dot file as expected with w');
 
     unlink 't/AmbiguousCalc.pm';
     unlink 't/AmbiguousCalc.output';
@@ -41,13 +41,13 @@ SKIP: {
     unlink 't/AmbiguousCalc.png';
 
     my $r = system(q{perl -I./lib/ eyapp -W t/AmbiguousCalc.eyp});
-    ok(!$r, "compilation with -w of ambigous Calc grammar");
+    ok(!$r, "compilation with -W of AmbiguousCalc grammar");
 
     ok(-s "t/AmbiguousCalc.dot", "AmbiguousCalc.dot generated");
 
     $r = qx{diff t/AmbiguousCalc.dot t/AmbiguousCalc.Wexpected};
 
-    is($r, '', '.dot file as expected');
+    is($r, '', '.dot file as expected with W');
 
     unlink 't/AmbiguousCalc.pm';
     unlink 't/AmbiguousCalc.output';
