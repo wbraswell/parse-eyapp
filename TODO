@@ -1,3 +1,4 @@
+  * Use %{ ... %} as syntactic sugar for syntactic code actions
   * Tests for png
   * GLR in eyapp
   * eyapp and PPCR in the Wikipedia
@@ -48,6 +49,11 @@
           Where are the follows?. They have been computed somewhere
       - Avoid warnings: rule not used, rule not used, etc. How?
         Shall I use a subgrammar that is the closure of the syntactic variable
+      - %start A
+        %prestart B
+        %start C
+        will generate three files File.pm FileB.pm FileC.pm
+      - Or, perhaps, eyapp --start C etc. will generate a %start directive and warnings will be supressed
 
   * Lexical Analyzer generation:
       * incremental lexer also influences the way the directive
