@@ -57,6 +57,7 @@ examples/debuggingtut/Precedencia.eyp
 examples/debuggingtut/reducereduceconflict.eyp
 examples/debuggingtut/reducereduceconflict_fix1.eyp
 examples/debuggingtut/reducereduceconflict_fix2.eyp
+examples/debuggingtut/reducereduceconflictPPCR.eyp
 examples/debuggingtut/rrconflictnamefirst.eyp
 examples/debuggingtut/rrconflictnamefirst_fix1.eyp
 examples/debuggingtut/SemanticInfoInTokens.eyp
