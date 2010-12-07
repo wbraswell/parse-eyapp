@@ -83,7 +83,7 @@ Compile it with
 
 the compile it again, using 'decl' as start symbol:
 
-   eyapp -S decl -o Decl.pm -m Decl -P CplusplusNested.eyp
+   eyapp -S decl -m Decl -P CplusplusNested.eyp
 
 Run it with:
 
