@@ -3,12 +3,12 @@
     order of arguments?
 
   * Generation of Several Parsers
-      - Or, perhaps, eyapp --start C etc. will generate a %start directive and warnings will be supressed
+      - Or, perhaps, eyapp -S C etc. will generate a %start directive and warnings will be supressed
         make tests
 
-           ~/LEyapp/examples/debuggingtut$ eyapp -S decl -o Decl.pm -m Decl -P CplusplusNested.eyp
-            0 reduce/reduce conflicts
+           ~/LEyapp/examples/debuggingtut$ eyapp -S decl -m Decl -P CplusplusNested.eyp
 
+       if no -m the default will be "decl.pm" i.e. the start symbol will name the module
 
       - %PREC conflict does not check that a conflict handler has been previously declared
       - The lexer must be the one of the main parser

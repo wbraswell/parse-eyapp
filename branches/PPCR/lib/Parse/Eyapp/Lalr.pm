@@ -99,16 +99,13 @@ sub Warnings {
     my $expected = $$self{GRAMMAR}{EXPECT};
     my ($sre, $rre) = ref($expected) ? @$expected : ($expected, 0);
 
-        $nbsr != $sre
-    and do {
-      $text.="$nbsr shift/reduce conflict".($nbsr != 1 ? "s " : " "); 
+    $nbsr != $sre and $nbsr > 0 and do {
+      $text.="$nbsr shift/reduce conflict".($nbsr > 1 ? "s " : " "); 
     };  # end of $nbsr != $sre There were shift-reduce conflicts
 
-        $nbrr != $rre
-    and do {
-            $nbsr != $sre
-        and $text.="and ";
-        $text.="$nbrr reduce/reduce conflict".($nbrr != 1 ? "s" : "");
+    $nbrr != $rre and $nbrr > 0 and do {
+      $nbsr != $sre and $text.="and ";
+      $text.="$nbrr reduce/reduce conflict".($nbrr > 1 ? "s" : "");
     };
 
     $text;
