@@ -4,19 +4,11 @@
 
   * Generation of Several Parsers
       - Or, perhaps, eyapp --start C etc. will generate a %start directive and warnings will be supressed
-                Useless non-terminals:
+        make tests
 
-                    stmt, declared line 41
-                    prog, declared line 34
-                    decORexp_explorer, declared line 22
+           ~/LEyapp/examples/debuggingtut$ eyapp -S decl -o Decl.pm -m Decl -P CplusplusNested.eyp
+            0 reduce/reduce conflicts
 
-                Useless rules:
-
-                    prog -> 
-                    prog -> prog decORexp_explorer stmt
-                    stmt -> expr ';'
-                    stmt -> decl
-                    decORexp_explorer -> 
 
       - %PREC conflict does not check that a conflict handler has been previously declared
       - The lexer must be the one of the main parser

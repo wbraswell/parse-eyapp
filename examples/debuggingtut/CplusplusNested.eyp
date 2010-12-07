@@ -79,8 +79,11 @@ declarator:
 
 Compile it with
  
-   eyapp -P Decl.eyp
    eyapp -C CplusplusNested
+
+the compile it again, using 'decl' as start symbol:
+
+   eyapp -S decl -o Decl.pm -m Decl -P CplusplusNested.eyp
 
 Run it with:
 
