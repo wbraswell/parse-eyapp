@@ -499,7 +499,8 @@ sub YYSetReduce {
   #$self->{CONFLICTHANDLERS}{conflictName}{states}
   # is a hash
   #        statenumber => [ tokens, '\'-\'' ]
-  my @conflictStates = @{$self->{CONFLICTHANDLERS}{$conflictName}{states}};
+  my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
+  my @conflictStates = $cS ? @$cS : ();
 
   # Perform the action to change the LALR tables only if the next state 
   # is listed as a conflictstate
