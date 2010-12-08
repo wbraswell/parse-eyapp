@@ -389,6 +389,7 @@ t/84graphics.t
 t/AmbiguousCalc.eyp
 t/AmbiguousCalc.WWexpected
 t/AmbiguousCalc.wexpected
+t/tree.dot.expected
 t/Precedencia.eyp
 t/85minusSoption.t
 t/pascalnestedeyapp3.eyp
