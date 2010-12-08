@@ -29,7 +29,11 @@ type :
       %name ENUM
       %rangeORenum? '(' id_list ')'
     | %name RANGE
-      %rangeORenum? expr '..' expr
+      %rangeORenum? range
+;
+
+range:
+       expr '..' expr
 ;
 
 id_list : 
@@ -69,8 +73,12 @@ See
 
 Compile it with:
 
-      eyapp Range.eyp
       eyapp -TC pascalnestedeyapp3.eyp
+
+The compile it again, but using 'range' as start symbol (option -S)
+and option -P to generate a parser that accepts if a prefix of the input matches:
+
+      eyapp -P -S range -m Range pascalnestedeyapp3.eyp 
 
 Run it with this options:
 
