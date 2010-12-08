@@ -403,10 +403,16 @@ if ($opt_w or $opt_W) {
 my($outfile)="$path$base.pm";
 my($package)="$base";
 
+# Use the name of the start symbol for the package, if specified
+$opt_m = $opt_S unless $opt_m;
+
     $opt_m
 and do {
     $package=$opt_m;
-    $package=~/^(?:(?:[^:]|:(?!:))*::)*(.*)$/;
+    $package=~/^(?:
+                  (?:[^:]|:(?!:))*::)*       # The ID up to the last ::
+                  (.*)                       # No colons here
+               $/x;
     $outfile="$1.pm";
 };
 

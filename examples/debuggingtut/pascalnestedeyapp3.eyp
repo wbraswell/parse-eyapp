@@ -9,7 +9,7 @@
     { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
 } 
 
-%explorer rangeORenum { $is_range = $self->YYPreParse('Range'); } 
+%explorer rangeORenum { $is_range = $self->YYPreParse('range'); } 
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
@@ -63,8 +63,6 @@ See
 
 =item * File C<userange.pl>.
 
-=item * File C<Range.eyp>.
-
 =item * File pascalenumeratedvsrange.eyp in examples/debuggintut/
 
 =item * The Bison manual L<http://www.gnu.org/software/bison/manual/html_mono/bison.html>
@@ -78,7 +76,7 @@ Compile it with:
 The compile it again, but using 'range' as start symbol (option -S)
 and option -P to generate a parser that accepts if a prefix of the input matches:
 
-      eyapp -P -S range -m Range pascalnestedeyapp3.eyp 
+      eyapp -P -S range pascalnestedeyapp3.eyp 
 
 Run it with this options:
 

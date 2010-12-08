@@ -1,6 +1,7 @@
   *There is abug in "eyapp" in the call 
                 my ($parser) = Parse::Eyapp->new(@args);
     order of arguments?
+    test the behavior of the function with different arguments
 
   * Generation of Several Parsers
       - Or, perhaps, eyapp -S C etc. will generate a %start directive and warnings will be supressed
