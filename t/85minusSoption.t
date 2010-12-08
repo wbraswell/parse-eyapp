@@ -101,7 +101,7 @@ typeDecl_is_type_ID_type_expr(
   like($r, $expected,'AST for "type r = (x,y,z); 8"');
 
   unlink 't/ppcr.pl';
-  unlink 't/range.pm';
+  unlink 'range.pm';
 }
 
 # testing PPCR and -S option with CplusplusNested2.eyp
@@ -146,7 +146,7 @@ PROG(PROG(EMPTY,EXP(TYPECAST(TERMINAL[int],ID[x]),NUM[2])),DECL(TERMINAL[int],ID
   like($r, $expected,'AST for "int (x) + 2; int (z) = 4;"');
 
   unlink 't/ppcr.pl';
-  unlink 't/decl.pm';
+  unlink 'decl.pm';
 
 }
 
