@@ -1,10 +1,11 @@
   * examples in MANIFEST: obsolete
-  * Use %{ ... %} as syntactic sugar for syntactic code actions
 
   *There is abug in "eyapp" in the call 
                 my ($parser) = Parse::Eyapp->new(@args);
     order of arguments?
     test the behavior of the function with different arguments
+
+  * Use %{ ... %} as syntactic sugar for syntactic code actions
 
   * Generation of Several Parsers
       - Or, perhaps, eyapp -S C etc. will generate a %start directive and warnings will be supressed
