@@ -1,21 +1,15 @@
 # examples/Eyapplanguageref/Lhs.eyp
 # eyapp -C Lhs.eyp
 # ./Lhs.pm -t -c '2+3'
+# ./Lhs.pm -t -c 'a=3'
 
 %right  '='
 %left   '-' '+'
 %left   '*' '/'
 %left   NEG
 
-%lexer {
-      s/^[ \t]+//;
-
-      s/^([0-9]+(?:\.[0-9]+)?)//   and return(NUM => bless { attr => $1}, 'NUM');
-      s/^([A-Za-z][A-Za-z0-9_]*)// and return(VAR => bless {attr => $1}, 'VAR');
-      s/^(.)//s                    and return($1,$1);
-      $_ eq ''                     and return('',undef);
-}
-
+%token NUM = { /\G([0-9]+(?:\.[0-9]+)?)/gc   and return(NUM => bless { attr => $1}, 'NUM'); }
+%token VAR = { /\G([A-Za-z][A-Za-z0-9_]*)/gc and return(VAR => bless {attr => $1}, 'VAR');  }
 
 %defaultaction { 
   my $self = shift;
