@@ -1,10 +1,19 @@
   * examples in MANIFEST: obsolete
+  * Use %{ ... %} as syntactic sugar for syntactic code actions
+
   *There is abug in "eyapp" in the call 
                 my ($parser) = Parse::Eyapp->new(@args);
     order of arguments?
     test the behavior of the function with different arguments
 
   * Generation of Several Parsers
+      - Or, perhaps, eyapp -S C etc. will generate a %start directive and warnings will be supressed
+        make tests
+
+           ~/LEyapp/examples/debuggingtut$ eyapp -S decl -m Decl -P CplusplusNested.eyp
+
+       if no -m the default will be "decl.pm" i.e. the start symbol will name the module
+
       - %PREC conflict does not check that a conflict handler has been previously declared
       - The lexer must be the one of the main parser
       - The accept state must change
@@ -18,7 +27,6 @@
         %start C
         will generate three files File.pm FileB.pm FileC.pm
 
-  * Use %{ ... %} as syntactic sugar for syntactic code actions
   * Tests for png
   * GLR in eyapp
   * eyapp and PPCR in the Wikipedia
