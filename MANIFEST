@@ -493,9 +493,15 @@ t/AmbiguousCalc.WWexpected
 t/AmbiguousCalc.wexpected
 t/tree.dot.expected
 t/Precedencia.eyp
+
 t/85minusSoption.t
 t/pascalnestedeyapp3.eyp
 t/CplusplusNested2.eyp
+
+t/86recycle.t
+t/PostfixWithActions.eyp
+t/rewritepostfixwithactions.pl
+
 #t/97podcoverage.t
 t/98nopm.t
 t/99Cplusplusgrammar.t
