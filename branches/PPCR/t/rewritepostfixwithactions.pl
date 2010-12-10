@@ -42,7 +42,7 @@ my $buildtree = sub {
 {
   no strict 'refs';
 
-  @{$_."::ISA"} = ('Parse::Eyapp::Node') for qw{ASSIGN  PLUS   TIMES DIV  NEG NUM VAR}; 
+  @{$_."::ISA"} = ('Parse::Eyapp::Node') for qw{ASSIGN PLUS TIMES DIV NEG NUM VAR}; 
 }
 
 $pparser->YYSetaction(

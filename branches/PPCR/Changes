@@ -1,4 +1,6 @@
 Revision history for Perl extension Eyapp.
+1.175
+  - Tests for png
 1.174
       - eyapp -S C etc. will generates a %start C directive and warnings will be supressed
        if no -m the default will be "decl.pm" i.e. the start symbol will name the module
