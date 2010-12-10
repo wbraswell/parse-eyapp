@@ -1328,8 +1328,7 @@ sub Run {
   my ($self) = shift;
   my $yydebug = shift;
   
-  unless ($self->input && defined(${$self->input()}) && ${$self->input()} ne '') {
-    croak "Provide some input for parsing" unless defined($_[0]);
+  if (defined($_[0])) {
     if (ref($_[0])) { # if arg is a reference
       $self->input(shift());
     }
@@ -1338,6 +1337,7 @@ sub Run {
       $self->input(\$x);
     }
   }
+  croak "Provide some input for parsing" unless ($self->input && defined(${$self->input()}));
   return $self->YYParse( 
     #yylex => $self->lexer(), 
     #yyerror => $self->error(),

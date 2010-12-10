@@ -29,18 +29,20 @@ $pparser->Run($debug, $x);
 
 # Let su reuse the grammar a third time.
 # Now we use it to generate the AST
+my $buildtree = \&Parse::Eyapp::Driver::YYBuildAST;
 $pparser->YYSetaction(
   'EXP'           => sub { $_[1] }, # bypass 
-  'OPERAND:NUM'   => \&Parse::Eyapp::Driver::YYBuildAST,
-  'OPERAND:VAR'   => \&Parse::Eyapp::Driver::YYBuildAST,
-  'OP:ASSIGN'     => \&Parse::Eyapp::Driver::YYBuildAST,
-  'OP:PLUS'       => \&Parse::Eyapp::Driver::YYBuildAST,
-  'OP:TIMES'      => \&Parse::Eyapp::Driver::YYBuildAST,
-  'OP:DIV'        => \&Parse::Eyapp::Driver::YYBuildAST,
-  'OP:NEG'        => \&Parse::Eyapp::Driver::YYBuildAST,
+  'OPERAND:NUM'   => $buildtree,
+  'OPERAND:VAR'   => $buildtree,
+  'OP:ASSIGN'     => $buildtree,
+  'OP:PLUS'       => $buildtree,
+  'OP:TIMES'      => $buildtree,
+  'OP:DIV'        => $buildtree,
+  'OP:NEG'        => $buildtree,
 );
 
-*TERMINAL::info = sub { $_[0]{attr} };
 my $t = $pparser->Run($debug, $x);
 print $t->str."\n";
 
+package TERMINAL;
+sub info { $_[0]{attr} };
