@@ -1312,8 +1312,8 @@ sub _AddRules {
 }
 
 # This sub is called fro Parse::Eyapp::Grammar::new
-#       0       1      2         3     4          5               6                  7  
-# Args: object, input, filename, tree, nocompact, lexerisdefined, acceptinputprefix, start
+#       0       1      2          3         4     5          6               7                  8
+# Args: object, input, firstline, filename, tree, nocompact, lexerisdefined, acceptinputprefix, start
 #  See the call to thsi sub 'Parse' inside sub new in module Grammar.pm 
 sub Parse {
     my($self)=shift;
@@ -1323,7 +1323,7 @@ sub Parse {
 
     my($parsed)={};
 
-    $input=\$_[0];
+    $input=\$_[0]; # we did a shift for $self, one less
 
     $lexlevel=0;
     my $firstline = $_[1];
