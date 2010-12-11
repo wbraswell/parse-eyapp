@@ -278,7 +278,6 @@ examples/naming/explicit_default_naming_scheme.eyp
 examples/naming/GiveNamesToCalc.eyp
 examples/naming/give_names_to_tokens.eyp
 examples/naming/give_token_names.eyp
-examples/naming/Tail.pm
 
 # Nodes of the AST
 examples/Node/alias_and_yyprefix.pl
@@ -501,6 +500,12 @@ t/CplusplusNested2.eyp
 t/86recycle.t
 t/PostfixWithActions.eyp
 t/rewritepostfixwithactions.pl
+t/NoacInh.eyp
+t/icalcu_and_ipost.pl
+
+t/87namingSchemes.t
+t/default_naming_scheme.eyp
+t/GiveNamesToCalc.eyp
 
 #t/97podcoverage.t
 t/98nopm.t
