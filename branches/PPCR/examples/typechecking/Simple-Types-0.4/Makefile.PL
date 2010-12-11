@@ -4,14 +4,16 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     NAME              => 'Simple::Types',
-    VERSION_FROM      => 'lib/Simple/Types.pm', # finds $VERSION
-    PREREQ_PM         => {Parse::Eyapp => "1.06"}, # e.g., Module::Name => 1.1
+    VERSION_FROM      => 'lib/Simple/Types.eyp', # finds $VERSION
+    PREREQ_PM         => {Parse::Eyapp => "0"}, # e.g., Module::Name => 1.1
 );
 
 sub MY::postamble {
 return <<'EOT';
 release: 
-	cd lib/Simple; eyapp -m Simple::Types Types.eyp; perl -c Types.pm; treereg -m Simple::Types Trans
+	eyapp -m Simple::Types -o lib/Simple/Types.pm lib/Simple/Types.eyp
+	treereg -m Simple::Types lib/Simple/Trans.trg
+	perl -Ilib -c lib/Simple/Types.pm; 
 
 pdf:
 	atopdf lib/Simple/Types.eyp lib/Simple/Trans.trg script/usetypes.pl -o /tmp/SimpleTypes.pdf
