@@ -16,7 +16,7 @@ script/bugmatch.txt
 script/bugzeben2.c
 script/bugzeben.c
 script/outbreak.c
-script/prueba02.c
+t/prueba02.c
 script/prueba03.c
 script/prueba04.c
 script/prueba05.c

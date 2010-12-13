@@ -445,8 +445,8 @@ t/64standalonegiftandeyapp.t
 t/65yydebugandpod.t
 t/66yydebugstandaloneandpod.t
 t/67outputfile.t
-t/68cleangrammar.t
-t/69cleanwithvgrammar.t
+#t/68cleangrammar.t
+#t/69cleanwithvgrammar.t
 t/70dos2unix.t
 t/71dynamicconflictresolution.t
 t/72mixedstandaloneanddynamicload.t
