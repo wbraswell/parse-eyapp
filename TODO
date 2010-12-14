@@ -1,7 +1,8 @@
   * Provide a higher level API for conflicts that can be solved using nested parsing:
-      - %conflict startsymbol
-         Los tokens se pueden deducir, las reglas estan anotadas con el PREC,
-         incluso creo que se puede deducir cual de las reglas es en términos del valor retornado
+      - %conflict conflictname somesymbol
+         Los tokens en conflicto se pueden deducir, las reglas estan ya anotadas con el PREC,
+         incluso creo que se puede deducir cual de las reglas es la que hay que aplicar 
+         en términos del valor retornado
          por el parsing anidado. Habría que seguir marcando el punto de exploracion:
 
         %conflict rangeORenum range
