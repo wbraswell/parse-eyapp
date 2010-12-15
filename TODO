@@ -3,6 +3,7 @@
       * conseguir articulo de Ganapanathi "semantic predicates in"
       * estudiar e introducir comparaciones
       * insistir en que esta implementado y "verificado"
+
   * Provide a higher level API for conflicts that can be solved using nested parsing:
       - %conflict conflictname somesymbol
          Los tokens en conflicto se pueden deducir, las reglas estan ya anotadas con el PREC,
