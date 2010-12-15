@@ -1,18 +1,20 @@
 #!/usr/bin/env perl
+# Compile first pascalnestedeyapp3.eyp with options:
+#   eyapp -TP -S range pascalnestedeyapp3.eyp 
 use strict;
 use warnings;
-use Range;
+use range;
 
-my $parser = Range->new( yyerror => sub {});
+my $parser = range->new( yyerror => sub {});
 $parser->YYPrompt(<<'EOM');
 Try one of these inputs:
 
-                (x) .. (y);
-                (x) ..  y ;
-                (x+2)*3 ..  y/2 ;
-                (x, y, z);
-                (x);
-                (x, y, z) .. (u+v);
+                (x) .. (y)
+                (x) ..  y 
+                (x+2)*3 ..  y/2 
+                (x, y, z)
+                (x)
+                (x, y, z) .. (u+v)
 
 EOM
 $parser->slurp_file('', "\n");

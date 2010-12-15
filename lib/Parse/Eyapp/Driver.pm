@@ -21,7 +21,7 @@ our ( $VERSION, $COMPATIBLE, $FILENAME );
 
 
 # $VERSION is also in Parse/Eyapp.pm
-$VERSION = "1.173";
+$VERSION = "1.174";
 $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
@@ -296,27 +296,12 @@ sub YYNames {
 sub YYIndex {
   my $self = shift;
 
-  # Already computed
-  if ($self->{INDICES} && reftype($self->{INDICES}) eq 'HASH') {
-    if (@_) {
-      my @indices = map { $self->{INDICES}{$_} } @_;
-      return wantarray? @indices : $indices[0];
-    }
-    return wantarray? %{$self->{INDICES}} : $self->{INDICES};
-  }
-
-  my @names = $self->YYNames;
-  my %index;
-  my $i = 0;
-  $index{$_} = $i++ for (@names);
-
-  $self->{INDICES} = \%index;
-  
   if (@_) {
-    my @indices = map { $index{$_} } @_;
+    my @indices = map { $self->{LABELS}{$_} } @_;
     return wantarray? @indices : $indices[0];
   }
-  return wantarray? %index : \%index;
+  return wantarray? %{$self->{LABELS}} : $self->{LABELS};
+
 }
 
 sub YYTopState {
@@ -499,7 +484,8 @@ sub YYSetReduce {
   #$self->{CONFLICTHANDLERS}{conflictName}{states}
   # is a hash
   #        statenumber => [ tokens, '\'-\'' ]
-  my @conflictStates = @{$self->{CONFLICTHANDLERS}{$conflictName}{states}};
+  my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
+  my @conflictStates = $cS ? @$cS : ();
 
   # Perform the action to change the LALR tables only if the next state 
   # is listed as a conflictstate
@@ -1342,8 +1328,7 @@ sub Run {
   my ($self) = shift;
   my $yydebug = shift;
   
-  unless ($self->input && defined(${$self->input()}) && ${$self->input()} ne '') {
-    croak "Provide some input for parsing" unless defined($_[0]);
+  if (defined($_[0])) {
     if (ref($_[0])) { # if arg is a reference
       $self->input(shift());
     }
@@ -1352,6 +1337,7 @@ sub Run {
       $self->input(\$x);
     }
   }
+  croak "Provide some input for parsing" unless ($self->input && defined(${$self->input()}));
   return $self->YYParse( 
     #yylex => $self->lexer(), 
     #yyerror => $self->error(),

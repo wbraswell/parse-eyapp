@@ -37,6 +37,7 @@ sub new {
                              $self->Option('nocompact'),  # 5 %nocompact
                              $self->Option('lexerisdefined'),    # 6 lexer is defined
                              $self->Option('prefix'),            # 7 accept prefix
+                             $self->Option('start'),            # 8 specify start symbol
                              #$self->Option('prefixname'),  # yyprefix
                              #$self->Option('buildingtree')  # If building AST
                             );
@@ -332,6 +333,9 @@ sub Accessors {
 ###########################
 sub Warnings {
     my($self)=shift;
+
+    return '' unless $self->{OPTIONS}{star};
+
     my($text) = '';
     my($grammar)=$$self{GRAMMAR};
 

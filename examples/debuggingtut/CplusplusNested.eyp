@@ -21,7 +21,7 @@ my $ISDEC;
 
 %explorer decORexp {
    #print "***********************\n";
-   $ISDEC = $self->YYPreParse('Decl', 
+   $ISDEC = $self->YYPreParse('decl', 
       #0xF # debug
    ); 
 }
@@ -79,8 +79,11 @@ declarator:
 
 Compile it with
  
-   eyapp -P Decl.eyp
    eyapp -C CplusplusNested
+
+the compile it again, using 'decl' as start symbol:
+
+   eyapp -S decl -P CplusplusNested.eyp
 
 Run it with:
 
@@ -129,8 +132,6 @@ This Eyapp parser solves the problem by dynamically changing the parser.
 =head1 SEE ALSO
 
 =over 2
-
-=item * The file C<Decl.eyp> in C<examples/debuggintut>
 
 =item * The file C<Cplusplus2.eyp> in C<examples/debuggintut>
 

@@ -1,242 +1,284 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 use strict;
-use warnings;
-use Test::More;
-use Simple::Types;
-use Data::Dumper;
+my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6);
 
-our $test_exception_installed;
-BEGIN {
-  $test_exception_installed = 1;
-  eval { require Test::Exception };
-  $test_exception_installed = 0 if $@;
+sub qmw {
+  my $expected1 = shift;
+
+  $expected1 =~ s/\s+//g;
+  $expected1 = quotemeta($expected1);
+  $expected1 = qr{$expected1};
+  
+  return $expected1;
 }
 
-my @tests = (
-   << "EOICORRECT",
-f() {
-  int a,b[1][2],c[1][2][3];
-  char d[10];
-  b[0][1] = a;
+BEGIN { $nt = 2; $nt2 = 3; $nt3 = 2;
 }
-EOICORRECT
-# Duplicated declaration of a at line 2
-   << "EOI_TWICE",
-f() {
-  int a,b[1][2],a[1][2][3];
-  char d[10];
-  b[0][1] = a;
-}
-EOI_TWICE
-# Duplicated declaration of a at line 3
-    << "EOI_TWICE_DIF_DEC",
-f() {
-  int a,b[1][2],c[1][2][3];
-  char d[10], b[9];
-  b[0] = a;
-}
-EOI_TWICE_DIF_DEC
+use Test::More tests=> $nt + $nt2+$nt3;
 
-# Correct program. Global and local decs
-    << "EOI_GLOBAL_DEC",
-int a,b[1][2],c[1][2][3]; 
-char d,e[1][2]; 
-f() {
-  int a,b[1][2],c[1][2][3];
-  char d[10], e[9];
+# test -S option and PPCR methodology with Pascal range versus enumerated conflict
+SKIP: {
+  skip "t/prueba01.c not found", $nt unless ($ENV{DEVELOPER} 
+                                                        && -r "t/prueba01.c" 
+                                                        && -x "./script/usetypes.pl");
 
-  b[0][1] = a;
-}
-EOI_GLOBAL_DEC
-    << "EOI_GLOBAL_DUP",
-/* Error: duplicated global dec */
-int a,b[1][2],c[1][2][3]; 
-char d,a[1][2]; 
-f() {
-  int a,b[1][2],c[1][2][3];
-  char d[10], e[9];
+  my $r = qx{perl -I./lib/ script/usetypes.pl t/prueba01.c 2>&1};
 
-  b[0][1] = a;
-}
-EOI_GLOBAL_DUP
-# Correct program. Parameters
-    << "EOI_GLOBAL_PAR",
-int a,b[1][2],c[1][2][3]; 
-char d,e[1][2]; 
-f(int a, char b[10]) {
-  int c[1][2][3];
-  char d[10], e[9];
+  ok(!$@,'t/prueba01.c executed as modulino');
 
-  b[0][1] = a;
-}
-EOI_GLOBAL_PAR
-# Correct program. Only global
-    << "EOI_GLOBAL",
-int a,b[1][2],c[1][2][3]; 
-EOI_GLOBAL
-# Correct program. Return char and Parameters
-    << "EOI_RETURN",
-int a,b[1][2],c[1][2][3]; 
-char d,e[1][2]; 
-char f(int a, char b[10]) {
-  int c[1][2];
-  char d[10], e[9];
+  my $expected = q{
+Type Error at line 8:  Variable 'e' declared with less than 2 dimensions
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
 
-  return b[0];
-}
-EOI_RETURN
-# Correct program. No parameters
-    << "EOI_RETURN_NOPAR",
-char d,e[1][2]; 
-char f() {
-  int c[2];
-  char d;
+  $r =~ s/\s+//g;
 
-  return d;
-}
-EOI_RETURN_NOPAR
-  << "EOIPARAMDECLTWICE",
-int a, b[1][2];
-char d, e[1][2]; 
-char f(int a, char b[10]) {
-  int c[1][2];
-  char b[10], e[9];
 
-  return b[0];
+  like($r, $expected,'checking output for prueba01.c');
+
+  ############################
 }
-EOIPARAMDECLTWICE
-# Correct program. No parameters
-    << "EOI_NESTED_BLOCKS",
-char d0; 
-char f() {
-  char d1;
-  {
-    char d2;
+
+SKIP: {
+  skip "t/prueba02.c not found", $nt unless ($ENV{DEVELOPER} 
+                                                        && -r "t/prueba02.c" 
+                                                        && -x "./script/usetypes.pl");
+
+
+  my $r = qx{perl -I./lib/ script/usetypes.pl t/prueba02.c 1 2>&1};
+
+  ok(!$@,'t/prueba02.c executed as modulino');
+
+  my $expected1 = qmw q{
+ 1 int a,b,e[10];
+ 2 
+ 3 g() {}
+ 4 
+ 5 int f(char c) {
+ 6 char d;
+ 7  c = 'X';
+ 8  e[d][b] = 'A'+c;
+ 9  { 
+10    int d;
+11    d = a + b;
+12  }
+13  c = d * 2;
+14  return c;
+15 }
+16 
+
+};
+  my $expected2 = qmw q{
+Type Error at line 8:  Variable 'e' declared with less than 2 dimensions
+};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected1,'checking output for prueba02.c');
+
+  like($r, $expected2,'checking err for prueba02.c');
+
+  ############################
+}
+
+SKIP: {
+  skip "t/prueba03.c not found", $nt unless ($ENV{DEVELOPER} 
+                                                        && -r "t/prueba03.c" 
+                                                        && -x "./script/usetypes.pl");
+
+
+  my $r = qx{perl -I./lib/ script/usetypes.pl t/prueba03.c 1 2>&1};
+
+  ok(!$@,'t/prueba03.c executed as modulino');
+
+  my $expected1 = qmw q{
+ 1 int a,b,e[10];
+ 2 
+ 3 g() {}
+ 4 
+ 5 int f(char c) {
+ 6 char d;
+ 7  c = 'X';
+ 8  e[d] = 'A'+c;
+ 9  { 
+10    int d;
+11    d = a + b;
+12  }
+13  a = b * 2;
+14  return c;
+15 }
+16 
+
+PROGRAM^{0}(
+  FUNCTION[g]^{1},
+  FUNCTION[f]^{2}(
+    ASSIGNCHAR(
+      VAR(
+        TERMINAL[c:7]
+      ),
+      CHARCONSTANT(
+        TERMINAL['X':7]
+      )
+    ),
+    ASSIGNINT(
+      VARARRAY(
+        TERMINAL[e:8],
+        INDEXSPEC(
+          CHAR2INT(
+            VAR(
+              TERMINAL[d:8]
+            )
+          )
+        )
+      ),
+      PLUS(
+        CHAR2INT(
+          CHARCONSTANT(
+            TERMINAL['A':8]
+          )
+        ),
+        CHAR2INT(
+          VAR(
+            TERMINAL[c:8]
+          )
+        )
+      )
+    ),
+    BLOCK[9:3:f]^{3}(
+      ASSIGNINT(
+        VAR(
+          TERMINAL[d:11]
+        ),
+        PLUS(
+          VAR(
+            TERMINAL[a:11]
+          ),
+          VAR(
+            TERMINAL[b:11]
+          )
+        )
+      )
+    ),
+    ASSIGNINT(
+      VAR(
+        TERMINAL[a:13]
+      ),
+      TIMES(
+        VAR(
+          TERMINAL[b:13]
+        ),
+        INUM(
+          TERMINAL[2:13]
+        )
+      )
+    ),
+    RETURNINT(
+      CHAR2INT(
+        VAR(
+          TERMINAL[c:14]
+        )
+      )
+    )
+  )
+)
+---------------------------
+0)
+Types:
+$VAR1 = {
+  'A_10(INT)' => bless( {
+    'children' => [
+      bless( {
+        'children' => []
+      }, 'INT' )
+    ]
+  }, 'A_10' ),
+  'F(X_1(CHAR),INT)' => bless( {
+    'children' => [
+      bless( {
+        'children' => [
+          bless( {
+            'children' => []
+          }, 'CHAR' )
+        ]
+      }, 'X_1' ),
+      $VAR1->{'A_10(INT)'}{'children'}[0]
+    ]
+  }, 'F' ),
+  'CHAR' => $VAR1->{'F(X_1(CHAR),INT)'}{'children'}[0]{'children'}[0],
+  'VOID' => bless( {
+    'children' => []
+  }, 'VOID' ),
+  'INT' => $VAR1->{'A_10(INT)'}{'children'}[0],
+  'F(X_0(),INT)' => bless( {
+    'children' => [
+      bless( {
+        'children' => []
+      }, 'X_0' ),
+      $VAR1->{'A_10(INT)'}{'children'}[0]
+    ]
+  }, 'F' )
+};
+Symbol Table:
+$VAR1 = {
+  'e' => {
+    'type' => 'A_10(INT)',
+    'line' => 1
+  },
+  'a' => {
+    'type' => 'INT',
+    'line' => 1
+  },
+  'b' => {
+    'type' => 'INT',
+    'line' => 1
+  },
+  'g' => {
+    'type' => 'F(X_0(),INT)',
+    'line' => 3
+  },
+  'f' => {
+    'type' => 'F(X_1(CHAR),INT)',
+    'line' => 5
   }
-  {
-    char d2;
-    {
-      char d3;
+};
 
-      d3;
-    }
+---------------------------
+1)
+$VAR1 = {};
+
+---------------------------
+2)
+$VAR1 = {
+  'c' => {
+    'type' => 'CHAR',
+    'param' => 1,
+    'line' => 5
+  },
+  'd' => {
+    'type' => 'CHAR',
+    'line' => 6
   }
-  {
-    d0;
+};
+
+---------------------------
+3)
+$VAR1 = {
+  'd' => {
+    'type' => 'INT',
+    'line' => 10
   }
+};
 
-  return d1;
-}
-EOI_NESTED_BLOCKS
-# Correct program. No parameters
-    << "EOI_NESTED_BLOCKS2",
-char d0; 
-char f() {
-  {
-    {}
-  }
-  {
-    { }
-  }
-  {
-    {{}}
-  }
-}
-EOI_NESTED_BLOCKS2
-    << "EOI_NESTED_BLOCKS3",
-char d0; 
-char f() {
-  {
-    {}
-  }
-  {
-    { }
-  }
-  {
-    {{}}
-  }
-}
-g() {
- {}
- {
-   {}
- }
- {}
-}
-EOI_NESTED_BLOCKS3
-     <<"EOIUSES_1",
-int a,b;
+};
 
-int f(char c) {
- a[2] = 4;
- b[1][3] = a + b;
- c = c[5] * 2;
- return g(c);
-}
-EOIUSES_1
-     <<"EOIUSES_2",
-int a,b;
+  $r =~ s/\s+//g;
 
-int f(char c) {
- a[2] = 4;
- { 
-   int d;
-   d = a + b;
- }
- c = d * 2;
- return g(c);
-}
-EOIUSES_2
-     <<"EOICT1",
-int a,b,e[20];
 
-int f(char c) {
-char d;
- c = 'X';
- a = 'A'+c;
- { 
-   int d;
-   d = a + b;
- }
- c = d * 2;
- return c;
-}
-EOICT1
-     <<"EOITRIVIAL1",
-int f(int a, int b) {
- return a+b;
-}
-EOITRIVIAL1
-     <<"EOICHECKTYPE2",
-int a,b,e[10];
+  like($r, $expected1,'checking output for prueba02.c');
 
-g() {}
-
-int f(char c) {
-char d;
- c = 'X';
- e[d][b] = 'A'+c;
- { 
-   int d;
-   d = a + g;
- }
- c = d * 2;
- return c;
-}
-EOICHECKTYPE2
-); # end of @tests
-
-my $c= Simple::Types->new();
-
-for (@tests) {
-  our $t;
-  print "\n*****************\n$_";
-  eval {
-    $t = $c->compile($_);
-  };
-  print "$@\n" if $@;
-  $Data::Dumper::Purity = 1;
-  $Data::Dumper::Indent = 1;
-  #print Dumper($t);
+  ############################
 }
 

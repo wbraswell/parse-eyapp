@@ -2,6 +2,8 @@
 %left '-' '+' 
 %left '*' '/' 
 %left NEG 
+%token NUM =
+%token VAR =
 
 %%
 
@@ -10,7 +12,8 @@ input:
 ;
 line:
       '\n'
-    | exp '\n'  
+    | exp '\n'
+    | exp ''  
 ;
 exp:
       NUM

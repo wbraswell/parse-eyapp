@@ -1,15 +1,58 @@
-  * Merge PPCR branch with trunk
+  * Artículos:
+      * Introducir modificaciones de los referees en los articulos de revista
+      * conseguir articulo de Ganapanathi "semantic predicates in"
+      * estudiar e introducir comparaciones
+      * insistir en que esta implementado y "verificado"
+
+  * Provide a higher level API for conflicts that can be solved using nested parsing:
+      - %conflict conflictname somesymbol
+         Los tokens en conflicto se pueden deducir, las reglas estan ya anotadas con el PREC,
+         incluso creo que se puede deducir cual de las reglas es la que hay que aplicar 
+         en términos del valor retornado
+         por el parsing anidado. Habría que seguir marcando el punto de exploracion:
+
+        %conflict rangeORenum range
+
+        %%
+
+        type_decl : 'type' ID '=' type ';' 
+        ;
+
+        type : 
+              %name ENUM
+              %rangeORenum? '(' id_list ')' 
+            | %name RANGE
+              %rangeORenum? range
+        ;
+
+        range:
+               expr '..' expr
+        ;
+
+  * Otra API de mas alto nivel sería el caso regexp
+          %conflict conflictname /regexp/ ruleName
+    esta se ejecuta en el punto del conflicto
+
+  * clean tests deleted. Do it gain?
+
+  * examples in MANIFEST: obsolete
+
+  * Use %{ ... %} as syntactic sugar for syntactic code actions
+
+  * Generation of Several Parsers
+      - The lexer must be the one of the main parser
+
+  * The accept state must change
+      A$ -> A
+      A$ -> A.b where b is in the follow of A, means acceptation
+      Where are the follows?. They have been computed somewhere
+
+  * %PREC conflict does not check that a conflict handler has been previously declared
+
+
   * GLR in eyapp
+
   * eyapp and PPCR in the Wikipedia
-
-  * $t->str method to produce .dot descriptions of the AST tree
-    -- parametrize call to dot program using file ~/.eyapprc
-
-    -- name of the file: the name of the inputfile. The extension
-       decides the type
-
-    -- write help --dot 
-    -- png for .output also: options -w and -W
 
   * Update documentation
 
@@ -21,33 +64,10 @@
       # I think I shall use an option in eyapp?
       # make a test
 
-  * Include %from directive. See examples/debuggingtut/Range2.eyp
-
-        %from pascalnestedeyapp2 import expr
-        # alternative syntax to include also semantic actions
-        #%from pascalnestedeyapp2 use expr
-        #%from pascalnestedeyapp2 use expr, TAIL 
-
-        %%
-        range: expr '..' expr ';'
-        ;
-
-        %%
-
   * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 
   * Bug/limitation: When using -m and -o the output file still uses the original grammar name.
     It seems more convenient to rename it to the output file suffixed with .output
-
-  * Generation of Several Parsers
-      - %PREC conflict does not check that a conflict handler has been previously declared
-      - The lexer must be the one of the main parser
-      - The accept state must change
-          A$ -> A
-          A$ -> A.b where b is in the follow of A, means acceptation
-          Where are the follows?. They have been computed somewhere
-      - Avoid warnings: rule not used, rule not used, etc. How?
-        Shall I use a subgrammar that is the closure of the syntactic variable
 
   * Lexical Analyzer generation:
       * incremental lexer also influences the way the directive
@@ -108,7 +128,7 @@
      - Warning Grammar.pm 
          sub Parse::Eyapp::Grammar::conflictHandlers  rewrite! or use Data::Dumper forever?
 
-  * %package directive: equvalent to eyapp -m option 
+  * %package directive: equivalent to eyapp -m option 
 
   * -%modulino directive 
       %modulino perlinterpreter prompt

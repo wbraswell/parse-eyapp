@@ -1,41 +1,41 @@
 %{
-our $VERSION = '0.01';
+my $INT    = '(int)\b';
+my $ID     = '([a-zA-Z_][a-zA-Z_0-9]*)';
+my $NUM    = '(\d+)';
+
+my $ISDEC;
+
 %}
 
-%strict
-
-%token INT = /(int\b)/
-%token ID  = /([a-zA-Z_]\w*)/
-%token NUM = /(\d+)/
+%token NUM = /$NUM/
+%token INT = /$INT/
+%token ID  = /$ID/
 
 %right '='
 %left '+'
 
+%conflict decORexp {
+  if ($ISDEC) { $self->YYSetReduce(')', 'ID:DEC' ); }
+  else { $self->YYSetReduce(')', 'ID:EXP' ); }
+}
+
+%explorer decORexp {
+   #print "***********************\n";
+   $ISDEC = $self->YYPreParse('decl', 
+      #0xF # debug
+   ); 
+}
+
+%expect-rr 1  # expect 1 reduce-reduce conflict
+
 %tree bypass
-
-%expect 0 1  # 0 shift-reduce conflicts, 1 reduce-reduce conflict
-
-%conflict decORexp 
-      {
-        if (m{\G
-                (?= 
-                    [)\s]* # ) ) ... )
-                    [;=]   
-                )
-             }gxc) {
-          $self->YYSetReduce(')', 'ID:DEC' );
-        }
-        else {
-          $self->YYSetReduce(')', 'ID:EXP' ); 
-        }
-      }
 
 %%
 prog:
     %name EMPTY
     /* empty */
   | %name PROG
-    prog stmt
+    prog %decORexp? stmt
 ;
 
 stmt: 
@@ -73,24 +73,37 @@ declarator:
 
 %%
 
-
 ####################################################
 
 =head1 SYNOPSIS
 
 Compile it with
  
-   eyapp -C Cplusplus1
+   eyapp -C CplusplusNested2
+
+the compile it again, using 'decl' as start symbol:
+
+   eyapp -S decl -P CplusplusNested2.eyp
 
 Run it with:
 
-   ./Cplusplus1.pm -t -i -c ' int (x) + 2; int (x) = 2;'
+   ./CplusplusNested2.pm -t -nos -i
 
-the result will be the generated abstract sytax tree
+or 
+
+   ./CplusplusNested2.pm -t -i -c 'int (x) + 2; int (z) = 4;'
+
+try with inputs:
+
+     int (x) = 2;
+     int (x) + 2;
+
+the output will be a description of the generated abstract syntax tree
 
 =head1  C++ Ambiguities
 
-This grammar models a problematic part of the C++ grammar—the ambiguity between certain
+This grammar models a problematic part of the C++ grammar
+the ambiguity between certain
 declarations and statements. For example,
 
      int (x) = y+z;
@@ -110,7 +123,8 @@ Eyapp detects this as a reduce/reduce conflict:
 	')'	[reduce using rule 11 (declarator)]
 	$default	reduce using rule 5 (expr)
 
-The C++ rule is: take it as a declaration if it looks as a declaration,
+The C++ disambiguation rule is: 
+take it as a declaration if it looks as a declaration,
 otherwise is an expression.
 
 This Eyapp parser solves the problem by dynamically changing the parser.
