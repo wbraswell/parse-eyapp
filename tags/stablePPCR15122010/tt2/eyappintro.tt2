@@ -1,0 +1,15 @@
+=head1 NAME
+ 
+Parse::Eyapp::eyappintro - An introduction to Parse::Eyapp
+ 
+=head1 SYNOPSIS
+ 
+[% PROCESS synopsis %]
+
+[% PROCESS introduction %]
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]

@@ -1,0 +1,5 @@
+clean:
+	rm -f Cplusplus.pm Cplusplus2.pm CplusplusAux.pm CplusplusLexSupport.pm Cpp_news.pm Debug.pm Debug1.pm Debug2.pm DebugDynamicResolution.pm DebugLookForward.pm DynamicallyChangingTheParser.pm DynamicallyChangingTheParser2.pm DynamicallyChangingTheParser3.pm PL_I_conflict.pm Precedencia.pm confusingsolveddynamic.pm nolalrrrconflict.pm nolalrrrconflictsolved.pm pascalenumeratedvsrange.pm pascalenumeratedvsrangesolvedviadyn.pm pascalenumeratedvsrangesolvedvialex.pm rrconflictnamefirst.pm rrconflictnamefirst_fix1.pm typicalrr.pm typicalrr2.pm typicalrr_fixed.pm typicalrrwithprec.pm 
+	rm -f Cplusplus2.output CplusplusAux.output Cpp_news.output Debug.output DebugDynamicResolution.output DynamicallyChangingTheParser.output confusingsolveddynamic.output nolalrrrconflict.output nolalrrrconflictsolved.output pascalenumeratedvsrange.output pascalenumeratedvsrangesolvedviadyn.output rrconflictnamefirst.output typicalrr.output typicalrr2.output typicalrr_fixed.output
+support:
+	ls -l RRTail.pm Tail.pm

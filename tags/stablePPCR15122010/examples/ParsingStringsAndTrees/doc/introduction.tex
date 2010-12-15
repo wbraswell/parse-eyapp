@@ -1,0 +1,149 @@
+Almost any Perl programmer knows what {\it Parsing} is about.
+One of the strengths of Perl is its excellence for text analysis. 
+Additionally to its embedded regular expression capacities, modules 
+like \cpan{Parse::RecDescent} \cite{conwayrd} and 
+\cpan{Parse::Yapp} \cite{desarmenien} make easier the task of text 
+understanding and text transformation.
+%This is in clear contrast with the absence of Perl 5 
+%generic tools\footnote{There are however very good specific ones,
+%for example, for \code{XML} and \code{HTML} support and 
+%symbolic mathematics
+% \cite{muller}
+%}
+%giving support for the subsequent stages
+%of text processing.
+%The exception being the module \code{Language::AttributeGrammar}
+%\cite{luke}. Parrot does well in this 
+%chapter, having the Parrot Grammar Engine (PGE) \cite{michaud}
+%and the Tree Grammar Engine (TGE)
+%\cite{randaltge}.
+
+\cpan{Parse::Eyapp} (Extended yapp) is a collection of modules
+that extends Francois Desarmenien \cpan{Parse::Yapp} \code{1.05}:
+Any \code{yapp} program runs without changes with \cpan{eyapp}.
+Additionally \cpan{Parse::Eyapp} provides new 
+functionalities like named attributes,
+EBNF-like expressions, modifiable default actions,
+abstract syntax tree building and translation schemes. 
+It also provides a language for tree transformations.
+
+This article introduces the basics of 
+translator construction with \cpan{Parse::Eyapp} through an
+example that compiles infix expressions into \cpan{Parrot} 
+Intermediate Representation (PIR)\cite{randal04}.
+\cpan{Parrot} is a virtual machine (VM), similar to the Java VM and the
+.NET VM. However, unlike these two which are designed for
+statically-typed languages like Java or C\#, \cpan{Parrot} is designed for
+use with dynamically typed languages such as Perl, Python, Ruby,
+or PHP.
+
+The input to the program will be a (semicolon separated)
+list of infix expressions, like in this example 
+located in file \verb|input1.inf|:
+\begin{verbatim}
+$ cat input1.inf 
+b = 5;
+a = b+2;
+a = 2*(a+b)*(2-4/2);
+print a;
+d = (a = a+1)*4-b;
+c = a*b+d;
+print c;
+print d
+\end{verbatim}
+
+and the output is the
+PIR resulting from the translation: 
+\begin{verbatim}
+ 1  .sub 'main' :main
+ 2     .local num a, b, c, d
+ 3     b = 5
+ 4     a = b + 2
+ 5     a = 0 # expression at line 3 
+ 6     print "a = "     # above was
+ 7     print a    # reduced to zero
+ 8     print "\n" # at compile time
+ 9     a = a + 1
+10     $N5 = a * 4
+11     d = $N5 - b
+12     $N7 = a * b
+13     c = $N7 + d
+14     print "c = "
+15     print c
+16     print "\n"
+17     print "d = "
+18     print d
+19     print "\n"
+20  .end
+\end{verbatim}
+
+You can download the code for this example from
+\htmladdnormallink
+{http://nereida.deioc.ull.es/~pl/eyapsimple/source.tgz}
+{http://nereida.deioc.ull.es/~pl/eyapsimple/source.tgz}.
+To use it, unpack the tarball:
+\begin{verbatim}
+tar xvzf source.tgz
+\end{verbatim}
+Change to the directory:
+\begin{verbatim}
+cd src
+\end{verbatim}
+and compile the grammar with \cpan{eyapp}:
+\begin{verbatim}
+eyapp Infix.eyp
+\end{verbatim}
+Compile also the set of tree transformations using \cpan{treereg}:
+\begin{verbatim}
+treereg -m main I2PIR.trg
+\end{verbatim}
+After these two compilations we have two new modules:
+\begin{verbatim}
+nereida:/tmp/src> ls -ltr |tail -2
+-rw-rw----  1 pl users   Infix.pm
+-rw-rw----  1 pl users   I2PIR.pm
+\end{verbatim}
+Module \verb|Infix.pm| contains the parser for the grammar described in \prog{Infix.eyp}.
+Module \verb|I2PIR.pm| contains the collection of tree transformations described
+in \prog{I2PIR.trg}. Now we can run the script \verb|infix2pir.pl| which makes use of these
+two modules:
+\begin{verbatim}
+$ ./infix2pir.pl input1.inf > input1.pir
+\end{verbatim}
+We can now make use of the \verb|parrot| interpreter to execute the code:
+\begin{verbatim}
+$ /Users/casianorodriguezleon/src/parrot/parrot-1.9.0/parrot input1.pir 
+a = 0
+c = 4
+d = -1
+\end{verbatim}
+
+\begin{rawhtml}
+<i>
+A note about the image links you can find  at the top and bottom of each page:
+<ul>
+<li>
+<a href = "http://nereida.deioc.ull.es/~pl/eyapsimple/source.tgz"><img width=23 alt="SRC" src="gzip.png"></a>  is a link to the file .tar.gz 
+containing the source files used as example in this article</li>
+<li>
+<a href = "xdviicon.gif"><img width=23 alt="DVI" src="xdviicon.gif"></a>  is a link to the .dvi version of this article. 
+</li>
+<li>
+<a href = "http://nereida.deioc.ull.es/~pl/eyapsimple/eyapsimple.ps"><img width=24 alt="eyapsimple.ps" src="gv.jpeg"></a> is
+a link to the postscript version of this article</li>
+<li>
+<a href = "http://nereida.deioc.ull.es/~pl/eyapsimple/eyapsimple.pdf"><img width=24 alt="eyapsimple.pdf" src="pdf_logo.jpg"></a> is a link to the .pdf version of this article</li>
+<li>
+<a href = "http://search.cpan.org/dist/Parse-Eyapp/"><img width=60 alt="Parse-Eyapp" src="lupa.gif"></a> is a link to the Parse::Eyapp 
+pages in CPAN</li>
+<li>
+<a href = "http://code.google.com/p/parse-eyapp/"><img width=30 alt="google-code" src="google-code.png"></a> is a link to the Parse::Eyapp 
+pages source repository at <a href="http://code.google.com/intl/en/projecthosting/">Google Code project hosting service</a></li>
+<li>
+<a href = "../perlexamples/"><img width=30 alt="apuntes de PL" src="dragon_tree4.jpg"></a> is a link to the "Procesadores de Lenguajes"
+course at Universidad de La Laguna (Spanish)</li>
+<li>
+<a href = "http://www.parrot.org/"><img width=75 alt="Parrot" src="parrotify_logo.png"></a> is a link to the Parrot project</li>
+</ul>
+</i>
+\end{rawhtml}

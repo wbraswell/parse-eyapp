@@ -1,0 +1,152 @@
+=head1 NAME
+ 
+Parse::Eyapp::YATW - Tree transformation objects
+ 
+=head1 SYNOPSIS
+
+  #!/usr/bin/perl -w
+  use strict;
+  use Rule6;
+  use Parse::Eyapp::YATW;
+
+  my %BinaryOperation = (PLUS=>'+', MINUS => '-', TIMES=>'*', DIV => '/');
+
+  sub set_terminfo {
+    no warnings;
+    *TERMINAL::info = sub { $_[0]{attr} };
+  }
+  sub is_foldable {
+    my ($op, $left, $right);
+    return 0 unless defined($op = $BinaryOperation{ref($_[0])});
+    return 0 unless ($left = $_[0]->child(0), $left->isa('NUM'));
+    return 0 unless ($right = $_[0]->child(1), $right->isa('NUM'));
+
+    my $leftnum = $left->child(0)->{attr};
+    my $rightnum = $right->child(0)->{attr};
+    $left->child(0)->{attr} = eval "$leftnum $op $rightnum";
+    $_[0] = $left;
+  }
+
+  my $parser = new Rule6();
+  my $input = "2*3";
+  my $t = $parser->Run(\$input);
+  &set_terminfo;
+  print "\n***** Before ******\n";
+  print $t->str;
+  my $p = Parse::Eyapp::YATW->new(PATTERN => \&is_foldable);
+  $p->s($t);
+  print "\n***** After ******\n";
+  print $t->str."\n";
+
+
+=head1 INTRODUCTION
+
+C<Parse::Eyapp:YATW> objects implement tree transformations.
+They have two attributes C<PATTERN> and C<NAME>.
+C<PATTERN> is a reference to the code implementing the transformation.
+C<NAME> is the name of the transformation.
+
+Though usually you build a transformation by means of Treeregexp programs
+you can directly invoke the method C<new> to build a tree transformation.
+A transformation object can be built from a function 
+that conforms to the YATW tree transformation call protocol
+
+For a subroutine  C<pattern_sub> to work as a YATW tree transformation
+- as subroutine C<is_foldable> in the L<SYNOPSIS> section - has to conform to the following
+call description:
+
+  pattern_sub(
+      $_[0],  # Node being visited
+      $_[1],  # Father of this node
+      $index, # Index of this node in @Father->children
+      $self,  # The YATW pattern object
+  );
+
+The C<pattern_sub> must return TRUE if matched 
+and FALSE otherwise.
+
+The function C<is_foldable> in the L<SYNOPSIS> section
+(file C<examples/YATW/foldrule6.pl>)
+holds the properties to be a YATW tree transformation
+
+     1    sub is_foldable {
+     2      my ($op, $left, $right);
+     3  
+     4      return 0 unless defined($op = $BinaryOperation{ref($_[0])});
+     5      return 0 unless ($left = $_[0]->child(0), $left->isa('NUM'));
+     6      return 0 unless ($right = $_[0]->child(1), $right->isa('NUM'));
+     7  
+     8      my $leftnum = $left->child(0)->{attr};
+     9      my $rightnum = $right->child(0)->{attr};
+    10      $left->child(0)->{attr} = eval "$leftnum $op $rightnum";
+    11      $_[0] = $left;
+    12    }
+
+First, checks that the current node is one of C<PLUS>, C<MINUS>, C<TIMES> or
+C<DIV> (line 4). Then checks that both children are C<NUM>bers (lines 5 and 6).
+In such case proceeds to modify its left child with the result of operating
+both children (line 10). The matching tree is finally substituted by its left child
+(line 11).
+
+This is the output of the program in the L<SYNOPSIS> section:
+
+  pl@nereida:~/LEyapp/examples$ eyapp Rule6.yp; foldrule6.pl
+
+  ***** Before ******
+  TIMES(NUM(TERMINAL[2]),NUM(TERMINAL[3]))
+  ***** After ******
+  NUM(TERMINAL[6])
+
+Follows the grammar description file in C<Rule6.yp>:
+
+  pl@nereida:~/LEyapp/examples$ cat -n Rule6.yp
+     1  %{
+     2  use Data::Dumper;
+     3  %}
+     4  %right  '='
+     5  %left   '-' '+'
+     6  %left   '*' '/'
+     7  %left   NEG
+     8  %tree
+     9
+    10  %%
+    11  line: exp  { $_[1] }
+    12  ;
+    13
+    14  exp:      %name NUM
+    15              NUM
+    16          | %name VAR
+    17            VAR
+    18          | %name ASSIGN
+    19            VAR '=' exp
+    20          | %name PLUS
+    21            exp '+' exp
+    22          | %name MINUS
+    23            exp '-' exp
+    24          | %name TIMES
+    25            exp '*' exp
+    26          | %name DIV
+    27            exp '/' exp
+    28          | %name UMINUS
+    29            '-' exp %prec NEG
+    30          |   '(' exp ')'  { $_[2] } /* Let us simplify a bit the tree */
+    31  ;
+    32
+    33  %%
+    34
+    35  use Tail2;
+
+The module C<Tail2> in file C<examples/Tail2.pm>  implements the lexical 
+analyzer plus the C<error> and C<run> methods.
+
+[% PROCESS YATW %]
+
+=head1 TREE MATCHING AND TREE SUBSTITUTION
+
+See the documentation in L<Parse::Eyapp::treematchingtut>
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]

@@ -1,0 +1,444 @@
+=head1 NAME
+ 
+Parse::Eyapp - Bottom up parser generator
+ 
+=head1 SYNOPSIS
+ 
+[% PROCESS synopsis %]
+  
+=head1 INTRODUCTION
+
+[%PROCESS shortintro %]
+
+=head1 THE DOCUMENTATION OF L<Parse::Eyapp>
+
+The documentation is distributed among several files:
+
+=over
+
+=item * To get familiar with  C<eyapp> read L<Parse::Eyapp::eyappintro>
+It assumes a reader familiar with parsing techniques.
+Familiarity with C<yacc> or C<yapp>, C<RecDescent>, C<ANTLR> or
+similar tools will help but it is not indispensable.
+
+=item * To master conflict resolution read L<Parse::Eyapp::debuggingtut>.
+
+=item *  The document L<Parse::Eyapp::defaultactionsintro> describes the use of
+default actions and how to deal with I<grammar reuse> and factorization.
+
+=item * L<Parse::Eyapp> can be used to generate data that conforms with a given grammar.
+The tutorial L<Parse::Eyapp::datagenerationtut> shows how.
+
+=item *  The document L<Parse::Eyapp::eyapplanguageref> 
+describes the Eyapp language. 
+
+=item *  The document L<Parse::Eyapp::translationschemestut> 
+describes the use of Translation Schemes inside the Eyapp language. 
+
+=item * The Treeregexp language is described in L<Parse::Eyapp::Treeregexp>.
+Treeregexp is a language to describe transformations of abstract syntax trees.
+
+=item * Read L<Parse::Eyapp::Scope> to know
+about the functionalities provided for Scope Analysis.
+
+=item * A set of basic miscellaneous support functions 
+are described in L<Parse::Eyapp::Base>. 
+Several of these functions are related to the dynamic use of methods 
+and subroutines. 
+
+=item * Don't forget to read the section L<BUGS AND LIMITATIONS>
+
+=back
+
+The examples used in this document can be found in
+the directory C<examples/Eyapp> accompanying this distribution.
+As a general rule, each pod/tutorial has an associated subdirectory
+of C<examples/Eyapp>. Thus, the examples used in the documentation
+of L<Parse::Eyapp::eyappintro> can be found in C<examples/Eyapp/eyappintro>;
+The examples mentioned in L<Parse::Eyapp::Node> can be found
+in C<examples/Eyapp/Node>. There are a few exceptions however.
+For those exceptions the relative location where the file can be found
+will be mentioned.
+
+=head1 THE EYAPP LANGUAGE
+
+[% PROCESS eyappgrammar %]
+
+[% PROCESS eyapplanguageref %]
+
+=head1 C<Parse::Eyapp> METHODS
+
+[% PROCESS parseeyappmethods %]
+
+=head1 METHODS AVAILABLE IN THE GENERATED C<CLASS>
+
+See the documentation for L<Parse::Eyapp::Driver>
+
+=head1 C<Parse::Eyapp::Parse> OBJECTS
+
+[% PROCESS Parse %]
+
+=head1 TRANSLATION SCHEMES AND THE C<%metatree> DIRECTIVE
+
+
+See the documentation for L<Parse::Eyapp::translationschemestut>
+
+
+=head1 THE TREEREGEXP LANGUAGE
+
+See the documentation for L<Parse::Eyapp::Treeregexp>
+
+ 
+=head1 MANIPULATING ABSTRACT SYNTAX TREES
+
+See the documentation for L<Parse::Eyapp::Node>
+
+=head1 TREE TRANSFORMATION OBJECTS
+
+See the documentation for L<Parse::Eyapp::YATW>
+
+=head1 COMPILING WITH C<eyapp> AND C<treereg>
+
+A Treeregexp program can be isolated in a file
+an compiled with the program C<treereg>.
+The default extension is C<.trg>.
+See the following example:
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ cat -n Shift.trg
+     1  # File: Shift.trg
+     2  {
+     3  =head1 SYNOPSIS
+     4
+     5  Compile the grammar and tree transformations first:
+     6
+     7       $ eyapp Rule5
+     8       $ treereg Shift
+     9
+    10  Then execute it with:
+    11
+    12       $ ./useruleandshift.pl
+    13
+    14  Try input:
+    15
+    16       a = b * 8
+    17
+    18  =cut
+    19  }
+    20
+    21  {
+    22    sub log2 {
+    23      my $n = shift;
+    24      return log($n)/log(2);
+    25    }
+    26
+    27    my $power;
+    28  }
+    29  mult2shift: TIMES($e, NUM($m))
+    30    and { $power = log2($m->{attr}); (1 << $power) == $m->{attr} } => {
+    31      $_[0]->delete(1);
+    32      $_[0]->{shift} = $power;
+    33      $_[0]->type('SHIFTLEFT');
+    34    }
+
+
+Note that auxiliary support code can be inserted at any point
+between transformations (lines 21-28). The code will be inserted (without 
+the defining curly brackets) at that point. Note also
+that the lexical variable C<$power> is visible
+inside the definition of the C<mult2shift> transformation.
+
+A treeregexp like C<$e> matches any node (line 29). A reference to the node
+is saved in the lexical variable C<$e>. The scope of the variable
+C<$e> is the current tree transformation, i.e. C<mult2shift>.
+Such kind of treeregexps are called B<scalar treeregexp>s.
+
+The call to the C<delete> method at line 31 deletes 
+the second child of the node being visited (i.e. C<NUM($m)>).
+
+The call to C<type> at line 33 retypes the node
+as a C<SHIFTLEFT> node.
+
+The program is compiled using the script C<treereg>:
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ eyapp Rule5
+  pl@nereida:~/LEyapp/examples/Eyapp$ treereg Shift
+  pl@nereida:~/LEyapp/examples/Eyapp$ ls -ltr | tail -2
+  -rw-r--r-- 1 pl users 6439 2008-09-02 08:59 Rule5.pm
+  -rw-r--r-- 1 pl users 1424 2008-09-02 08:59 Shift.pm
+
+
+The Grammar C<examples/Eyapp/Rule5.yp> is similar to the one in the L</SYNOPSIS>
+section. Module C<Rule5.pm> contains the parser.
+The module C<Shift.pm> contains the code implementing
+the tree transformations.
+
+The client program follows:
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ cat -n useruleandshift.pl
+     1  #!/usr/bin/perl -w
+     2  use strict;
+     3  use Rule5;
+     4  use Parse::Eyapp::Base qw(insert_function);
+     5  use Shift;
+     6
+     7  =head1 SYNOPSIS
+     8
+     9  Compile the grammar and tree transformations first:
+    10
+    11       $ eyapp Rule5
+    12       $ treereg Shift
+    13
+    14  Then execute it with:
+    15
+    16       $ ./useruleandshift.pl
+    17
+    18  Try inputs:
+    19
+    20       a = b * 8
+    21       d = c * 16
+    22
+    23  =cut
+    24
+    25  sub SHIFTLEFT::info { $_[0]{shift} }
+    26  insert_function('TERMINAL::info', \&TERMINAL::attr);
+    27
+    28  my $parser = new Rule5();
+    29  $parser->slurp_file('','Arithmetic expression: ', "\n");
+    30  my $t = $parser->Run;
+    31  unless ($parser->YYNberr) {
+    32    print "***********\n",$t->str,"\n";
+    33    $t->s(@Shift::all);
+    34    print "***********\n",$t->str,"\n";
+    35  }
+
+
+Lines 25 and 26 provide the node classes C<TERMINAL> and C<SHIFTLEFT> of C<info>
+methods to be used during the calls to the C<str> method (lines 32 and 34). 
+
+Multiplications by a power of two are substituted by the corresponding shifts:
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ ./useruleandshift.pl
+  Arithmetic expression: a = b * 8
+  ***********
+  ASSIGN(TERMINAL[a],TIMES(VAR(TERMINAL[b]),NUM(TERMINAL[8])))
+  ***********
+  ASSIGN(TERMINAL[a],SHIFTLEFT[3](VAR(TERMINAL[b])))
+
+=head2 Compiling: More Options
+
+See files C<Rule9.yp>, C<Transform4.trg> and C<foldand0rule9_4.pl> 
+in the examples directory for a more detailed vision of this example. 
+File C<Rule9.yp> is very much like the grammar
+in the L</SYNOPSIS> example.
+To compile the grammar C<Rule9.yp> and the treeregexp
+file C<Transform4.trg> use the commands:
+  
+                eyapp -m 'Calc' Rule9.yp
+
+That will produce a file C<Calc.pm> containing a package C<Calc>
+that implements the LALR parser. 
+Then the command:
+
+                treereg -o T.pm -p 'R::' -m T Transform4
+
+produces a file C<T.pm> containing a package C<T> that implements
+the tree transformation program. The C<-p> option announces that
+node classes are prefixed by C<'R::'>.
+
+With such parameters the client program uses the generated modules as 
+follows:
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ cat -n foldand0rule9_4.pl                   
+     1  #!/usr/bin/env perl
+     2  =head1 SYNOPSIS
+     3
+     4     foldand0rule9_4.pl
+     5
+     6  Try inputs:
+     7
+     8     a = 2*3+4   # Reducido a: a = 6
+     9     a = 2*[3+b] # syntax error
+    10     a = 2*3*b   # Reducido a: a = 6*b
+    11
+    12  Compile it with
+    13
+    14           eyapp -m 'Calc' Rule9.yp
+    15           treereg -o T.pm -p 'R::' -m T Transform4
+    16
+    17  =cut
+    18
+    19  use warnings;
+    20  use strict;
+    21  use Calc;
+    22  use T;
+    23
+    24  sub R::TERMINAL::info { $_[0]{attr} }
+    25
+    26  my $parser = new Calc(yyprefix => "R::");
+    27                     # stdin, prompt              , read one line at time
+    28  $parser->slurp_file('','Arithmetic expression: ', "\n");
+    29
+    30  my $t = $parser->YYParse;
+    31
+    32  unless ($parser->YYNberr) {
+    33    print "\n***** Tree before the transformations ******\n";
+    34    print $t->str."\n";
+    35
+    36    $t->s(@T::all);
+    37    print "\n***** Tree after the transformations were applied ******\n";
+    38    print $t->str."\n";
+    39  }
+
+
+running the program produces the following output:
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ ./foldand0rule9_4.pl
+  Arithmetic expression: a = 2*3
+
+  ***** Tree before the transformations ******
+  R::ASSIGN(R::TERMINAL[a],R::TERMINAL[=],R::TIMES(R::NUM(R::TERMINAL[2]),R::TERMINAL[*],R::NUM(R::TERMINAL[3])))
+
+  ***** Tree after the transformations were applied ******
+  R::ASSIGN(R::TERMINAL[a],R::TERMINAL[=],R::NUM(R::TERMINAL[6]))
+
+  pl@nereida:~/LEyapp/examples/Eyapp$ ./foldand0rule9_4.pl
+  Arithmetic expression: a = 2*[3+b]
+
+  Syntax error near '['.
+  Expected one of these terminals: '-' 'NUM' 'VAR' '('
+
+
+=head1 L<Parse::Eyapp::Scope>: SUPPORT FOR SCOPE ANALYSIS
+
+See the documentation for L<Parse::Eyapp::Scope>
+
+=head1 MISCELLANEOUS SUPPORT FUNCTIONS IN L<Parse::Eyapp::Base>
+    
+See the documentation in L<Parse::Eyapp::Base>
+
+
+=head1 ENVIRONMENT
+ 
+Remember to set the environment variable C<PERL5LIB>
+if you decide to install C<Parse::Eyapp> at a location other than the standard.
+For example, on a bash or sh:
+
+  export PERL5LIB=/home/user/wherever_it_is/lib/:$PERL5LIB
+
+on a C<csh> or C<tcsh>
+
+  setenv PERL5LIB /home/user/wherever_it_is/lib/:$PERL5LIB
+
+Be sure the scripts C<eyapp> and C<treereg> are in the execution PATH.
+ 
+=head1 DEPENDENCIES
+ 
+This distribution depends on the following modules:
+
+=over
+
+=item * L<List::Util>
+
+=item * L<Data::Dumper>
+
+=item * L<Pod::Usage>
+
+=back 
+
+It seems that L<List::Util> is in the core of Perl
+distributions since version 5.73:
+
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("List::Util")'
+  5.007003
+
+and L<Data::Dumper> is also in the core since 5.5:
+
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("Data::Dumper")'
+  5.005
+
+and L<Pod::Usage> is also in the core since 5.6:
+
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("Pod::Usage")'
+  5.006
+
+=for none
+  > perl -MModule::CoreList -e 'print Module::CoreList->first_release("Memoize")'
+  5.007003
+
+I also recommend the following modules:
+
+=over
+
+=item * L<Test::Pod>
+
+=item * L<Test::Warn>
+
+=item * L<Test::Exception>
+
+=back
+
+The dependence on  L<Test::Warn>, L<Test::Pod> and L<Test::Exception> is merely for
+the execution of tests. If the modules aren't installed the tests
+depending on them will be skipped.
+
+=head1 INSTALLATION
+
+To install it, follow the traditional mantra:
+
+                                 perl Makefile.PL
+                                 make
+                                 make test
+                                 make install
+
+Also:
+
+=over
+
+=item * Make a local copy of the C<examples/> directory in this distribution. They contain
+the examples used in the tutorials
+
+=back
+
+=head1 BUGS AND LIMITATIONS
+ 
+=over
+
+=item *
+The way Parse::Eyapp parses Perl code is verbatim the way it does Parse::Yapp 1.05.
+Quoting Francois Desarmenien L<Parse::Yapp> documentation:
+
+"Be aware that matching braces in Perl is much more difficult than
+in C: inside strings they don't need to match. While in C it is
+very easy to detect the beginning of a string construct, or a
+single character, it is much more difficult in Perl, as there
+are so many ways of writing such literals. So there is no check
+for that today. If you need a brace in a double-quoted string, just
+quote it (C<\{> or C<\}>). For single-quoted strings, you will need
+to make a comment matching it I<in the right order>.
+Sorry for the inconvenience.
+
+    {
+        "{ My string block }".
+        "\{ My other string block \}".
+        qq/ My unmatched brace \} /.
+        # Force the match: {
+        q/ for my closing brace } /
+        q/ My opening brace { /
+        # must be closed: }
+    }
+
+All of these constructs should work."
+
+Alternative I<exact solutions> were tried but resulted in much slower
+code. Therefore, until something faster is found, I rather prefer for
+Parse::Eyapp to live with this limitation.
+
+The same limitation may appear inside header code (code between C<%{> and C<%}>)
+
+=back
+
+=head1 SEE ALSO
+
+[% PROCESS seealso %]
+
+[% PROCESS authorandcopyright %]

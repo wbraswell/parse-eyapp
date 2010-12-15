@@ -1,0 +1,15 @@
+
+The parser for the C<Eyapp> language
+was written and generated
+using C<Parse::Eyapp> and the C<eyapp> compiler (actually
+the first version 
+was bootstrapped using the L<yapp|Parse::Yapp> compiler).
+The Eyapp program parsing the C<Eyapp> language
+is in the file C<Parse/Eyapp/Parse.yp> 
+in the C<Parse::Eyapp> distribution.
+Therefore C<Parse::Eyapp::Parse> 
+objects have all the methods in C<Parse::Eyapp::Driver>.
+
+A C<Parse::Eyapp::Parse> is nothing but a particular kind of C<Parse::Eyapp>
+parser: I<the one that parses> C<Eyapp> I<grammars>.
+

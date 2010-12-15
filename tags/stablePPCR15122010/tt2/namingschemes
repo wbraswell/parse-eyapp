@@ -1,0 +1,188 @@
+
+Explicit names can be given to grammar productions
+via the C<%name> directive. An alternative to explicitly gave 
+names to rules is to define a I<naming scheme> via the Eyapp directive
+C<%namingscheme>. This can be helpful when you inherit a large grammar
+and want to quickly build a parser. The ANSI C parser in 
+C<examples/languages/C/ansic.eyp> is a good example. Another
+example is the Pascal parser in C<examples/languages/pascal/pascal.eyp>.
+
+The Eyapp directive C<%namingscheme> is followed by some Perl code. Such Perl
+code must return a reference to a subroutine that will be called each time a new
+production right hand side is parsed. The subroutine returns the name for the production.
+
+The Perl code defining the handler receives a C<Parse::Eyapp> object
+that describes the grammar. The code after the C<%namingscheme>
+directive is evaluated during the early phases of the compilation of the input 
+grammar. As an example of how to set a naming scheme, 
+see lines 22-38 below (you can find this example and others in the directory
+C<examples/naming> of the accompanying distribution):
+
+  lusasoft@LusaSoft:~/src/perl/Eyapp/examples/naming$ cat -n GiveNamesToCalc.eyp
+     1  # GiveNamesToCalc.eyp
+     2  %right  '='
+     3  %left   '-' '+'
+     4  %left   '*' '/'
+     5  %left   NEG
+     6  %right  '^'
+     7
+     8  %tree bypass
+     9
+    10  %{
+    11  use base q{Tail};
+    12
+    13  sub exp_is_NUM::info {
+    14    my $self = shift;
+    15
+    16    $self->{attr}[0];
+    17  }
+    18
+    19  *exp_is_VAR::info = *var_is_VAR::info = \&exp_is_NUM::info;
+    20  %}
+    21
+    22  %namingscheme {
+    23    #Receives a Parse::Eyapp object describing the grammar
+    24    my $self = shift;
+    25
+    26    $self->tokennames(
+    27      '=' => 'ASSIGN',
+    28      '+' => 'PLUS',
+    29      '*' => 'TIMES',
+    30      '-' => 'MINUS',
+    31      '/' => 'DIV',
+    32      '^' => 'EXP',
+    33    );
+    34
+    35    # returns the handler that will give names
+    36    # to the right hand sides
+    37    \&give_token_name;
+    38  }
+    39  %%
+    40
+    41  line:
+    42      exp
+    43  ;
+    44
+    45  exp:
+    46      NUM
+    47    | VAR
+    48    | var '=' exp
+    49    | exp '+' exp
+    50    | exp '-' exp
+    51    | exp '*' exp
+    52    | exp '/' exp
+    53    | %no bypass exp_is_NEG
+    54       '-' exp %prec NEG
+    55    | exp '^' exp
+    56    | '(' exp ')'
+    57  ;
+    58
+    59  var:
+    60      VAR
+    61  ;
+    62  %%
+    63
+    64  unless (caller) {
+    65    my $t = __PACKAGE__->main(@ARGV);
+    66    print $t->str."\n";
+    67  }
+
+The example uses a naming scheme that is provided by C<Parse::Eyapp>: C<Parse::Eyapp::Grammar::give_token_name>.
+The current provided naming schemes handlers are:
+
+=over 2
+
+=item * C<give_default_name>: The name of the production is the name of the Left Hand Side of the Production Rule
+concatenated with an underscore and the index of the production
+
+=item * C<give_lhs_name>: The name of the production is the name of the Left Hand Side of the Production Rule (this
+is the naming scheme used by the C<%tree> directive when no explicit name was given)
+
+=item * C<give_token_name>: The name of the production is the Left Hand Side of the Production Rule followed by the 
+word C<_is_> followed by the concatenation of the names of the tokens in the right and side (separated by underscores).
+
+=back
+
+All of these handlers are implemented inside the class C<Parse::Eyapp::Grammar>. There is no need at line 
+37 to explicit the class name prefix since the naming scheme code is evaluated inside such class:
+
+    22  %namingscheme {
+    23    #Receives a Parse::Eyapp object describing the grammar
+    24    my $self = shift;
+    25
+    26    $self->tokennames(
+    27      '=' => 'ASSIGN',
+    28      '+' => 'PLUS',
+    29      '*' => 'TIMES',
+    30      '-' => 'MINUS',
+    31      '/' => 'DIV',
+    32      '^' => 'EXP',
+    33    );
+    34
+    35    # returns the handler that will give names
+    36    # to the right hand sides
+    37    \&give_token_name;
+    38  }
+
+As it is illustrated in this example, the method C<tokennames> of C<Parse::Eyapp>
+objects provide a way to give identifier names to tokens that are defined by strings.
+When we execute the former module/program (modulino) with input C<a=2*-3> we got the following
+output:
+
+  lusasoft@LusaSoft:~/src/perl/Eyapp/examples/naming$ eyapp -b '' GiveNamesToCalc.eyp
+  lusasoft@LusaSoft:~/src/perl/Eyapp/examples/naming$ ./GiveNamesToCalc.pm
+  Expressions. Press CTRL-D (Unix) or CTRL-Z (Windows) to finish:
+  a=2*-3
+  line_is_exp(var_is_VAR[a],exp_is_TIMES(exp_is_NUM[2],exp_is_NEG(exp_is_NUM[3])))
+
+For each production rule the handler is called with arguments:
+
+=over 2
+
+=item * 
+the C<Parse::Eyapp> object, 
+
+=item * the production index (inside the grammar), 
+
+=item * the left hand side
+symbol and a reference to a list with the symbols in the right hand side. 
+
+=back
+
+The following code of some version of C<give_token_name> exemplifies how a
+naming scheme handler can be written:
+
+  lusasoft@LusaSoft:~/src/perl/Eyapp$ sed -ne '101,132p' lib/Parse/Eyapp/Grammar.pm | cat -n
+     1  sub give_token_name {
+     2    my ($self, $index, $lhs, $rhs) = @_;
+     3
+     4    my @rhs = @$rhs;
+     5    $rhs = '';
+     6
+     7    unless (@rhs) { # Empty RHS
+     8      return $lhs.'_is_empty';
+     9    }
+    10
+    11    my $names = $self->{GRAMMAR}{TOKENNAMES} || {};
+    12    for (@rhs) {
+    13      if ($self->is_token($_)) {
+    14        s/^'(.*)'$/$1/;
+    15        my $name = $names->{$_} || '';
+    16        unless ($name) {
+    17          $name = $_ if /^\w+$/;
+    18        }
+    19        $rhs .= "_$name" if $name;
+    20      }
+    21    }
+    22
+    23    unless ($rhs) { # no 'word' tokens in the RHS
+    24      for (@rhs) {
+    25        $rhs .= "_$_" if /^\w+$/;
+    26      }
+    27    }
+    28
+    29    # check if another production with such name exists?
+    30    my $name = $lhs.'_is'.$rhs;
+    31    return $name;
+    32  }
+

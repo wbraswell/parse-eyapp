@@ -1,0 +1,141 @@
+A C<Parse::Eyapp> object holds the information 
+about the C<Eyapp> input grammar: parsing tables,
+conflicts, semantic actions, etc.
+
+
+=head2 Parse::Eyapp-E<gt>new_grammar
+
+To translate an Eyapp grammar you must use
+either the L<eyapp> script or call the class constructor 
+C<new_grammar>.
+The C<Parse::Eyapp> method C<Parse::Eyapp-E<gt>new_grammar(input=E<gt>$grammar)> 
+creates a package containing the code that implements a LALR parser
+for the input grammar:
+
+    my $p = Parse::Eyapp->new_grammar(
+      input=>$translationscheme,
+      classname=>'Grammar',
+      firstline => 6,
+      outputfile => 'main'
+    );
+    die $p->Warnings if $p->Warnings;
+    my $new_parser_for_grammar = Grammar->new();
+
+The method returns a C<Parse::Eyapp> object.
+
+You can check the object to see if there were
+problems during the construction of the parser
+for your grammar:
+
+                die $p->qtables() if $p->Warnings;
+
+The method C<Warnings> returns
+the warnings produced during the parsing. The absence of warnings indicates
+the correctness of the input program.
+
+The call to C<Parse::Eyapp-E<gt>new_grammar> generates
+a class/package containing the parser for
+your input grammar. Such package lives in the namespace 
+determined by the C<classname> argument
+of C<new_grammar>. To create a parser for the 
+grammar you call the constructor C<new> of
+the just created class:
+
+    my $new_parser_for_grammar = Grammar->new();
+
+The meaning of the arguments of  C<Parse::Eyapp-E<gt>new_grammar> 
+is:
+
+=over 
+
+=item -   input 
+
+The string containing the input
+
+=item -   classname 
+
+The name of the package that will held the code for the LALR parser.
+The package of the caller will be used as default if none is specified.
+
+=item -   firstline 
+
+For error diagnostics. The line where the definition of the Eyapp
+grammar starts.
+
+=item -   linenumbers 
+
+Include/not include  C<# line directives> in the generated code
+
+=item -   outputfile 
+
+If defined the generated code fill be dumped in the specified filename (with extension .pm)
+and the LALR information ambiguities and conflicts) in the specified filename 
+with extension .output.
+
+=back
+
+=head2 $eyapp->qtables
+
+Returns a string containing information
+on warnings, ambiguities, conflicts, rules and the generated DFA tables.
+Is the same information in C<file.output> when using the command 
+C<eyapp -v file.eyp>.
+
+  my $p = Parse::Eyapp->new_grammar(
+    input=>$eyappprogram,
+    classname=>'SimpleC',
+    outputfile => 'SimpleC.pm',
+    firstline=>12,
+  );
+
+  print $p->qtables() if $p->Warnings;
+
+=head2 $eyapp->outputtables
+
+It receives two arguments
+
+  $eyapp->outputtables($path, $base)
+
+Similar to C<qtables> but prints 
+the information on warnings, conflicts and rules
+to the specified C<$path/$base>.
+
+=head2 $eyapp->Warnings
+
+Returns the warnings resulting from compiling the grammar:
+
+  my $p = Parse::Eyapp->new_grammar(
+    input=>$translationscheme,
+    classname=>'main',
+    firstline => 6,
+    outputfile => 'main'
+  );
+  die $p->Warnings if $p->Warnings;
+
+Returns the empty string if there were no conflicts.
+
+=head2 $eyapp->ShowDfa
+
+Returns a string with the information about the LALR generated
+DFA.
+
+
+=head2 $eyapp->Summary
+
+Returns a string with summary information about the compilation
+of the grammar. No arguments.
+
+=head2 $eyapp->Conflicts
+
+Returns a string with summary information about the conflicts
+that arose when compiling the grammar. No arguments.
+
+=head2 $eyapp->DfaTable
+
+Returns a string with the parsing tables
+
+=head2 $eyapp->tokennames
+
+Used when defining a naming scheme
+to associate identifiers with (usually string) tokens.
+See section NAMING SCHEMES of L<Parse::Eyapp>
