@@ -1,15 +1,13 @@
-%{
-  my $is_range = 0;
-%}
 
 %conflict rangeORenum {
-  if ($is_range) 
+  #if ($self->{CONFLICTHANDLERS}{rangeORenum}{'.range'})
+  if ($self->YYIs('range'))
     { $self->YYSetReduce( 'ID:RANGE' ); }
   else 
     { $self->YYSetReduce( 'ID:ENUM' ); }
 } 
 
-%explorer rangeORenum { $is_range = $self->YYPreParse('range'); } 
+%explorer rangeORenum { $self->YYNestedParse('range'); } 
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
@@ -71,17 +69,17 @@ See
 
 Compile it with:
 
-      eyapp -TC pascalnestedeyapp3.eyp
+      eyapp -TC pascalnestedeyapp3_5.eyp
 
 The compile it again, but using 'range' as start symbol (option -S)
 and option -P to generate a parser that accepts if a prefix of the input matches:
 
-      eyapp -P -S range pascalnestedeyapp3.eyp 
+      eyapp -P -S range pascalnestedeyapp3_5.eyp 
 
 Run it with this options:
 
-    $ ./pascalnestedeyapp3.pm -t -i -m 1 -c 'type e = (x, y, z);'
-    $ ./pascalnestedeyapp3.pm -t -i -m 1 -c 'type e = (x, @, z);'
+    $ ./pascalnestedeyapp3_5.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyapp3_5.pm -t -i -m 1 -c 'type e = (x, @, z);'
 
 Try also these inputs:
 
