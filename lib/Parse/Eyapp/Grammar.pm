@@ -278,6 +278,7 @@ sub conflictHandlers {
   my $t = Dumper $self->{GRAMMAR}{CONFLICTHANDLERS};
   $t =~ s/^\$VAR\d*\s*=\s*//;
   $t =~s/;$//;
+  $t =~s/\\'//g; # quotes inside quotes
   $t;
 }
 

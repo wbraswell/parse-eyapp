@@ -568,6 +568,11 @@ CONFLICT_HEADER
 
               undef;
             }
+        #        conflict syntacticvariable name : label
+    |   CONFLICT ident IDENT IDENT LABEL  '\n'
+    |   CONFLICT ident IDENT LABEL  '\n'
+    |   CONFLICT ident REGEXP IDENT LABEL  '\n'
+    |   CONFLICT ident REGEXP LABEL  '\n'
     /*********************************************/
     |   EXPLORER ident CODE '\n' # research testing
             {
@@ -1084,6 +1089,9 @@ sub _Lexer {
 
     $lineno[0]=$lineno[1];
 
+            $$input=~/\G($LABEL)/gc
+        and return('LABEL',[ $1, $lineno[0] ]);
+
         $$input=~/\G($ID)/gc
     and return('IDENT',[ $1, $lineno[0] ]);
 
@@ -1191,8 +1199,9 @@ sub _Lexer {
           return('NAME',[ $bypass, $lineno[0] ]);
         };
 
-            $$input=~/\G($LABEL)/gc
-        and return('LABEL',[ $1, $lineno[0] ]);
+    # Now label is returned in the "common" area
+    #       $$input=~/\G($LABEL)/gc
+    #   and return('LABEL',[ $1, $lineno[0] ]);
 
             $$input=~/\G%begin\s*{/gc  # }
         and return ('BEGINCODE', &slurp_perl_code());

@@ -32,7 +32,7 @@ It will output s.t. like C<PROG(D(TERMINAL[D],D[D]),SS(TERMINAL[S],S[S]))>
 %token D S
 
 # new syntax!!!
-%conflict LAST_OR_MORE  /\s*;\s*S/ 'D:LAST' 
+%conflict LAST_OR_MORE  /\s*;\s*S/ D:LAST 
 
 
 %tree bypass

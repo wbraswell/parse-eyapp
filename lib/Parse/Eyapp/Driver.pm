@@ -449,29 +449,27 @@ sub YYPreParse {
   return (wantarray ? ($t) : !$ne);
 }
 
+#x $self->{CONFLICTHANDLERS}                                                                              
+#0  HASH(0x100b306c0)
+#   'rangeORenum' => HASH(0x100b30660)
+#      'explorerline' => 12
+#      'line' => 5
+#      'production' => HASH(0x100b30580)
+#         '-13' => ARRAY(0x100b30520)
+#            0  1 <------- mark: conflictive position in the rhs 
+#         '-5' => ARRAY(0x100b30550)
+#            0  1 <------- mark: conflictive position in the rhs 
+#      'states' => ARRAY(0x100b30630)
+#         0  HASH(0x100b30600)
+#            25 => ARRAY(0x100b305c0)
+#               0  '\',\''
+#               1  '\')\''
 
-
-# sub YYLookBothWays {
-#   my $self = shift;
-#   my $stackFirst = shift;
-#   my $inputLast  = shift;
-# 
-#   my @stackTokens = $self->YYSymbolStack($stackFirst,-1);
-#   my @inputTokens = $self->YYLookaheads($inputLast);
-# 
-#   if (wantarray) {
-#     return (@stackTokens, @inputTokens);
-#   }
-#   else {
-#     local $" = shift || '';
-#     return "@stackTokens@inputTokens";
-#   }
-# }
 
 sub YYSetReduce {
-  my ($self, $token, $action) = @_;
-
-  $token = [ $token ] unless ref($token);
+  my $self = shift;
+  my $action = pop;
+  my $token = shift;
   
 
   croak "YYSetReduce error: specify a production" unless defined($action);
@@ -501,6 +499,8 @@ sub YYSetReduce {
     $action = -$actionnum;
   }
 
+  $token = $cs->{$conflictstate} unless defined($token);
+  $token = [ $token ] unless ref($token);
   for (@$token) {
     # save if shift
     if ($self->{STATES}[$conflictstate]{ACTIONS}{$_} >= 0) {
