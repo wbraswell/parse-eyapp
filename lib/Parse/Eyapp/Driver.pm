@@ -542,6 +542,20 @@ sub YYSetShift {
   }
 }
 
+# It does YYSetReduce or YYSetshift according to the 
+# decision variable
+sub YYIf {
+  my $self = shift;
+  my $syntaxVariable = shift;
+
+  if ($self->YYIs($syntaxVariable)) {
+    $self->YYSetReduce($_[0]); 
+  }
+  else {
+    $self->YYSetReduce($_[1]); 
+  }
+}
+
 sub YYGetLRAction {
   my ($self,  $state, $token) = @_;
 
