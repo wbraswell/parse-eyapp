@@ -395,32 +395,6 @@ sub YYLookaheads {
 
 
 # more parameters: debug, etc, ...
-#sub YYPreParse {
-#  my $self = shift; 
-#  my $parser = shift;
-#
-#  eval "require $parser";
-#   
-#  # optimize to state variable for 5.10
-#  my $rp = $parser->new( yyerror => sub {});
-#
-#  my $pos = pos(${$self->input});
-#  #print "pos = $pos\n";
-#  $rp->input($self->input);
-#
-#  my $t = $rp->Run(@_);
-#  my $ne = $rp->YYNberr;
-#
-#  #print "After nested parsing\n";
-#
-#  pos(${$self->input}) = $pos;
-#
-#  return (wantarray ? ($t) : !$ne);
-#}
-#
-#
-## new interface
-## more parameters: debug, etc, ...
 #sub YYNestedParse {
 sub YYPreParse {
   my $self = shift; 
@@ -519,6 +493,17 @@ sub YYSetShift {
   # Conflict state
   my $conflictstate = $self->YYNextState();
 
+  my $conflictName = $self->YYLhs;
+
+  my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
+  my @conflictStates = $cS ? @$cS : ();
+
+  # Perform the action to change the LALR tables only if the next state 
+  # is listed as a conflictstate
+  my ($cs) = (grep { exists $_->{$conflictstate}} @conflictStates); 
+  return unless $cs;
+
+  $token = $cs->{$conflictstate} unless defined($token);
   $token = [ $token ] unless ref($token);
 
   my $conflictname = $self->YYLhs;
