@@ -423,6 +423,29 @@ sub YYPreParse {
   return (wantarray ? ($t) : !$ne);
 }
 
+sub YYNestedParse {
+  my $self = shift;
+  my $parser = shift;
+  my $conflictName = $self->YYLhs;
+  $conflictName =~ s/_explorer$//;
+
+  my $ok = $self->YYPreParse($parser, @_);
+
+  $self->{CONFLICTHANDLERS}{$conflictName}{".".$parser} = $ok;
+
+  return $ok;
+}
+
+sub YYIs {
+  my $self = shift;
+  my $syntaxVariable = '.'.(shift());
+  my $conflictName = $self->YYLhs;
+  my $v = $self->{CONFLICTHANDLERS}{$conflictName};
+
+  $v->{$syntaxVariable} = shift if @_;
+  return $v->{$syntaxVariable};
+}
+
 #x $self->{CONFLICTHANDLERS}                                                                              
 #0  HASH(0x100b306c0)
 #   'rangeORenum' => HASH(0x100b30660)
@@ -438,8 +461,6 @@ sub YYPreParse {
 #            25 => ARRAY(0x100b305c0)
 #               0  '\',\''
 #               1  '\')\''
-
-
 sub YYSetReduce {
   my $self = shift;
   my $action = pop;
