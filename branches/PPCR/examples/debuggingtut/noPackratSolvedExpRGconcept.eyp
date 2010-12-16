@@ -13,7 +13,7 @@ my $nxr = 0;
 
   if ($nxs == $nxr+1) { 
     print "Reducing by :MIDx\n";
-    $self->YYSetReduce(['NUM',], ':MIDx' );
+    $self->YYSetReduce(':MIDx' );
     
     $nxr = $nxs = 0; 
   }
