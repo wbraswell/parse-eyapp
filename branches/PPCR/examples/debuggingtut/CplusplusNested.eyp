@@ -15,8 +15,8 @@ my $ISDEC;
 %left '+'
 
 %conflict decORexp {
-  if ($ISDEC) { $self->YYSetReduce(')', 'ID:DEC' ); }
-  else { $self->YYSetReduce(')', 'ID:EXP' ); }
+  if ($ISDEC) { $self->YYSetReduce('ID:DEC' ); }
+  else { $self->YYSetReduce('ID:EXP' ); }
 }
 
 %explorer decORexp {
