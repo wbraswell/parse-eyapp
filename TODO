@@ -30,6 +30,7 @@
         ;
      SUBGOALS:
         -- YYSetReduce can work without specifying the token set
+        -- YYSetShift can work without specifying the token set
 
   * Otra API de mas alto nivel sería el caso regexp
           %conflict conflictname /regexp/ ruleName
