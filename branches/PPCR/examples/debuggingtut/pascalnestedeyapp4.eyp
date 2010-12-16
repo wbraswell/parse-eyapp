@@ -2,6 +2,7 @@
 
 # proposed new syntax!!!!!
 %conflict rangeORenum range ID:RANGE
+%conflict range ID:RANGE
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/

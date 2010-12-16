@@ -1,10 +1,11 @@
 
 %conflict rangeORenum {
   #if ($self->{CONFLICTHANDLERS}{rangeORenum}{'.range'})
-  if ($self->YYIs('range'))
-    { $self->YYSetReduce( 'ID:RANGE' ); }
-  else 
-    { $self->YYSetReduce( 'ID:ENUM' ); }
+  #if ($self->YYIs('range'))
+  #  { $self->YYSetReduce( 'ID:RANGE' ); }
+  #else 
+  #  { $self->YYSetReduce( 'ID:ENUM' ); }
+  $self->YYIf('range', 'ID:RANGE', 'ID:ENUM');
 } 
 
 %explorer rangeORenum { $self->YYNestedParse('range'); } 
