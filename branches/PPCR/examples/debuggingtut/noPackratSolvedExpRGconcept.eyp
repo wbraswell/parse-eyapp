@@ -17,7 +17,7 @@ my $nxr = 0;
     
     $nxr = $nxs = 0; 
   }
-  else { $self->YYSetShift('NUM') } 
+  else { $self->YYSetShift() } 
 }  
 
 %explorer isInTheMiddle {
