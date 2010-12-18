@@ -420,7 +420,7 @@ sub YYPreParse {
 
   pos(${$self->input}) = $pos;
 
-  return (wantarray ? ($t) : !$ne);
+  return (wantarray ? ($t, !$ne) : !$ne);
 }
 
 sub YYNestedParse {
@@ -429,21 +429,34 @@ sub YYNestedParse {
   my $conflictName = $self->YYLhs;
   $conflictName =~ s/_explorer$//;
 
-  my $ok = $self->YYPreParse($parser, @_);
+  my ($t, $ok) = $self->YYPreParse($parser, @_);
 
-  $self->{CONFLICTHANDLERS}{$conflictName}{".".$parser} = $ok;
+  $self->{CONFLICTHANDLERS}{$conflictName}{".".$parser} = [$ok, $t];
 
   return $ok;
 }
 
 sub YYIs {
   my $self = shift;
+  # this is ungly and dangeorus. Don't use the dot. Change it!
   my $syntaxVariable = '.'.(shift());
   my $conflictName = $self->YYLhs;
   my $v = $self->{CONFLICTHANDLERS}{$conflictName};
 
-  $v->{$syntaxVariable} = shift if @_;
-  return $v->{$syntaxVariable};
+  $v->{$syntaxVariable}[0] = shift if @_;
+  return $v->{$syntaxVariable}[0];
+}
+
+
+sub YYVal {
+  my $self = shift;
+  # this is ungly and dangeorus. Don't use the dot. Change it!
+  my $syntaxVariable = '.'.(shift());
+  my $conflictName = $self->YYLhs;
+  my $v = $self->{CONFLICTHANDLERS}{$conflictName};
+
+  $v->{$syntaxVariable}[1] = shift if @_;
+  return $v->{$syntaxVariable}[1];
 }
 
 #x $self->{CONFLICTHANDLERS}                                                                              
