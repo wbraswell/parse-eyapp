@@ -603,6 +603,38 @@ CONFLICT_EXPLORER
 
               undef;
             }
+    |   EXPLORER ident ident '\n' # research testing: copy paste: factorize!
+            {
+              my ($name, $startsymbol) = @_[2,3];
+              my ($cn, $line) = @$name;
+
+
+              my $c = <<"NESTEDPARSING";
+{ \$self->YYNestedParse('$startsymbol->[0]'); }
+NESTEDPARSING
+             my $li = $startsymbol->[1];
+
+              # TODO: this must be in Output
+              my $conflict_header = <<"CONFLICT_EXPLORER";
+  my \$self = \$_[0];
+  for (\${\$self->input()}) {  
+#line $li "$filename" 
+CONFLICT_EXPLORER
+              $c =~ s/^/$conflict_header/; # }
+
+              # {
+              # follows the closing curly bracket of the for .. to contextualize!!!!!!                 v
+              $c =~ s/$/\n################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################\n  }\n/;
+              #$code->[0] = $c;
+              $conflict{$cn}{explorer} = $c;
+              $conflict{$cn}{explorerline} = $line;
+
+              # TODO: error control. Factorize!!!!!
+              $$syms{$cn.'_explorer'} = $line;
+              $$nterm{$cn.'_explorer'} = undef;
+
+              undef;
+            }
     /*********************************************/
 
     |   EXPECT NUMBER '\n'             { $expect=$_[2][0]; undef }
