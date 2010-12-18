@@ -1,11 +1,14 @@
+  * make tests for the new %explorer and %conflict syntax!
   * Errores por mala colocación de conflictos. Se pueden controlar en _DynamicConflicts en Lalr
   * quiza entre la información guardada en CONFLICTHANDLERS deberían ir las etiquetas simbólicas.
     Esto simplificaría YYSetReduce
-    Tienes que repasar YYIf: no esta acabada!!!!
-    De hecho, deberías comprobar que tipo de acción es el que hay que hacer. Se puede saber por el signo en 
+
+  * Tienes que repasar YYIf: no esta acabada!!!!
+    De hecho, deberías comprobar que tipo de acción (s o r) es la que hay que hacer. Se puede saber por el signo en 
     la información asociada con el conflict handler y ejecutarla
 
   * Need a shift-reduce conflict example solved with 'pure' PPCR
+
   * Artículos:
       * Introducir modificaciones de los referees en los articulos de revista
       * conseguir articulo de Ganapanathi "semantic predicates in"
