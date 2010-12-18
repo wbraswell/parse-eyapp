@@ -1,4 +1,5 @@
-  * quiza entre la información guardada en CONFLICTHANDLERS wdeebrían ir las etiquetas simbólicas.
+  * Errores por mala colocación de conflictos. Se pueden controlar en _DynamicConflicts en Lalr
+  * quiza entre la información guardada en CONFLICTHANDLERS deberían ir las etiquetas simbólicas.
     Esto simplificaría YYSetReduce
     Tienes que repasar YYIf: no esta acabada!!!!
     De hecho, deberías comprobar que tipo de acción es el que hay que hacer. Se puede saber por el signo en 
