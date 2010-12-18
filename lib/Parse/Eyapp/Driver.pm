@@ -544,6 +544,8 @@ sub YYSetShift {
 
 # It does YYSetReduce or YYSetshift according to the 
 # decision variable
+# I need to know the kind of conflict that there is
+# shift-reduce or reduce-reduce
 sub YYIf {
   my $self = shift;
   my $syntaxVariable = shift;
