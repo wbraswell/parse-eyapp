@@ -3,7 +3,7 @@
   $self->YYIf('range', 'ID:RANGE', 'ID:ENUM');
 } 
 
-%explorer rangeORenum range 
+%explorer rangeORenum 'range' 
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
