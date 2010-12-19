@@ -1,3 +1,6 @@
+  * No warnings with -c in 
+        eyapp -C CplusplusStartOption
+    check this bug!!!!
   * make tests for the new %explorer and %conflict syntax!
   * Errores por mala colocación de conflictos. Se pueden controlar en _DynamicConflicts en Lalr
   * quiza entre la información guardada en CONFLICTHANDLERS deberían ir las etiquetas simbólicas.
