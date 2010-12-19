@@ -603,14 +603,14 @@ CONFLICT_EXPLORER
 
               undef;
             }
-    |   EXPLORER ident ident '\n' # research testing: copy paste: factorize!
+    |   EXPLORER ident LITERAL '\n' # research testing: copy paste: factorize!
             {
               my ($name, $startsymbol) = @_[2,3];
               my ($cn, $line) = @$name;
 
 
               my $c = <<"NESTEDPARSING";
-{ \$self->YYNestedParse('$startsymbol->[0]'); }
+{ \$self->YYNestedParse($startsymbol->[0]); }
 NESTEDPARSING
              my $li = $startsymbol->[1];
 

@@ -18,7 +18,7 @@ my $nxs = 0;
   else { $self->YYSetShift() } 
 }  
 
-%explorer isInTheMiddle ExpList
+%explorer isInTheMiddle 'ExpList'
 
 %%
 
