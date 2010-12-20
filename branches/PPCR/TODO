@@ -2,6 +2,17 @@
         eyapp -C CplusplusStartOption
     check this bug!!!!
   * make tests for the new %explorer and %conflict syntax!
+       - DebugDynamicResolution.eyp
+       - dynamicgrammar1.eyp
+       - reducereduceconflictPPCR.eyp
+       -  ExpList.eyp, reuseconflicthandler.eyp, noPackratSolvedExpRGconcept.eyp
+       - CplusplusNested.eyp
+       - pascalnestedeyapp3_5.eypp
+
+  * Posible sintáxis para los resoluciones de conflicto:
+                    %conflict range ID:RANGE
+    el nombre de la variable de exploración coincide con el del conflicto
+
   * Errores por mala colocación de conflictos. Se pueden controlar en _DynamicConflicts en Lalr
   * quiza entre la información guardada en CONFLICTHANDLERS deberían ir las etiquetas simbólicas.
     Esto simplificaría YYSetReduce

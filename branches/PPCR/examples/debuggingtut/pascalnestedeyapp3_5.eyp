@@ -1,4 +1,5 @@
 
+#%conflict rangeORenum range 'ID:RANGE'
 %conflict rangeORenum {
   $self->YYIf('range', 'ID:RANGE', 'ID:ENUM');
 } 
