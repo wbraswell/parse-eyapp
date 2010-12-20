@@ -399,6 +399,7 @@ sub YYLookaheads {
 sub YYPreParse {
   my $self = shift; 
   my $parser = shift;
+  my $file = shift() || $parser;
 
   # Check for errors!
   eval "require $parser";

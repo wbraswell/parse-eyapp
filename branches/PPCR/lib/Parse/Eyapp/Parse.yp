@@ -283,6 +283,34 @@ ENDOFLEXER
   return $lexertemplate;
 }
 
+sub explorer_handler {
+              my ($name, $code) = @_;
+              my ($cn, $line) = @$name;
+
+
+              my ($c, $li) = @$code;
+
+              # TODO: this must be in Output
+              my $conflict_header = <<"CONFLICT_EXPLORER";
+  my \$self = \$_[0];
+  for (\${\$self->input()}) {  
+#line $li "$filename" 
+CONFLICT_EXPLORER
+              $c =~ s/^/$conflict_header/; # }
+
+              # {
+              # follows the closing curly bracket of the for .. to contextualize!!!!!!                 v
+              $c =~ s/$/\n################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################\n  }\n/;
+              #$code->[0] = $c;
+              $conflict{$cn}{explorer} = $c;
+              $conflict{$cn}{explorerline} = $line;
+
+              # TODO: error control. Factorize!!!!!
+              $$syms{$cn.'_explorer'} = $line;
+              $$nterm{$cn.'_explorer'} = undef;
+
+              undef;
+            }
 %}
 
 %token ASSOC         /* is %(left|right|nonassoc) */
@@ -577,63 +605,41 @@ CONFLICT_HEADER
     |   EXPLORER ident CODE '\n' # research testing
             {
               my ($name, $code) = @_[2,3];
-              my ($cn, $line) = @$name;
 
-
-              my ($c, $li) = @$code;
-
-              # TODO: this must be in Output
-              my $conflict_header = <<"CONFLICT_EXPLORER";
-  my \$self = \$_[0];
-  for (\${\$self->input()}) {  
-#line $li "$filename" 
-CONFLICT_EXPLORER
-              $c =~ s/^/$conflict_header/; # }
-
-              # {
-              # follows the closing curly bracket of the for .. to contextualize!!!!!!                 v
-              $c =~ s/$/\n################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################\n  }\n/;
-              #$code->[0] = $c;
-              $conflict{$cn}{explorer} = $c;
-              $conflict{$cn}{explorerline} = $line;
-
-              # TODO: error control. Factorize!!!!!
-              $$syms{$cn.'_explorer'} = $line;
-              $$nterm{$cn.'_explorer'} = undef;
-
-              undef;
+              explorer_handler($name, $code);
             }
-    |   EXPLORER ident LITERAL '\n' # research testing: copy paste: factorize!
+    |   EXPLORER ident LITERAL '\n' # 
             {
               my ($name, $startsymbol) = @_[2,3];
-              my ($cn, $line) = @$name;
-
 
               my $c = <<"NESTEDPARSING";
 { \$self->YYNestedParse($startsymbol->[0]); }
 NESTEDPARSING
-             my $li = $startsymbol->[1];
+              my $li = $startsymbol->[1];
 
-              # TODO: this must be in Output
-              my $conflict_header = <<"CONFLICT_EXPLORER";
-  my \$self = \$_[0];
-  for (\${\$self->input()}) {  
-#line $li "$filename" 
-CONFLICT_EXPLORER
-              $c =~ s/^/$conflict_header/; # }
+              explorer_handler($name, [$c, $li]);
+            }
+    |   EXPLORER ident ident '\n' # research testing: copy paste: factorize!
+            {
+              my ($name, $startsymbol) = @_[2,3];
 
-              # {
-              # follows the closing curly bracket of the for .. to contextualize!!!!!!                 v
-              $c =~ s/$/\n################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################\n  }\n/;
-              #$code->[0] = $c;
-              $conflict{$cn}{explorer} = $c;
-              $conflict{$cn}{explorerline} = $line;
+              my $c = <<"NESTEDPARSING";
+{ \$self->YYNestedParse('$startsymbol->[0]'); }
+NESTEDPARSING
+              my $li = $startsymbol->[1];
 
-              # TODO: error control. Factorize!!!!!
-              $$syms{$cn.'_explorer'} = $line;
-              $$nterm{$cn.'_explorer'} = undef;
+              explorer_handler($name, [$c, $li]);
+            }
+    |   EXPLORER ident ident LITERAL '\n' # research testing: copy paste: factorize!
+            {
+              my ($name, $startsymbol, $file) = @_[2,4];
 
-              undef;
+              my $c = <<"NESTEDPARSING";
+{ \$self->YYNestedParse('$startsymbol->[0]', $file->[0]); }
+NESTEDPARSING
+              my $li = $startsymbol->[1];
+
+              explorer_handler($name, [$c, $li]);
             }
     /*********************************************/
 

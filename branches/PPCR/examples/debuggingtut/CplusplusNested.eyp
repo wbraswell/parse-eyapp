@@ -16,7 +16,7 @@ my $NUM    = '(\d+)';
   else { $self->YYSetReduce('ID:EXP' ); }
 }
 
-%explorer decORexp 'decl'
+%explorer decORexp decl
 
 %expect-rr 1  # expect 1 reduce-reduce conflict
 
