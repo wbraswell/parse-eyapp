@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6);
+my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7);
 
-BEGIN { $nt = 8; $nt2 = 7; $nt3 = 7; $nt4 = 6; $nt5 = 7; $nt6 = 6;
+BEGIN { $nt = 8; $nt2 = 7; $nt3 = 7; $nt4 = 6; $nt5 = 7; $nt6 = 6; $nt7 = 6;
 }
-use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6;
+use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7;
 
 # test -S option and PPCR methodology with Pascal range versus enumerated conflict
 SKIP: {
@@ -395,6 +395,49 @@ PROG(D(D),SS(S))
 
 
   like($r, $expected,'AST for "D;D;S;S"');
+
+  unlink 't/ppcr.pl';
+
+}
+
+SKIP: {
+  skip "t/dynamicgrammar1.eyp not found", $nt7 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/dynamicgrammar1.eyp"
+                                                        && -r "t/input_for_dynamicgrammar.txt"
+                                                        && -x "./eyapp");
+
+  unlink 't/ppcr.pl';
+
+  my $r = system(q{perl -I./lib/ eyapp -C -o t/ppcr.pl t/dynamicgrammar1.eyp 2> t/err});
+  ok(!$r, "t/dynamicgrammar1.eyp grammar compiled");
+  like(qx{cat t/err},qr{^$},"no warning: %expect-rr 1");
+
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -f t/input_for_dynamicgrammar.txt 2>&1};
+
+  };  
+
+  ok(!$@,'t/dynamicgrammar1.eyp executed as modulino');
+
+  my $expected = q{
+0
+2
+1
+3
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "int (x) + 2; int (z) = 4;"');
 
   unlink 't/ppcr.pl';
 
