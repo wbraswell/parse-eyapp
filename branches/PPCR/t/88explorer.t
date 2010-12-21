@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7);
+my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7, $nt8, $nt9);
 
-BEGIN { $nt = 8; $nt2 = 7; $nt3 = 7; $nt4 = 6; $nt5 = 7; $nt6 = 6; $nt7 = 6;
+BEGIN { $nt = 8; $nt2 = 7; $nt3 = 7; $nt4 = 6; $nt5 = 7; $nt6 = 6; $nt7 = 6; $nt8 = 6; $nt9 = 6;
 }
-use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7;
+use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9;
 
 # test -S option and PPCR methodology with Pascal range versus enumerated conflict
 SKIP: {
@@ -438,6 +438,87 @@ SKIP: {
 
 
   like($r, $expected,'AST for "int (x) + 2; int (z) = 4;"');
+
+  unlink 't/ppcr.pl';
+
+}
+
+# testing PPCR and -S option with CplusplusStartOption.eyp
+# testing nested parsing (YYPreParse) when one token 
+# has been read by the outer parser
+SKIP: {
+  skip "t/CplusplusStartOption.eyp not found", $nt8 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/CplusplusStartOption.eyp"
+                                                        && -x "./eyapp");
+
+  unlink 't/ppcr.pl';
+
+  my $r = system(q{perl -I./lib/ eyapp -C -S decl -o t/ppcr.pl t/CplusplusStartOption.eyp 2> t/err});
+  ok(!$r, "t/CplusplusStartOption.eyp grammar compiled");
+  like(qx{cat t/err},qr{^$},"no warning: %expect-rr 1");
+
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'int (x) = y+z;' 2>&1};
+
+  };
+
+  ok(!$@,'t/CplusplusStartOption.eyp executed as modulino');
+
+  my $expected = q{
+DECLARATORINIT(TERMINAL[int],ID[x],PLUS(ID[y],ID[z]))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "int (x) = y+z;"');
+
+  unlink 't/ppcr.pl';
+
+}
+
+SKIP: {
+  skip "t/CplusplusStartOption.eyp not found", $nt9 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/CplusplusStartOption.eyp"
+                                                        && -x "./eyapp");
+
+  unlink 't/ppcr.pl';
+
+  my $r = system(q{perl -I./lib/ eyapp -C -o t/ppcr.pl t/CplusplusStartOption.eyp 2> t/err});
+  ok(!$r, "t/CplusplusStartOption.eyp grammar compiled");
+
+  like(qx{cat t/err},qr/Useless rules:/,"warnings");
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'int (x) = y+z;' 2>&1};
+
+  };
+
+  ok(!$@,'t/CplusplusStartOption.eyp executed as modulino');
+
+  my $expected = q{
+DECLARATORINIT(TERMINAL[int],ID[x],PLUS(ID[y],ID[z]))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "int (x) = y+z;"');
 
   unlink 't/ppcr.pl';
 
