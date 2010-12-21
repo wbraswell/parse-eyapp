@@ -822,7 +822,12 @@ rhseltwithid :
 
 rhselt:     symbol    { [ 'SYMB', $_[1] ] }
     | code    { [ 'CODE', $_[1] ] }
-    | DPREC ident { [ 'CONFLICTHANDLER', $_[2] ] }
+    | DPREC ident 
+        { 
+           my $cname = $_[2][0];
+           $conflict{$cname}{total}++;
+           [ 'CONFLICTHANDLER', $_[2] ] 
+        }
     #************** research *****************#
     | VIEWPOINT 
         { 
