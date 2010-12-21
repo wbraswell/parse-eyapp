@@ -335,7 +335,7 @@ sub Accessors {
 sub Warnings {
     my($self)=shift;
 
-    return '' if $self->{OPTIONS}{star};
+    return '' if $self->Option('start');
 
     my($text) = '';
     my($grammar)=$$self{GRAMMAR};
