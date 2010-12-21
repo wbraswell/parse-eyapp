@@ -1,4 +1,12 @@
 Revision history for Perl extension Eyapp.
+1.176
+  * Tests in t/88explorer.t for the new %explorer and %conflict syntax!
+       - DebugDynamicResolution.eyp
+       - dynamicgrammar1.eyp
+       - reducereduceconflictPPCR.eyp
+       -  ExpList.eyp, reuseconflicthandler.eyp, noPackratSolvedExpRGconcept.eyp
+       - CplusplusNested.eyp
+       - pascalnestedeyapp3_5.eypp
 1.175
   - Tests for png
 1.174
