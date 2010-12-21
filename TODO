@@ -28,10 +28,11 @@
   * Need a shift-reduce conflict example solved with 'pure' PPCR
 
   * Artículos:
+      * reescribir con nueva sintáxis TOPLAS y el comsys
       * Introducir modificaciones de los referees en los articulos de revista
       * conseguir articulo de Ganapanathi "semantic predicates in"
       * estudiar e introducir comparaciones
-      * insistir en que esta implementado y "verificado"
+      * insistir en que esta implementado y "verificado": describir implementación
 
   * Provide a higher level API for conflicts that can be solved using nested parsing:
       - %conflict conflictname somesymbol
