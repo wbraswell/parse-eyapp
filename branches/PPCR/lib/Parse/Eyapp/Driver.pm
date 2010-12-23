@@ -556,6 +556,17 @@ sub YYSetShift {
   }
 }
 
+
+  # if is reduce ...
+    # x $self->{CONFLICTHANDLERS}{$conflictName}{production}{$action} $action is a number
+    #0  ARRAY(0x100b3f930)
+    #   0  2
+    # has the position in the item, starting at 0
+    # DB<19> x $self->YYRHSLength(4)
+    # 0  3
+    # if pos is length -1 then is reduce otherwise is shift
+
+
 # It does YYSetReduce or YYSetshift according to the 
 # decision variable
 # I need to know the kind of conflict that there is

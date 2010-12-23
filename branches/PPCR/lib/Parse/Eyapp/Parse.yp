@@ -311,6 +311,7 @@ CONFLICT_EXPLORER
 
               undef;
             }
+
 %}
 
 %token ASSOC         /* is %(left|right|nonassoc) */
@@ -383,6 +384,14 @@ ident:  IDENT   {
                 }
 ;
 
+prodname:  IDENT 
+      |   LABEL
+      |   IDENT LABEL
+            {
+              $_[1][0] .= $_[2][0];
+              $_[1];
+            }
+;
 
 # Head section:
 head: headsec '%%'
@@ -596,11 +605,43 @@ CONFLICT_HEADER
 
               undef;
             }
-        #        conflict syntacticvariable name : label
-    |   CONFLICT ident IDENT IDENT LABEL  '\n'
-    |   CONFLICT ident IDENT LABEL  '\n'
-    |   CONFLICT ident REGEXP IDENT LABEL  '\n'
-    |   CONFLICT ident REGEXP LABEL  '\n'
+        # conflict syntacticvariable?  prodname : prodname
+    |   CONFLICT ident ident '?' prodname ':' prodname '\n'
+            {
+              print "<@{$_[2]} @{$_[3]} @{$_[5]} @{$_[7]}>\n";
+            
+              my $conflict = $_[2];
+              my ($startsymbol, $line) = @{$_[3]};
+              my @prodname = ($_[5][0], $_[7][0]);
+
+              my $cn = $conflict->[0];
+
+              my $c = <<"CONFLICT_HEADER";
+  my \$self = \$_[0];
+  for (\${\$self->input()}) {  
+#line $line "$filename" 
+    \$self->YYIf('$startsymbol', '$prodname[0]', '$prodname[1]');
+################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################
+  }
+CONFLICT_HEADER
+
+              $conflict{$cn}{codeh} = $c;
+              $conflict{$cn}{line} = $line;
+
+              $$syms{$cn} = $line;
+              $$nterm{$cn} = undef;
+
+              $$nterm{$startsymbol} = undef;
+
+
+              $c = <<"NESTEDPARSING";
+{ \$self->YYNestedParse('$startsymbol'); }
+NESTEDPARSING
+
+              explorer_handler($conflict, [$c, $line]);
+
+              undef;
+            }
     /*********************************************/
     |   EXPLORER ident CODE '\n' # research testing
             {
@@ -1252,7 +1293,7 @@ sub _Lexer {
         #********** research *************#
             $$input=~/\G%([a-zA-Z_]\w*)\?/gc
         and return('VIEWPOINT',[ $1, $lineno[0] ]);
-        #********** research *************#
+
 
     }
 
