@@ -30,7 +30,7 @@ and execute it with:
 %}
 
 %semantic token 'c' 'd' 'f' 'x' 'y'
-%expect-rr 1
+#%expect-rr 1
 
 %conflict DORF {
   if (/\G(?=.*?d)/gc) { $self->YYSetReduce('XY:D' ); } else { $self->YYSetReduce('XY:F' ); }

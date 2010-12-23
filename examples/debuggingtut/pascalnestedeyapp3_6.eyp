@@ -1,16 +1,5 @@
 
-# potential future syntax
-#%conflict rangeORenum range? reduce ID:RANGE : reduce ID:ENUM
-#%range? ID:RANGE : ID:ENUM
-#%range? ID:RANGE : shift
-#%range? ID:RANGE 
-#%PREC optional if there is only one conflict?
-
-%conflict rangeORenum {
-  $self->YYIf('range', 'ID:RANGE', 'ID:ENUM');
-} 
-
-%explorer rangeORenum 'range' 
+%conflict rORe range? ID:RANGE : ID:ENUM
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
@@ -28,9 +17,9 @@ type_decl : 'type' ID '=' type ';'
 
 type : 
       %name ENUM
-      %rangeORenum? '(' id_list ')'
+      %rORe? '(' id_list ')'
     | %name RANGE
-      %rangeORenum? range
+      %rORe? range
 ;
 
 range:
@@ -39,7 +28,7 @@ range:
 
 id_list : 
       %name ID:ENUM
-      ID                      %PREC rangeORenum
+      ID                      %PREC rORe
     | id_list ',' ID
 ;
 
@@ -50,7 +39,7 @@ expr : '(' expr ')'   { $_[2] } /* bypass */
     | %name DIV      expr '/' expr
     | %name COMMA    expr ',' expr
     | %name ID:RANGE
-      ID                     %PREC rangeORenum
+      ID                     %PREC rORe
     | %name NUM      NUM
 ;
 
@@ -72,17 +61,18 @@ See
 
 Compile it with:
 
-      eyapp -TC pascalnestedeyapp3_5.eyp
+      eyapp -TC pascalnestedeyapp3_6.eyp
 
 The compile it again, but using 'range' as start symbol (option -S)
 and option -P to generate a parser that accepts if a prefix of the input matches:
 
-      eyapp -P -S range pascalnestedeyapp3_5.eyp 
+      eyapp -P -S range pascalnestedeyapp3_6.eyp 
 
 Run it with this options:
 
-    $ ./pascalnestedeyapp3_5.pm -t -i -m 1 -c 'type e = (x, y, z);'
-    $ ./pascalnestedeyapp3_5.pm -t -i -m 1 -c 'type e = (x, @, z);'
+    $  ./pascalnestedeyapp3_6.pm -t -i -m 1 -c 'type e = (x)..(z);'
+    $ ./pascalnestedeyapp3_6.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyapp3_6.pm -t -i -m 1 -c 'type e = (x, @, z);'
 
 Try also these inputs:
 
