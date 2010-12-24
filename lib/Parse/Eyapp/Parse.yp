@@ -606,9 +606,9 @@ CONFLICT_HEADER
               undef;
             }
         # conflict syntacticvariable?  prodname : prodname
-    |   CONFLICT ident ident '?' prodname ':' prodname '\n'
+    |   CONFLICT ident IDENT '?' prodname ':' prodname '\n'
             {
-              print "<@{$_[2]} @{$_[3]} @{$_[5]} @{$_[7]}>\n";
+              #print "<@{$_[2]} @{$_[3]} @{$_[5]} @{$_[7]}>\n";
             
               my $conflict = $_[2];
               my ($startsymbol, $line) = @{$_[3]};
@@ -631,7 +631,8 @@ CONFLICT_HEADER
               $$syms{$cn} = $line;
               $$nterm{$cn} = undef;
 
-              $$nterm{$startsymbol} = undef;
+              #$$nterm{$startsymbol} = undef;
+              #delete $$syms{$startsymbol};
 
 
               $c = <<"NESTEDPARSING";

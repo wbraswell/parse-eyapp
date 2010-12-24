@@ -1,10 +1,11 @@
-  * No warnings with -c in 
-        eyapp -C CplusplusStartOption
-    check this bug!!!!
-    Make a test!  85minusSoption.t
-     
-    May be the nested parser can be embedded in the same module generated without requiring
-    a second compilation with -S start -P
+  * Luis: test everything related  with conflict resolution
+  * Need a shift-reduce conflict example solved with 'pure' PPCR
+  * %conflict C symbol? prod : prod
+      - symbol? no necessarily a symbol of the grammar
+
+      - VIEWPOINT in the body, i.e. symbol? must be optional. 
+      In such case the nested parsing is made inside the conflict solver
+      See lastD.eyp and DebugDynamicResolution4
 
   * Trying to supress the generation of conflict rules when there is no conflict (during nested
     auxiliary compilation). Count the number of appearances of %PREC conflict . If it is greater
@@ -13,19 +14,16 @@
     semantic actions that insert the conflict symbols as soon as a production is defined.
     To solve it we must delay the translation until the whole grammar has been seen.
 
-  * Posible sintáxis para los resoluciones de conflicto:
-                    %conflict range ID:RANGE
-    el nombre de la variable de exploración coincide con el del conflicto
+  * Write code to control
+    Errores por mala colocación de conflictos. Se pueden controlar en _DynamicConflicts en Lalr
 
-  * Errores por mala colocación de conflictos. Se pueden controlar en _DynamicConflicts en Lalr
   * quiza entre la información guardada en CONFLICTHANDLERS deberían ir las etiquetas simbólicas.
     Esto simplificaría YYSetReduce
 
   * Tienes que repasar YYIf: no esta acabada!!!!
-    De hecho, deberías comprobar que tipo de acción (s o r) es la que hay que hacer. Se puede saber por el signo en 
+    De hecho, deberías comprobar que tipo de acción (s o r) 
+    es la que hay que hacer. Se puede saber por el signo en 
     la información asociada con el conflict handler y ejecutarla
-
-  * Need a shift-reduce conflict example solved with 'pure' PPCR
 
   * Artículos:
       * reescribir con nueva sintáxis TOPLAS y el comsys
