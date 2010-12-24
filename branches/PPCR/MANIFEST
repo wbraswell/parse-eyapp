@@ -67,6 +67,9 @@ examples/debuggingtut/Debug1.eyp
 examples/debuggingtut/Debug2.eyp
 examples/debuggingtut/DebugDynamicResolution.eyp
 examples/debuggingtut/DebugDynamicResolution2.eyp
+examples/debuggingtut/DebugDynamicResolution3.eyp
+examples/debuggingtut/DebugDynamicResolution4.eyp
+examples/debuggingtut/lastD.eyp
 examples/debuggingtut/DebugLookForward.eyp
 examples/debuggingtut/DebugLookForward2.eyp
 examples/debuggingtut/DebugTail.pm
