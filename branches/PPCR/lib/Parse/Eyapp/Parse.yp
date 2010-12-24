@@ -744,11 +744,20 @@ body:
             for my $A (keys %conflict) { 
               my $lhs = [$A, $conflict{$A}{line}];
               my $code = $conflict{$A}{codeh};
+
+              if  (defined($conflict{$A}{explorer}) and !$conflict{$A}{totalviewpoint}) {
+                  $code = "{ $conflict{$A}{explorer} }\n{ $code }";
+                  my $expname = $A.'_explorer';
+                  delete $$syms{$expname};
+                  delete $$nterm{$expname};
+                  delete $conflict{$A}{explorer};
+              }
+
               my $rhss = [ rhs([], name => $lhs, code => $code), ];
               _AddRules($lhs, $rhss);
               delete $conflict{$A}{codeh};
 
-              if (defined($conflict{$A}{explorer})) {
+              if (defined($conflict{$A}{explorer}) and ($conflict{$A}{totalviewpoint})) {
                 my $lhs = [$A.'_explorer', $conflict{$A}{explorerline}];
                 my $code = $conflict{$A}{explorer};
                 my $rhss = [ rhs([], name => $lhs, code => $code), ];
@@ -873,6 +882,7 @@ rhselt:     symbol    { [ 'SYMB', $_[1] ] }
     #************** research *****************#
     | VIEWPOINT 
         { 
+           $conflict{$_[1][0]}{totalviewpoint}++;
            $_[1][0] .='_explorer';
            [ 'CONFLICTVIEWPOINT', $_[1] ] 
         }
