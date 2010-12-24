@@ -7,6 +7,16 @@ Revision history for Perl extension Eyapp.
        -  ExpList.eyp, reuseconflicthandler.eyp, noPackratSolvedExpRGconcept.eyp
        - CplusplusNested.eyp
        - pascalnestedeyapp3_5.eypp
+  * Conflict resolution syntax:
+                    %conflict rORe range? ID:RANGE ID:ENUM
+   
+  * No warnings with -c in 
+        eyapp -C CplusplusStartOption
+    check this bug!!!!
+    Make a test!  85minusSoption.t
+     
+    May be the nested parser can be embedded in the same module generated without requiring
+    a second compilation with -S start -P
 1.175
   - Tests for png
 1.174

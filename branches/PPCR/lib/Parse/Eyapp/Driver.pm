@@ -402,7 +402,7 @@ sub YYPreParse {
   my $file = shift() || $parser;
 
   # Check for errors!
-  eval "require $parser";
+  eval "require $file";
    
   # optimize to state variable for 5.10
   my $rp = $parser->new( yyerror => sub {});
@@ -576,10 +576,20 @@ sub YYIf {
   my $syntaxVariable = shift;
 
   if ($self->YYIs($syntaxVariable)) {
-    $self->YYSetReduce($_[0]); 
+    if ($_[0] eq 'shift') {
+      $self->YYSetShift(@_); 
+    }
+    else {
+      $self->YYSetReduce($_[0]); 
+    }
   }
   else {
-    $self->YYSetReduce($_[1]); 
+    if ($_[1] eq 'shift') {
+      $self->YYSetShift(@_); 
+    }
+    else {
+      $self->YYSetReduce($_[1]); 
+    }
   }
 }
 
