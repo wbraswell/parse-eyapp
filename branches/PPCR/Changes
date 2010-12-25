@@ -1,5 +1,12 @@
 Revision history for Perl extension Eyapp.
 1.176
+  * A shift-reduce conflict example solved with 'pure' PPCR in DebugdynamicResolution4.eyp
+  * %conflict C symbol? prod : prod
+      - symbol is no necessarily a symbol of the grammar
+
+      - VIEWPOINT in the body, i.e. symbol? must be optional. 
+      In such case the nested parsing is made inside the conflict solver
+      See lastD.eyp and DebugDynamicResolution4
   * Tests in t/88explorer.t for the new %explorer and %conflict syntax!
        - DebugDynamicResolution.eyp
        - dynamicgrammar1.eyp
