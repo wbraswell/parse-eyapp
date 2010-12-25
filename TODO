@@ -1,11 +1,4 @@
   * Luis: test everything related  with conflict resolution
-  * Need a shift-reduce conflict example solved with 'pure' PPCR
-  * %conflict C symbol? prod : prod
-      - symbol? no necessarily a symbol of the grammar
-
-      - VIEWPOINT in the body, i.e. symbol? must be optional. 
-      In such case the nested parsing is made inside the conflict solver
-      See lastD.eyp and DebugDynamicResolution4
 
   * Trying to supress the generation of conflict rules when there is no conflict (during nested
     auxiliary compilation). Count the number of appearances of %PREC conflict . If it is greater
