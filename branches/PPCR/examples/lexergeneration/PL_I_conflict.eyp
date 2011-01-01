@@ -24,8 +24,6 @@ and also
 
                ./PL_I_conflict.pm -t -i -c 'if then=if then if=then'
 
-The problem arises again
-
 Also try:
 
                 ./PL_I_conflict.pm -t -c 'if then=if then if a=b then c=d'
