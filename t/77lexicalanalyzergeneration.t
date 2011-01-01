@@ -4,7 +4,7 @@ my $nt;
 my $skips;
 
 BEGIN { $nt = 5; $skips = 4; }
-use Test::More tests=> $skips*$nt+1;
+use Test::More tests=> $skips*$nt+1+7;
 
 SKIP: {
   skip "t/numlist.eyp not found", $nt unless ($ENV{DEVELOPER} && -r "t/numlist.eyp" && -x "./eyapp");
@@ -199,5 +199,81 @@ SKIP: {
   like($r, $expected,q{Error for %semantic token '+' = /(\+)/});
 
   unlink 't/err';
+
+}
+
+SKIP: {
+  skip "t/dummytoken.eyp not found", 1 unless ($ENV{DEVELOPER} && -r "t/dummytoken.eyp" && -x "./eyapp");
+
+  unlink 't/dummytoken.pl';
+
+  my $r = system(q{perl -I./lib/ eyapp -C -s -o t/dummytoken.pl t/dummytoken.eyp 2> t/err});
+  
+  ok(!$r, "standalone option");
+  
+  $r = qx{cat t/err};
+
+  is($r, '', q{no errors during compilation '%dummy token'});
+
+  unlink 't/err';
+
+  ok(-s "t/dummytoken.pl", "modulino standalone exists");
+
+  ok(-x "t/dummytoken.pl", "modulino standalone has execution permits");
+
+  local $ENV{PERL5LIB};
+  my $eyapppath = shift @INC; # Supress ~/LEyapp/lib from search path
+  eval {
+
+    $r = qx{t/dummytoken.pl -t -i -m 1 -c 'if e then if e then o else o'};
+
+  };
+
+  ok(!$@,'t/dummytoken.eyp executed as standalone modulino');
+
+  my $expected = q{
+
+IFTHEN(
+  TERMINAL[e],
+  IFTHENELSE(
+    TERMINAL[e],
+    TERMINAL[o],
+    TERMINAL[o]
+  )
+)
+
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "if e then if e then o else o"');
+
+  eval {
+
+    $r = qx{t/dummytoken.pl -t -i -m 1 -c 'TUTU' 2>&1};
+
+  };
+
+  $expected = q{
+
+Syntax error near 'TUTU'. 
+Expected terminal: 'end of input'
+There were 1 errors during parsing
+
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'dummy token produces error');
+
+  unlink 't/dummytoken.pl';
 
 }
