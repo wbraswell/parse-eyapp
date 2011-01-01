@@ -1,3 +1,4 @@
+  * add to t/77lexicalanalyzergeneration.t the PL_I_conflict.eyp in examples/lexergeneration
   * Luis: test everything related  with conflict resolution
 
   * Trying to supress the generation of conflict rules when there is no conflict (during nested

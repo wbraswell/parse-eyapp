@@ -125,7 +125,7 @@ EORT
 EORT
     }
     elsif ($termdef{$t}[2] eq 'CODE') { # token definition is code
-      $DEFINEDTOKENS .= $termdef{$t}[0];
+      $DEFINEDTOKENS .= "$termdef{$t}[0]\n";
     }
   }
 
