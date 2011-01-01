@@ -35,6 +35,11 @@ sub deleteNotUsedTokens {
   my %usedSymbols;
   @usedSymbols{@usedSymbols} = ();
 
+  for (@{$self->{GRAMMAR}{DUMMY}}) {
+    delete $usedSymbols{$_};
+    delete $termDef->{$_};
+  }
+
   for my $token (keys %$term) {
     delete $term->{$token} unless exists $usedSymbols{$token};
   }
