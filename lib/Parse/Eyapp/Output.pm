@@ -110,9 +110,16 @@ sub makeLexer {
   for my $t (@termdef) {
     if ($termdef{$t}[2] eq 'REGEXP') {
       my $reg = $termdef{$t}[0];
-      $reg =~ s{^/}{/\\G};
+      $reg =~ s{^/}{/\\G}; # add \G at the begining of the regexp
       $DEFINEDTOKENS .= << "EORT";
       ${reg}gc and return ('$t', \$1);
+EORT
+    }
+    elsif ($termdef{$t}[2] eq 'CONTEXTUAL_REGEXP') {
+      my $reg = $termdef{$t}[0];
+      $reg =~ s{^/}{/\\G}; # add \G at the begining of the regexp
+      $DEFINEDTOKENS .= << "EORT";
+      \$self->expects('$t') and ${reg}gc and return ('$t', \$1);
 EORT
     }
     elsif ($termdef{$t}[2] eq 'LITERAL') { # %token without regexp or code definition

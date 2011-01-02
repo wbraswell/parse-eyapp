@@ -722,9 +722,14 @@ toklist:    toklist tokendef        { push(@{$_[1]},$_[2]); $_[1] }
     |       tokendef                { [ $_[1] ] }
 ;
 
-tokendef:   ident '=' REGEXP    { 
+tokendef:   ident '=' REGEXP     { 
                                     push @{$_[3]}, 'REGEXP';
                                     push @{$_[1]}, $_[3]; 
+                                    $_[1] 
+                                 } 
+    |       ident '=' '%' REGEXP { 
+                                    push @{$_[4]}, 'CONTEXTUAL_REGEXP';
+                                    push @{$_[1]}, $_[4]; 
                                     $_[1] 
                                  } 
     |       ident '=' CODE      { 
