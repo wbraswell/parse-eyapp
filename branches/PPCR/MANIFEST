@@ -268,6 +268,9 @@ examples/lexergeneration/twolexers2.eyp
 examples/lexergeneration/useincremental.pl
 examples/lexergeneration/usesimple.pl
 examples/lexergeneration/usesimplefromfile.pl
+examples/lexergeneration/PL_I_conflict.eyp
+examples/lexergeneration/PL_I_conflict2.eyp
+examples/lexergeneration/dummytoken.eyp
 examples/MatchingTrees/m2.pl
 examples/MatchingTrees/numchildren.pl
 examples/MatchingTrees/Rule6.yp
@@ -526,6 +529,13 @@ t/74lalrdependanttest.t
 t/75tokenandvariablewiththesamename.t
 t/76minusvoption.t
 t/77lexicalanalyzergeneration.t
+t/dummytoken.eyp
+t/PL_I_conflictWithLexical.eyp
+t/PL_I_conflictContextualTokens.eyp
+t/CplusplusStartOption.eyp
+t/dynamicgrammar1.eyp
+t/CplusplusNested3.eyp
+t/ExpList2.eyp
 t/78twolexers.t
 t/79syntactictokenwithdef.t
 t/80ppcr.t
