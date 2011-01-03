@@ -30,9 +30,7 @@ examples/debuggingtut/Cplusplus.eyp
 examples/debuggingtut/Cplusplus1.eyp
 examples/debuggingtut/Cplusplus2.eyp
 examples/debuggingtut/Cplusplus3.eyp
-examples/debuggingtut/CplusplusNested.dot
 examples/debuggingtut/CplusplusNested.eyp
-examples/debuggingtut/CplusplusNested.output
 examples/debuggingtut/Debug.eyp
 examples/debuggingtut/Debug1.eyp
 examples/debuggingtut/Debug2.eyp
@@ -51,7 +49,6 @@ examples/debuggingtut/DynamicallyChangingTheParser4.eyp
 examples/debuggingtut/dynamicgrammar.eyp
 examples/debuggingtut/dynamicgrammar0.eyp
 examples/debuggingtut/dynamicgrammar624.eyp
-examples/debuggingtut/dyng.pl
 examples/debuggingtut/ExpList.eyp
 examples/debuggingtut/input_for_dynamicgrammar.txt
 examples/debuggingtut/inputforsemanticinfo.txt
@@ -59,14 +56,10 @@ examples/debuggingtut/inputforsemanticinfo2.txt
 examples/debuggingtut/lr_1_grammar.eyp
 examples/debuggingtut/minimalrr.eyp
 examples/debuggingtut/minimalrr2.eyp
-examples/debuggingtut/nolalrrrconflictsolved.eyp
-examples/debuggingtut/nolalrrrconflictsolved2.eyp
 examples/debuggingtut/nolr_k_grammar.eyp
 examples/debuggingtut/nolr_k_grammarsolveddynamic.eyp
 examples/debuggingtut/nonslrgrammar.eyp
 examples/debuggingtut/nopackrat.eyp
-examples/debuggingtut/nopackrat.output.eyp
-examples/debuggingtut/nopackrat.output.yp
 examples/debuggingtut/nopackrat.yp
 examples/debuggingtut/nopackrat2.eyp
 examples/debuggingtut/noPackratSolvedExpRG.eyp
@@ -159,7 +152,6 @@ examples/eyapplanguageref/CalcwithAttributeGrammar.pl
 examples/eyapplanguageref/CsBetweenCommansAndD.eyp
 examples/eyapplanguageref/CsBetweenCommansAndDWithNames.eyp
 examples/eyapplanguageref/dynamicyyprefix_and_alias.pl
-examples/eyapplanguageref/ia.pl
 examples/eyapplanguageref/intermediateaction2.yp
 examples/eyapplanguageref/intermediateactiontree.yp
 examples/eyapplanguageref/Lhs.eyp
