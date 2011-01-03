@@ -1,4 +1,3 @@
-  * %token if   = %/(if)(?!\s*=)/
   * Luis: test everything related  with conflict resolution
 
   * Trying to supress the generation of conflict rules when there is no conflict (during nested

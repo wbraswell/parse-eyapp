@@ -113,6 +113,7 @@ examples/debuggingtut/paulocustodio.eyp
 examples/debuggingtut/PL_I_conflict.eyp
 examples/debuggingtut/PL_I_conflictNested.eyp
 examples/debuggingtut/PLIConflictNested.eyp
+examples/debuggingtut/PLIConflictNested2.eyp
 examples/debuggingtut/Precedencia.eyp
 examples/debuggingtut/Range.eyp
 examples/debuggingtut/Range2.eyp
@@ -271,6 +272,8 @@ examples/lexergeneration/usesimplefromfile.pl
 examples/lexergeneration/PL_I_conflict.eyp
 examples/lexergeneration/PL_I_conflict2.eyp
 examples/lexergeneration/dummytoken.eyp
+examples/lexergeneration/PLIConflictNested2.eyp
+examples/lexergeneration/Assign.eyp
 examples/MatchingTrees/m2.pl
 examples/MatchingTrees/numchildren.pl
 examples/MatchingTrees/Rule6.yp
@@ -536,6 +539,8 @@ t/CplusplusStartOption.eyp
 t/dynamicgrammar1.eyp
 t/CplusplusNested3.eyp
 t/ExpList2.eyp
+t/PLIConflictNested.eyp
+t/PLIConflictNested2.eyp
 t/78twolexers.t
 t/79syntactictokenwithdef.t
 t/80ppcr.t
@@ -556,6 +561,7 @@ t/AmbiguousCalc.eyp
 t/AmbiguousCalc.wexpected
 t/AmbiguousCalc.WWexpected
 t/Assign.eyp
+t/Assign2.eyp
 t/ast234.png
 t/Calc.eyp
 t/cleanok/examples_ADRIANSANTOS__Infix.eyp
