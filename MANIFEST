@@ -16,14 +16,11 @@ examples/Calculator/scripts/witherrors
 examples/Calculator/t/01smoke.t
 examples/Calculator/t/02semanticerrors.t
 examples/Calculator/t/03syntacticerrors.t
-examples/debuggingtut/a
 examples/debuggingtut/aSb.yp
 examples/debuggingtut/Assign.eyp
 examples/debuggingtut/bugyapp2.eyp
 examples/debuggingtut/bugyapp3.eyp
-examples/debuggingtut/Calc.dot
 examples/debuggingtut/Calc.eyp
-examples/debuggingtut/Calc.output
 examples/debuggingtut/confusing.eyp
 examples/debuggingtut/confusingsolveddynamic.eyp
 examples/debuggingtut/confusingsolvedstatic.eyp
@@ -74,8 +71,6 @@ examples/debuggingtut/nopackrat.yp
 examples/debuggingtut/nopackrat2.eyp
 examples/debuggingtut/noPackratSolvedExpRG.eyp
 examples/debuggingtut/noPackratSolvedExpRG2.eyp
-examples/debuggingtut/noPackratSolvedExpRG2bak.eyp
-examples/debuggingtut/noPackratSolvedExpRG_bak.eyp
 examples/debuggingtut/noPackratSolvedExpRGconcept.eyp
 examples/debuggingtut/pascal1.eyp
 examples/debuggingtut/pascalenumeratedvsrange.eyp
@@ -114,7 +109,6 @@ examples/debuggingtut/Tieins.eyp
 examples/debuggingtut/tokenvar.eyp
 examples/debuggingtut/twostarts.eyp
 examples/debuggingtut/twostarts1.pl
-examples/debuggingtut/twostarts_bak.eyp
 examples/debuggingtut/typicalrr.eyp
 examples/debuggingtut/typicalrr2.eyp
 examples/debuggingtut/typicalrr_fixed.eyp
@@ -348,8 +342,6 @@ examples/typechecking/Simple-Types-0.4/script/bugmatch.txt
 examples/typechecking/Simple-Types-0.4/script/bugzeben.c
 examples/typechecking/Simple-Types-0.4/script/bugzeben2.c
 examples/typechecking/Simple-Types-0.4/script/outbreak.c
-examples/typechecking/Simple-Types-0.4/script/prueba02.c
-examples/typechecking/Simple-Types-0.4/script/prueba03.c
 examples/typechecking/Simple-Types-0.4/script/prueba04.c
 examples/typechecking/Simple-Types-0.4/script/prueba05.c
 examples/typechecking/Simple-Types-0.4/script/prueba06.c
@@ -375,6 +367,8 @@ examples/typechecking/Simple-Types-0.4/setvar
 examples/typechecking/Simple-Types-0.4/t/01load.t
 examples/typechecking/Simple-Types-0.4/t/02tests.t
 examples/typechecking/Simple-Types-0.4/t/prueba01.c
+examples/typechecking/Simple-Types-0.4/t/prueba02.c
+examples/typechecking/Simple-Types-0.4/t/prueba03.c
 examples/yaml/Calc.eyp
 examples/yaml/hello.pl
 examples/yaml/infix2postfix.groovy
@@ -427,13 +421,10 @@ lib/Parse/Eyapp/Unify.pm
 lib/Parse/Eyapp/YATW.pm
 lib/Parse/Eyapp/YATW.pod
 local.preamble.pl
-make_eyapp_c_tests.pl
-Makefile.old
 Makefile.PL
 makepods
 MANIFEST
 MANIFEST.SKIP
-preamble
 README
 README.SUBVERSION
 t/01calc.t
@@ -536,13 +527,11 @@ t/86recycle.t
 t/87namingSchemes.t
 t/98nopm.t
 t/99Cplusplusgrammar.t
-t/a.pl
 t/AmbiguousCalc.eyp
 t/AmbiguousCalc.wexpected
 t/AmbiguousCalc.WWexpected
 t/Assign.eyp
 t/Assign2.eyp
-t/ast234.png
 t/Calc.eyp
 t/cleanok/examples_ADRIANSANTOS__Infix.eyp
 t/cleanok/examples_debuggingtut__aSb.yp
@@ -643,8 +632,6 @@ t/cleanvok/examples_ParsingStringsAndTrees__Infix.eyp
 t/cleanvok/examples_performance__chris.eyp
 t/cleanvok/examples_YATW__Rule6.yp
 t/CplusplusNested.eyp
-t/CplusplusNested.output
-t/CplusplusNested.pm
 t/CplusplusNested2.eyp
 t/Cplusplustokensubst.eyp
 t/Debug2.eyp
