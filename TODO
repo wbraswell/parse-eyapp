@@ -1,4 +1,4 @@
-  * Luis: test everything related  with conflict resolution
+  * optimize generated lexer for contextual tokens (Expected must be called only once)
 
   * Trying to supress the generation of conflict rules when there is no conflict (during nested
     auxiliary compilation). Count the number of appearances of %PREC conflict . If it is greater
