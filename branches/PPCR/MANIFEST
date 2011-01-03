@@ -60,7 +60,6 @@ examples/debuggingtut/nolr_k_grammar.eyp
 examples/debuggingtut/nolr_k_grammarsolveddynamic.eyp
 examples/debuggingtut/nonslrgrammar.eyp
 examples/debuggingtut/nopackrat.eyp
-examples/debuggingtut/nopackrat.yp
 examples/debuggingtut/nopackrat2.eyp
 examples/debuggingtut/noPackratSolvedExpRG.eyp
 examples/debuggingtut/noPackratSolvedExpRG2.eyp
