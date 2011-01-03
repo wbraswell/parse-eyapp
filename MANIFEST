@@ -539,6 +539,9 @@ t/ExpList2.eyp
 t/78twolexers.t
 t/79syntactictokenwithdef.t
 t/80ppcr.t
+t/CplusplusNested4.eyp
+t/DebugDynamicResolution4.eyp
+t/pascalnestedeyapp3_6.eyp
 t/81tokendirectiveandsubstitution.t
 t/82expectandPLI.t
 t/83parsingstringsandtrees.t
