@@ -591,6 +591,7 @@ sub YYIf {
       $self->YYSetReduce($_[1]); 
     }
   }
+  $self->YYIs($syntaxVariable, 0); 
 }
 
 sub YYGetLRAction {
