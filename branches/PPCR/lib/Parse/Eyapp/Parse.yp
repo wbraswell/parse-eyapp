@@ -649,9 +649,16 @@ CONFLICT_HEADER
               #delete $$syms{$startsymbol};
 
 
+              if ($startsymbol eq 'EMPTY') {
+              $c = <<"NESTEDPARSING";
+{ \$self->YYIs('EMPTY', 1); }
+NESTEDPARSING
+              }
+              else {
               $c = <<"NESTEDPARSING";
 { \$self->YYNestedParse('$startsymbol'); }
 NESTEDPARSING
+              }
 
               explorer_handler($conflict, [$c, $line]);
 
