@@ -1,4 +1,5 @@
-  * Review reduce-reduce example. Put state variable to zero after decision in conflict area
+  * Make tests for syntax:
+                %conflict ToN EMPTY? TYPE:VAR : NAME:VAR
   * Implement syntax 
               %conflict decORexp /regexp/? ID:DEC : ID:EXP
   * debugging: break points, call actual debugger inside semantic actions, etc.

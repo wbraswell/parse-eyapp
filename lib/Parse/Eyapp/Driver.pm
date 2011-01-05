@@ -437,6 +437,19 @@ sub YYNestedParse {
   return $ok;
 }
 
+sub YYNestedRegexp {
+  my $self = shift;
+  my $regexp = shift;
+  my $conflictName = $self->YYLhs;
+  $conflictName =~ s/_explorer$//;
+
+  my $ok =~ /\G$regexp/gc;
+
+  $self->{CONFLICTHANDLERS}{$conflictName}{'..regexp'} = [$ok, undef];
+
+  return $ok;
+}
+
 sub YYIs {
   my $self = shift;
   # this is ungly and dangeorus. Don't use the dot. Change it!

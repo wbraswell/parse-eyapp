@@ -664,6 +664,39 @@ NESTEDPARSING
 
               undef;
             }
+    |   CONFLICT ident REGEXP '?' prodname ':' prodname '\n'
+            {
+            
+              my $conflict = $_[2];
+              my ($regexp, $line) = @{$_[3]};
+              my @prodname = ($_[5][0], $_[7][0]);
+
+              my $cn = $conflict->[0];
+
+              my $c = <<"CONFLICT_HEADER";
+  my \$self = \$_[0];
+  for (\${\$self->input()}) {  
+#line $line "$filename" 
+    \$self->YYIf('.regexp', '$prodname[0]', '$prodname[1]');
+################ @@@@@@@@@ End of User Code @@@@@@@@@ ###################
+  }
+CONFLICT_HEADER
+
+              $conflict{$cn}{codeh} = $c;
+              $conflict{$cn}{line} = $line;
+
+              $$syms{$cn} = $line;
+              $$nterm{$cn} = undef;
+              $regexp = substr($regexp,1,-1);
+
+              $c = <<"NESTEDPARSING";
+{ \$self->YYNestedRegexp('$regexp'); }
+NESTEDPARSING
+
+              explorer_handler($conflict, [$c, $line]);
+
+              undef;
+            }
     /*********************************************/
     |   EXPLORER ident CODE '\n' # research testing
             {

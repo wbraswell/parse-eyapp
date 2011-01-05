@@ -31,11 +31,11 @@ name_list:
 
 Compile it with:
 
-            eyapp -vTC reducereduceconflictPPCR.eyp
+            eyapp -vTC reducereduceconflictPPCR2.eyp
 
 See the C<.output> file. Run it with this options:
 
-            ./reducereduceconflictPPCR.pm -deb -t -i -m 1 -c 'a,b:c d:e,'
+            ./reducereduceconflictPPCR2.pm -deb -t -i -m 1 -c 'a,b:c d:e,'
 
 =cut
 
