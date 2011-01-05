@@ -1,3 +1,7 @@
+  * Review reduce-reduce example. Put state variable to zero after decision in conflict area
+  * Implement syntax 
+              %conflict decORexp /regexp/? ID:DEC : ID:EXP
+  * debugging: break points, call actual debugger inside semantic actions, etc.
   * optimize generated lexer for contextual tokens (Expected must be called only once)
 
   * Trying to supress the generation of conflict rules when there is no conflict (during nested
