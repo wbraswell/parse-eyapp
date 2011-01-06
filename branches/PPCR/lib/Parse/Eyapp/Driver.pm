@@ -443,7 +443,7 @@ sub YYNestedRegexp {
   my $conflictName = $self->YYLhs;
   $conflictName =~ s/_explorer$//;
 
-  my $ok =~ /\G$regexp/gc;
+  my $ok = $_ =~ /\G$regexp/gc;
 
   $self->{CONFLICTHANDLERS}{$conflictName}{'..regexp'} = [$ok, undef];
 
@@ -525,7 +525,7 @@ sub YYSetReduce {
   $token = [ $token ] unless ref($token);
   for (@$token) {
     # save if shift
-    if ($self->{STATES}[$conflictstate]{ACTIONS}{$_} >= 0) {
+    if (exists($self->{STATES}[$conflictstate]{ACTIONS}) and $self->{STATES}[$conflictstate]{ACTIONS}{$_} >= 0) {
       $self->{CONFLICT}{$conflictName}{$_}  = [ $conflictstate,  $self->{STATES}[$conflictstate]{ACTIONS}{$_} ];
     }
     $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $action;

@@ -2,8 +2,16 @@
                 %conflict ToN EMPTY? TYPE:VAR : NAME:VAR
   * Implement syntax 
               %conflict decORexp /regexp/? ID:DEC : ID:EXP
-  * debugging: break points, call actual debugger inside semantic actions, etc.
+    make tests
+  * Artículos:
+      * OOPLAS
+      * reescribir con nueva sintáxis TOPLAS y el comsys
+      * Introducir modificaciones de los referees en los articulos de revista: implementacion, pruebas
+      * conseguir articulo de Ganapanathi "semantic predicates in"
+      * estudiar e introducir comparaciones
+      * insistir en que esta implementado y "verificado": describir implementación
   * optimize generated lexer for contextual tokens (Expected must be called only once)
+  * debugging: break points, call actual debugger inside semantic actions, etc.
 
   * Trying to supress the generation of conflict rules when there is no conflict (during nested
     auxiliary compilation). Count the number of appearances of %PREC conflict . If it is greater
@@ -53,17 +61,6 @@
   * quiza entre la información guardada en CONFLICTHANDLERS deberían ir las etiquetas simbólicas.
     Esto simplificaría YYSetReduce
 
-  * Tienes que repasar YYIf: no esta acabada!!!!
-    De hecho, deberías comprobar que tipo de acción (s o r) 
-    es la que hay que hacer. Se puede saber por el signo en 
-    la información asociada con el conflict handler y ejecutarla
-
-  * Artículos:
-      * reescribir con nueva sintáxis TOPLAS y el comsys
-      * Introducir modificaciones de los referees en los articulos de revista
-      * conseguir articulo de Ganapanathi "semantic predicates in"
-      * estudiar e introducir comparaciones
-      * insistir en que esta implementado y "verificado": describir implementación
 
 
   * Otra API de mas alto nivel sería el caso regexp
