@@ -25,6 +25,7 @@ examples/debuggingtut/confusing.eyp
 examples/debuggingtut/confusingsolveddynamic.eyp
 examples/debuggingtut/confusingsolvedstatic.eyp
 examples/debuggingtut/confusingsolvedstatic2.eyp
+examples/debuggingtut/confusingsolvedppcr.eyp
 examples/debuggingtut/correcttypicalrr.eyp
 examples/debuggingtut/Cplusplus.eyp
 examples/debuggingtut/Cplusplus1.eyp
