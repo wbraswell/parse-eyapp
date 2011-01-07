@@ -398,6 +398,15 @@ prodname:  IDENT
 head: headsec '%%'
 ;
 
+perlident:  
+          IDENT 
+      |   perlident '::' IDENT
+            {
+              $_[1][0] .= $_[3][0];
+              $_[1];
+            }
+;
+
 headsec:    #empty  #default action
     |       decls   #default action
 ;
@@ -620,7 +629,7 @@ CONFLICT_HEADER
               undef;
             }
         # conflict syntacticvariable?  prodname : prodname
-    |   CONFLICT ident IDENT '?' prodname ':' prodname '\n'
+    |   CONFLICT ident perlident '?' prodname ':' prodname '\n'
             {
               #print "<@{$_[2]} @{$_[3]} @{$_[5]} @{$_[7]}>\n";
             
@@ -723,7 +732,7 @@ NESTEDPARSING
 
               explorer_handler($name, [$c, $li]);
             }
-    |   EXPLORER ident ident '\n' # research testing: copy paste: factorize!
+    |   EXPLORER ident perlident '\n' # research testing: copy paste: factorize!
             {
               my ($name, $startsymbol) = @_[2,3];
 
@@ -734,7 +743,7 @@ NESTEDPARSING
 
               explorer_handler($name, [$c, $li]);
             }
-    |   EXPLORER ident ident LITERAL '\n' # research testing: copy paste: factorize!
+    |   EXPLORER ident perlident LITERAL '\n' # research testing: copy paste: factorize!
             {
               my ($name, $startsymbol, $file) = @_[2,4];
 
