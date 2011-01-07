@@ -443,7 +443,7 @@ sub YYNestedRegexp {
   my $conflictName = $self->YYLhs;
   $conflictName =~ s/_explorer$//;
 
-  my $ok = $_ =~ /\G$regexp/gc;
+  my $ok = $_ =~ /$regexp/gc;
 
   $self->{CONFLICTHANDLERS}{$conflictName}{'..regexp'} = [$ok, undef];
 

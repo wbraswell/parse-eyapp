@@ -1,13 +1,22 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7, $nt8, $nt9);
+my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7, $nt8, $nt9, $nt10, $nt11, $nt12);
 
-BEGIN { $nt = 8; $nt2 = 7; $nt3 = 11; $nt4 = 7; $nt5 = 7; $nt6 = 6;
+BEGIN { 
+  $nt = 8; 
+  $nt2 = 7; 
+  $nt3 = 11; 
+  $nt4 = 7; 
+  $nt5 = 7; 
+  $nt6 = 6;
   $nt7 = 7;
   $nt8 = 7;
   $nt9 = 9;
+  $nt10 = 8;
+  $nt11 = 8;
+  $nt12 = 6;
 }
-use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9;
+use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12;
 
 # test PPCR methodology with Pascal range versus enumerated conflict
 SKIP: {
@@ -610,6 +619,174 @@ typeDecl_is_type_ID_type(TERMINAL[e],ENUM(idList_is_idList_ID(idList_is_idList_I
 
 
   like($r, $expected,'AST for "type e = (x, y, z);"');
+
+  unlink 't/ppcr.pl';
+  unlink 't/decl.pm';
+
+}
+
+# 10 # testing syntax
+#           %conflict DORF /.*?d/? XY:D : XY:F
+SKIP: {
+  skip "t/confusingsolvedppcr.eyp not found", $nt10 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/confusingsolvedppcr.eyp"
+                                                        && -x "./eyapp");
+
+  unlink 't/ppcr.pl';
+
+  my $r = system(q{perl -I./lib/ eyapp -TC -o t/ppcr.pl t/confusingsolvedppcr.eyp 2> t/err});
+  ok(!$r, "t/confusingsolvedppcr.eyp grammar compiled");
+  like(qx{cat t/err},qr{1 reduce/reduce conflict\s*},"1 rr conflict");
+
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'x y c d' 2>&1};
+
+  };
+
+  ok(!$@,'t/confusingsolvedppcr.eyp executed as modulino');
+
+  my $expected = q{
+Bcd(XY(TERMINAL[x],TERMINAL[y]),TERMINAL[c],TERMINAL[d])
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "x y c d"');
+
+  ###################################################
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'x y c f' 2>&1};
+
+  };
+
+  ok(!$@,'t/confusingsolvedppcr.eyp executed as modulino');
+
+  $expected = q{
+Ecf(XY(TERMINAL[x],TERMINAL[y]),TERMINAL[c],TERMINAL[f])
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "x y c f"');
+
+  unlink 't/ppcr.pl';
+  unlink 't/decl.pm';
+
+}
+
+# 11 # testing syntax
+#           %conflict DORF !/.*?d/? XY:F : XY:D
+SKIP: {
+  skip "t/confusingsolvedppcrnot.eyp not found", $nt11 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/confusingsolvedppcrnot.eyp"
+                                                        && -x "./eyapp");
+
+  unlink 't/ppcr.pl';
+
+  my $r = system(q{perl -I./lib/ eyapp -TC -o t/ppcr.pl t/confusingsolvedppcrnot.eyp 2> t/err});
+  ok(!$r, "t/confusingsolvedppcrnot.eyp grammar compiled");
+  like(qx{cat t/err},qr{1 reduce/reduce conflict\s*},"1 rr conflict");
+
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'x y c d' 2>&1};
+
+  };
+
+  ok(!$@,'t/confusingsolvedppcrnot.eyp executed as modulino');
+
+  my $expected = q{
+Bcd(XY(TERMINAL[x],TERMINAL[y]),TERMINAL[c],TERMINAL[d])
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "x y c d"');
+
+  ###################################################
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'x y c f' 2>&1};
+
+  };
+
+  ok(!$@,'t/confusingsolvedppcrnot.eyp executed as modulino');
+
+  $expected = q{
+Ecf(XY(TERMINAL[x],TERMINAL[y]),TERMINAL[c],TERMINAL[f])
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "x y c f"');
+
+  unlink 't/ppcr.pl';
+  unlink 't/decl.pm';
+
+}
+
+# 12 # testing syntax
+#           %conflict DORF /.*?d/? XY:D : XY:F
+SKIP: {
+  skip "t/DebugDynamicResolution2.eyp not found", $nt12 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/DebugDynamicResolution2.eyp"
+                                                        && -x "./eyapp");
+
+  unlink 't/ppcr.pl';
+
+  my $r = system(q{perl -I./lib/ eyapp -C -o t/ppcr.pl t/DebugDynamicResolution2.eyp 2> t/err});
+  ok(!$r, "t/DebugDynamicResolution2.eyp grammar compiled");
+  like(qx{cat t/err},qr{1 shift/reduce conflict\s*},"1 sr conflict");
+
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'D;D;D;S;S;S' 2>&1};
+
+  };
+
+  ok(!$@,'t/DebugDynamicResolution2.eyp executed as modulino');
+
+  my $expected = q{
+PROG(D(D(D)),SS(SS(S)))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "D;D;D;S;S;S"');
 
   unlink 't/ppcr.pl';
   unlink 't/decl.pm';
