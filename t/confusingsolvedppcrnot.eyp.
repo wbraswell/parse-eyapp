@@ -9,12 +9,12 @@ the postponed conflict resolution technique.
 
 Compile the grammar with:
 
-                 eyapp -TC confusingsolvedppcr.eyp
+                 eyapp -TC confusingsolvedppcrnot.eyp
 
 and execute it with:
 
-                ./confusingsolvedppcr.pm -t -i -c 'x y c d'
-                ./confusingsolvedppcr.pm -t -i -c 'x y c f'
+                ./confusingsolvedppcrnot.pm -t -i -c 'x y c d'
+                ./confusingsolvedppcrnot.pm -t -i -c 'x y c f'
 
 
 =head1 SEE ALSO
@@ -32,7 +32,7 @@ and execute it with:
 %semantic token 'c' 'd' 'f' 'x' 'y'
 #%expect-rr 1
 
-%conflict DORF /.*?d/? XY:D : XY:F
+%conflict DORF !/.*?d/? XY:F : XY:D
 
 %%
 A: 

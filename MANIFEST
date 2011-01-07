@@ -509,7 +509,10 @@ t/79syntactictokenwithdef.t
 t/80ppcr.t
 t/CplusplusNested4.eyp
 t/DebugDynamicResolution4.eyp
+t/DebugDynamicResolution2.eyp
 t/pascalnestedeyapp3_6.eyp
+t/confusingsolvedppcr.eyp
+t/confusingsolvedppcrnot.eyp
 t/81tokendirectiveandsubstitution.t
 t/82expectandPLI.t
 t/83parsingstringsandtrees.t
