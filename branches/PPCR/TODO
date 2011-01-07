@@ -1,3 +1,4 @@
+  * make tests for perlident in conflict syntaxes using a parser that is in a different directory than the main parser
   * Make tests for syntax:
                 %conflict ToN EMPTY? TYPE:VAR : NAME:VAR
   * Implement syntax 
