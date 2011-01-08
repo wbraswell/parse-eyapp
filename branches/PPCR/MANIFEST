@@ -508,6 +508,7 @@ t/78twolexers.t
 t/79syntactictokenwithdef.t
 t/80ppcr.t
 t/CplusplusNested4.eyp
+t/CplusplusNested5.eyp
 t/DebugDynamicResolution4.eyp
 t/DebugDynamicResolution2.eyp
 t/pascalnestedeyapp3_6.eyp
