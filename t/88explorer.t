@@ -77,6 +77,7 @@ T_is_isInTheMiddleExplorer_S(
 
   unlink 't/ppcr.pl';
   unlink 't/ExpList2.pm';
+  unlink 't/err';
 
 }
 
@@ -153,6 +154,7 @@ T_is_isInTheMiddleExplorer_S_isInTheMiddleExplorer_S(
 
   unlink 't/ppcr.pl';
   unlink 't/ExpList2.pm';
+  unlink 't/err';
 
 }
 
@@ -218,6 +220,7 @@ def_is_paramSpec_ToNExplorer_returnSpec(
   like($r, $expected,'AST for "a,b:c d:e,"');
 
   unlink 't/ppcr.pl';
+  unlink 't/err';
 
 }
 
@@ -257,6 +260,7 @@ PROG(D(D),SS(S))
   like($r, $expected,'AST for "D;D;S;S"');
 
   unlink 't/ppcr.pl';
+  unlink 't/err';
 
 }
 
@@ -300,6 +304,7 @@ SKIP: {
   like($r, $expected,'AST for "int (x) + 2; int (z) = 4;"');
 
   unlink 't/ppcr.pl';
+  unlink 't/err';
 
 }
 
