@@ -402,7 +402,7 @@ perlident:
           IDENT 
       |   perlident '::' IDENT
             {
-              $_[1][0] .= $_[3][0];
+              $_[1][0] .= "::".$_[3][0];
               $_[1];
             }
 ;
@@ -1350,6 +1350,8 @@ sub _Lexer {
         $$input=~/\G%($ID)/gc     and return($headertoken{$1},[ undef, $lineno[0] ]);
 
         $$input=~/\G($REGEXP)/gc  and return('REGEXP',[ $1, $lineno[0] ]);
+
+        $$input=~/\G::/gc and return('::',[ undef, $lineno[0] ]);
 
     }
     else {  # In rule section

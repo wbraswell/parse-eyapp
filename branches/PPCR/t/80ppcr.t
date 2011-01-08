@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7, $nt8, $nt9, $nt10, $nt11, $nt12);
+my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7, $nt8, $nt9, $nt10, $nt11, $nt12, $nt13);
 
 BEGIN { 
   $nt = 8; 
@@ -15,8 +15,9 @@ BEGIN {
   $nt10 = 8;
   $nt11 = 8;
   $nt12 = 6;
+  $nt13 = 7;
 }
-use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12;
+use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12+$nt13;
 
 # test PPCR methodology with Pascal range versus enumerated conflict
 SKIP: {
@@ -192,6 +193,7 @@ T_is_preproc_S_other_things(
 
   unlink 't/ppcr.pl';
   unlink 't/ExpList.pm';
+  unlink 't/err';
 
 }
 
@@ -279,6 +281,7 @@ Expected one of these terminals: -, , /, ^, *, +,
   unlink 't/err';
   unlink 't/ppcr.pl';
   unlink 't/ExpList.pm';
+  unlink 't/err';
 }
 
 # testing the use of the same conflict handler in different grammar
@@ -380,6 +383,7 @@ T_is_isInTheMiddleExplorer_S_isInTheMiddleExplorer_S(
 
   unlink 't/ppcr.pl';
   unlink 't/ExpList.pm';
+  unlink 't/err';
 
 }
 
@@ -427,6 +431,7 @@ PROG(PROG(EMPTY,EXP(TYPECAST(TERMINAL[int],ID[x]),NUM[2])),DECL(TERMINAL[int],ID
 
   unlink 't/ppcr.pl';
   unlink 't/Decl.pm';
+  unlink 't/err';
 
 }
 
@@ -471,6 +476,7 @@ SKIP: {
   like($r, $expected,'AST for "int (x) + 2; int (z) = 4;"');
 
   unlink 't/ppcr.pl';
+  unlink 't/err';
 
 }
 
@@ -515,6 +521,7 @@ PROG(D(D),SS(S)
 
   unlink 't/ppcr.pl';
   unlink 't/lastD.pm';
+  unlink 't/err';
 
 }
 
@@ -558,6 +565,7 @@ PROG(PROG(EMPTY,EXP(TYPECAST(TERMINAL[int],ID[x]),NUM[2])),DECL(TERMINAL[int],ID
 
   unlink 't/ppcr.pl';
   unlink 't/decl.pm';
+  unlink 't/err';
 
 }
 
@@ -622,6 +630,7 @@ typeDecl_is_type_ID_type(TERMINAL[e],ENUM(idList_is_idList_ID(idList_is_idList_I
 
   unlink 't/ppcr.pl';
   unlink 't/decl.pm';
+  unlink 't/err';
 
 }
 
@@ -685,6 +694,7 @@ Ecf(XY(TERMINAL[x],TERMINAL[y]),TERMINAL[c],TERMINAL[f])
 
   unlink 't/ppcr.pl';
   unlink 't/decl.pm';
+  unlink 't/err';
 
 }
 
@@ -748,6 +758,7 @@ Ecf(XY(TERMINAL[x],TERMINAL[y]),TERMINAL[c],TERMINAL[f])
 
   unlink 't/ppcr.pl';
   unlink 't/decl.pm';
+  unlink 't/err';
 
 }
 
@@ -790,5 +801,53 @@ PROG(D(D(D)),SS(SS(S)))
 
   unlink 't/ppcr.pl';
   unlink 't/decl.pm';
+  unlink 't/err';
+
+}
+
+SKIP: {
+  skip "t/CplusplusNested5.eyp not found", $nt8 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/CplusplusNested5.eyp"
+                                                        && -x "./eyapp"
+                                                        && mkdir 't/Tutu');
+
+  unlink 't/ppcr.pl';
+
+
+  my $r = system(q{perl -I./lib/ eyapp -m Tutu::decl -o t/Tutu/decl.pm -S decl -P t/CplusplusNested5.eyp});
+  ok(!$r, "Auxiliary parser decl.pm generated from t/CplusplusNested5.eyp");
+
+  $r = system(q{perl -I./lib/ eyapp -C -o t/ppcr.pl t/CplusplusNested5.eyp 2> t/err});
+  ok(!$r, "t/CplusplusNested5.eyp grammar compiled");
+  is(qx{cat t/err},'',"no warnings");
+
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'int (x) + 2; int (z) = 4; ' 2>&1};
+
+  };
+
+  ok(!$@,'t/CplusplusNested5.eyp executed as modulino');
+
+  my $expected = q{
+PROG(PROG(EMPTY,EXP(TYPECAST(TERMINAL[int],ID[x]),NUM[2])),DECL(TERMINAL[int],ID[z],NUM[4])
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "int (x) + 2; int (z) = 4; "');
+
+  unlink 't/ppcr.pl';
+  unlink 't/Tutu/decl.pm';
+  rmdir  't/Tutu';
+  unlink 't/err';
 
 }
