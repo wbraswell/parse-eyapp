@@ -1,4 +1,10 @@
 Revision history for Perl extension Eyapp.
+1.180
+  * tests for perlident in conflict syntaxes using a parser that is in a different directory than the main parser
+  * tests for syntax:
+                %conflict ToN EMPTY? TYPE:VAR : NAME:VAR
+  * tests for syntax 
+              %conflict decORexp /regexp/? ID:DEC : ID:EXP
 1.179
   * Syntax:
                 %conflict ToN EMPTY? TYPE:VAR : NAME:VAR
