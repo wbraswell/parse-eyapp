@@ -1,3 +1,8 @@
+  * Option -v in eyapp will produce a navigable grammar.output.html version of the output
+    file
+
+  * EBNF ors must be implemented
+
   * Artículos:
       * OOPLAS
       * reescribir con nueva sintáxis TOPLAS y el comsys

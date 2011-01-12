@@ -1,0 +1,45 @@
+%{
+my $ab = 0;
+%}
+
+%conflict AorC {
+   $self->YYIf('abC', 'shift', 'BC');
+}
+
+#%expect 1 1
+%%
+st:  AorC_explorer s
+;
+
+AorC_explorer: {   
+       $ab = $_[0]->YYPreParse('abC'); 
+    }   
+;
+
+s: aeqb 
+ | beqc
+;
+
+aeqb: ab cs
+;
+
+ab: /* empty */ 
+  | 'a'         %PREC AorC 
+       ab 'b'
+;
+
+cs : /* empty */ | cs 'c' 
+;
+
+beqc: as bc
+;
+
+bc: /* empty */ | 'b' bc 'c'
+;
+
+as: %name BC
+    /* empty */ %PREC AorC
+  | as 'a'
+;
+
+%%
