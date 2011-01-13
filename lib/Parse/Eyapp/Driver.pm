@@ -532,6 +532,51 @@ sub YYSetReduce {
   }
 }
 
+sub YYSetReduce2 {
+  my $self = shift;
+  my $action = pop;
+  my $token = shift;
+  
+
+  croak "YYSetReduce error: specify a production" unless defined($action);
+
+  my $conflictName = $self->YYLhs;
+
+  $conflictName =~ s/_explorer$//;
+
+  #$self->{CONFLICTHANDLERS}{conflictName}{states}
+  # is a hash
+  #        statenumber => [ tokens, '\'-\'' ]
+  my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
+  my @conflictStates = $cS ? @$cS : ();
+  # Conflict state
+  my $cs = $conflictStates[0];
+
+
+  # Perform the action to change the LALR tables only if the next state 
+  # is listed as a conflictstate
+  my ($conflictstate) = keys %{$cs};
+
+  # Action can be given using the name of the production
+  unless (looks_like_number($action)) {
+    my $actionnum = $self->{LABELS}{$action};
+    unless (looks_like_number($actionnum)) {
+      croak "YYSetReduce error: can't find production '$action'. Did you forget to name it?";
+    }
+    $action = -$actionnum;
+  }
+
+  $token = $cs->{$conflictstate} unless defined($token);
+  $token = [ $token ] unless ref($token);
+  for (@$token) {
+    # save if shift
+    if (exists($self->{STATES}[$conflictstate]{ACTIONS}) and $self->{STATES}[$conflictstate]{ACTIONS}{$_} >= 0) {
+      $self->{CONFLICT}{$conflictName}{$_}  = [ $conflictstate,  $self->{STATES}[$conflictstate]{ACTIONS}{$_} ];
+    }
+    $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $action;
+  }
+}
+
 sub YYSetShift {
   my ($self, $token) = @_;
 
