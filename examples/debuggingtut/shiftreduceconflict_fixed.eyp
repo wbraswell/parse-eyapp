@@ -12,11 +12,11 @@ IFTHEN(
 )
 Also have a look at the t.png output file
 */
-%syntactic token IF        = /(if)/
-%syntactic token ELSE      = /(else)/
-%syntactic token THEN      = /(then)/
-%token EXPR      = /(e)/
-%token OTHERSTMT = /(o)/
+%syntactic token IF        = /(?i:if)/
+%syntactic token ELSE      = /(?i:else)/
+%syntactic token THEN      = /(?i:then)/
+%token EXPR      = /(?i:(e))/
+%token OTHERSTMT = /(?i:(o))/
 
 %left THEN
 %left ELSE

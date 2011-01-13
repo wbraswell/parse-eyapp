@@ -1,15 +1,92 @@
-  * Merge PPCR branch with trunk
+  * Option -v in eyapp will produce a navigable grammar.output.html version of the output
+    file
+
+  * EBNF ors must be implemented
+
+  * Artículos:
+      * OOPLAS
+      * reescribir con nueva sintáxis TOPLAS y el comsys
+      * Introducir modificaciones de los referees en los articulos de revista: implementacion, pruebas
+      * conseguir articulo de Ganapanathi "semantic predicates in"
+      * estudiar e introducir comparaciones
+      * insistir en que esta implementado y "verificado": describir implementación
+  * optimize generated lexer for contextual tokens (Expected must be called only once)
+  * debugging: break points, call actual debugger inside semantic actions, etc.
+
+  * Trying to supress the generation of conflict rules when there is no conflict (during nested
+    auxiliary compilation). Count the number of appearances of %PREC conflict . If it is greater
+    than two there is a true conflict. Otherwise the conflict symbols can be ignored.
+    There is however a problem. The translation used by Parse.yp performs some premature 
+    semantic actions that insert the conflict symbols as soon as a production is defined.
+    To solve it we must delay the translation until the whole grammar has been seen.
+
+  * Write code to control the right use of %conflict and %PREC
+      -   x $self->{GRAMMAR}{CONFLICTHANDLERS}                                                                      
+      0  HASH(0x1009898a0)
+         'decORexp' => HASH(0x100c5c1e0)
+            'explorerline' => 14
+            'line' => 14
+            'production' => HASH(0x100c50130)
+               '-12' => ARRAY(0x100c572e0)
+                  0  1
+               '-5' => ARRAY(0x100c50230)
+                  0  1
+            'states' => ARRAY(0x100c4bb50)
+               0  HASH(0x100c5bba0)
+                  28 => ARRAY(0x100c3c5b0)
+                     0  '\')\''
+            'total' => 2
+            'totalviewpoint' => 1
+ 
+       DB<8> x $$self{CONFLICTS}{FORCED}                                                                               
+        0  HASH(0x100c38800)
+           'DETAIL' => HASH(0x100c5b630)
+              28 => HASH(0x100c58030)
+                 'LIST' => ARRAY(0x100c581c0)
+                    0  ARRAY(0x100c581e0)
+                       0  '\')\''
+                       1  '-12'
+                 'TOTAL' => ARRAY(0x100c57d10)
+                    0  empty slot
+                    1  1
+           'TOTAL' => ARRAY(0x100c57da0)
+              0  0
+              1  1
+
+
+      - %PREC in no conflict production or in wrong position
+      - called for reduce-reduce but it is not a reduce-reduce, etc.
+      - Every %conflict has to have at least two associated %PRECs
+
+  * quiza entre la información guardada en CONFLICTHANDLERS deberían ir las etiquetas simbólicas.
+    Esto simplificaría YYSetReduce
+
+
+
+  * Otra API de mas alto nivel sería el caso regexp
+          %conflict conflictname /regexp/ ruleName
+    esta se ejecuta en el punto del conflicto
+
+  * clean tests deleted. Do it gain?
+
+  * examples in MANIFEST: obsolete
+
+  * Use %{ ... %} as syntactic sugar for syntactic code actions
+
+  * Generation of Several Parsers
+      - The lexer must be the one of the main parser
+
+  * The accept state must change
+      A$ -> A
+      A$ -> A.b where b is in the follow of A, means acceptation
+      Where are the follows?. They have been computed somewhere
+
+  * %PREC conflict does not check that a conflict handler has been previously declared
+
+
   * GLR in eyapp
+
   * eyapp and PPCR in the Wikipedia
-
-  * $t->str method to produce .dot descriptions of the AST tree
-    -- parametrize call to dot program using file ~/.eyapprc
-
-    -- name of the file: the name of the inputfile. The extension
-       decides the type
-
-    -- write help --dot 
-    -- png for .output also: options -w and -W
 
   * Update documentation
 
@@ -21,33 +98,10 @@
       # I think I shall use an option in eyapp?
       # make a test
 
-  * Include %from directive. See examples/debuggingtut/Range2.eyp
-
-        %from pascalnestedeyapp2 import expr
-        # alternative syntax to include also semantic actions
-        #%from pascalnestedeyapp2 use expr
-        #%from pascalnestedeyapp2 use expr, TAIL 
-
-        %%
-        range: expr '..' expr ';'
-        ;
-
-        %%
-
   * Change the API for YYSetReduce and YYSetshift to include the name of the conflict?
 
   * Bug/limitation: When using -m and -o the output file still uses the original grammar name.
     It seems more convenient to rename it to the output file suffixed with .output
-
-  * Generation of Several Parsers
-      - %PREC conflict does not check that a conflict handler has been previously declared
-      - The lexer must be the one of the main parser
-      - The accept state must change
-          A$ -> A
-          A$ -> A.b where b is in the follow of A, means acceptation
-          Where are the follows?. They have been computed somewhere
-      - Avoid warnings: rule not used, rule not used, etc. How?
-        Shall I use a subgrammar that is the closure of the syntactic variable
 
   * Lexical Analyzer generation:
       * incremental lexer also influences the way the directive
@@ -108,7 +162,7 @@
      - Warning Grammar.pm 
          sub Parse::Eyapp::Grammar::conflictHandlers  rewrite! or use Data::Dumper forever?
 
-  * %package directive: equvalent to eyapp -m option 
+  * %package directive: equivalent to eyapp -m option 
 
   * -%modulino directive 
       %modulino perlinterpreter prompt
