@@ -1,3 +1,41 @@
+  * Modifiy Parse::Eyapp::Driver::_Parse 
+    If the state is a conflict state execute the conflict handlers for that state:
+    We need then a hash whose keys will be the conflictive states:
+      {
+        state => { 
+                   handlername => { 
+                     code => conflict handler sub, 
+                     actions => { tokens => [a,b,c], shift 2, reduce 4}
+                   }
+                   ... 
+                 }
+        ...
+      }
+    no syntactic auxiliary variable will be introduced. The arguments 
+    for the 'code' handler will be the parser itself and the conflict name.
+
+
+
+      DB<3> x $self->{CONFLICTHANDLERS}                                                                               
+      0  HASH(0x100b57f30)
+         'ToN' => HASH(0x100b57eb0)
+            '.EMPTY' => ARRAY(0x100b43c90)
+                 empty array
+            'explorerline' => 12
+            'line' => 5
+            'production' => HASH(0x100b57de0)
+               '-6' => ARRAY(0x100b57d80)
+                  0  1
+               '-7' => ARRAY(0x100b57db0)
+                  0  1
+            'states' => ARRAY(0x100b57e80)
+               0  HASH(0x100b57e50)
+                  8 => ARRAY(0x100b57e20)
+                     0  ','
+            'total' => 2
+            'totalviewpoint' => 1
+
+    
   * Option -v in eyapp will produce a navigable grammar.output.html version of the output
     file
 

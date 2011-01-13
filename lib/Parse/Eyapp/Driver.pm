@@ -1779,6 +1779,9 @@ sub _Parse {
         my($actions,$act,$stateno);
 
         $stateno=$$stack[-1][0];
+
+        # check if the state is a conflictive one,
+        # if so, execute its conflict handlers
         $actions=$$states[$stateno];
 
 #DBG> print STDERR ('-' x 40),"\n";
