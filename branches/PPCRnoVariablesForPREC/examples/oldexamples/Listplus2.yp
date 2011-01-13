@@ -1,0 +1,47 @@
+%{
+use Data::Dumper;
+my $num = 0;
+%}
+
+%%
+Start: S 
+        { 
+          print Dumper($_[1]); 
+          print "$num\n"; 
+        }
+;
+S:  ('c' 'd' { $num++ })+  
+;
+
+%%
+
+sub _Error {
+        exists $_[0]->YYData->{ERRMSG}
+    and do {
+        print $_[0]->YYData->{ERRMSG};
+        delete $_[0]->YYData->{ERRMSG};
+        return;
+    };
+    print "Syntax error.\n";
+}
+
+sub _Lexer {
+    my($parser)=shift;
+
+        $parser->YYData->{INPUT}
+    or  $parser->YYData->{INPUT} = <STDIN>
+    or  return('',undef);
+
+    $parser->YYData->{INPUT}=~s/^[\s]//;
+
+    for ($parser->YYData->{INPUT}) {
+        s/^(.)//s and return($1,$1);
+    }
+}
+
+sub Run {
+    my($self)=shift;
+    $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error 
+      #, yydebug => 0x1F 
+    );
+}

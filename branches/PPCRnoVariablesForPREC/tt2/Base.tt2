@@ -1,0 +1,27 @@
+=head1 NAME 
+
+Parse::Eyapp::Base - Miscellaneous support functions for Parse::Eyapp
+ 
+=head1 SYNOPSIS
+
+  use Parse::Eyapp::Base qw(:all)
+
+=head1 INTRODUCTION
+    
+C<Parse::Eyapp::Base> holds a set of utility functions that give support to the other 
+modules that made C<Parse::Eyapp>. Several of them are related to the dynamic use of methods 
+and subroutines. 
+
+=head1 SUBROUTINES
+    
+[% PROCESS Base %]
+
+=head1 SEE ALSO
+  
+=over
+
+=item * L<Parse::Eyapp>,
+
+=back
+
+[% PROCESS authorandcopyright %]

@@ -1,0 +1,104 @@
+=over
+
+=item * The project home is at L<http://code.google.com/p/parse-eyapp/>.
+Use a subversion client to anonymously check out the latest project source code:
+
+   svn checkout http://parse-eyapp.googlecode.com/svn/trunk/ parse-eyapp-read-only
+
+=item * The tutorial I<Parsing Strings and Trees with> C<Parse::Eyapp>
+(An Introduction to Compiler Construction in seven pages) in
+L<http://nereida.deioc.ull.es/~pl/eyapsimple/> 
+
+=item * 
+L<Parse::Eyapp>, 
+L<Parse::Eyapp::eyapplanguageref>, 
+L<Parse::Eyapp::debuggingtut>,
+L<Parse::Eyapp::defaultactionsintro>,
+L<Parse::Eyapp::translationschemestut>,
+L<Parse::Eyapp::Driver>,
+L<Parse::Eyapp::Node>,
+L<Parse::Eyapp::YATW>,
+L<Parse::Eyapp::Treeregexp>,
+L<Parse::Eyapp::Scope>,
+L<Parse::Eyapp::Base>,
+L<Parse::Eyapp::datagenerationtut>
+
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/languageintro.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/debuggingtut.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/eyapplanguageref.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/Treeregexp.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/Node.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/YATW.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/Eyapp.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/Base.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/translationschemestut.pdf> 
+
+=item * The pdf file in L<http://nereida.deioc.ull.es/~pl/perlexamples/treematchingtut.pdf> 
+
+=item *
+perldoc L<eyapp>, 
+
+=item *
+perldoc L<treereg>,
+
+=item *
+perldoc L<vgg>,
+
+=item * The Syntax Highlight file for vim at L<http://www.vim.org/scripts/script.php?script_id=2453>
+and L<http://nereida.deioc.ull.es/~vim/>
+
+=item * I<Analisis Lexico y Sintactico>, (Notes for a course in compiler 
+construction) by  Casiano Rodriguez-Leon. 
+Available at  L<http://nereida.deioc.ull.es/~pl/perlexamples/>
+Is the more complete and reliable source for Parse::Eyapp. However is in Spanish.
+
+=item *
+L<Parse::Yapp>,
+
+=item *
+Man pages of yacc(1) and
+bison(1),
+L<http://www.delorie.com/gnu/docs/bison/bison.html>
+
+=item *
+L<Language::AttributeGrammar>
+
+=item *
+L<Parse::RecDescent>.
+
+=item *
+L<HOP::Parser>
+
+=item *
+L<HOP::Lexer>
+
+=item * ocamlyacc tutorial at 
+L<http://plus.kaist.ac.kr/~shoh/ocaml/ocamllex-ocamlyacc/ocamlyacc-tutorial/ocamlyacc-tutorial.html>
+
+=back
+
+=head1 REFERENCES
+
+=over
+
+=item *
+The classic Dragon's book I<Compilers: Principles, Techniques, and Tools> 
+by Alfred V. Aho, Ravi Sethi and
+Jeffrey D. Ullman (Addison-Wesley 1986)
+
+=item *
+I<CS2121: The Implementation and Power of Programming Languages>
+(See L<http://www.cs.man.ac.uk/~pjj>, L<http://www.cs.man.ac.uk/~pjj/complang/g2lr.html> 
+and L<http://www.cs.man.ac.uk/~pjj/cs2121/ho/ho.html>) by 
+Pete Jinks
+
+=back

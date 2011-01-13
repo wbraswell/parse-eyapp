@@ -1,0 +1,223 @@
+%
+%  $Description: Author guidelines and sample document in LaTeX 2.09$
+%
+%  $Author: ienne $
+%  $Date: 1995/09/15 15:20:59 $
+%  $Revision: 1.4 $
+%
+\documentclass[times, 10pt,%twocolumn
+]{article}
+%\usepackage{latex8}
+\usepackage{times, graphics}
+\usepackage{html}
+%\documentstyle[times,art10,twocolumn,latex8]{article}
+%-------------------------------------------------------------------------
+% take the % away on next line to produce the final camera-ready version
+\pagestyle{empty}
+%-------------------------------------------------------------------------
+%\textwidth 17 cm
+%\textheight 256 mm
+\columnsep 3 mm
+
+
+\newcommand{\cpan}[1]
+ {\htmladdnormallink{#1}
+ {http://search.cpan.org/perldoc?#1}}
+\newcommand{\code}[1]{{\tt #1}}
+\newcommand{\I}[1]{{\it #1}}
+\newcommand{\prog}[1]{\htmladdnormallink{{\tt #1}}{http://code.google.com/p/parse-eyapp/source/browse/trunk/examples/ParsingStringsAndTrees/#1}}
+%\htmladdnormallink{{\tt #1}}{http://code.google.com/p/parse-eyapp/source/browse/#svn/trunk/examples/#1}
+%\newenvironment{tabcode}{
+%\begin{center}
+%\begin{tabular}{p{7cm}}
+%}
+%{
+%\end{tabular}
+%\end{center}
+%}
+%\newcommand{\ici}[1] {\index{#1}}
+\hyphenation{a-na-ly-zer}
+
+\title{Parsing Strings and Trees with {\tt Parse::Eyapp}\\
+\it (An Introduction to Compiler Construction)}
+
+\author{
+Casiano Rodriguez-Leon\\
+Dpto. Estad\'{\i}stica, I.O. y Computaci\'{o}n.
+Universidad de La Laguna
+}
+\begin{document}
+
+\maketitle
+
+\htmladdtonavigation{
+  \htmladdnormallink
+  {\htmladdimg[width=23 alt="SRC"]
+  {gzip.png}}
+  {http://nereida.deioc.ull.es/~pl/eyapsimple/source.tgz}
+}
+
+\htmladdtonavigation{
+  \htmladdnormallink
+  {\htmladdimg[width=23 alt="DVI"]
+  {xdviicon.gif}}
+  {http://nereida.deioc.ull.es/~pl/eyapsimple/eyapsimple.dvi}
+}
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=24
+                 alt="eyapsimple.ps"
+                ]
+     {gv.jpeg}}
+     {eyapsimple.ps}} 
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=24
+                 alt="eyapsimple.pdf"
+                ]
+     {pdf_logo.jpg}}
+     {eyapsimple.pdf}} 
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=60 
+                 alt="modulos"
+                ]
+     {lupa.gif}}
+     {http://search.cpan.org/dist/Parse-Eyapp/}} 
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=30 
+                 alt="google-code"
+                ]
+     {google-code.png}}
+     {http://code.google.com/p/parse-eyapp/source/browse/#svn/trunk/examples/ParsingStringsAndTrees}} 
+
+\htmladdtonavigation{\htmladdnormallink{\htmladdimg[width=35 alt="apuntes"]{dragon_tree4.jpg}}{../perlexamples/}} 
+
+  \htmladdtonavigation{\htmladdnormallink{
+     \htmladdimg[
+                 width=70 
+                 alt="modulos"
+                ]
+     {parrotify_logo.png}}
+     {http://www.parrot.org/}} 
+
+%
+% if the list of authors exceeds the space for a headline,
+% an abbreviated author list is needed
+
+\begin{abstract}
+\cpan{Parse::Eyapp} (Extended yapp) is a collection of modules
+that extends Francois Desarmenien Parse::Yapp 1.05.
+Eyapp extends yacc/yapp syntax with 
+functionalities like named attributes,
+EBNF-like expressions, modifiable default action,
+automatic abstract syntax tree building,
+dynamic conflict resolution,
+translation schemes, tree regular expressions,
+tree transformations, scope analysis support,
+and directed acyclic graphs among others.
+
+This article teaches you the basics of 
+Compiler Construction using \cpan{Parse::Eyapp} to
+build a translator from infix expressions to Parrot 
+Intermediate Representation.
+\end{abstract}
+%-------------------------------------------------------------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{section:introduction}
+\input{introduction.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A Fast Introduction to Parrot}
+\label{section:parrot}
+\input{parrot.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Phases of a Translator}
+\label{section:phases}
+\input{phases.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Lexical Analysis}
+\label{section:lexicalanalysis}
+\input{lexicalanalysis.tex}
+
+%-------------------------------------------------------------------------------
+%\label{section:errordiagnostics}
+%\input{errordiagnostics.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Syntax Analysis}
+\label{section:syntacticanalysis}
+\input{syntacticanalysis.tex}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Tree Transformations}
+\label{section:machineindependentoptimizations}
+\input{machineindependentoptimizations.tex}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Resource Allocation}
+\label{section:addressassign}
+\input{addressassign.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Code Generation}
+\label{section:codegeneration}
+\input{codegeneration.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Peephole Transformations}
+\label{section:peephole}
+\input{peephole.tex}
+
+\section{Output Generation}
+\label{section:output}
+\input{output.tex}
+
+
+\section{Conclusions and Future Work}
+
+This work presented \code{Parse::Eyapp}, a bottom-up parser that 
+extends the \code{Yacc} LALR algorithm and conflict resolution mechanism
+with dynamic conflict resolution.
+
+\code{Yacc} and \code{Parse::Yapp} programmers will feel at home
+in \code{Parse::Eyapp}. 
+Additionally to the beneficial mature approach to parsing provided by
+\code{Yacc}-like parser generators,
+\code{Parse::Eyapp} delivers a set of extensions
+that give support to the later phases
+of text processing.
+
+\section{About the Author}
+Casiano Rodriguez-Leon is a Professor of Computer Science at Universidad
+de La Laguna. His research focuses on Parallel Computing. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acknowledgements}
+
+This work has been supported by the {\sc EC (FEDER)} and by
+the Spanish Ministry of Education and Science inside the
+`Plan Nacional de {\sc i+d+}i'.
+Thanks To Francois Desarmenien. \code{Parse::Eyapp} shares a large percentage 
+of code with \code{Parse::Yapp}.
+
+
+\bibliographystyle{unsrt}
+\bibliography{perl}
+
+\label{end:of:file}
+
+\end{document}

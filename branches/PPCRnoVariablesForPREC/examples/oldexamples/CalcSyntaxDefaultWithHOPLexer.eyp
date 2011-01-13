@@ -1,0 +1,84 @@
+# CalcSyntaxDefaultWithHOPLexer.eyp
+%right  '='
+%left   '-' '+'
+%left   '*' '/'
+%left   NEG
+%right  '^'
+
+%defaultaction {
+  my $parser = shift;
+
+  print $parser->YYLhs." --> ";
+  my $i = 0;
+  for ($parser->YYRightside) {
+     print "$_";
+     print "[$_[$i]]" if /NUM|VAR/;
+     print " ";
+     $i++;
+  }
+  print "\n";
+}
+
+%{
+use HOP::Lexer qw(string_lexer);
+%}
+%%
+line: (exp '\n')*
+;
+
+exp:
+    NUM                
+  | VAR                
+  | VAR '=' exp        
+  | exp '+' exp        
+  | exp '-' exp        
+  | exp '*' exp        
+  | exp '/' exp        
+  | '-' exp %prec NEG  
+  | exp '^' exp        
+  | '(' exp ')'        
+;
+
+%%
+
+sub _Error {
+        exists $_[0]->YYData->{ERRMSG}
+    and do {
+        print $_[0]->YYData->{ERRMSG};
+        delete $_[0]->YYData->{ERRMSG};
+        return;
+    };
+    print "Syntax error.\n";
+}
+
+sub Run {
+    my($self)=shift;
+    my $input = shift;
+
+    my @lexemes = (
+      ['SPACE', qr{[ \t]+}, sub { () } ],
+      ['NUM',   qr{[0-9]+(?:\.[0-9]+)?}],
+      ['VAR',   qr{[A-Za-z][A-Za-z0-9_]*}],
+      ["\n",    qr{\n}],
+      ['ANY',   qr{.}, 
+                  sub {
+                    my ($label, $val) = @_;
+                    return [ $val, $val ];
+                  }
+      ]
+
+    );
+    my $lexer = string_lexer($input, @lexemes);
+
+    return $self->YYParse( 
+      yylex => sub { 
+        my $parser = shift;
+        my $token = $lexer->();
+        return @$token if defined($token);
+        return ('', undef);
+      }, 
+      yyerror => \&_Error,
+      yydebug => 0xF
+    );
+}
+
