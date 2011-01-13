@@ -2,15 +2,14 @@
 %token VAR =  /([A-Za-z][A-Za-z0-9_]*)/
 
 #%conflict ToN EMPTY? TYPE:VAR : NAME:VAR
-%conflict ToN {}
-%explorer ToN {
-  { $self->YYIs('EMPTY', 1); } 
+%conflict ToN {
   if ($self->YYIs('EMPTY'))
     { $self->YYSetReduce2('TYPE:VAR' ); }
   else 
     { $self->YYSetReduce2('NAME:VAR' ); }
 }
 
+%explorer ToN { $self->YYIs('EMPTY', 1); } 
 
 %%
 
@@ -25,10 +24,10 @@ return_spec:
         |    name ':' type
         ;
 type:        %name TYPE:VAR
-             VAR           %PREC ToN
+             VAR    %PREC ToN
         ;
 name:        %name NAME:VAR
-             VAR           %PREC ToN
+             VAR    %PREC ToN
         ;
 name_list:
              name
@@ -40,11 +39,11 @@ name_list:
 
 Compile it with:
 
-            eyapp -vTC reducereduceconflictExplorerOnly.eyp
+            eyapp -vTC reducereduceconflictPPCR.eyp
 
 See the C<.output> file. Run it with this options:
 
-            ./reducereduceconflictExplorerOnly.pm -deb -t -i -m 1 -c 'a,b:c d:e,'
+            ./reducereduceconflictPPCR.pm -deb -t -i -m 1 -c 'a,b:c d:e,'
 
 =cut
 
