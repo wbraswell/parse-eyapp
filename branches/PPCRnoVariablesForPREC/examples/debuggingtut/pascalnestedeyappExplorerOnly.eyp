@@ -1,0 +1,98 @@
+
+%conflict rangeORenum {
+} 
+
+%explorer rangeORenum { 
+  my $is_range = 0;
+  $is_range = $self->YYPreParse('range');
+
+  if ($is_range) 
+    { $self->YYSetReduce2('ID:RANGE' ); }
+  else 
+    { $self->YYSetReduce2('ID:ENUM' ); }
+} 
+
+%token ID  = /([A-Za-z]\w*)/
+%token NUM = /(\d+)/
+
+%left   ','
+%left   '-' '+'
+%left   '*' '/'
+
+#%expect-rr 2
+
+%%
+
+type_decl : 'type' ID '=' %rangeORenum? type ';'
+;
+
+type : 
+      %name ENUM
+      '(' id_list ')'
+    | %name RANGE
+      range
+;
+
+range:
+       expr '..' expr
+;
+
+id_list : 
+      %name ID:ENUM
+      ID                      %PREC rangeORenum
+    | id_list ',' ID
+;
+
+expr : '(' expr ')'   { $_[2] } /* bypass */
+    | %name PLUS     expr '+' expr
+    | %name MINUS    expr '-' expr
+    | %name TIMES    expr '*' expr
+    | %name DIV      expr '/' expr
+    | %name COMMA    expr ',' expr
+    | %name ID:RANGE
+      ID                     %PREC rangeORenum
+    | %name NUM      NUM
+;
+
+%%
+
+=head1 SYNOPSIS
+
+See 
+
+=over 2
+
+=item * File C<userange.pl>.
+
+=item * File pascalenumeratedvsrange.eyp in examples/debuggintut/
+
+=item * The Bison manual L<http://www.gnu.org/software/bison/manual/html_mono/bison.html>
+
+=back
+
+Compile it with:
+
+      eyapp -TC pascalnestedeyappExplorerOnly.eyp
+
+The compile it again, but using 'range' as start symbol (option -S)
+and option -P to generate a parser that accepts if a prefix of the input matches:
+
+      eyapp -P -S range pascalnestedeyappExplorerOnly.eyp 
+
+Run it with this options:
+
+    $ ./pascalnestedeyappExplorerOnly.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyappExplorerOnly.pm -t -i -m 1 -c 'type e = (x, @, z);'
+
+Try also these inputs:
+
+                type e = (x) .. (y);
+                type r = (x) ..  y ;
+                type r = (x+2)*3 ..  y/2 ;
+                type e = (x, y, z);
+                type e = (x);
+                type e = (x, y, z) .. (u+v);
+
+
+=cut
+
