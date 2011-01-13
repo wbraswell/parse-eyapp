@@ -1,0 +1,111 @@
+=head1 NAME 
+
+Parse::Eyapp::Unify - Unification of trees
+ 
+=head1 SYNOPSIS
+
+  /***************** Polymorphic Type Checking *****************/
+    /*
+    eyapp -m Aho::Polymorphism  Polymorphism.eyp;
+          treereg -m Aho::Polymorphism Trans.trg
+    */
+
+  {
+    use Parse::Eyapp::Unify;
+
+    my $count = 0;
+
+          sub fresh {
+                  my $ts = shift;
+
+                  $ts =~ s/(Parse::Eyapp::Node::TYPEVAR::[\w:]+)/$1$count/g;
+                  $count++;
+                  my @t = Parse::Eyapp::Node->hnew($ts);
+                  representative($_, $_) for @t;
+                  return $t[0];
+          }
+
+          sub new_var {
+                  my $p = Parse::Eyapp::Node->hnew("Parse::Eyapp::Node::TYPEVAR::_$count");
+                  representative($p, $p);
+                  $count++;
+                  return $p;
+          }
+
+  }
+
+  functioncall: FUNCTIONCALL($f, $arg)
+    => {
+      my ($name, $line) = @{$f->{attr}};
+
+      my $p = new_var();
+
+      my $q = Parse::Eyapp::Node->new("F");
+      representative($q, $q);
+      $q->push($arg->{t}, $p);
+
+      if (unify($f->{t}, $q)) {
+        print "Unified\n";
+        print "Now ".strunifiedtree($f->{t})." and ".strunifiedtree($q)."\n";
+      }
+      else {
+        print "NOT Unified\n";
+      }
+
+      $FUNCTIONCALL->{t} = representative($p);
+      print "type of ".$FUNCTIONCALL->str." is ".$FUNCTIONCALL->{t}->str."\n";
+
+      return 1;
+    }
+
+  tuple: ARGS($x, $y)
+    => {
+      $ARGS->{t} = Parse::Eyapp::Node->new( 'X',);
+      $ARGS->{t}->push($x->{t}, $y->{t});
+      representative($ARGS->{t}, $ARGS->{t});
+    }
+
+  id: ID
+    => {
+      my ($name, $line) = @{$ID->{attr}};
+      our %st;
+      my $ts = $st{$name}->{ts};
+      $ID->{t} = fresh($ts);
+    }
+
+   
+[% PROCESS Unify %]
+
+=head1 SEE ALSO
+    
+=over
+
+=item * The classic book "Compilers: Principles, Techniques, and Tools" by Alfred V. Aho, Ravi Sethi and
+Jeffrey D. Ullman (Addison-Wesley 1986).
+Chapter 6. Sections 6.6 and 6.7 on Polymorphic functions and Type Inference
+
+=item * L<Parse::Eyapp>,
+
+=item * The tutorial I<Parsing Strings and Trees with> C<Parse::Eyapp>
+(An Introduction to Compiler Construction in seven pages)> in
+
+=item * The pdf files in L<http://nereida.deioc.ull.es/~pl/perlexamples/Eyapp.pdf> 
+
+=item * L<http://nereida.deioc.ull.es/~pl/perlexamples/section_eyappts.html> (Spanish),
+
+=item * L<eyapp>,
+
+=item * L<treereg>,
+
+=item * L<Parse::yapp>,
+
+=item * yacc(1),
+
+=item * bison(1),
+
+=item * L<Parse::RecDescent>.
+
+=back
+
+[% PROCESS authorandcopyright %]
+
