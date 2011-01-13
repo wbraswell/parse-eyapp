@@ -1,8 +1,13 @@
 # examples/Eyapplanguageref/Lhs.eyp
+# eyapp -C Lhs.eyp
+# ./Lhs.pm -t -c '2+3'
+# ./Lhs.pm -t -c 'a=3'
 %right '=' 
 %left '-' '+' 
 %left '*' '/' 
 %left NEG 
+%token NUM =
+%token VAR =
 
 %%
 
@@ -12,7 +17,8 @@ input:
 ;
 line:
       '\n'
-    | exp '\n'  
+    | exp '\n'
+    | exp ''  # '' stands for end of input
 ;
 exp:
       NUM

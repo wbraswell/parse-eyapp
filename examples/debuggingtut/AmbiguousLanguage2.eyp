@@ -1,0 +1,42 @@
+
+%conflict AorC {
+   $self->YYIf('abC', 'shift', 'BC');
+}
+
+#%expect 1 1
+%%
+st:  AorC_explorer %PREC AorC s
+;
+
+AorC_explorer: {   
+       $_[0]->YYNestedParse('abC'); 
+    }   
+;
+
+s: aeqb 
+ | beqc
+;
+
+aeqb: ab cs
+;
+
+ab: /* empty */ 
+  | 'a'         
+       ab 'b'
+;
+
+cs : /* empty */ | cs 'c' 
+;
+
+beqc: as bc
+;
+
+bc: /* empty */ | 'b' bc 'c'
+;
+
+as: %name BC
+    /* empty */ 
+  | as 'a'
+;
+
+%%

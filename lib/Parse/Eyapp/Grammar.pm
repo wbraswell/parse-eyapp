@@ -37,6 +37,7 @@ sub new {
                              $self->Option('nocompact'),  # 5 %nocompact
                              $self->Option('lexerisdefined'),    # 6 lexer is defined
                              $self->Option('prefix'),            # 7 accept prefix
+                             $self->Option('start'),            # 8 specify start symbol
                              #$self->Option('prefixname'),  # yyprefix
                              #$self->Option('buildingtree')  # If building AST
                             );
@@ -277,6 +278,7 @@ sub conflictHandlers {
   my $t = Dumper $self->{GRAMMAR}{CONFLICTHANDLERS};
   $t =~ s/^\$VAR\d*\s*=\s*//;
   $t =~s/;$//;
+  $t =~s/\\'//g; # quotes inside quotes
   $t;
 }
 
@@ -332,6 +334,9 @@ sub Accessors {
 ###########################
 sub Warnings {
     my($self)=shift;
+
+    return '' if $self->Option('start');
+
     my($text) = '';
     my($grammar)=$$self{GRAMMAR};
 
@@ -610,6 +615,7 @@ sub _ReduceGrammar {
                    INCREMENTAL       => $values->{INCREMENTAL},       # true if '%incremental lexer' was used
                    MODULINO          => $values->{MODULINO},          # hash perlpath => path, prompt => question
                    STRICT            => $values->{STRICT},            # true if %stric
+                   DUMMY             => $values->{DUMMY},             # array ref 
                    TOKENNAMES     => {},                              # for naming schemes
                  }, __PACKAGE__;
 
