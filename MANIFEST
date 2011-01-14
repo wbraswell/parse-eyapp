@@ -37,7 +37,6 @@ examples/debuggingtut/Debug1.eyp
 examples/debuggingtut/Debug2.eyp
 examples/debuggingtut/DebugDynamicResolution.eyp
 examples/debuggingtut/DebugDynamicResolution2.eyp
-examples/debuggingtut/DebugDynamicResolution3.eyp
 examples/debuggingtut/DebugDynamicResolution4.eyp
 examples/debuggingtut/lastD.eyp
 examples/debuggingtut/DebugLookForward.eyp
@@ -146,7 +145,6 @@ examples/eyapplanguageref/bugyapp2.eyp
 examples/eyapplanguageref/bugyapp3.eyp
 examples/eyapplanguageref/bypass.pl
 examples/eyapplanguageref/Calc.eyp
-examples/eyapplanguageref/calc.pl
 examples/eyapplanguageref/CalcUsingTail.eyp
 examples/eyapplanguageref/CalcwithAttributeGrammar.pl
 examples/eyapplanguageref/CsBetweenCommansAndD.eyp
