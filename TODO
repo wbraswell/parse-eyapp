@@ -11,8 +11,9 @@
                  }
         ...
       }
-    no syntactic auxiliary variable will be introduced. The arguments 
-    for the 'code' handler will be the parser itself and the conflict name.
+  * No syntactic auxiliary variable will be introduced in the %PREC positions. 
+
+  * The arguments for the 'code' handler will be the parser itself and the conflict name.
 
 
 
@@ -34,6 +35,27 @@
                      0  ','
             'total' => 2
             'totalviewpoint' => 1
+
+  * Modify the LR parser algorithm:
+
+    my($self)=shift;
+
+    my($rules,$states,$error) = @$self{ 'RULES', 'STATES', 'ERROR' };
+    my($errstatus,$nberror,$token,$value,$stack,$check,$dotpos) = ...
+
+    $$errstatus=0; $$nberror=0; ($$token,$$value)=(undef,undef);
+    @$stack=( [ 0, undef, ] ); $$check='';
+
+    while(1) {
+        my($actions,$act,$stateno);
+
+        $stateno=$$stack[-1][0];
+
+        $self->executeconflicthandlers($stateno) if ($self->is_conflictive($stateno)); #!!!! 
+
+        $actions=$$states[$stateno];
+        ....
+
 
     
   * Option -v in eyapp will produce a navigable grammar.output.html version of the output

@@ -213,12 +213,12 @@ sub process_production {
           push(@newrhs, $tmplhs);
           next;
       }
-      elsif ($what eq 'CONFLICTHANDLER') {
-        my $ch = $value->[0];
-        push @{$conflict{$ch}{production}{-$position}}, $s; 
-      }
-      elsif ($what eq 'CONFLICTVIEWPOINT') {
-      }
+#     elsif ($what eq 'CONFLICTHANDLER') {
+#       my $ch = $value->[0];
+#       push @{$conflict{$ch}{production}{-$position}}, $s; 
+#     }
+#     elsif ($what eq 'CONFLICTVIEWPOINT') {
+#     }
       
       push(@newrhs, $$value[0]);
   }
