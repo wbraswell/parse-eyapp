@@ -489,7 +489,7 @@ sub YYVal {
 #            25 => ARRAY(0x100b305c0)
 #               0  '\',\''
 #               1  '\')\''
-sub YYSetReduce {
+sub YYSetReduceXXXXX {
   my $self = shift;
   my $action = pop;
   my $token = shift;
@@ -533,7 +533,7 @@ sub YYSetReduce {
   }
 }
 
-sub YYSetReduce2 {
+sub YYSetReduce {
   my $self = shift;
   my $action = pop;
   my $token = shift;
@@ -1780,7 +1780,13 @@ sub _Parse {
         my($actions,$act,$stateno);
 
         $stateno=$$stack[-1][0];
-        warn "Conflictive state $stateno managed by conflict handler '$conflictiveStates{$stateno}{name}'\n" if exists($conflictiveStates{$stateno});
+        if (exists($conflictiveStates{$stateno})) {
+          #warn "Conflictive state $stateno managed by conflict handler '$conflictiveStates{$stateno}{name}'\n" 
+          for my $h (@{$conflictiveStates{$stateno}}) {
+            $self->{CURRENT_LHS} = $h->{name};
+            $h->{codeh}($self);
+          }
+        }
 
         # check if the state is a conflictive one,
         # if so, execute its conflict handlers
@@ -1847,8 +1853,8 @@ sub _Parse {
         push(@$stack,[ $act, $$value ]);
 #DBG>   push(@{$stack->[-1]},$$token);
 
-          $$token ne '' #Don't eat the eof
-        and $$token=$$value=undef;
+          defined($$token) and ($$token ne '') #Don't eat the eof
+              and $$token=$$value=undef;
                 next;
             };
 

@@ -290,7 +290,7 @@ sub stateConflict {
   my $c = $self->{GRAMMAR}{CONFLICTHANDLERS};
   my %stateConflict;
 
-  my $t = '{ '; # }
+  my %t = ();
   for my $cn (keys %$c) {
     my $ce = $c->{$cn};
     my $codeh = $ce->{codeh};
@@ -300,17 +300,21 @@ sub stateConflict {
         my ($sn) = keys %$s;
         #my ($tokens) = values %$s;
         #$tokens = join ',', @$tokens;
-        $t .= << "NEWSTATECONFLICTENTRY";
-            $sn => { 
+        $t{$sn} = '' unless defined($t{$sn});
+        $t{$sn} .= << "NEWSTATECONFLICTENTRY";
+                   { 
                       name => '$cn', 
-                      codeh => $codeh 
+                      codeh => $codeh,
                    },
 NEWSTATECONFLICTENTRY
     } #for states
   } #for  conflict names
  
-  #{
-  "$t}\n";
+  my $t = '{ ';
+  for my $s (keys %t) {
+    $t .= "$s => [ $t{$s} ],";
+  }
+  $t .= ' }';
 }
 
 #####################################

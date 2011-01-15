@@ -4,9 +4,9 @@
 
 %conflict rangeORenum {
   if ($is_range) 
-    { $self->YYSetReduce([',', ')'], 'ID:RANGE' ); }
+    { $self->YYSetReduce2([',', ')'], 'ID:RANGE' ); }
   else 
-    { $self->YYSetReduce([',', ')'], 'ID:ENUM' ); }
+    { $self->YYSetReduce2([',', ')'], 'ID:ENUM' ); }
 } 
 
 %explorer rangeORenum { $is_range = $self->YYPreParse('range'); } 

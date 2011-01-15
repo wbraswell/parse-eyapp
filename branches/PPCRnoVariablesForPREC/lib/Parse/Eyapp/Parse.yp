@@ -216,6 +216,7 @@ sub process_production {
      elsif ($what eq 'CONFLICTHANDLER') {
        my $ch = $value->[0];
        push @{$conflict{$ch}{production}{-$position}}, $s; 
+       next;
      }
 #     elsif ($what eq 'CONFLICTVIEWPOINT') {
 #     }
@@ -624,7 +625,7 @@ CONFLICT_HEADER
               $conflict{$cn}{line} = $line;
 
               $$syms{$cn} = $line;
-              $$nterm{$cn} = undef;
+              #$$nterm{$cn} = undef;
 
               undef;
             }
@@ -845,8 +846,8 @@ body:
                   delete $conflict{$A}{explorer};
               }
 
-              my $rhss = [ rhs([], name => $lhs, code => $code), ];
-              _AddRules($lhs, $rhss);
+              #my $rhss = [ rhs([], name => $lhs, code => $code), ];
+              #_AddRules($lhs, $rhss);
               #delete $conflict{$A}{codeh};
 
               if (defined($conflict{$A}{explorer}) and ($conflict{$A}{totalviewpoint})) {
@@ -938,7 +939,7 @@ rhs:    #empty      #default action (will return undef)
 
 rhselts:    rhselts rhseltwithid  
               { 
-                push(@{$_[1]},$_[2]); 
+                push(@{$_[1]},$_[2]);
                 $_[1] 
               }
     |   rhseltwithid              { [ $_[1] ] }
@@ -961,6 +962,9 @@ rhseltwithid :
     | '$' error { _SyntaxError(2,"\$ is allowed for identifiers only",$lineno[0]) }
 
     | rhselt
+       {
+         $_[1];
+       }
 ;
 
 rhselt:     symbol    { [ 'SYMB', $_[1] ] }
