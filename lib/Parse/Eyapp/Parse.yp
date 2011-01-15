@@ -213,10 +213,10 @@ sub process_production {
           push(@newrhs, $tmplhs);
           next;
       }
-#     elsif ($what eq 'CONFLICTHANDLER') {
-#       my $ch = $value->[0];
-#       push @{$conflict{$ch}{production}{-$position}}, $s; 
-#     }
+     elsif ($what eq 'CONFLICTHANDLER') {
+       my $ch = $value->[0];
+       push @{$conflict{$ch}{production}{-$position}}, $s; 
+     }
 #     elsif ($what eq 'CONFLICTVIEWPOINT') {
 #     }
       
@@ -847,7 +847,7 @@ body:
 
               my $rhss = [ rhs([], name => $lhs, code => $code), ];
               _AddRules($lhs, $rhss);
-              delete $conflict{$A}{codeh};
+              #delete $conflict{$A}{codeh};
 
               if (defined($conflict{$A}{explorer}) and ($conflict{$A}{totalviewpoint})) {
                 my $lhs = [$A.'_explorer', $conflict{$A}{explorerline}];

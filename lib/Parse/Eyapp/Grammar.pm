@@ -282,6 +282,37 @@ sub conflictHandlers {
   $t;
 }
 
+
+# produces the text mapping states to conflicthandlers
+sub stateConflict {
+  my $self = shift;
+
+  my $c = $self->{GRAMMAR}{CONFLICTHANDLERS};
+  my %stateConflict;
+
+  my $t = '{ '; # }
+  for my $cn (keys %$c) {
+    my $ce = $c->{$cn};
+    my $codeh = $ce->{codeh};
+    $codeh = "sub { $codeh }";
+    my @s = defined($ce->{states}) ?  @{$ce->{states}} : ();
+    for my $s (@s) {
+        my ($sn) = keys %$s;
+        #my ($tokens) = values %$s;
+        #$tokens = join ',', @$tokens;
+        $t .= << "NEWSTATECONFLICTENTRY";
+            $sn => { 
+                      name => '$cn', 
+                      codeh => $codeh 
+                   },
+NEWSTATECONFLICTENTRY
+    } #for states
+  } #for  conflict names
+ 
+  #{
+  "$t}\n";
+}
+
 #####################################
 # Method To Return the Bypass Option#
 #####################################

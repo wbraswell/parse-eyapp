@@ -42,6 +42,7 @@ my (%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
        YYBUILDINGTREE  => '',
        YYACCESSORS => 'HASH',
        YYCONFLICTHANDLERS => 'HASH',
+       YYSTATECONFLICT => 'HASH',
        YYLABELS => 'HASH',
        ); 
 my (%newparams) = (%params, YYPREFIX => '',);
@@ -1753,7 +1754,7 @@ sub _Parse {
   my($errstatus,$nberror,$token,$value,$stack,$check,$dotpos)
      = @$self{ 'ERRST', 'NBERR', 'TOKEN', 'VALUE', 'STACK', 'CHECK', 'DOTPOS' };
 
-
+  my %conflictiveStates = %{$self->{STATECONFLICT}};
 #DBG> my($debug)=$$self{DEBUG};
 #DBG> my($dbgerror)=0;
 
@@ -1779,6 +1780,7 @@ sub _Parse {
         my($actions,$act,$stateno);
 
         $stateno=$$stack[-1][0];
+        warn "Conflictive state $stateno managed by conflict handler '$conflictiveStates{$stateno}{name}'\n" if exists($conflictiveStates{$stateno});
 
         # check if the state is a conflictive one,
         # if so, execute its conflict handlers
