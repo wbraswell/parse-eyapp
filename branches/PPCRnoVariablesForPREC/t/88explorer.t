@@ -183,7 +183,7 @@ SKIP: {
 
   my $expected = q{
 
-def_is_paramSpec_ToNExplorer_returnSpec(
+def_is_paramSpec_returnSpec(
   paramSpec_is_nameList_type(
     nameList_is_name_nameList(
       NAME(
