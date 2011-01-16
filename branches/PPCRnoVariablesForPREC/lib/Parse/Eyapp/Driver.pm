@@ -429,7 +429,6 @@ sub YYNestedParse {
   my $self = shift;
   my $parser = shift;
   my $conflictName = $self->YYLhs;
-  $conflictName =~ s/_explorer$//;
 
   my ($t, $ok) = $self->YYPreParse($parser, @_);
 
@@ -442,7 +441,6 @@ sub YYNestedRegexp {
   my $self = shift;
   my $regexp = shift;
   my $conflictName = $self->YYLhs;
-  $conflictName =~ s/_explorer$//;
 
   my $ok = $_ =~ /$regexp/gc;
 
@@ -543,19 +541,18 @@ sub YYSetReduce {
 
   my $conflictName = $self->YYLhs;
 
-  $conflictName =~ s/_explorer$//;
-
   #$self->{CONFLICTHANDLERS}{conflictName}{states}
   # is a hash
   #        statenumber => [ tokens, '\'-\'' ]
   my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
   my @conflictStates = $cS ? @$cS : ();
+ 
+  return unless @conflictStates;
+
   # Conflict state
   my $cs = $conflictStates[0];
 
 
-  # Perform the action to change the LALR tables only if the next state 
-  # is listed as a conflictstate
   my ($conflictstate) = keys %{$cs};
 
   # Action can be given using the name of the production
@@ -584,29 +581,27 @@ sub YYSetShift {
   # my ($self, $token, $action) = @_;
   # $action is syntactic sugar ...
 
-  # Conflict state
-  my $conflictstate = $self->YYNextState();
 
   my $conflictName = $self->YYLhs;
 
   my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
   my @conflictStates = $cS ? @$cS : ();
+ 
+  return unless @conflictStates;
 
-  # Perform the action to change the LALR tables only if the next state 
-  # is listed as a conflictstate
-  my ($cs) = (grep { exists $_->{$conflictstate}} @conflictStates); 
-  return unless $cs;
+  my $cs = $conflictStates[0];
+
+  my ($conflictstate) = keys %{$cs};
 
   $token = $cs->{$conflictstate} unless defined($token);
   $token = [ $token ] unless ref($token);
 
-  my $conflictname = $self->YYLhs;
   for (@$token) {
-    if (defined($self->{CONFLICT}{$conflictname}{$_}))  {
-      my ($conflictstate2, $action) = @{$self->{CONFLICT}{$conflictname}{$_}};
+    if (defined($self->{CONFLICT}{$conflictName}{$_}))  {
+      my ($conflictstate2, $action) = @{$self->{CONFLICT}{$conflictName}{$_}};
       # assert($conflictstate == $conflictstate2) 
 
-      $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $self->{CONFLICT}{$conflictname}{$_}[1];
+      $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $self->{CONFLICT}{$conflictName}{$_}[1];
     }
     else {
       #croak "YYSetShift error. No shift action found";
@@ -1779,6 +1774,7 @@ sub _Parse {
     while(1) {
         my($actions,$act,$stateno);
 
+        $self->{POS} = pos(${$self->input()});
         $stateno=$$stack[-1][0];
         if (exists($conflictiveStates{$stateno})) {
           #warn "Conflictive state $stateno managed by conflict handler '$conflictiveStates{$stateno}{name}'\n" 
@@ -1801,7 +1797,6 @@ sub _Parse {
 #DBG>          "\n";
 
 
-        $self->{POS} = pos(${$self->input()});
         if  (exists($$actions{ACTIONS})) {
 
         defined($$token)

@@ -14,13 +14,13 @@ my $nxs = 0;
 
   warn "nxr = $nxr nxs = $nxs\n";
   if ($nxs == $nxr+1) { 
-    warn "Reducing by :MIDx nxs = $nxs nxr = $nxr\n";
+    warn "Reducing by :MIDx nxs = $nxs nxr = $nxr input: '".unexpendedInput()."'\n";
     $self->YYSetReduce(['NUM', ], ':MIDx' );
     
     $nxr = $nxs = 0; 
   }
   else { 
-     warn "Shifting\n";
+     warn "Shifting input: '".unexpendedInput()."'\n";
      $self->YYSetShift(['NUM', ]  ) 
      ##$self->YYSetShift(['NUM',]  ) 
   } 

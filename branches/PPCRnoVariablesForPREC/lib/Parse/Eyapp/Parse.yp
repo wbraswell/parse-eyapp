@@ -308,8 +308,8 @@ CONFLICT_EXPLORER
               $conflict{$cn}{explorerline} = $line;
 
               # TODO: error control. Factorize!!!!!
-              $$syms{$cn.'_explorer'} = $line;
-              $$nterm{$cn.'_explorer'} = undef;
+              $$syms{$cn} = $line;
+              $$nterm{$cn} = undef;
 
               undef;
             }
@@ -838,24 +838,26 @@ body:
               my $lhs = [$A, $conflict{$A}{line}];
               my $code = $conflict{$A}{codeh};
 
-              if  (defined($conflict{$A}{explorer}) and !$conflict{$A}{totalviewpoint}) {
-                  $code = "{ $conflict{$A}{explorer} }\n{ $code }";
-                  my $expname = $A.'_explorer';
-                  delete $$syms{$expname};
-                  delete $$nterm{$expname};
-                  delete $conflict{$A}{explorer};
+              if  (defined($conflict{$A}{explorer}))  {
+                  if (!$conflict{$A}{totalviewpoint}) {
+                      $conflict{$A}{codeh} = "{ $conflict{$A}{explorer} }\n{ $code }";
+                      delete $$syms{$A};
+                      delete $$nterm{$A};
+                      delete $$term{$A};
+                      delete $conflict{$A}{explorer};
+                  }
+                  else {
+                    my $lhs = [$A, $conflict{$A}{explorerline}];
+                    my $code = $conflict{$A}{explorer};
+                    my $rhss = [ rhs([], name => $lhs, code => $code), ];
+                    _AddRules($lhs, $rhss);
+                    delete $conflict{$A}{explorer};
+                  }
               }
-
-              #my $rhss = [ rhs([], name => $lhs, code => $code), ];
-              #_AddRules($lhs, $rhss);
-              #delete $conflict{$A}{codeh};
-
-              if (defined($conflict{$A}{explorer}) and ($conflict{$A}{totalviewpoint})) {
-                my $lhs = [$A.'_explorer', $conflict{$A}{explorerline}];
-                my $code = $conflict{$A}{explorer};
-                my $rhss = [ rhs([], name => $lhs, code => $code), ];
-                _AddRules($lhs, $rhss);
-                delete $conflict{$A}{explorer};
+              else {
+                 delete $$syms{$A};
+                 delete $$nterm{$A};
+                 delete $$term{$A};
               }
             }
 
@@ -979,7 +981,6 @@ rhselt:     symbol    { [ 'SYMB', $_[1] ] }
     | VIEWPOINT 
         { 
            $conflict{$_[1][0]}{totalviewpoint}++;
-           $_[1][0] .='_explorer';
            [ 'CONFLICTVIEWPOINT', $_[1] ] 
         }
     #************** research *****************#
