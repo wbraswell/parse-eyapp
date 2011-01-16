@@ -837,11 +837,10 @@ body:
             # Add conflict handlers
             # [ left hand side,   right hand side,  precedence, rulename, code, ]
             for my $A (keys %conflict) { 
-              my $lhs = [$A, $conflict{$A}{line}];
-              my $code = $conflict{$A}{codeh};
 
               if  (defined($conflict{$A}{explorer}))  {
                   if (!$conflict{$A}{totalviewpoint}) {
+                      my $code = $conflict{$A}{codeh};
                       $conflict{$A}{codeh} = "{ $conflict{$A}{explorer} }\n{ $code }";
                       delete $$syms{$A};
                       delete $$nterm{$A};
@@ -867,7 +866,7 @@ body:
             if ($strict) {
               for (keys %nondeclared) {
                   warn "Warning! Non declared token $_ at line $$syms{$_} of $filename\n" 
-                unless ($_ eq 'error' || $$term{$_} || exists($$nterm{$_}));
+                unless ($_ eq 'error' || $$term{$_} || exists($$nterm{$_}) || exists($conflict{$_}));
               }
             }
             # Superstart rule
