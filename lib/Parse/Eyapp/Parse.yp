@@ -107,7 +107,7 @@ sub symbol_index {
 
   local $_ = 0;
   for my $value (@{$rhs}) {
-    $_++ unless ($value->[0] eq 'CODE') and $metatree;
+    $_++ unless (($value->[0] eq 'CODE') and $metatree) or ($value->[0] eq 'CONFLICTHANDLER');
     my $id = $value->[1][2];
     if (defined($id)) {
         _SyntaxError(
@@ -187,6 +187,7 @@ sub process_production {
   my $position = $#$rules;
   my @newrhs = ();
 
+  my $m = 0;
   for my $s (0..$#$rhs) {
       my($what,$value)=@{$$rhs[$s]};
 
@@ -215,13 +216,14 @@ sub process_production {
       }
      elsif ($what eq 'CONFLICTHANDLER') {
        my $ch = $value->[0];
-       push @{$conflict{$ch}{production}{-$position}}, $s; 
+       push @{$conflict{$ch}{production}{-$position}}, $m; 
        next;
      }
 #     elsif ($what eq 'CONFLICTVIEWPOINT') {
 #     }
       
       push(@newrhs, $$value[0]);
+      $m++;
   }
   return \@newrhs;
 }

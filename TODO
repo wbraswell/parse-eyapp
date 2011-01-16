@@ -1,3 +1,4 @@
+  * bug in notation x.y and $x
   * Modifiy Parse::Eyapp::Driver::_Parse 
     If the state is a conflict state execute the conflict handlers for that state:
     We need then a hash whose keys will be the conflictive states:
