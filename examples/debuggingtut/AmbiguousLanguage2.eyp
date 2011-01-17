@@ -13,7 +13,7 @@ st:  AorC_explorer s
 ;
 
 AorC_explorer: {   
-       $_[0]->YYNestedParse('abC'); 
+       $_[0]->YYNestedParse('abC', 'AorC'); 
     }   
 ;
 

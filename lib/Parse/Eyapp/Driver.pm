@@ -428,7 +428,9 @@ sub YYPreParse {
 sub YYNestedParse {
   my $self = shift;
   my $parser = shift;
-  my $conflictName = $self->YYLhs;
+  my $conflictName =  shift;
+
+  $conflictName = $self->YYLhs unless $conflictName;
 
   my ($t, $ok) = $self->YYPreParse($parser, @_);
 
