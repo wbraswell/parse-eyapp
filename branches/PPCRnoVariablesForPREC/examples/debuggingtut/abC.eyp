@@ -1,5 +1,6 @@
 %%
 abC: ab 'c'
+# |  ab ''
 ;
 
 ab: /* empty */ 
