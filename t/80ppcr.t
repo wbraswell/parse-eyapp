@@ -149,38 +149,37 @@ SKIP: {
   my $expected = q{
 Number of x's = 3
 nxr = 1 nxs = 1
-Shifting
+Shifting input: '*4 5+2 other things'
 nxr = 1 nxs = 2
-Reducing by :MIDx nxs = 2 nxr = 1
+Reducing by :MIDx nxs = 2 nxr = 1 input: '+2 other things'
 
-T_is_preproc_S_other_things(
+T_is_S_other_things(
   S_is_x_S_x(
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[2]
-      ),
+    x_is_NUM_OP_x(
+      TERMINAL[2],
       TERMINAL[-],
-      TERMINAL[3]
-    ),
-    S_is_x(
-      x_is_x_OP_NUM(
-        x_is_NUM(
-          TERMINAL[3]
-        ),
-        TERMINAL[*],
-        TERMINAL[4]
+      x_is_NUM(
+        TERMINAL[3]
       )
     ),
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[5]
-      ),
+    S_is_x(
+      x_is_NUM_OP_x(
+        TERMINAL[3],
+        TERMINAL[*],
+        x_is_NUM(
+          TERMINAL[4]
+        )
+      )
+    ),
+    x_is_NUM_OP_x(
+      TERMINAL[5],
       TERMINAL[+],
-      TERMINAL[2]
+      x_is_NUM(
+        TERMINAL[2]
+      )
     )
   )
 )
-
 };
   $expected =~ s/\s+//g;
   $expected = quotemeta($expected);
@@ -315,59 +314,59 @@ SKIP: {
 
   my $expected = q{
 Number of x's = 3
-Reducing by :MIDx input = '+2 ; 4+8 3-1 2*3 ;'
+Reducing by :MIDx input = '+2 ; 4+8 3-1 2*3 ; '
 Number of x's = 3
-Reducing by :MIDx input = '*3 ;'
+Reducing by :MIDx input = '*3 ; '
 
-T_is_isInTheMiddleExplorer_S_isInTheMiddleExplorer_S(
+T_is_S_S(
   S_is_x_S_x(
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[2]
-      ),
+    x_is_NUM_OP_x(
+      TERMINAL[2],
       TERMINAL[-],
-      TERMINAL[3]
-    ),
-    S_is_x(
-      x_is_x_OP_NUM(
-        x_is_NUM(
-          TERMINAL[3]
-        ),
-        TERMINAL[*],
-        TERMINAL[4]
+      x_is_NUM(
+        TERMINAL[3]
       )
     ),
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[5]
-      ),
+    S_is_x(
+      x_is_NUM_OP_x(
+        TERMINAL[3],
+        TERMINAL[*],
+        x_is_NUM(
+          TERMINAL[4]
+        )
+      )
+    ),
+    x_is_NUM_OP_x(
+      TERMINAL[5],
       TERMINAL[+],
-      TERMINAL[2]
+      x_is_NUM(
+        TERMINAL[2]
+      )
     )
   ),
   S_is_x_S_x(
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[4]
-      ),
+    x_is_NUM_OP_x(
+      TERMINAL[4],
       TERMINAL[+],
-      TERMINAL[8]
-    ),
-    S_is_x(
-      x_is_x_OP_NUM(
-        x_is_NUM(
-          TERMINAL[3]
-        ),
-        TERMINAL[-],
-        TERMINAL[1]
+      x_is_NUM(
+        TERMINAL[8]
       )
     ),
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[2]
-      ),
+    S_is_x(
+      x_is_NUM_OP_x(
+        TERMINAL[3],
+        TERMINAL[-],
+        x_is_NUM(
+          TERMINAL[1]
+        )
+      )
+    ),
+    x_is_NUM_OP_x(
+      TERMINAL[2],
       TERMINAL[*],
-      TERMINAL[3]
+      x_is_NUM(
+        TERMINAL[3]
+      )
     )
   )
 )

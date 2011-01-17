@@ -37,30 +37,30 @@ SKIP: {
   my $expected = q{
 Reducing by :MIDx
 
-T_is_isInTheMiddleExplorer_S(
+T_is_S(
   S_is_x_S_x(
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[2]
-      ),
+    x_is_NUM_OP_x(
+      TERMINAL[2],
       TERMINAL[-],
-      TERMINAL[3]
-    ),
-    S_is_x(
-      x_is_x_OP_NUM(
-        x_is_NUM(
-          TERMINAL[3]
-        ),
-        TERMINAL[*],
-        TERMINAL[4]
+      x_is_NUM(
+        TERMINAL[3]
       )
     ),
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[5]
-      ),
+    S_is_x(
+      x_is_NUM_OP_x(
+        TERMINAL[3],
+        TERMINAL[*],
+        x_is_NUM(
+          TERMINAL[4]
+        )
+      )
+    ),
+    x_is_NUM_OP_x(
+      TERMINAL[5],
       TERMINAL[+],
-      TERMINAL[2]
+      x_is_NUM(
+        TERMINAL[2]
+      )
     )
   )
 )
@@ -107,13 +107,13 @@ SKIP: {
 
   };
 
-  ok(!$@,'t/t/reuseconflicthandler2.eyp executed as modulino');
+  ok(!$@,'t/reuseconflicthandler2.eyp executed as modulino');
 
   my $expected = q{
 Reducing by :MIDx input = ' 1 2+2 3-5;'
 Reducing by :MIDx input = '-5;'
 
-T_is_isInTheMiddleExplorer_S_isInTheMiddleExplorer_S(
+T_is_S_S(
   S_is_x(
     x_is_NUM(
       TERMINAL[2]
@@ -124,24 +124,23 @@ T_is_isInTheMiddleExplorer_S_isInTheMiddleExplorer_S(
       TERMINAL[1]
     ),
     S_is_x(
-      x_is_x_OP_NUM(
+      x_is_NUM_OP_x(
+        TERMINAL[2],
+        TERMINAL[+],
         x_is_NUM(
           TERMINAL[2]
-        ),
-        TERMINAL[+],
-        TERMINAL[2]
+        )
       )
     ),
-    x_is_x_OP_NUM(
-      x_is_NUM(
-        TERMINAL[3]
-      ),
+    x_is_NUM_OP_x(
+      TERMINAL[3],
       TERMINAL[-],
-      TERMINAL[5]
+      x_is_NUM(
+        TERMINAL[5]
+      )
     )
   )
 )
-
 };
   $expected =~ s/\s+//g;
   $expected = quotemeta($expected);
