@@ -71,6 +71,21 @@
       * conseguir articulo de Ganapanathi "semantic predicates in"
       * estudiar e introducir comparaciones
       * insistir en que esta implementado y "verificado": describir implementación
+       
+      * Referees PLDI
+         -- too vague description
+         -- motivation for the YYExpected: explain the problem
+         -- Syntactic analysis that depends on the semantic phase: explain better
+         -- how the PPCR is better than backtracking
+         -- more mathematics, proofs,
+         -- One pass: is not clear to the referee
+         -- Doubts about the implementation: have been implemented paragraph, see example files in 
+            such, and such addresses
+         -- Comparisons with other parsers: Regexp::Grammars, Marpa: execution times, etc.
+            Complexity.
+         -- typos, wording
+         -- two different articles
+
   * optimize generated lexer for contextual tokens (Expected must be called only once)
   * debugging: break points, call actual debugger inside semantic actions, etc.
 
