@@ -239,6 +239,135 @@ sub ShowDfa {
     $text;
 }
 
+sub ShowDfa_html {
+    my($self)=shift;
+    my($text) = '';
+    my($grammar,$states)=($$self{GRAMMAR}, $$self{STATES});
+
+    for my $stateno (0..$#$states) {
+        my(@shifts,@reduces,@errors,$default);
+
+        $text.="<a name=\"state$stateno\"></a>State $stateno:<br>\n";
+
+        #Dump Kernel Items
+        for (sort {     $$a[0] <=> $$b[0]
+                    or  $$a[1] <=> $$b[1] } @{$$states[$stateno]{'CORE'}}) {
+            my($ruleno,$pos)=@$_;
+            my($lhs,$rhs)=@{$$grammar{RULES}[$ruleno]}[0,1];
+            my(@rhscopy)=@$rhs;
+        
+                $ruleno
+            or  $rhscopy[-1] = '$end';
+
+            splice(@rhscopy,$pos,0,'.');
+            $text.= "&nbsp;$lhs -> ".join(' ',@rhscopy)."&nbsp;(<a href=\"#rule$ruleno\"> Rule $ruleno</a>)<br>\n";
+        }
+
+
+
+        #Prepare Actions
+        for (keys(%{$$states[$stateno]{ACTIONS}})) {
+            my($term,$action)=($_,$$states[$stateno]{ACTIONS}{$_});
+
+                $term eq chr(0)
+            and $term = '$end';
+
+                not defined($action)
+            and do {
+                push(@errors,$term);
+                next;
+            };
+
+                $action > 0
+            and do {
+                push(@shifts,[ $term, $action ]);
+                next;
+            };
+
+            $action = -$action;
+
+                $term
+            or  do {
+                $default= [ '$default', $action ];
+                next;
+            };
+
+            push(@reduces,[ $term, $action ]);
+        }
+
+            #Dump shifts
+            @shifts
+        and do {
+            $text.="<br>\n";
+            for (sort { $$a[0] cmp $$b[0] } @shifts) {
+                my($term,$shift)=@$_;
+
+                $text.="&nbsp;$term&nbsp;shift, and go to <a href=\"#state$shift\"> state $shift</a><br>\n";
+            }
+        };
+
+            #Dump errors
+            @errors
+        and do {
+            $text.="<br>\n";
+            for my $term (sort { $a cmp $b } @errors) {
+                $text.="&nbsp;$term&nbsp;error (nonassociative)<br>\n";
+            }
+        };
+
+        #Prepare reduces
+            exists($$self{CONFLICTS}{FORCED}{DETAIL}{$stateno})
+        and push(@reduces,@{$$self{CONFLICTS}{FORCED}{DETAIL}{$stateno}{LIST}});
+
+        @reduces=sort { $$a[0] cmp $$b[0] or $$a[1] <=> $$b[1] } @reduces;
+
+            defined($default)
+        and push(@reduces,$default);
+
+        #Dump reduces
+            @reduces
+        and do {
+            $text.="<br>\n";
+            for (@reduces) {
+                my($term,$ruleno)=@$_;
+                my($discard);
+
+                    $ruleno < 0
+                and do {
+                    ++$discard;
+                    $ruleno = -$ruleno;
+                };
+
+                    $term eq chr(0)
+                and $term = '$end';
+
+                $text.= "&nbsp;$term&nbsp;".($discard  ? "[" : "");
+                if($ruleno) {
+                    $text.= "reduce using <a href=\"#rule$ruleno\">rule $ruleno</a> ".
+                            "($$grammar{RULES}[$ruleno][0])";
+                }
+                else {
+                    $text.='accept';
+                }
+                $text.=($discard  ? "]" : "")."<br>\n";
+            }
+        };
+
+            #Dump gotos
+            exists($$states[$stateno]{GOTOS})
+        and    do {
+                $text.= "<br>\n";
+                for (keys(%{$$states[$stateno]{GOTOS}})) {
+                    $text.= "&nbsp;$_&nbsp;go to <a href=\"#state$$states[$stateno]{GOTOS}{$_}\"> state $$states[$stateno]{GOTOS}{$_}</a><br>\n";
+                }
+            };
+
+        $text.="<br>\n";
+    }
+    $text;
+}
+
+####################################################################
 ####################################################################
 # Usage      : $parser->outputtables($path, $base)
 # Purpose    : Gives support to eyapp option -v
@@ -249,23 +378,50 @@ sub outputtables {
   my ($parser, $path, $base) = @_;
 
   my($output)=$base?"$path$base.output":"STDOUT";
+  my($outputhtml)=$base?"$path$base.html":"STDOUT";
   my($tmp);
 
           open(my $OUT,">$output")
   or	die "Cannot create $base.output for writing.\n";
+          open(my $OUT_HTML,">$outputhtml")
+  or	die "Cannot create $base.html for writing.\n";
 
-          $tmp=$parser->Warnings()
+  print $OUT_HTML "<HTML>\n<HEAD>\n<TITLE>$path$base</TITLE>\n<META NAME=\"description\" CONTENT=\"$path$base\">\n</HEAD>\n<BODY>\n";
+
+  $tmp=$parser->Warnings()
   and	print	$OUT "Warnings:\n---------\n$tmp\n";
-          $tmp=$parser->Conflicts()
-  and	print	$OUT "Conflicts:\n----------\n$tmp\n";
-  print	$OUT "Rules:\n------\n";
-  print	$OUT $parser->ShowRules()."\n";
-  print	$OUT "States:\n-------\n";
-  print	$OUT $parser->ShowDfa()."\n";
-  print	$OUT "Summary:\n--------\n";
-  print	$OUT $parser->Summary();
+  $tmp=$parser->Warnings_html()
+  and	print	$OUT "<p>Warnings:<br>---------<br></p>\n<p>$tmp</p>\n";
+
+  $tmp=$parser->Conflicts()
+  and print $OUT "Conflicts:\n----------\n$tmp\n";
+
+  $tmp=$parser->Conflicts_html()
+  and print $OUT_HTML "<p>Conflicts:<br>----------<br></p>\n<p>$tmp</p>\n";
+
+  print $OUT "Rules:\n------\n";
+  print $OUT_HTML "<p>Rules:<br>------<br></p>\n<p>";
+
+  print $OUT $parser->ShowRules()."\n";
+  print $OUT_HTML $parser->ShowRules_html()."</p>\n";
+
+  print $OUT "States:\n-------\n";
+
+  print $OUT_HTML "<p>States:<br>-------<br></p>\n<p>";
+
+  print $OUT $parser->ShowDfa()."\n";
+  print $OUT_HTML $parser->ShowDfa_html()."</p>\n";
+
+  print $OUT "Summary:\n--------\n";
+  print $OUT_HTML "<p>Summary:<br>-------<br></p>\n<p>";
+
+  print $OUT $parser->Summary();
+  print $OUT_HTML $parser->Summary_html();
+
+  print $OUT_HTML "</BODY>\n</HTML>\n";
 
   close($OUT);
+  close($OUT_HTML);
 }
 
 sub outputDot {
@@ -436,6 +592,16 @@ sub Summary {
     $text;
 }
 
+sub Summary_html {
+    my($self)=shift;
+    my($text) = '';
+
+	$text=$self->SUPER::Summary_html();
+    $text.="Number of states        : ".
+            scalar(@{$$self{STATES}})."<br>\n";
+    $text;
+}
+
 #######################################
 # Method To Get Infos about conflicts #
 #######################################
@@ -476,6 +642,51 @@ sub Conflicts {
                    ($nbrr > 1 ? "s" : "");
         };
         $text.="\n";
+    };
+
+    $text;
+}
+
+#######################################
+# Method To Get Infos about conflicts #
+#######################################
+sub Conflicts_html {
+    my($self)=shift;
+    my($states)=$$self{STATES};
+    my($conflicts)=$$self{CONFLICTS};
+    my($text) = '';
+
+    for my $stateno ( sort { $a <=> $b } keys(%{$$conflicts{SOLVED}})) {
+
+        for (@{$$conflicts{SOLVED}{$stateno}}) {
+            my($ruleno,$token,$how)=@$_;
+
+                $token eq chr(0)
+            and $token = '$end';
+
+            $text.="Conflict in <a href=\"#state$stateno\">  state $stateno</a> between <a href=\"#rule$ruleno\"> rule ".
+                   "$ruleno</a> and token $token resolved as $how.<br>\n"; 
+        }
+    };
+
+    for my $stateno ( sort { $a <=> $b } keys(%{$$conflicts{FORCED}{DETAIL}})) {
+        my($nbsr,$nbrr)=@{$$conflicts{FORCED}{DETAIL}{$stateno}{TOTAL}};
+
+        $text.="State $stateno contains ";
+
+            $nbsr
+        and $text.="$nbsr shift/reduce conflict".
+                   ($nbsr > 1 ? "s" : "");
+
+            $nbrr
+        and do {
+                $nbsr
+            and $text.=" and ";
+
+            $text.="$nbrr reduce/reduce conflict".
+                   ($nbrr > 1 ? "s" : "");
+        };
+        $text.="<br>\n";
     };
 
     $text;
