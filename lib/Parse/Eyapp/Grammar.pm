@@ -90,6 +90,27 @@ sub ShowRules {
     $text;
 }
 
+sub ShowRules_html {
+    my($self)=shift;
+    my($rules)=$$self{GRAMMAR}{RULES};
+    my($ruleno)=0;
+    my($text);
+
+    for (@$rules) {
+        my($lhs,$rhs)=@$_;
+
+        $text.="<a name=\"rule$ruleno\"></a>$ruleno &nbsp; $lhs  -> ";
+        if(@$rhs) {
+            $text.=join(' ',map { $_ eq chr(0) ? '$end' : $_ } @$rhs);
+        }
+        else {
+            $text.="/* empty */";
+        }
+        $text.="<br>\n";
+		++$ruleno;
+    }
+    $text;
+}
 sub give_default_name {
   my ($self, $index, $lhs) = @_;
 
@@ -367,6 +388,41 @@ sub Warnings {
     $text;
 }
 
+sub Warnings_html {
+    my($self)=shift;
+
+    return '' if $self->Option('start');
+
+    my($text) = '';
+    my($grammar)=$$self{GRAMMAR};
+
+        exists($$grammar{UUTERM})
+    and    do {
+            $text="Unused terminals:<br><br>\n\n";
+            for (@{$$grammar{UUTERM}}) {
+                $text.="&npsp;$$_[0], declared line $$_[1]<br>\n";    
+            }
+        $text.="<br>\n";
+        };
+        exists($$grammar{UUNTERM})
+    and    do {
+            $text.="Useless non-terminals:<br>\n\n";
+            for (@{$$grammar{UUNTERM}}) {
+                $text.="&npsp;$$_[0], declared line $$_[1]<br>\n";    
+            }
+        $text.="<br>\n";
+        };
+        exists($$grammar{UURULES})
+    and    do {
+            $text.="Useless rules:<br>\n\n";
+            for (@{$$grammar{UURULES}}) {
+                $text.="&npsp;$$_[0] -> ".join(' ',@{$$_[1]})."<br>\n";
+            }
+        $text.="<br>\n";
+        };
+    $text;
+}
+
 ######################################
 # Method to get summary about parser #
 ######################################
@@ -383,6 +439,18 @@ sub Summary {
     $text;
 }
 
+sub Summary_html {
+    my($self)=shift;
+    my($text);
+
+    $text ="Number of rules         : ".
+            scalar(@{$$self{GRAMMAR}{RULES}})."<br>\n";
+    $text.="Number of terminals     : ".
+            scalar(keys(%{$$self{GRAMMAR}{TERM}}))."<br>\n";
+    $text.="Number of non-terminals : ".
+            scalar(keys(%{$$self{GRAMMAR}{NTERM}}))."<br>\n";
+    $text;
+}
 ###############################
 # Method to Ouput rules table #
 ###############################
