@@ -1,11 +1,4 @@
-  * syntax:
-        %conflict rangeORenum exp '..' exp ? prodname : prodname
-
-  * When compiling a nested parser we must accept if some prefix of the input 
-    conforms to the language and the following token is a LEGAL TOKEN 
-    (has to be in the follows, for sure).
-    That means the nested parser must be tightly coupled to the outer parser.
-
+  * merge svn branches!
   * two tests with examples/debuggingtut/AmbiguousLanguage2.eyp 
     one test with t/noPackratSolvedExpRG2.yp checking that produces the same table than eyapp
     

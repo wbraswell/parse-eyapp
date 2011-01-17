@@ -3,19 +3,21 @@
 # ~/LEyapp/examples/debuggingtut$ eyapp -P abC.eyp 
 # ~/LEyapp/examples/debuggingtut$ ./AmbiguousLanguage2.pm -t -i -m 1 -c 'abbcc'
 
-%conflict AorC {
-   $self->YYIf('abC', 'shift', 'BC');
-}
+%conflict AorC abC? shift: BC
+
+#%conflict AorC {
+#   $self->YYIf('abC', 'shift', 'BC');
+#}
 
 #%expect 1 1
 %%
-st:  AorC_explorer s
+st:  AorC? s
 ;
 
-AorC_explorer: {   
-       $_[0]->YYNestedParse('abC', 'AorC'); 
-    }   
-;
+#AorC_explorer: {   
+#       $_[0]->YYNestedParse('abC', 'AorC'); 
+#   }   
+#;
 
 s: aeqb 
  | beqc
