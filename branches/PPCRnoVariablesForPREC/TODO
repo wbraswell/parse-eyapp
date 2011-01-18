@@ -1,5 +1,9 @@
   * merge svn branches!
+
+  * AmbiguousLanguage2.eyp usar como contraejemplo a la primera teoria
+
   * two tests with examples/debuggingtut/AmbiguousLanguage2.eyp 
+
     one test with t/noPackratSolvedExpRG2.yp checking that produces the same table than eyapp
     
     The diificulty of using yacc is extraordinary. See t/noPackratSolvedExpRG2.yp

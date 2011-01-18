@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7, $nt8, $nt9, $nt10, $nt11, $nt12, $nt13);
+my ($nt, $nt2, $nt3, $nt4, $nt5, $nt6, $nt7, $nt8, $nt9, $nt10, $nt11, $nt12, $nt13, $nt14);
 
 BEGIN { 
   $nt = 8; 
@@ -16,8 +16,9 @@ BEGIN {
   $nt11 = 8;
   $nt12 = 6;
   $nt13 = 7;
+  $nt14 = 9;
 }
-use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12+$nt13;
+use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12+$nt13+$nt14;
 
 # test PPCR methodology with Pascal range versus enumerated conflict
 SKIP: {
@@ -805,10 +806,10 @@ PROG(D(D(D)),SS(SS(S)))
 }
 
 SKIP: {
-  skip "t/CplusplusNested5.eyp not found", $nt8 unless ($ENV{DEVELOPER} 
+  skip "t/CplusplusNested5.eyp not found", $nt13 unless ($ENV{DEVELOPER} 
                                                         && -r "t/CplusplusNested5.eyp"
                                                         && -x "./eyapp"
-                                                        && mkdir 't/Tutu');
+                                                        && ( -d 't/Tutu' or mkdir 't/Tutu'));
 
   unlink 't/ppcr.pl';
 
@@ -846,6 +847,97 @@ PROG(PROG(EMPTY,EXP(TYPECAST(TERMINAL[int],ID[x]),NUM[2])),DECL(TERMINAL[int],ID
 
   unlink 't/ppcr.pl';
   unlink 't/Tutu/decl.pm';
+  rmdir  't/Tutu';
+  unlink 't/err';
+
+}
+
+SKIP: {
+  skip "t/AmbiguousLanguage2.eyp not found", $nt14 unless ($ENV{DEVELOPER} 
+                                                        && -r "t/AmbiguousLanguage2.eyp"
+                                                        && -r "t/ab.eyp"
+                                                        && -x "./eyapp"
+                                                        && ( -d 't/Tutu' or mkdir 't/Tutu'));
+
+  unlink 't/ppcr.pl';
+
+
+  my $r = system(q{perl -I./lib/ eyapp -m Tutu::ab -o t/Tutu/ab.pm -P t/ab.eyp});
+  ok(!$r, "Auxiliary parser Tutu/ab.pm generated from t/ab.eyp");
+
+  $r = system(q{perl -I./lib/ eyapp -TC -o t/ppcr.pl t/AmbiguousLanguage2.eyp 2> t/err});
+  ok(!$r, "t/AmbiguousLanguage2.eyp grammar compiled");
+  is(qx{cat t/err},"1 shift/reduce conflict and 1 reduce/reduce conflict\n","1 sr and 1rr warnings");
+
+  ok(-s "t/ppcr.pl", "modulino ppcr exists");
+
+  ok(-x "t/ppcr.pl", "modulino has execution permits");
+
+  ########## abbcc
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'abbcc' 2>&1};
+
+  };
+
+  ok(!$@,'t/AmbiguousLanguage2.eyp executed as modulino');
+
+  my $expected = q{
+st_is_s(_OPTIONAL,s_is_beqc(beqc_is_as_bc(as_is_as_a(BC),bc_is_b_bc_c(bc_is_b_bc_c(bc_is_empty)))))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "abbcc"');
+
+  ########## aabb
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'aabb' 2>&1};
+
+  };
+
+  ok(!$@,'t/AmbiguousLanguage2.eyp executed as modulino');
+
+  my $expected = q{
+st_is_s(_OPTIONAL,s_is_aeqb(aeqb_is_ab_cs(ab_is_a_ab_b(ab_is_a_ab_b(ab_is_empty)),cs_is_empty))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "aabb"');
+
+
+  ########## bbcc
+  eval {
+
+    $r = qx{perl -Ilib -It t/ppcr.pl -t -i -c 'bbcc' 2>&1};
+
+  };
+
+  ok(!$@,'t/AmbiguousLanguage2.eyp executed as modulino');
+
+  my $expected = q{
+st_is_s(_OPTIONAL,s_is_beqc(beqc_is_as_bc(BC,bc_is_b_bc_c(bc_is_b_bc_c(bc_is_empty)))))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+  like($r, $expected,'AST for "bbcc"');
+
+  unlink 't/ppcr.pl';
+  unlink 't/Tutu/ab.pm';
   rmdir  't/Tutu';
   unlink 't/err';
 
