@@ -1,6 +1,7 @@
+%token EOF = /\Z/
 %%
-abC: ab 'c'
-# |  ab ''
+s:   ab 'c'
+  |  ab EOF
 ;
 
 ab: /* empty */ 
