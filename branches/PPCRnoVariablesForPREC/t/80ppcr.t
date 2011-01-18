@@ -16,7 +16,7 @@ BEGIN {
   $nt11 = 8;
   $nt12 = 6;
   $nt13 = 7;
-  $nt14 = 9;
+  $nt14 = 11;
 }
 use Test::More tests=> $nt+$nt2+$nt3+$nt4+$nt5+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12+$nt13+$nt14;
 
@@ -903,7 +903,7 @@ st_is_s(_OPTIONAL,s_is_beqc(beqc_is_as_bc(as_is_as_a(BC),bc_is_b_bc_c(bc_is_b_bc
 
   ok(!$@,'t/AmbiguousLanguage2.eyp executed as modulino');
 
-  my $expected = q{
+  $expected = q{
 st_is_s(_OPTIONAL,s_is_aeqb(aeqb_is_ab_cs(ab_is_a_ab_b(ab_is_a_ab_b(ab_is_empty)),cs_is_empty))
 };
   $expected =~ s/\s+//g;
