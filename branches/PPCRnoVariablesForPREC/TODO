@@ -1,5 +1,8 @@
   * merge svn branches!
 
+  * Modify _Parser. You don't have to execute all the conflict handlers in each step
+    only the handler associated with the pair ( state, current token) if it is conflictive
+
   * AmbiguousLanguage2.eyp usar como contraejemplo a la primera teoria
 
   * two tests with examples/debuggingtut/AmbiguousLanguage2.eyp 
