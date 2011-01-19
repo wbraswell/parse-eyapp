@@ -3,7 +3,7 @@
 # ~/LEyapp/examples/debuggingtut$ eyapp -P ab.eyp 
 # ~/LEyapp/examples/debuggingtut$ ./AmbiguousLanguage2.pm -t -i -m 1 -c 'abbcc'
 
-%conflict AorC ab? shift: BC
+%conflict AorC Tutu::ab? shift: BC
 
 #%conflict AorC {
 #   $self->YYIf('ab', 'shift', 'BC');

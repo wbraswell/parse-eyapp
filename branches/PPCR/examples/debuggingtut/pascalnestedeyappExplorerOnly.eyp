@@ -1,8 +1,16 @@
-/* This grammar is equivalent to examples/debuggingtut/pascalnestedyapp3.eyp */
 
-# proposed new syntax!!!!!
-%conflict rangeORenum range ID:RANGE
-%conflict range ID:RANGE
+%conflict rangeORenum {
+} 
+
+%explorer rangeORenum { 
+  my $is_range = 0;
+  $is_range = $self->YYPreParse('range');
+
+  if ($is_range) 
+    { $self->YYSetReduce2('ID:RANGE' ); }
+  else 
+    { $self->YYSetReduce2('ID:ENUM' ); }
+} 
 
 %token ID  = /([A-Za-z]\w*)/
 %token NUM = /(\d+)/
@@ -11,18 +19,18 @@
 %left   '-' '+'
 %left   '*' '/'
 
-%expect-rr 2
+#%expect-rr 2
 
 %%
 
-type_decl : 'type' ID '=' type ';'
+type_decl : 'type' ID '=' %rangeORenum? type ';'
 ;
 
 type : 
       %name ENUM
-      %rangeORenum? '(' id_list ')'
+      '(' id_list ')'
     | %name RANGE
-      %rangeORenum? range
+      range
 ;
 
 range:
@@ -64,17 +72,17 @@ See
 
 Compile it with:
 
-      eyapp -TC pascalnestedeyapp3.eyp
+      eyapp -TC pascalnestedeyappExplorerOnly.eyp
 
 The compile it again, but using 'range' as start symbol (option -S)
 and option -P to generate a parser that accepts if a prefix of the input matches:
 
-      eyapp -P -S range pascalnestedeyapp3.eyp 
+      eyapp -P -S range pascalnestedeyappExplorerOnly.eyp 
 
 Run it with this options:
 
-    $ ./pascalnestedeyapp3.pm -t -i -m 1 -c 'type e = (x, y, z);'
-    $ ./pascalnestedeyapp3.pm -t -i -m 1 -c 'type e = (x, @, z);'
+    $ ./pascalnestedeyappExplorerOnly.pm -t -i -m 1 -c 'type e = (x, y, z);'
+    $ ./pascalnestedeyappExplorerOnly.pm -t -i -m 1 -c 'type e = (x, @, z);'
 
 Try also these inputs:
 
@@ -87,5 +95,4 @@ Try also these inputs:
 
 
 =cut
-
 
