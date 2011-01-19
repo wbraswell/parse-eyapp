@@ -1,10 +1,12 @@
 %{
 our $VERSION = '0.01';
-use base q{DebugTail}; 
 %}
 
 %strict
-%token ID NUM INT 
+
+%token INT = /(int\b)/
+%token ID  = /([a-zA-Z_]\w*)/
+%token NUM = /(\d+)/
 
 %right '='
 %left '+'
@@ -15,9 +17,12 @@ use base q{DebugTail};
 
 %conflict decORexp 
       {
-        my $self = shift;
-
-        if (${$self->input()} =~ m{^[)\s]*[;=]\s*}) {
+        if (m{\G
+                (?= 
+                    [)\s]* # ) ) ... )
+                    [;=]   
+                )
+             }gxc) {
           $self->YYSetReduce(')', 'ID:DEC' );
         }
         else {
@@ -68,33 +73,6 @@ declarator:
 
 %%
 
-__PACKAGE__->lexer( 
-  sub {
-    my $self = shift;
-    
-    for (${$self->input()}) {
-      s{^(\s*)}{};
-
-      return ('', undef) unless $_;
-
-      return ('INT', $1) if s{^(int\b)}{};
-
-      return ('ID',  $1) if (s{^([a-zA-Z_]\w*)}{});
-
-      return ('NUM', $1) if s/^(\d+)//;
-
-      return ($1,    $1) if s/^(.)//;
-    }
-
-    return EndOfInput();
-  }
-);
-
-unless (caller()) {
-  my $prompt = 'Try first "int (x) = 2;" then "int (x) + 2;" '.
-               '(press <CR><CTRL-D> to finish): ';
-  __PACKAGE__->main($prompt) 
-}
 
 ####################################################
 
@@ -102,16 +80,11 @@ unless (caller()) {
 
 Compile it with
  
-   eyapp -b '' Cplusplus
+   eyapp -C Cplusplus1
 
 Run it with:
 
-   ./Cplusplus.pm -t
-
-try with inputs:
-
-     int (x) = 2;
-     int (x) + 2;
+   ./Cplusplus1.pm -t -i -c ' int (x) + 2; int (x) = 2;'
 
 the result will be the generated abstract sytax tree
 

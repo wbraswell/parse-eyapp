@@ -35,6 +35,11 @@ sub deleteNotUsedTokens {
   my %usedSymbols;
   @usedSymbols{@usedSymbols} = ();
 
+  for (@{$self->{GRAMMAR}{DUMMY}}) {
+    delete $usedSymbols{$_};
+    delete $termDef->{$_};
+  }
+
   for my $token (keys %$term) {
     delete $term->{$token} unless exists $usedSymbols{$token};
   }
@@ -105,9 +110,48 @@ sub makeLexer {
   for my $t (@termdef) {
     if ($termdef{$t}[2] eq 'REGEXP') {
       my $reg = $termdef{$t}[0];
-      $reg =~ s{^/}{/\\G};
+      $reg =~ s{^/}{/\\G}; # add \G at the begining of the regexp
       $DEFINEDTOKENS .= << "EORT";
       ${reg}gc and return ('$t', \$1);
+EORT
+    }
+    elsif ($termdef{$t}[2] eq 'CONTEXTUAL_REGEXP') {
+      my $reg = $termdef{$t}[0];
+      $reg =~ s{^/}{/\\G}; # add \G at the begining of the regexp
+      $DEFINEDTOKENS .= << "EORT";
+      \$self->expects('$t') and ${reg}gc and return ('$t', \$1);
+EORT
+    }
+    elsif ($termdef{$t}[2] eq 'CONTEXTUAL_REGEXP_MATCH') {
+      my $reg = $termdef{$t}[0];
+      my $parser = $termdef{$t}[3][0];
+      $reg =~ s{^/}{/\\G}; # add \G at the begining of the regexp
+      $DEFINEDTOKENS .= << "EORT";
+      my \$pos = pos();
+      if (${reg}gc) { 
+        if (\$self->expects('$t')) {   
+           if (\$self->YYPreParse('$parser')) {
+             return ('$t', \$1); 
+           }
+        }
+      }
+      pos(\$_) = \$pos;
+EORT
+    }
+    elsif ($termdef{$t}[2] eq 'CONTEXTUAL_REGEXP_NOMATCH') {
+      my $reg = $termdef{$t}[0];
+      my $parser = $termdef{$t}[3][0];
+      $reg =~ s{^/}{/\\G}; # add \G at the begining of the regexp
+      $DEFINEDTOKENS .= << "EORT";
+      my \$pos = pos();
+      if (${reg}gc) { 
+        if (\$self->expects('$t')) {   
+           if (!\$self->YYPreParse('$parser')) {
+             return ('$t', \$1); 
+           }
+        }
+      }
+      pos(\$_) = \$pos;
 EORT
     }
     elsif ($termdef{$t}[2] eq 'LITERAL') { # %token without regexp or code definition
@@ -120,7 +164,7 @@ EORT
 EORT
     }
     elsif ($termdef{$t}[2] eq 'CODE') { # token definition is code
-      $DEFINEDTOKENS .= $termdef{$t}[0];
+      $DEFINEDTOKENS .= "$termdef{$t}[0]\n";
     }
   }
 
@@ -246,7 +290,7 @@ MODULINO
   my $lexerisdefined = $self->Option('lexerisdefined') || $self->{GRAMMAR}{LEXERISDEFINED}; 
   my $defaultLexer = $lexerisdefined ? q{} : $self->makeLexer();
 
-  my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix, $conflict_handlers);
+  my($head,$states,$rules,$tail,$driver, $bypass, $accessors, $buildingtree, $prefix, $conflict_handlers, $state_conflict);
   my($version)=$Parse::Eyapp::Driver::VERSION;
   my($datapos);
   my $makenodeclasses = '';
@@ -273,6 +317,7 @@ MODULINO
   $prefix = $self->Prefix;
 
   $conflict_handlers = $self->conflictHandlers;
+  $state_conflict = $self->stateConflict;
 
   $buildingtree = $self->Buildingtree;
   $accessors = $self->Accessors;
@@ -376,6 +421,7 @@ sub new {
     yyprefix       => '<<$prefix>>',
     yyaccessors    => <<$accessors_hash>>,
     yyconflicthandlers => <<$conflict_handlers>>,
+    yystateconflict => <<$state_conflict>>,
     @_,
   );
   bless($self,$class);

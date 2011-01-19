@@ -4,6 +4,7 @@ MANIFEST
 README
 t/01load.t
 t/02tests.t
+t/prueba01.c
 lib/Simple/Makefile
 lib/Simple/Trans.trg
 lib/Simple/Types.eyp
@@ -15,8 +16,7 @@ script/bugmatch.txt
 script/bugzeben2.c
 script/bugzeben.c
 script/outbreak.c
-script/prueba01.c
-script/prueba02.c
+t/prueba02.c
 script/prueba03.c
 script/prueba04.c
 script/prueba05.c

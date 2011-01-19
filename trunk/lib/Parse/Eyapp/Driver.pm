@@ -21,7 +21,7 @@ our ( $VERSION, $COMPATIBLE, $FILENAME );
 
 
 # $VERSION is also in Parse/Eyapp.pm
-$VERSION = "1.173";
+$VERSION = "1.178";
 $COMPATIBLE = '0.07';
 $FILENAME   =__FILE__;
 
@@ -42,6 +42,7 @@ my (%params)=(YYLEX => 'CODE', 'YYERROR' => 'CODE', YYVERSION => '',
        YYBUILDINGTREE  => '',
        YYACCESSORS => 'HASH',
        YYCONFLICTHANDLERS => 'HASH',
+       YYSTATECONFLICT => 'HASH',
        YYLABELS => 'HASH',
        ); 
 my (%newparams) = (%params, YYPREFIX => '',);
@@ -296,27 +297,12 @@ sub YYNames {
 sub YYIndex {
   my $self = shift;
 
-  # Already computed
-  if ($self->{INDICES} && reftype($self->{INDICES}) eq 'HASH') {
-    if (@_) {
-      my @indices = map { $self->{INDICES}{$_} } @_;
-      return wantarray? @indices : $indices[0];
-    }
-    return wantarray? %{$self->{INDICES}} : $self->{INDICES};
-  }
-
-  my @names = $self->YYNames;
-  my %index;
-  my $i = 0;
-  $index{$_} = $i++ for (@names);
-
-  $self->{INDICES} = \%index;
-  
   if (@_) {
-    my @indices = map { $index{$_} } @_;
+    my @indices = map { $self->{LABELS}{$_} } @_;
     return wantarray? @indices : $indices[0];
   }
-  return wantarray? %index : \%index;
+  return wantarray? %{$self->{LABELS}} : $self->{LABELS};
+
 }
 
 sub YYTopState {
@@ -410,39 +396,14 @@ sub YYLookaheads {
 
 
 # more parameters: debug, etc, ...
-#sub YYPreParse {
-#  my $self = shift; 
-#  my $parser = shift;
-#
-#  eval "require $parser";
-#   
-#  # optimize to state variable for 5.10
-#  my $rp = $parser->new( yyerror => sub {});
-#
-#  my $pos = pos(${$self->input});
-#  #print "pos = $pos\n";
-#  $rp->input($self->input);
-#
-#  my $t = $rp->Run(@_);
-#  my $ne = $rp->YYNberr;
-#
-#  #print "After nested parsing\n";
-#
-#  pos(${$self->input}) = $pos;
-#
-#  return (wantarray ? ($t) : !$ne);
-#}
-#
-#
-## new interface
-## more parameters: debug, etc, ...
 #sub YYNestedParse {
 sub YYPreParse {
   my $self = shift; 
   my $parser = shift;
+  my $file = shift() || $parser;
 
   # Check for errors!
-  eval "require $parser";
+  eval "require $file";
    
   # optimize to state variable for 5.10
   my $rp = $parser->new( yyerror => sub {});
@@ -461,32 +422,77 @@ sub YYPreParse {
 
   pos(${$self->input}) = $pos;
 
-  return (wantarray ? ($t) : !$ne);
+  return (wantarray ? ($t, !$ne) : !$ne);
+}
+
+sub YYNestedParse {
+  my $self = shift;
+  my $parser = shift;
+  my $conflictName =  shift;
+
+  $conflictName = $self->YYLhs unless $conflictName;
+
+  my ($t, $ok) = $self->YYPreParse($parser, @_);
+
+  $self->{CONFLICTHANDLERS}{$conflictName}{".".$parser} = [$ok, $t];
+
+  return $ok;
+}
+
+sub YYNestedRegexp {
+  my $self = shift;
+  my $regexp = shift;
+  my $conflictName = $self->YYLhs;
+
+  my $ok = $_ =~ /$regexp/gc;
+
+  $self->{CONFLICTHANDLERS}{$conflictName}{'..regexp'} = [$ok, undef];
+
+  return $ok;
+}
+
+sub YYIs {
+  my $self = shift;
+  # this is ungly and dangeorus. Don't use the dot. Change it!
+  my $syntaxVariable = '.'.(shift());
+  my $conflictName = $self->YYLhs;
+  my $v = $self->{CONFLICTHANDLERS}{$conflictName};
+
+  $v->{$syntaxVariable}[0] = shift if @_;
+  return $v->{$syntaxVariable}[0];
 }
 
 
+sub YYVal {
+  my $self = shift;
+  # this is ungly and dangeorus. Don't use the dot. Change it!
+  my $syntaxVariable = '.'.(shift());
+  my $conflictName = $self->YYLhs;
+  my $v = $self->{CONFLICTHANDLERS}{$conflictName};
 
-# sub YYLookBothWays {
-#   my $self = shift;
-#   my $stackFirst = shift;
-#   my $inputLast  = shift;
-# 
-#   my @stackTokens = $self->YYSymbolStack($stackFirst,-1);
-#   my @inputTokens = $self->YYLookaheads($inputLast);
-# 
-#   if (wantarray) {
-#     return (@stackTokens, @inputTokens);
-#   }
-#   else {
-#     local $" = shift || '';
-#     return "@stackTokens@inputTokens";
-#   }
-# }
+  $v->{$syntaxVariable}[1] = shift if @_;
+  return $v->{$syntaxVariable}[1];
+}
 
-sub YYSetReduce {
-  my ($self, $token, $action) = @_;
-
-  $token = [ $token ] unless ref($token);
+#x $self->{CONFLICTHANDLERS}                                                                              
+#0  HASH(0x100b306c0)
+#   'rangeORenum' => HASH(0x100b30660)
+#      'explorerline' => 12
+#      'line' => 5
+#      'production' => HASH(0x100b30580)
+#         '-13' => ARRAY(0x100b30520)
+#            0  1 <------- mark: conflictive position in the rhs 
+#         '-5' => ARRAY(0x100b30550)
+#            0  1 <------- mark: conflictive position in the rhs 
+#      'states' => ARRAY(0x100b30630)
+#         0  HASH(0x100b30600)
+#            25 => ARRAY(0x100b305c0)
+#               0  '\',\''
+#               1  '\')\''
+sub YYSetReduceXXXXX {
+  my $self = shift;
+  my $action = pop;
+  my $token = shift;
   
 
   croak "YYSetReduce error: specify a production" unless defined($action);
@@ -499,7 +505,8 @@ sub YYSetReduce {
   #$self->{CONFLICTHANDLERS}{conflictName}{states}
   # is a hash
   #        statenumber => [ tokens, '\'-\'' ]
-  my @conflictStates = @{$self->{CONFLICTHANDLERS}{$conflictName}{states}};
+  my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
+  my @conflictStates = $cS ? @$cS : ();
 
   # Perform the action to change the LALR tables only if the next state 
   # is listed as a conflictstate
@@ -515,9 +522,55 @@ sub YYSetReduce {
     $action = -$actionnum;
   }
 
+  $token = $cs->{$conflictstate} unless defined($token);
+  $token = [ $token ] unless ref($token);
   for (@$token) {
     # save if shift
-    if ($self->{STATES}[$conflictstate]{ACTIONS}{$_} >= 0) {
+    if (exists($self->{STATES}[$conflictstate]{ACTIONS}) and $self->{STATES}[$conflictstate]{ACTIONS}{$_} >= 0) {
+      $self->{CONFLICT}{$conflictName}{$_}  = [ $conflictstate,  $self->{STATES}[$conflictstate]{ACTIONS}{$_} ];
+    }
+    $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $action;
+  }
+}
+
+sub YYSetReduce {
+  my $self = shift;
+  my $action = pop;
+  my $token = shift;
+  
+
+  croak "YYSetReduce error: specify a production" unless defined($action);
+
+  my $conflictName = $self->YYLhs;
+
+  #$self->{CONFLICTHANDLERS}{conflictName}{states}
+  # is a hash
+  #        statenumber => [ tokens, '\'-\'' ]
+  my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
+  my @conflictStates = $cS ? @$cS : ();
+ 
+  return unless @conflictStates;
+
+  # Conflict state
+  my $cs = $conflictStates[0];
+
+
+  my ($conflictstate) = keys %{$cs};
+
+  # Action can be given using the name of the production
+  unless (looks_like_number($action)) {
+    my $actionnum = $self->{LABELS}{$action};
+    unless (looks_like_number($actionnum)) {
+      croak "YYSetReduce error: can't find production '$action'. Did you forget to name it?";
+    }
+    $action = -$actionnum;
+  }
+
+  $token = $cs->{$conflictstate} unless defined($token);
+  $token = [ $token ] unless ref($token);
+  for (@$token) {
+    # save if shift
+    if (exists($self->{STATES}[$conflictstate]{ACTIONS}) and $self->{STATES}[$conflictstate]{ACTIONS}{$_} >= 0) {
       $self->{CONFLICT}{$conflictName}{$_}  = [ $conflictstate,  $self->{STATES}[$conflictstate]{ACTIONS}{$_} ];
     }
     $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $action;
@@ -530,24 +583,71 @@ sub YYSetShift {
   # my ($self, $token, $action) = @_;
   # $action is syntactic sugar ...
 
-  # Conflict state
-  my $conflictstate = $self->YYNextState();
 
+  my $conflictName = $self->YYLhs;
+
+  my $cS = $self->{CONFLICTHANDLERS}{$conflictName}{states};
+  my @conflictStates = $cS ? @$cS : ();
+ 
+  return unless @conflictStates;
+
+  my $cs = $conflictStates[0];
+
+  my ($conflictstate) = keys %{$cs};
+
+  $token = $cs->{$conflictstate} unless defined($token);
   $token = [ $token ] unless ref($token);
 
-  my $conflictname = $self->YYLhs;
   for (@$token) {
-    if (defined($self->{CONFLICT}{$conflictname}{$_}))  {
-      my ($conflictstate2, $action) = @{$self->{CONFLICT}{$conflictname}{$_}};
+    if (defined($self->{CONFLICT}{$conflictName}{$_}))  {
+      my ($conflictstate2, $action) = @{$self->{CONFLICT}{$conflictName}{$_}};
       # assert($conflictstate == $conflictstate2) 
 
-      $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $self->{CONFLICT}{$conflictname}{$_}[1];
+      $self->{STATES}[$conflictstate]{ACTIONS}{$_} = $self->{CONFLICT}{$conflictName}{$_}[1];
     }
     else {
       #croak "YYSetShift error. No shift action found";
       # shift is the default ...  hope to be lucky!
     }
   }
+}
+
+
+  # if is reduce ...
+    # x $self->{CONFLICTHANDLERS}{$conflictName}{production}{$action} $action is a number
+    #0  ARRAY(0x100b3f930)
+    #   0  2
+    # has the position in the item, starting at 0
+    # DB<19> x $self->YYRHSLength(4)
+    # 0  3
+    # if pos is length -1 then is reduce otherwise is shift
+
+
+# It does YYSetReduce or YYSetshift according to the 
+# decision variable
+# I need to know the kind of conflict that there is
+# shift-reduce or reduce-reduce
+sub YYIf {
+  my $self = shift;
+  my $syntaxVariable = shift;
+
+  if ($self->YYIs($syntaxVariable)) {
+    if ($_[0] eq 'shift') {
+      $self->YYSetShift(@_); 
+    }
+    else {
+      $self->YYSetReduce($_[0]); 
+    }
+  }
+  else {
+    if ($_[1] eq 'shift') {
+      $self->YYSetShift(@_); 
+    }
+    else {
+      $self->YYSetReduce($_[1]); 
+    }
+  }
+  $self->YYIs($syntaxVariable, 0); 
 }
 
 sub YYGetLRAction {
@@ -1342,8 +1442,7 @@ sub Run {
   my ($self) = shift;
   my $yydebug = shift;
   
-  unless ($self->input && defined(${$self->input()}) && ${$self->input()} ne '') {
-    croak "Provide some input for parsing" unless defined($_[0]);
+  if (defined($_[0])) {
     if (ref($_[0])) { # if arg is a reference
       $self->input(shift());
     }
@@ -1352,6 +1451,7 @@ sub Run {
       $self->input(\$x);
     }
   }
+  croak "Provide some input for parsing" unless ($self->input && defined(${$self->input()}));
   return $self->YYParse( 
     #yylex => $self->lexer(), 
     #yyerror => $self->error(),
@@ -1651,7 +1751,7 @@ sub _Parse {
   my($errstatus,$nberror,$token,$value,$stack,$check,$dotpos)
      = @$self{ 'ERRST', 'NBERR', 'TOKEN', 'VALUE', 'STACK', 'CHECK', 'DOTPOS' };
 
-
+  my %conflictiveStates = %{$self->{STATECONFLICT}};
 #DBG> my($debug)=$$self{DEBUG};
 #DBG> my($dbgerror)=0;
 
@@ -1676,7 +1776,18 @@ sub _Parse {
     while(1) {
         my($actions,$act,$stateno);
 
+        $self->{POS} = pos(${$self->input()});
         $stateno=$$stack[-1][0];
+        if (exists($conflictiveStates{$stateno})) {
+          #warn "Conflictive state $stateno managed by conflict handler '$conflictiveStates{$stateno}{name}'\n" 
+          for my $h (@{$conflictiveStates{$stateno}}) {
+            $self->{CURRENT_LHS} = $h->{name};
+            $h->{codeh}($self);
+          }
+        }
+
+        # check if the state is a conflictive one,
+        # if so, execute its conflict handlers
         $actions=$$states[$stateno];
 
 #DBG> print STDERR ('-' x 40),"\n";
@@ -1688,7 +1799,6 @@ sub _Parse {
 #DBG>          "\n";
 
 
-        $self->{POS} = pos(${$self->input()});
         if  (exists($$actions{ACTIONS})) {
 
         defined($$token)
@@ -1740,8 +1850,8 @@ sub _Parse {
         push(@$stack,[ $act, $$value ]);
 #DBG>   push(@{$stack->[-1]},$$token);
 
-          $$token ne '' #Don't eat the eof
-        and $$token=$$value=undef;
+          defined($$token) and ($$token ne '') #Don't eat the eof
+              and $$token=$$value=undef;
                 next;
             };
 
