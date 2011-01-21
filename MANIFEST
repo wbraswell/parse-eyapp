@@ -16,6 +16,9 @@ examples/Calculator/scripts/witherrors
 examples/Calculator/t/01smoke.t
 examples/Calculator/t/02semanticerrors.t
 examples/Calculator/t/03syntacticerrors.t
+examples/debuggingtut/AmbiguousLanguage.eyp
+examples/debuggingtut/AmbiguousLanguage2.eyp
+examples/debuggingtut/ab.eyp
 examples/debuggingtut/aSb.yp
 examples/debuggingtut/Assign.eyp
 examples/debuggingtut/bugyapp2.eyp
