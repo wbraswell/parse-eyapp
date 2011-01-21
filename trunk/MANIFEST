@@ -505,6 +505,8 @@ t/PLIConflictNested2.eyp
 t/78twolexers.t
 t/79syntactictokenwithdef.t
 t/80ppcr.t
+t/AmbiguousLanguage2.eyp
+t/ab.eyp
 t/CplusplusNested4.eyp
 t/CplusplusNested5.eyp
 t/DebugDynamicResolution4.eyp
