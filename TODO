@@ -1,12 +1,7 @@
-  * merge svn branches!
-
+  * Implement support for tie-ins in the generated lexical analyzer
   * AmbiguousLanguage2.eyp usar como contraejemplo a la primera teoria
-
-  * two tests with examples/debuggingtut/AmbiguousLanguage2.eyp 
-
-    one test with t/noPackratSolvedExpRG2.yp checking that produces the same table than eyapp
     
-    The diificulty of using yacc is extraordinary. See t/noPackratSolvedExpRG2.yp
+    The difficulty of using yacc is extraordinary. See t/noPackratSolvedExpRG2.yp
 
                         x:
                              NUM
@@ -26,65 +21,9 @@
 
             ...
 
-  * bug in notation x.y and $x
   * Modifiy Parse::Eyapp::Driver::_Parse 
-    If the state is a conflict state execute the conflict handlers for that state:
-    We need then a hash whose keys will be the conflictive states:
-      {
-        state => { 
-                   handlername => { 
-                     code => conflict handler sub, 
-                     actions => { tokens => [a,b,c], shift 2, reduce 4}
-                   }
-                   ... 
-                 }
-        ...
-      }
-  * No syntactic auxiliary variable will be introduced in the %PREC positions. 
-
-  * The arguments for the 'code' handler will be the parser itself and the conflict name.
-
-
-
-      DB<3> x $self->{CONFLICTHANDLERS}                                                                               
-      0  HASH(0x100b57f30)
-         'ToN' => HASH(0x100b57eb0)
-            '.EMPTY' => ARRAY(0x100b43c90)
-                 empty array
-            'explorerline' => 12
-            'line' => 5
-            'production' => HASH(0x100b57de0)
-               '-6' => ARRAY(0x100b57d80)
-                  0  1
-               '-7' => ARRAY(0x100b57db0)
-                  0  1
-            'states' => ARRAY(0x100b57e80)
-               0  HASH(0x100b57e50)
-                  8 => ARRAY(0x100b57e20)
-                     0  ','
-            'total' => 2
-            'totalviewpoint' => 1
-
-  * Modify the LR parser algorithm:
-
-    my($self)=shift;
-
-    my($rules,$states,$error) = @$self{ 'RULES', 'STATES', 'ERROR' };
-    my($errstatus,$nberror,$token,$value,$stack,$check,$dotpos) = ...
-
-    $$errstatus=0; $$nberror=0; ($$token,$$value)=(undef,undef);
-    @$stack=( [ 0, undef, ] ); $$check='';
-
-    while(1) {
-        my($actions,$act,$stateno);
-
-        $stateno=$$stack[-1][0];
-
-        $self->executeconflicthandlers($stateno) if ($self->is_conflictive($stateno)); #!!!! 
-
-        $actions=$$states[$stateno];
-        ....
-
+    If the state is a conflict state execute the conflict handlers for that state in 
+    the presence of a conflictive token!
 
     
   * Option -v in eyapp will produce a navigable grammar.output.html version of the output
