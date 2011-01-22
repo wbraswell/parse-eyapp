@@ -11,7 +11,7 @@
 
 #%expect 1 1
 %%
-st:  AorC? s
+st:  %AorC? s
 ;
 
 #AorC_explorer: {   

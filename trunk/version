@@ -4,6 +4,6 @@ my @files = ('lib/Parse/Eyapp.pm', 'lib/Parse/Eyapp/Driver.pm');
 for (@files) {
   my $r = `cat $_`;
   $r =~ /\$VERSION\s*=\s*(['"])([\d.]+)\1;/;
-  my $version = $1;
+  my $version = $2;
   print "$version\n";
 }
