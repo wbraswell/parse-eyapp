@@ -1,9 +1,5 @@
 Changes
 examples/Calculator/Changes
-examples/Calculator/etc/etsiistation
-examples/Calculator/etc/imac_casiano
-examples/Calculator/etc/nereida
-examples/Calculator/etc/setperl5lib
 examples/Calculator/lib/Math/Calc.eyp
 examples/Calculator/lib/Math/Calc.pod
 examples/Calculator/local.preamble.pl
@@ -271,7 +267,6 @@ examples/ParsingStringsAndTrees/doc/images/pdf_logo.jpg
 examples/ParsingStringsAndTrees/doc/latex8.sty
 examples/ParsingStringsAndTrees/doc/lexicalanalysis.tex.lexer
 examples/ParsingStringsAndTrees/doc/makefile
-examples/ParsingStringsAndTrees/doc/src/eyapp
 examples/ParsingStringsAndTrees/doc/src/I2PIR.trg
 examples/ParsingStringsAndTrees/doc/src/Infix.eyp
 examples/ParsingStringsAndTrees/doc/src/infix2pir.pl
