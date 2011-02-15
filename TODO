@@ -1,3 +1,14 @@
+  * Bug and conceptual errors:
+         * %/.../ defines contextual tokens and it is independent of
+         * / ... /=Var
+           / ... /!Var
+           they must exist independently
+         * There is a "token" synchronization  problem in this case
+           See files:
+           t/forforeacherikcontextual.eyp 
+           t/forforeacherik.eyp 
+           t/forforeacherikcontextual2.eyp
+           t/C.eyp
   * Check that Driver and generated parser are compatible. Version numbers
 
   * Implement support for tie-ins in the generated lexical analyzer
