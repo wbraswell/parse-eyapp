@@ -9,6 +9,10 @@
            t/forforeacherik.eyp 
            t/forforeacherikcontextual2.eyp
            t/C.eyp
+
+           creo que hay salvar en self->{POS} la $pos despues del matching
+           en el código del lexer generado para este tipo de tokens
+
   * Check that Driver and generated parser are compatible. Version numbers
 
   * Implement support for tie-ins in the generated lexical analyzer
