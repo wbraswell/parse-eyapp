@@ -409,7 +409,7 @@ sub YYPreParse {
   my $rp = $parser->new( yyerror => sub {});
 
   my $pos  = pos(${$self->input});
-  my $rpos = $self->{POS};;
+  my $rpos = $self->{POS};
 
   #print "pos = $pos\n";
   $rp->input($self->input);
