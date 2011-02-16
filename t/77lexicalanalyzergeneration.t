@@ -621,38 +621,38 @@ IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],
 # with forforeach example
 SKIP: {
   skip "t/forforeacherik.eyp not found", $nt11 unless 
-      ($ENV{DEVELOPER} i
+      ($ENV{DEVELOPER} 
       && -r "t/forforeacherik.eyp" 
       && -r "t/forforeacherikcontextual.eyp" 
       && -r "t/forforeacherikcontextual2.eyp" 
       && -r "t/C.eyp" 
       && -x "./eyapp");
 
-  unlink 't/PLIConflictNested2.pl';
-  unlink 't/Assign2.pm';
+  unlink 't/forforeacherik.pl';
+  unlink 't/C.pm';
 
-  my $r = system(q{perl -I./lib/ eyapp -P -o t/Assign2.pm  t/Assign2.eyp});
+  my $r = system(q{perl -I./lib/ eyapp -P -o t/C.pm  t/C.eyp});
   
-  ok(!$r, "aux standalone option");
+  ok(!$r, "aux grammar C.eyp compiled");
 
-  ok(-s "t/Assign2.pm", "aux module Assign2 exists");
+  ok(-s "t/C.pm", "aux module C.pm exists");
 
-  $r = system(q{perl -I./lib/ eyapp -C -o t/PLIConflictNested2.pl t/PLIConflictNested2.eyp});
+  $r = system(q{perl -I./lib/ eyapp -TC -o t/forforeacherik.pl t/forforeacherik.eyp});
   
-  ok(!$r, "compiled t/PLIConflictNested2.eyp");
+  ok(!$r, "compiled t/forforeacherik.eyp");
 
-  ok(-s "t/PLIConflictNested2.pl", "modulino exists");
+  ok(-s "t/forforeacherik.pl", "modulino exists");
 
-  ok(-x "t/PLIConflictNested2.pl", "modulino has execution permits");
-
-
-    $r = qx{perl -It t/PLIConflictNested2.pl -t -i -c 'if if=then then then=if'};
+  ok(-x "t/forforeacherik.pl", "modulino has execution permits");
 
 
-  ok(!$@,'t/PLIConflictNested2.eyp executed as standalone modulino');
+    $r = qx{perl -It t/forforeacherik.pl -t -i -c 'with for each a' 2>&1};
+
+
+  ok(!$@,'t/forforeacherik.eyp executed as standalone modulino');
 
   my $expected = q{
-IF(TERMINAL[if],EQ(ID[if],ID[then]),TERMINAL[then],ASSIGN(ID[then],ID[if]))
+s_is_with_FE_ID(TERMINAL[foreach],TERMINAL[a])
 };
   $expected =~ s/\s+//g;
   $expected = quotemeta($expected);
@@ -661,50 +661,10 @@ IF(TERMINAL[if],EQ(ID[if],ID[then]),TERMINAL[then],ASSIGN(ID[then],ID[if]))
   $r =~ s/\s+//g;
 
 
-  like($r, $expected,'AST for "if if=then then then=if"');
-
-  eval {
-
-    $r = qx{perl -It t/PLIConflictNested2.pl -t -i -c 'if then=if then if=then'};
-
-  };
-
-  ok(!$@,'t/PLIConflictNested2.eyp executed as standalone modulino');
-
-  $expected = q{
-IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],ASSIGN(ID[if],ID[then]))
-};
-  $expected =~ s/\s+//g;
-  $expected = quotemeta($expected);
-  $expected = qr{$expected};
-
-  $r =~ s/\s+//g;
+  like($r, $expected,'AST of forforeacherik.eyp for "with for each a"');
 
 
-  like($r, $expected,'AST for "if then=if then if=then"');
-
-  eval {
-
-    $r = qx{perl -It t/PLIConflictNested2.pl -t -i -c 'if then=if then if a=b then c=d'};
-
-  };
-
-  ok(!$@,'t/PLIConflictNested2.eyp executed as standalone modulino');
-
-  $expected = q{
-IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],
-   IF(TERMINAL[if],EQ(ID[a],ID[b]),TERMINAL[then],ASSIGN(ID[c],ID[d]))
-};
-  $expected =~ s/\s+//g;
-  $expected = quotemeta($expected);
-  $expected = qr{$expected};
-
-  $r =~ s/\s+//g;
-
-
-  like($r, $expected,'AST for "if then=if then if a=b then c=d"');
-
-  unlink 't/PLIConflictNested2.pl';
-  unlink 't/Assign2.pm';
+  unlink 't/forforeacherik.pl';
+  unlink 't/C.pm';
 
 }
