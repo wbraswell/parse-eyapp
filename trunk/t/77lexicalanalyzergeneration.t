@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
-my ($nt, $nt6, $nt7, $nt8, $nt9, $nt10, $nt11);
+my ($nt, $nt6, $nt7, $nt8, $nt9, $nt10, $nt11, $nt12);
 my $skips;
 
 BEGIN { 
@@ -12,8 +12,9 @@ BEGIN {
   $nt9 = 9;
   $nt10 = 11;
   $nt11 = 11;
+  $nt12 = 23;
 }
-use Test::More tests=> $skips*$nt+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11;
+use Test::More tests=> $skips*$nt+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12;
 
 
 SKIP: {
@@ -670,7 +671,7 @@ s_is_with_FE_ID(TERMINAL[foreach],TERMINAL[a])
 
   ok(!$@,'t/forforeacherik.eyp executed as standalone modulino');
 
-  my $expected = q{
+  $expected = q{
 Syntax error near 'for each'. 
 Expected one of these terminals: 'F' 'with'
 There were 1 errors during parsing
@@ -700,7 +701,7 @@ There were 1 errors during parsing
 
   ok(!$@,'t/forforeacherikcontextual.eyp executed as standalone modulino');
 
-  my $expected = q{
+  $expected = q{
 s_is_with_FE_ID(TERMINAL[foreach],TERMINAL[a])
 };
   $expected =~ s/\s+//g;
@@ -719,7 +720,7 @@ s_is_with_FE_ID(TERMINAL[foreach],TERMINAL[a])
 
   ok(!$@,'t/forforeacherikcontextual.eyp executed as standalone modulino');
 
-  my $expected = q{
+  $expected = q{
 s_is_F_ID(TERMINAL[for],TERMINAL[each])
 };
   $expected =~ s/\s+//g;
@@ -730,6 +731,53 @@ s_is_F_ID(TERMINAL[for],TERMINAL[each])
 
 
   like($r, $expected,q{AST in  forforeacherikcontextual.eyp for "for each"});
+
+  ############################################
+
+  $r = system(q{perl -I./lib/ eyapp -TC -o t/forforeacherik.pl t/forforeacherikcontextual2.eyp});
+  
+  ok(!$r, "compiled t/forforeacherikcontextual2.eyp");
+
+  ok(-s "t/forforeacherik.pl", "modulino exists");
+
+  ok(-x "t/forforeacherik.pl", "modulino has execution permits");
+
+
+    $r = qx{perl -It t/forforeacherik.pl -t -i -c 'for each each s' 2>&1};
+
+
+  ok(!$@,'t/forforeacherikcontextual2.eyp executed as standalone modulino');
+
+  $expected = q{
+s_is_FE_ID_s(TERMINAL[for each],TERMINAL[each])
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST of forforeacherikcontextual2.eyp for "for each each s"');
+
+
+
+    $r = qx{perl -It t/forforeacherik.pl -t -i -c 'for each' 2>&1};
+
+
+  ok(!$@,'t/forforeacherikcontextual2.eyp executed as standalone modulino');
+
+  $expected = q{
+s_is_F_ID(TERMINAL[for],TERMINAL[each])
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,q{AST in  forforeacherikcontextual2.eyp for "for each"});
 
   ############################################
 
