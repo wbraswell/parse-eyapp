@@ -7,4 +7,4 @@ for (@files) {
   my $version = $2;
   print "$version\n";
 }
-exec q{vim -p 'lib/Parse/Eyapp.pm' 'lib/Parse/Eyapp/Driver.pm'};
+exec q{vim -p 'lib/Parse/Eyapp.pm' 'lib/Parse/Eyapp/Driver.pm'} if @ARGV;
