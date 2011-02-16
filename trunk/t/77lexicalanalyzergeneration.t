@@ -532,9 +532,101 @@ IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],
 
 }
 
-# Checking syntax: %token if   = %/(if)\b/ !Assign2
+# Checking syntax: %token if   = %/(if)\b/=Assign2
 SKIP: {
   skip "t/PLIConflictNested2.eyp not found", $nt10 unless ($ENV{DEVELOPER} && -r "t/PLIConflictNested2.eyp" && -x "./eyapp");
+
+  unlink 't/PLIConflictNested2.pl';
+  unlink 't/Assign2.pm';
+
+  my $r = system(q{perl -I./lib/ eyapp -P -o t/Assign2.pm  t/Assign2.eyp});
+  
+  ok(!$r, "aux standalone option");
+
+  ok(-s "t/Assign2.pm", "aux module Assign2 exists");
+
+  $r = system(q{perl -I./lib/ eyapp -C -o t/PLIConflictNested2.pl t/PLIConflictNested2.eyp});
+  
+  ok(!$r, "compiled t/PLIConflictNested2.eyp");
+
+  ok(-s "t/PLIConflictNested2.pl", "modulino exists");
+
+  ok(-x "t/PLIConflictNested2.pl", "modulino has execution permits");
+
+
+    $r = qx{perl -It t/PLIConflictNested2.pl -t -i -c 'if if=then then then=if'};
+
+
+  ok(!$@,'t/PLIConflictNested2.eyp executed as standalone modulino');
+
+  my $expected = q{
+IF(TERMINAL[if],EQ(ID[if],ID[then]),TERMINAL[then],ASSIGN(ID[then],ID[if]))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "if if=then then then=if"');
+
+  eval {
+
+    $r = qx{perl -It t/PLIConflictNested2.pl -t -i -c 'if then=if then if=then'};
+
+  };
+
+  ok(!$@,'t/PLIConflictNested2.eyp executed as standalone modulino');
+
+  $expected = q{
+IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],ASSIGN(ID[if],ID[then]))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "if then=if then if=then"');
+
+  eval {
+
+    $r = qx{perl -It t/PLIConflictNested2.pl -t -i -c 'if then=if then if a=b then c=d'};
+
+  };
+
+  ok(!$@,'t/PLIConflictNested2.eyp executed as standalone modulino');
+
+  $expected = q{
+IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],
+   IF(TERMINAL[if],EQ(ID[a],ID[b]),TERMINAL[then],ASSIGN(ID[c],ID[d]))
+};
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'AST for "if then=if then if a=b then c=d"');
+
+  unlink 't/PLIConflictNested2.pl';
+  unlink 't/Assign2.pm';
+
+}
+
+# Checking syntax: %token if   = %/(if)\b/=variable
+# with forforeach example
+SKIP: {
+  skip "t/forforeacherik.eyp not found", $nt11 unless 
+      ($ENV{DEVELOPER} i
+      && -r "t/forforeacherik.eyp" 
+      && -r "t/forforeacherikcontextual.eyp" 
+      && -r "t/forforeacherikcontextual2.eyp" 
+      && -r "t/C.eyp" 
+      && -x "./eyapp");
 
   unlink 't/PLIConflictNested2.pl';
   unlink 't/Assign2.pm';
