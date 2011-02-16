@@ -130,8 +130,14 @@ EORT
       \$pos = pos();
       if (${reg}gc) { 
         if (\$self->expects('$t')) {   
+           my \$oldselfpos = \$self->{POS};
+           \$self->{POS} = pos();   
            if (\$self->YYPreParse('$parser')) {
+             \$self->{POS} = \$oldselfpos;
              return ('$t', \$1); 
+           }
+           else {
+             \$self->{POS} = \$oldselfpos;
            }
         }
       }
@@ -142,12 +148,19 @@ EORT
       my $reg = $termdef{$t}[0];
       my $parser = $termdef{$t}[3][0];
       $reg =~ s{^/}{/\\G}; # add \G at the begining of the regexp
+      # factorize, factorize!!!! ohh!!!!
       $DEFINEDTOKENS .= << "EORT";
       \$pos = pos();
       if (${reg}gc) { 
         if (\$self->expects('$t')) {   
+           my \$oldselfpos = \$self->{POS};
+           \$self->{POS} = pos();   
            if (!\$self->YYPreParse('$parser')) {
+             \$self->{POS} = \$oldselfpos;
              return ('$t', \$1); 
+           }
+           else {
+             \$self->{POS} = \$oldselfpos;
            }
         }
       }

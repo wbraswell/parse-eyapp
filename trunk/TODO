@@ -1,4 +1,8 @@
+  * La informacion acerca de los números de línea en el debugger 
+    para la generación del analizador léxico esta hecha un desastre
+
   * Bug and conceptual errors in contextual tokens:
+         * factorize, factorize makeLexer!!!!
          * There is a "token" synchronization  problem in this case
            See files:
            t/forforeacherikcontextual.eyp 
