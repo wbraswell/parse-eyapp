@@ -621,7 +621,7 @@ IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],
 # Checking syntax: %token if   = %/(if)\b/=variable
 # with forforeach example
 SKIP: {
-  skip "t/forforeacherik.eyp not found", $nt11 unless 
+  skip "t/forforeacherik.eyp not found", $nt12 unless 
       ($ENV{DEVELOPER} 
       && -r "t/forforeacherik.eyp" 
       && -r "t/forforeacherikcontextual.eyp" 
