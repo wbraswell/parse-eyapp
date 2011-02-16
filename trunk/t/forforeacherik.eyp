@@ -3,7 +3,7 @@
 # by Van Wyk and Schwerdfeger
 
 %token FE   = /(for\s*each)\b/ 
-%token F = /(for)\b/
+%token F    = /(for)\b/
 %token ID   = /([a-zA-Z_]\w*)/
 
 %%

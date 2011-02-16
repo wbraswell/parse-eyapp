@@ -1,8 +1,4 @@
-  * Bug and conceptual errors:
-         * %/.../ defines contextual tokens and it is independent of
-         * / ... /=Var
-           / ... /!Var
-           they must exist independently
+  * Bug and conceptual errors in contextual tokens:
          * There is a "token" synchronization  problem in this case
            See files:
            t/forforeacherikcontextual.eyp 
@@ -12,6 +8,18 @@
 
            creo que hay salvar en self->{POS} la $pos despues del matching
            en el código del lexer generado para este tipo de tokens
+
+         * %/.../ defines contextual tokens and it is independent of
+                           / ... /=Var
+                           / ... /!Var
+           they must exist independently
+
+         * This technique can be used to parse difficult ambiguous grammars
+                   EQUAB = %//=ab 
+           then in the body of the grammar:
+                         s: EQUAB ab cs | as bc
+           etc.
+
 
   * Check that Driver and generated parser are compatible. Version numbers
 
