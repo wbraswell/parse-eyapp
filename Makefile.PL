@@ -162,13 +162,13 @@ Eyapp.tex:lib/Parse/Eyapp.pod
 texs: ${TEXS}
 
 treereg.html:treereg
-	mpod2html -nowarnings -noverbose -nonavigation -nobanner -noidx -notoc treereg  -o $@
+	pod2cpanhtml treereg  $@
 
 eyapp.html:eyapp
-	mpod2html -nowarnings -noverbose -nonavigation -nobanner -noidx -notoc eyapp  -o $@
+	pod2cpanhtml eyapp $@
 
 %.html:%.pod
-	mpod2html -nowarnings -noverbose -nonavigation -nobanner -noidx -notoc $*.pod  -o $@
+	pod2cpanhtml $*.pod $@
 	#perl -e 's/^Cannot find .*//gi; s/\A\s+//' -p -i.bak $@
 
 htmls: ${HTMLS} eyapp.html treereg.html 
@@ -349,7 +349,7 @@ To use this C<Makefile.PL> as developer is convenient to have installed:
 
 =item * LaTeX
 
-=item * mpod2html
+=item * pod2cpanhtml
 
 =item * Devel::Cover
 
