@@ -2,7 +2,7 @@
 %token ID = /([a-zA-Z_])\w*/
 
 %%
-ifstmt: 
+expr_then: 
      expr then 
 ;
 
