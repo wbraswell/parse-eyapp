@@ -10,7 +10,7 @@ BEGIN {
   $nt7 = 7;
   $nt8 = 9;
   $nt9 = 9;
-  $nt10 = 13;
+  $nt10 = 15;
   $nt11 = 11;
   $nt12 = 23;
 }
@@ -636,6 +636,36 @@ IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],
               ID[if],
               ID[then]
             )
+          )
+        )
+  };
+  $expected =~ s/\s+//g;
+  $expected = quotemeta($expected);
+  $expected = qr{$expected};
+
+  $r =~ s/\s+//g;
+
+
+  like($r, $expected,'PLIConflictNested2 AST for "if if then if if then if=then"');
+
+  #############################################
+
+  eval {
+
+    $r = qx{perl -It t/PLIConflictNested2.pl -t -i -c 'if if then if=then'};
+
+  };
+
+  ok(!$@,'t/PLIConflictNested2.eyp executed as standalone modulino');
+
+  $expected = q{
+        IF(
+          TERMINAL[if],
+          ID[if],
+          TERMINAL[then],
+          ASSIGN(
+            ID[if],
+            ID[then]
           )
         )
   };
