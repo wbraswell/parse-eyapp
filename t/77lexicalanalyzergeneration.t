@@ -646,7 +646,7 @@ IF(TERMINAL[if],EQ(ID[then],ID[if]),TERMINAL[then],
   $r =~ s/\s+//g;
 
 
-  like($r, $expected,'AST for "if then=if then if a=b then c=d"');
+  like($r, $expected,'PLIConflictNested2 AST for "if if then if if then if=then"');
 
   unlink 't/PLIConflictNested2.pl';
   unlink 't/Assign2.pm';
