@@ -6,6 +6,13 @@ use ExtUtils::MakeMaker;
 # treereg is the compiler for the tree transformation language
 my @exe_files = qw{eyapp treereg};
 
+if (defined($ENV{DEVELOPER}) && ($ENV{DEVELOPER} eq 'casiano')) {
+ system(q{
+   yapp -n -m 'Parse::Eyapp::Parse' -o 'lib/Parse/Eyapp/Parse.pm' lib/Parse/Eyapp/Parse.yp;
+   eyapp -l -n -m Parse::Eyapp::Treeregparser -o lib/Parse/Eyapp/Treeregexp.pm lib/Parse/Eyapp/Treeregexp.yp
+  }
+ );
+}
 WriteMakefile(
     'NAME'         => 'Parse::Eyapp',
     'VERSION_FROM' => 'lib/Parse/Eyapp.pm', # finds $VERSION
