@@ -14,7 +14,7 @@ BEGIN {
   $nt11 = 11;
   $nt12 = 23;
 }
-use Test::More tests=> $skips*$nt+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12;
+use Test::More 'no_plan'; #tests=> $skips*$nt+$nt6+$nt7+$nt8+$nt9+$nt10+$nt11+$nt12;
 
 
 SKIP: {

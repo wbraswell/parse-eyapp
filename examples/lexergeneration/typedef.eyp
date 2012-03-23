@@ -1,0 +1,96 @@
+/* C Typedef Solution. */ 
+%token  IDENTIFIER  = lookup();  /* Symbol table lookup. */ 
+
+%%
+Input : [Declaration]... EOF                +> input_ 
+
+Declaration:
+     VarDecl  [',' Var ]... ';'    +> decl_ 
+   | typedef VarDecl2 [',' Var2]... ';'    +> typedefdecl_ 
+;
+
+VarDecl  : Type...  Ident 
+;
+Var      : [Ptr]... Ident 
+;
+VarDecl2 : Type...  Ident2 
+;
+Var2     : [Ptr]... Ident2 
+;
+Ident    : IDENTIFIER              +> ident_(1) 
+;
+Ident2   : IDENTIFIER             +> ident_(1,{typedef}) 
+;
+Type 
+      : SimpleType                      +> type_(1) 
+      | Type Ptr 
+;
+Ptr   :   '*'                        +> ptr_ 
+;
+SimpleType: 
+        char 
+      | int 
+      | short 
+      | unsigned 
+      | {typedef} 
+;
+
+%%
+
+=head1 DESCRIPTION
+
+There are two independent topics being discussed here. 
+
+  (1) Scope of variables. 
+  (2) typedef variables. 
+
+(1) Scope of variables is solved easily.  In your symbol table you 
+have to keep track of the level for all variables.  Every time you 
+see a '{' you have to increment the level.  So the 'a' will be put 
+into the symbol table as a level 1 variable and the 'b' will be a 
+level 2.  The bottom-up quality of LALR will not affect this.  The 
+'a' will be seen first and the 'b' later, so no problem here. 
+
+(2) The infamous 'typedef' problem continues to plague the newbie or 
+part-time LALR grammar hacker, but it was solved way back in 1987 by 
+an LALR parser generator which used an integrated symbol table and 
+semantic grammar symbols (e.i. {typedef}).  The state-of-the-art 
+simple solution works fine with the LRSTAR parser generator (see 
+http://highperware.com). Here is the simple LALR(1) grammar which 
+solves this 'typedef' problem: 
+
+/* C Typedef Solution. */ 
+   <error>          => error(); 
+   <identifier>    => lookup();  /* Symbol table lookup. */ 
+/* Rules. */ 
+   Input -> [Declaration]... <eof>                +> input_ 
+   Declaration 
+       ->         VarDecl  [',' Var ]... ';'    +> decl_ 
+       -> typedef VarDecl2 [',' Var2]... ';'    +> typedefdecl_ 
+   VarDecl  -> Type...  Ident 
+   Var      -> [Ptr]... Ident 
+   VarDecl2 -> Type...  Ident2 
+   Var2     -> [Ptr]... Ident2 
+   Ident    -> <identifier>              +> ident_(1) 
+   Ident2   -> <identifier>             +> ident_(1,{typedef}) 
+   Type 
+          -> SimpleType                      +> type_(1) 
+          -> Type Ptr 
+   Ptr    -> '*'                        +> ptr_ 
+   SimpleType 
+          -> char 
+          -> int 
+          -> short 
+          -> unsigned 
+          -> {typedef} 
+
+It handles the input file: 
+typedef unsigned int UINT, * UINTPTR; 
+UNIT a, b, c; 
+UINTPTR x, y, z; 
+Note, no hacks or kludges are required, just a state-of-the-art parser 
+generator. 
+Paul B Mann 
+
+=cut
+

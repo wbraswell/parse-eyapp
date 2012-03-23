@@ -128,7 +128,7 @@ IF(
 }
 
 SKIP: {
-  skip "t/albertosimoes.yp not found", $nt unless ($ENV{DEVELOPER} 
+  skip "t/albertosimoes.yp not found", 3, unless ($ENV{DEVELOPER} 
                                                         && -r "t/albertosimoes.yp" 
                                                         && -x "./eyapp");
 
