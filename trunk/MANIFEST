@@ -517,6 +517,7 @@ t/confusingsolvedppcr.eyp
 t/confusingsolvedppcrnot.eyp
 t/81tokendirectiveandsubstitution.t
 t/82expectandPLI.t
+t/albertosimoes.yp
 t/83parsingstringsandtrees.t
 t/84graphics.t
 t/85minusSoption.t
