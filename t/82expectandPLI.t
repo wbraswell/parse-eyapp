@@ -4,7 +4,7 @@ my ($nt, );
 
 BEGIN { $nt = 10 + 3; 
 }
-use Test::More tests=> $nt;
+use Test::More 'no_plan'; #tests=> $nt;
 
 # test "expects" method with PL-I if if=then then then=if example
 SKIP: {
