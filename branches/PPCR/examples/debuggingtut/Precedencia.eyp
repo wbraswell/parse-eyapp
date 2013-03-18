@@ -1,8 +1,7 @@
 %{
 =head1 SYNOPSIS
 
-Be sure Math::Tail in examples/Calculator/lib is reachable
-compile it with 
+Compile it with 
 
   eyapp -C Precedencia.eyp
 

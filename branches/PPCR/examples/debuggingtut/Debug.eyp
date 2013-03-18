@@ -10,9 +10,9 @@ Compile it with
 See the C<Debug.output> file generated.
 Execute the generated modulino with:
 
-      ./Debug.pm -d  # to activate debugging
+      ./Debug.pm -deb  # to activate debugging
       ./Debug.pm -h  # for help
-      ./Debug.pm -d -c  'D; S' 
+      ./Debug.pm -deb -c  'D; S' 
 
 The generated parser will not recognize any input, since its shifts forever.
 Try input C<'D; D; S'>.
