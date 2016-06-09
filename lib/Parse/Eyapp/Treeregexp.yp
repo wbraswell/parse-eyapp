@@ -373,7 +373,7 @@ sub _Lexer {
 
         return('REGEXP', [$string, $tokenbegin, $options]);
     };
-        $input=~/\G%{/gc
+        $input=~/\G%\{/gc
     and do {
         my($code);
 
@@ -385,7 +385,7 @@ sub _Lexer {
         return('Parse::Eyapp::Treeregexp::GLOBALCODE', [$code, $tokenbegin]);
     };
 
-        $input=~/\G{/gc
+        $input=~/\G\{/gc
     and do {
         my($level,$from,$code);
 
