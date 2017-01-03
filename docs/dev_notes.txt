@@ -1,7 +1,14 @@
 ===============
 TRAVIS-CI BUILD
 ===============
-cpanm Parse::Yapp
+cpanm Template::Toolkit
 make -f makepods pods
 perl Makefile.PL
 make test
+
+
+============
+CPAN Release
+============
+cpanm Parse::Yapp
+
