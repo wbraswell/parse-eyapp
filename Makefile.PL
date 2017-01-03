@@ -368,7 +368,7 @@ To use this C<Makefile.PL> as developer is convenient to have installed:
 
 =head1 AUTHOR
  
-Casiano Rodriguez-Leon (casiano@ull.es)
+Will Braswell <wbraswell@cpan.org>
 
 =head1 LICENCE AND COPYRIGHT
  

@@ -1,0 +1,19 @@
+#!/bin/bash
+rm lib/Parse/Eyapp.pod
+rm lib/Parse/Eyapp/Base.pod
+rm lib/Parse/Eyapp/datagenerationtut.pod
+rm lib/Parse/Eyapp/debuggingtut.pod
+rm lib/Parse/Eyapp/defaultactionsintro.pod
+rm lib/Parse/Eyapp/Driver.pod
+rm lib/Parse/Eyapp/eyappintro.pod
+rm lib/Parse/Eyapp/eyapplanguageref.pod
+rm lib/Parse/Eyapp/MatchingTrees.pod
+rm lib/Parse/Eyapp/Node.pod
+rm lib/Parse/Eyapp/Parse.pm
+rm lib/Parse/Eyapp/Parse.pod
+rm lib/Parse/Eyapp/Scope.pod
+rm lib/Parse/Eyapp/translationschemestut.pod
+rm lib/Parse/Eyapp/Treeregexp.output
+rm lib/Parse/Eyapp/Treeregexp.pm
+rm lib/Parse/Eyapp/Treeregexp.pod
+rm lib/Parse/Eyapp/YATW.pod
