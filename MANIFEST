@@ -1,4 +1,6 @@
 Changes
+docs/todo.txt
+docs/dev_notes.txt
 examples/Calculator/Changes
 examples/Calculator/lib/Math/Calc.eyp
 examples/Calculator/lib/Math/Calc.pod
@@ -683,5 +685,4 @@ t/tokensemdef.eyp
 t/tree.dot.expected
 t/twolexers.eyp
 t/twolexers2.eyp
-TODO
 treereg

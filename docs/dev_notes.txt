@@ -11,4 +11,5 @@ make test
 CPAN Release
 ============
 cpanm Parse::Yapp  # for `yapp`
+make -f makepods release  # chicken-and-egg, requires `eyapp`
 
