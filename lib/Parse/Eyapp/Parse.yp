@@ -1320,13 +1320,13 @@ sub _Lexer {
         return($1, [ $1, $lineno[0] ]);
     };
 
-        $$input=~/\G\s*{/gc and return ('CODE', &slurp_perl_code());  # }
+        $$input=~/\G\s*\{/gc and return ('CODE', &slurp_perl_code());  # }
 
     if($lexlevel == 0) {# In head section
 
         $$input=~/\G%(left|right|nonassoc)/gc and return('ASSOC',[ uc($1), $lineno[0] ]);
 
-            $$input=~/\G%{/gc
+            $$input=~/\G%\{/gc
         and do {
             my($code);
 
