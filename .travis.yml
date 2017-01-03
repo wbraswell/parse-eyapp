@@ -1,5 +1,5 @@
 language: perl
-# v0.004_000
+# v0.005_000
 
 perl:
   - "5.8"
@@ -14,7 +14,7 @@ perl:
 
 install:
     - cpanm Parse::Yapp
-    - make -f makepods
+    - make -f makepods pods
     - cpanm --installdeps --notest .
 
 script: perl Makefile.PL && make test

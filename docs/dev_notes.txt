@@ -1,4 +1,7 @@
+===============
+TRAVIS-CI BUILD
+===============
 cpanm Parse::Yapp
-make -f makepods
+make -f makepods pods
 perl Makefile.PL
 make test
