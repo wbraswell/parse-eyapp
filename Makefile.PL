@@ -23,7 +23,7 @@ WriteMakefile(
     },
     'EXE_FILES'    => \@exe_files,
     ABSTRACT_FROM  => 'lib/Parse/Eyapp.pod', 
-    AUTHOR         => 'Casiano Rodriguez-Leon <casiano@ull.es>',
+    AUTHOR         => 'Will Braswell <wbraswell@cpan.org>',
 );
 
 sub MY::postamble {
@@ -373,6 +373,7 @@ Casiano Rodriguez-Leon (casiano@ull.es)
 =head1 LICENCE AND COPYRIGHT
  
 Copyright (c) 2006-2009 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
+Copyright (c) 2016, 2017 William N. Braswell, Jr. All rights reserved.
 
 These modules are free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
