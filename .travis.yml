@@ -12,10 +12,10 @@ perl:
   - "5.22"
   - "5.24"
 
-before_script:
+install:
     - cpanm Parse::Yapp
     - make -f makepods
-    - cpanm --quiet --installdeps --notest .
+    - cpanm --installdeps --notest .
 
 script: perl Makefile.PL && make test
 
