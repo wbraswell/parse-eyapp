@@ -22,7 +22,7 @@ WriteMakefile(
     'Pod::Usage'   => "1.0", 
     },
     'EXE_FILES'    => \@exe_files,
-    ABSTRACT_FROM  => 'lib/Parse/Eyapp.pod', 
+#    ABSTRACT_FROM  => 'lib/Parse/Eyapp.pod', 
     AUTHOR         => 'Will Braswell <wbraswell@cpan.org>',
 );
 
