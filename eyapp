@@ -9,7 +9,7 @@
 eyapp - A Perl front-end to the Parse::Eyapp module
 
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
     eyapp [options] grammar[.eyp]
     eyapp -V
