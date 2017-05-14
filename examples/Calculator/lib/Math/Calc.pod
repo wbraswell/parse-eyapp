@@ -160,7 +160,7 @@ Now the distribution can be used in a machine where Parse::Eyapp isn't installed
   Files=3, Tests=10,  0 wallclock secs ( 0.12 cusr +  0.01 csys =  0.13 CPU)
 
 
-=head1 LICENCE AND COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
  
 Copyright (c) 2006-2008 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
 

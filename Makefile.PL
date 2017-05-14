@@ -370,7 +370,7 @@ To use this C<Makefile.PL> as developer is convenient to have installed:
  
 Will Braswell <wbraswell@cpan.org>
 
-=head1 LICENCE AND COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
  
 Copyright (c) 2006-2009 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
 Copyright (c) 2016, 2017 William N. Braswell, Jr. All rights reserved.

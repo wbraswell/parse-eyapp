@@ -146,7 +146,7 @@ I wish to thank Francois Desarmenien for his L<Parse::Yapp> module,
 to my students at La Laguna and to the Perl Community. Special thanks to 
 my family and Larry Wall.
 
-=head1 LICENCE AND COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
  
 Copyright (c) 2006-2008 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
 

@@ -52,7 +52,7 @@ calc.pl - Calculator example in Parse::Eyapp
 
 Casiano Rodriguez Leon E<lt>casiano@ull.esE<gt>
 
-=head1 LICENCE AND COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
  
 Copyright (c) 2007 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
 
