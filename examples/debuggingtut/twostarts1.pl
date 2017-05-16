@@ -3,8 +3,14 @@
 #
 #    This file was generated using Parse::Eyapp version 1.165.
 #
-# (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien.
-# (c) Parse::Eyapp Copyright 2006-2008 Casiano Rodriguez-Leon. Universidad de La Laguna.
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
 #        Don't edit this file, use source file 'twostarts.eyp' instead.
 #
 #             ANY CHANGE MADE HERE WILL BE LOST !

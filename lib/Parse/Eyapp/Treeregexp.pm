@@ -2,8 +2,15 @@
 #
 #    This file was generated using Parse::Eyapp version 1.182.
 #
-# (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien.
-# (c) Parse::Eyapp Copyright 2006-2008 Casiano Rodriguez-Leon. Universidad de La Laguna.
+#
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
 #        Don't edit this file, use source file 'lib/Parse/Eyapp/Treeregexp.yp' instead.
 #
 #             ANY CHANGE MADE HERE WILL BE LOST !
@@ -1934,7 +1941,15 @@ package $packagename;
 # This module has been generated using Parse::Eyapp::Treereg
 # from file $filename. Don't modify it.
 # Change $filename instead.
-# Copyright (c) Casiano Rodriguez-Leon 2006. Universidad de La Laguna.
+#
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
 # You may use it and distribute it under the terms of either
 # the GNU General Public License or the Artistic License,
 # as specified in the Perl README file.
