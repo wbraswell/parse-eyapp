@@ -2,8 +2,14 @@
 # Module Parse::Eyapp::Output
 #
 # This module is based on Francois Desarmenien Parse::Yapp distribution
-# (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien, all rights reserved.
-# (c) Parse::Eyapp Copyright 2006-2008 Casiano Rodriguez-Leon, all rights reserved.
+#
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
 #
 
 package Parse::Eyapp::Output;
@@ -383,8 +389,14 @@ sub Driver_pm {
 #
 #    This file was generated using Parse::Eyapp version <<$version>>.
 #
-# (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien.
-# (c) Parse::Eyapp Copyright 2006-2008 Casiano Rodriguez-Leon. Universidad de La Laguna.
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
 #        Don't edit this file, use source file <<$FILENAME>> instead.
 #
 #             ANY CHANGE MADE HERE WILL BE LOST !
