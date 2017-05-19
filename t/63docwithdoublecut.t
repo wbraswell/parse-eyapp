@@ -166,10 +166,14 @@ my family and Larry Wall.
 
 =head1 LICENSE AND COPYRIGHT
  
-Copyright (c) 2006-2008 Casiano Rodriguez-Leon (casiano@ull.es). All rights reserved.
+Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+Copyright © 2017 William N. Braswell, Jr.
+All Rights Reserved.
 
-Parse::Yapp copyright is of Francois Desarmenien, all rights reserved. 1998-2001
- 
+Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+All Rights Reserved.
+
 These modules are free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
  

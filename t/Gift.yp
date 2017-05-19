@@ -1257,8 +1257,13 @@ Universidad de La Laguna.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2005 by Casiano Rodriguez Leon, Coromoto Leon Hernandez
-and Luis Garcia Forte. 
+Copyright © 2005, 2006, 2007, 2008 Casiano Rodriguez-Leon, Coromoto Leon Hernandez and Luis Garcia Forte. 
+Copyright © 2017 William N. Braswell, Jr.
+All Rights Reserved.
+
+Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+All Rights Reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.4 or,
