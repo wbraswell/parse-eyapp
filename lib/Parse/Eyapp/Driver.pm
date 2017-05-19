@@ -4,9 +4,15 @@
 # This module is part of the Parse::Eyapp package available on your
 # nearest CPAN
 #
-# This module is based on Francois Desarmenien Parse::Yapp module
-# (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien, all rights reserved.
-# (c) Parse::Eyapp Copyright 2006-2010 Casiano Rodriguez-Leon, all rights reserved.
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Based on Parse::Yapp.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
 
 our $SVNREVISION = '$Rev: 2399M $';
 our $SVNDATE     = '$Date: 2009-01-06 12:28:04 +0000 (mar, 06 ene 2009) $';

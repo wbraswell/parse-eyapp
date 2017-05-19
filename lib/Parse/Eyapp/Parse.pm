@@ -2,8 +2,13 @@
 #
 #    This file was generated using Parse::Eyapp version 1.182.
 #
-# (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien.
-# (c) Parse::Eyapp Copyright 2006-2008 Casiano Rodriguez-Leon. Universidad de La Laguna.
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
 #        Don't edit this file, use source file 'lib/Parse/Eyapp/Parse.yp' instead.
 #
 #             ANY CHANGE MADE HERE WILL BE LOST !
@@ -28,10 +33,15 @@ BEGIN {
 
 sub unexpendedInput { defined($_) ? substr($_, (defined(pos $_) ? pos $_ : 0)) : '' }
 
-# (c) Copyright Casiano Rodriguez-Leon 
-# Based on the original yapp by Francois Desarmenien 1998-2001
-# (c) Parse::Yapp Copyright 1998-2001 Francois Desarmenien, all rights reserved.
-# (c) Parse::Eyapp Copyright 2006-2008 Casiano Rodriguez Leon, all rights reserved.
+# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
+#
+# Based on Parse::Yapp.
+#
+# Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+# Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+# All Rights Reserved.
 
 require 5.004;
 
