@@ -145,7 +145,8 @@ Jeffrey D. Ullman (Addison-Wesley 1986)
 
 =head1 AUTHOR
  
-Casiano Rodriguez-Leon (casiano@ull.es)
+William N. Braswell, Jr. <wbraswell_cpan@NOSPAM.nym.hush.com>
+(Remove "NOSPAM".)
 
 =head1 ACKNOWLEDGMENTS
 
@@ -166,7 +167,7 @@ my family and Larry Wall.
 
 =head1 LICENSE AND COPYRIGHT
  
-Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+Copyright © 2006, 2007, 2008, 2009, 2010, 2011, 2012 Casiano Rodriguez-Leon.
 Copyright © 2017 William N. Braswell, Jr.
 All Rights Reserved.
 

@@ -1190,8 +1190,9 @@ We haven't found a formal definition of the GIFT language
 and so we have based the building of this parser 
 on the description given by the Moodle
 help for the GIFT format. If you find any bugs,
-please let us know to the first author address
-E<lt>casiano@ull.esE<gt>
+please let us know to the first author address:
+William N. Braswell, Jr. <wbraswell_cpan@NOSPAM.nym.hush.com>
+(Remove "NOSPAM".)
 
 There are a few limits in the way the version of Moodle 
 manages the GIFT format. 
@@ -1249,7 +1250,10 @@ and National TIC project TIC2002-04498-C05-05 (TRACER).
 
 =head1 AUTHOR
 
-This is a join work by
+William N. Braswell, Jr. <wbraswell_cpan@NOSPAM.nym.hush.com>
+(Remove "NOSPAM".)
+
+This is a joint work by
 Casiano Rodriguez Leon E<lt>casiano@ull.esE<gt>,
 Coromoto Leon Hernandez E<lt>cleon@ull.esE<gt>,
 and Luis Garcia Forte E<lt>lgforte@ull.esE<gt>.
@@ -1257,7 +1261,7 @@ Universidad de La Laguna.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright © 2005, 2006, 2007, 2008 Casiano Rodriguez-Leon, Coromoto Leon Hernandez and Luis Garcia Forte. 
+Copyright © 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Casiano Rodriguez-Leon, Coromoto Leon Hernandez and Luis Garcia Forte. 
 Copyright © 2017 William N. Braswell, Jr.
 All Rights Reserved.
 

@@ -1,4 +1,13 @@
 Revision history for Perl extension Eyapp.
+
+1.2 Wed Jun 14 2017
+  * First Release In Over 5 Years, 
+    How's That For Medium-Term Stability?!?  :-)
+  * Bug Fix, Unescaped Left Curly Braces { In Regular Expressions,
+    Fatal Since Perl v5.25.1
+  * Typo Fixes, POD Spelling
+  * Misc Minor Updates
+
 1.179
   * No syntactic auxiliary variable will be introduced in the %PREC positions. 
   * Modified the LR parser algorithm:

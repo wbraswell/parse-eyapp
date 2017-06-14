@@ -1,9 +1,8 @@
 ########################################################################################
 #
-#    This file was generated using Parse::Eyapp version 1.182.
+#    This file was generated using Parse::Eyapp version 1.2.
 #
-#
-# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2006, 2007, 2008, 2009, 2010, 2011, 2012 Casiano Rodriguez-Leon.
 # Copyright © 2017 William N. Braswell, Jr.
 # All Rights Reserved.
 #
@@ -246,13 +245,13 @@ our $LEX = sub {
 
       m{\G(\s+)}gc and $self->tokenline($1 =~ tr{\n}{});
 
-      m{\G(and|\=\>|\*|\:|\=|\,|\.|\)|\(|\;)}gc and return ($1, $1);
+      m{\G(and|\=\>|\.|\(|\)|\,|\:|\=|\;|\*)}gc and return ($1, $1);
 
       /\G(ARRAY)/gc and return ($1, $1);
-      /\G(CODE)/gc and return ($1, $1);
       /\G(SCALAR)/gc and return ($1, $1);
-      /\G(REGEXP)/gc and return ($1, $1);
       /\G(IDENT)/gc and return ($1, $1);
+      /\G(REGEXP)/gc and return ($1, $1);
+      /\G(CODE)/gc and return ($1, $1);
 
 
       return ('', undef) if ($_ eq '') || (defined(pos($_)) && (pos($_) >= length($_)));
@@ -281,7 +280,7 @@ sub new {
 
   warn $warnmessage unless __PACKAGE__->isa('Parse::Eyapp::Driver'); 
   my($self)=$class->SUPER::new( 
-    yyversion => '1.182',
+    yyversion => '1.2',
     yyGRAMMAR  =>
 [#[productionNameAndLabel => lhs, [ rhs], bypass]]
   [ '_SUPERSTART' => '$start', [ 'treeregexplist', '$end' ], 0 ],
@@ -429,43 +428,43 @@ sub new {
 	{#State 0
 		DEFAULT => -2,
 		GOTOS => {
-			'treeregexplist' => 2,
-			'STAR-1' => 1
+			'treeregexplist' => 1,
+			'STAR-1' => 2
 		}
 	},
 	{#State 1
 		ACTIONS => {
-			'CODE' => 3,
-			'IDENT' => 6,
-			'' => -3,
-			'REGEXP' => 5
-		},
-		GOTOS => {
-			'treeregexp' => 4
+			'' => 3
 		}
 	},
 	{#State 2
 		ACTIONS => {
-			'' => 7
+			'CODE' => 5,
+			'REGEXP' => 6,
+			'' => -3,
+			'IDENT' => 4
+		},
+		GOTOS => {
+			'treeregexp' => 7
 		}
 	},
 	{#State 3
-		DEFAULT => -10
+		DEFAULT => 0
 	},
 	{#State 4
-		DEFAULT => -1
-	},
-	{#State 5
-		DEFAULT => -12
-	},
-	{#State 6
 		ACTIONS => {
-			":" => 9,
-			"=" => 8
+			"=" => 8,
+			":" => 9
 		}
 	},
+	{#State 5
+		DEFAULT => -10
+	},
+	{#State 6
+		DEFAULT => -12
+	},
 	{#State 7
-		DEFAULT => 0
+		DEFAULT => -1
 	},
 	{#State 8
 		ACTIONS => {
@@ -477,121 +476,121 @@ sub new {
 	},
 	{#State 9
 		ACTIONS => {
-			"." => 13,
-			'IDENT' => 16,
+			"*" => 17,
+			"." => 16,
 			'REGEXP' => 15,
-			'SCALAR' => 12,
-			'ARRAY' => 18,
-			"*" => 17
+			'SCALAR' => 13,
+			'IDENT' => 14,
+			'ARRAY' => 12
 		},
 		GOTOS => {
-			'treereg' => 14
+			'treereg' => 18
 		}
 	},
 	{#State 10
 		ACTIONS => {
-			'IDENT' => 20,
-			";" => 19
+			";" => 20,
+			'IDENT' => 19
 		}
 	},
 	{#State 11
 		DEFAULT => -8
 	},
 	{#State 12
+		DEFAULT => -51
+	},
+	{#State 13
 		ACTIONS => {
-			"and" => 23,
-			'' => -39,
-			"(" => 24,
-			")" => -39,
+			"=>" => -39,
 			"," => -39,
-			'CODE' => -39,
 			'IDENT' => -39,
+			"(" => 24,
 			'REGEXP' => -39,
-			"=>" => -39
+			'CODE' => -39,
+			'' => -39,
+			"and" => 23,
+			")" => -39
 		},
 		GOTOS => {
 			'PAREN-21' => 21,
 			'OPTIONAL-22' => 22
 		}
 	},
-	{#State 13
-		ACTIONS => {
-			"and" => 26,
-			'' => -42,
-			"(" => 25,
-			")" => -42,
-			'CODE' => -42,
-			"," => -42,
-			'REGEXP' => -42,
-			'IDENT' => -42,
-			"=>" => -42
-		},
-		GOTOS => {
-			'OPTIONAL-24' => 27,
-			'PAREN-23' => 28
-		}
-	},
 	{#State 14
 		ACTIONS => {
-			'REGEXP' => -6,
-			'IDENT' => -6,
-			'' => -6,
-			"=>" => 30,
-			'CODE' => -6
+			"and" => 28,
+			'' => -30,
+			")" => -30,
+			'REGEXP' => -30,
+			'CODE' => -30,
+			'IDENT' => -30,
+			"(" => 27,
+			"=>" => -30,
+			"," => -30
 		},
 		GOTOS => {
-			'PAREN-2' => 31,
-			'OPTIONAL-3' => 29
+			'OPTIONAL-16' => 25,
+			'PAREN-15' => 26
 		}
 	},
 	{#State 15
 		ACTIONS => {
-			"," => -33,
+			")" => -33,
+			"and" => -33,
+			'' => -33,
 			'CODE' => -33,
-			"=>" => -33,
-			":" => 35,
-			'IDENT' => -33,
 			'REGEXP' => -33,
 			"(" => -18,
-			")" => -33,
-			'' => -33,
-			"and" => -33
+			'IDENT' => -33,
+			"," => -33,
+			"=>" => -33,
+			":" => 29
 		},
 		GOTOS => {
-			'OPTIONAL-18' => 33,
-			'PAREN-17' => 32,
-			'OPTIONAL-8' => 36,
-			'PAREN-7' => 34
+			'OPTIONAL-8' => 31,
+			'OPTIONAL-18' => 30,
+			'PAREN-17' => 33,
+			'PAREN-7' => 32
 		}
 	},
 	{#State 16
 		ACTIONS => {
-			"and" => 40,
-			'' => -30,
-			")" => -30,
-			"(" => 39,
-			'IDENT' => -30,
-			'REGEXP' => -30,
-			"=>" => -30,
-			"," => -30,
-			'CODE' => -30
+			"," => -42,
+			"=>" => -42,
+			"(" => 36,
+			'IDENT' => -42,
+			'CODE' => -42,
+			'REGEXP' => -42,
+			")" => -42,
+			"and" => 35,
+			'' => -42
 		},
 		GOTOS => {
-			'PAREN-15' => 38,
-			'OPTIONAL-16' => 37
+			'PAREN-23' => 37,
+			'OPTIONAL-24' => 34
 		}
 	},
 	{#State 17
 		DEFAULT => -52
 	},
 	{#State 18
-		DEFAULT => -51
+		ACTIONS => {
+			"=>" => 38,
+			'REGEXP' => -6,
+			'CODE' => -6,
+			'IDENT' => -6,
+			'' => -6
+		},
+		GOTOS => {
+			'OPTIONAL-3' => 40,
+			'PAREN-2' => 39
+		}
 	},
 	{#State 19
-		DEFAULT => -11
+		DEFAULT => -7
 	},
 	{#State 20
-		DEFAULT => -7
+		DEFAULT => -11
 	},
 	{#State 21
 		DEFAULT => -38
@@ -606,119 +605,119 @@ sub new {
 	},
 	{#State 24
 		ACTIONS => {
+			'ARRAY' => 12,
+			'IDENT' => 14,
+			'SCALAR' => 13,
+			"." => 16,
 			")" => -56,
-			"." => 13,
-			'SCALAR' => 12,
 			'REGEXP' => 15,
-			'IDENT' => 16,
-			"*" => 17,
-			'ARRAY' => 18
+			"*" => 17
 		},
 		GOTOS => {
-			'STAR-26' => 44,
-			'treereg' => 42,
-			'childlist' => 45,
-			'STAR-25' => 43
+			'STAR-26' => 45,
+			'STAR-25' => 44,
+			'childlist' => 43,
+			'treereg' => 42
 		}
 	},
 	{#State 25
-		ACTIONS => {
-			'SCALAR' => 12,
-			'REGEXP' => 15,
-			'IDENT' => 16,
-			"*" => 17,
-			'ARRAY' => 18,
-			")" => -56,
-			"." => 13
-		},
-		GOTOS => {
-			'STAR-25' => 43,
-			'childlist' => 46,
-			'treereg' => 42,
-			'STAR-26' => 44
-		}
+		DEFAULT => -47
 	},
 	{#State 26
+		DEFAULT => -29
+	},
+	{#State 27
+		ACTIONS => {
+			"*" => 17,
+			'REGEXP' => 15,
+			")" => -56,
+			"." => 16,
+			'SCALAR' => 13,
+			'IDENT' => 14,
+			'ARRAY' => 12
+		},
+		GOTOS => {
+			'childlist' => 46,
+			'treereg' => 42,
+			'STAR-26' => 45,
+			'STAR-25' => 44
+		}
+	},
+	{#State 28
 		ACTIONS => {
 			'CODE' => 47
 		}
 	},
-	{#State 27
-		DEFAULT => -50
-	},
-	{#State 28
-		DEFAULT => -41
-	},
 	{#State 29
-		DEFAULT => -9
+		ACTIONS => {
+			'IDENT' => 48
+		}
 	},
 	{#State 30
 		ACTIONS => {
-			'CODE' => 48
+			")" => -36,
+			"and" => 51,
+			'' => -36,
+			'CODE' => -36,
+			'REGEXP' => -36,
+			'IDENT' => -36,
+			"," => -36,
+			"=>" => -36
+		},
+		GOTOS => {
+			'PAREN-19' => 50,
+			'OPTIONAL-20' => 49
 		}
 	},
 	{#State 31
-		DEFAULT => -5
-	},
-	{#State 32
-		DEFAULT => -32
-	},
-	{#State 33
 		ACTIONS => {
-			"=>" => -36,
-			'REGEXP' => -36,
-			'IDENT' => -36,
-			'CODE' => -36,
-			"," => -36,
-			")" => -36,
-			"and" => 50,
-			'' => -36
-		},
-		GOTOS => {
-			'PAREN-19' => 49,
-			'OPTIONAL-20' => 51
+			"(" => 52
 		}
 	},
-	{#State 34
+	{#State 32
 		DEFAULT => -17
+	},
+	{#State 33
+		DEFAULT => -32
+	},
+	{#State 34
+		DEFAULT => -50
 	},
 	{#State 35
 		ACTIONS => {
-			'IDENT' => 52
+			'CODE' => 53
 		}
 	},
 	{#State 36
 		ACTIONS => {
-			"(" => 53
+			'IDENT' => 14,
+			'SCALAR' => 13,
+			'ARRAY' => 12,
+			"." => 16,
+			")" => -56,
+			"*" => 17,
+			'REGEXP' => 15
+		},
+		GOTOS => {
+			'STAR-26' => 45,
+			'STAR-25' => 44,
+			'childlist' => 54,
+			'treereg' => 42
 		}
 	},
 	{#State 37
-		DEFAULT => -47
+		DEFAULT => -41
 	},
 	{#State 38
-		DEFAULT => -29
-	},
-	{#State 39
-		ACTIONS => {
-			"*" => 17,
-			'ARRAY' => 18,
-			'IDENT' => 16,
-			'REGEXP' => 15,
-			'SCALAR' => 12,
-			"." => 13,
-			")" => -56
-		},
-		GOTOS => {
-			'childlist' => 54,
-			'treereg' => 42,
-			'STAR-26' => 44,
-			'STAR-25' => 43
-		}
-	},
-	{#State 40
 		ACTIONS => {
 			'CODE' => 55
 		}
+	},
+	{#State 39
+		DEFAULT => -5
+	},
+	{#State 40
+		DEFAULT => -9
 	},
 	{#State 41
 		DEFAULT => -37
@@ -728,17 +727,17 @@ sub new {
 	},
 	{#State 43
 		ACTIONS => {
-			")" => -55,
-			"," => 56
+			")" => 56
 		}
 	},
 	{#State 44
-		DEFAULT => -57
+		ACTIONS => {
+			")" => -55,
+			"," => 57
+		}
 	},
 	{#State 45
-		ACTIONS => {
-			")" => 57
-		}
+		DEFAULT => -57
 	},
 	{#State 46
 		ACTIONS => {
@@ -746,51 +745,51 @@ sub new {
 		}
 	},
 	{#State 47
-		DEFAULT => -40
+		DEFAULT => -28
 	},
 	{#State 48
-		DEFAULT => -4
+		ACTIONS => {
+			"," => -31,
+			"=>" => -31,
+			"(" => -16,
+			'IDENT' => -31,
+			'REGEXP' => -31,
+			'CODE' => -31,
+			")" => -31,
+			'' => -31,
+			"and" => -31
+		}
 	},
 	{#State 49
-		DEFAULT => -35
+		DEFAULT => -48
 	},
 	{#State 50
+		DEFAULT => -35
+	},
+	{#State 51
 		ACTIONS => {
 			'CODE' => 59
 		}
 	},
-	{#State 51
-		DEFAULT => -48
-	},
 	{#State 52
 		ACTIONS => {
-			'' => -31,
-			"and" => -31,
-			")" => -31,
-			"(" => -16,
-			'REGEXP' => -31,
-			'IDENT' => -31,
-			"=>" => -31,
-			'CODE' => -31,
-			"," => -31
+			"*" => 17,
+			'REGEXP' => 15,
+			")" => -56,
+			"." => 16,
+			'IDENT' => 14,
+			'SCALAR' => 13,
+			'ARRAY' => 12
+		},
+		GOTOS => {
+			'childlist' => 60,
+			'treereg' => 42,
+			'STAR-26' => 45,
+			'STAR-25' => 44
 		}
 	},
 	{#State 53
-		ACTIONS => {
-			")" => -56,
-			"." => 13,
-			'SCALAR' => 12,
-			'REGEXP' => 15,
-			'IDENT' => 16,
-			'ARRAY' => 18,
-			"*" => 17
-		},
-		GOTOS => {
-			'treereg' => 42,
-			'STAR-26' => 44,
-			'childlist' => 60,
-			'STAR-25' => 43
-		}
+		DEFAULT => -40
 	},
 	{#State 54
 		ACTIONS => {
@@ -798,51 +797,51 @@ sub new {
 		}
 	},
 	{#State 55
-		DEFAULT => -28
+		DEFAULT => -4
 	},
 	{#State 56
 		ACTIONS => {
-			"*" => 17,
-			'ARRAY' => 18,
-			'SCALAR' => 12,
-			'IDENT' => 16,
-			'REGEXP' => 15,
-			"." => 13
+			'REGEXP' => -24,
+			'CODE' => -24,
+			")" => -24,
+			"and" => 63,
+			'' => -24,
+			"," => -24,
+			"=>" => -24,
+			'IDENT' => -24
 		},
 		GOTOS => {
-			'treereg' => 62
+			'PAREN-11' => 62,
+			'OPTIONAL-12' => 64
 		}
 	},
 	{#State 57
 		ACTIONS => {
-			")" => -24,
-			'' => -24,
-			"and" => 65,
-			'CODE' => -24,
-			"," => -24,
-			"=>" => -24,
-			'REGEXP' => -24,
-			'IDENT' => -24
+			"*" => 17,
+			"." => 16,
+			'REGEXP' => 15,
+			'IDENT' => 14,
+			'SCALAR' => 13,
+			'ARRAY' => 12
 		},
 		GOTOS => {
-			'OPTIONAL-12' => 64,
-			'PAREN-11' => 63
+			'treereg' => 65
 		}
 	},
 	{#State 58
 		ACTIONS => {
-			")" => -27,
-			"and" => 67,
-			'' => -27,
-			"=>" => -27,
-			'REGEXP' => -27,
-			'IDENT' => -27,
-			'CODE' => -27,
-			"," => -27
+			'IDENT' => -15,
+			"," => -15,
+			"=>" => -15,
+			")" => -15,
+			"and" => 68,
+			'' => -15,
+			'REGEXP' => -15,
+			'CODE' => -15
 		},
 		GOTOS => {
-			'OPTIONAL-14' => 68,
-			'PAREN-13' => 66
+			'OPTIONAL-6' => 67,
+			'PAREN-5' => 66
 		}
 	},
 	{#State 59
@@ -855,63 +854,63 @@ sub new {
 	},
 	{#State 61
 		ACTIONS => {
+			"=>" => -27,
+			"," => -27,
+			'IDENT' => -27,
+			'CODE' => -27,
+			'REGEXP' => -27,
+			'' => -27,
 			"and" => 71,
-			'' => -15,
-			")" => -15,
-			'CODE' => -15,
-			"," => -15,
-			'REGEXP' => -15,
-			'IDENT' => -15,
-			"=>" => -15
+			")" => -27
 		},
 		GOTOS => {
-			'PAREN-5' => 70,
-			'OPTIONAL-6' => 72
+			'PAREN-13' => 72,
+			'OPTIONAL-14' => 70
 		}
 	},
 	{#State 62
-		DEFAULT => -53
+		DEFAULT => -23
 	},
 	{#State 63
-		DEFAULT => -23
+		ACTIONS => {
+			'CODE' => 73
+		}
 	},
 	{#State 64
 		DEFAULT => -45
 	},
 	{#State 65
-		ACTIONS => {
-			'CODE' => 73
-		}
+		DEFAULT => -53
 	},
 	{#State 66
-		DEFAULT => -26
+		DEFAULT => -14
 	},
 	{#State 67
+		DEFAULT => -43
+	},
+	{#State 68
 		ACTIONS => {
 			'CODE' => 74
 		}
 	},
-	{#State 68
-		DEFAULT => -46
-	},
 	{#State 69
 		ACTIONS => {
-			")" => -21,
-			'' => -21,
-			"and" => 76,
 			"," => -21,
-			'CODE' => -21,
 			"=>" => -21,
 			'IDENT' => -21,
-			'REGEXP' => -21
+			'CODE' => -21,
+			'REGEXP' => -21,
+			")" => -21,
+			"and" => 77,
+			'' => -21
 		},
 		GOTOS => {
-			'OPTIONAL-10' => 75,
-			'PAREN-9' => 77
+			'OPTIONAL-10' => 76,
+			'PAREN-9' => 75
 		}
 	},
 	{#State 70
-		DEFAULT => -14
+		DEFAULT => -46
 	},
 	{#State 71
 		ACTIONS => {
@@ -919,27 +918,27 @@ sub new {
 		}
 	},
 	{#State 72
-		DEFAULT => -43
+		DEFAULT => -26
 	},
 	{#State 73
 		DEFAULT => -22
 	},
 	{#State 74
-		DEFAULT => -25
+		DEFAULT => -13
 	},
 	{#State 75
-		DEFAULT => -44
+		DEFAULT => -20
 	},
 	{#State 76
+		DEFAULT => -44
+	},
+	{#State 77
 		ACTIONS => {
 			'CODE' => 79
 		}
 	},
-	{#State 77
-		DEFAULT => -20
-	},
 	{#State 78
-		DEFAULT => -13
+		DEFAULT => -25
 	},
 	{#State 79
 		DEFAULT => -19
@@ -1941,15 +1940,13 @@ package $packagename;
 # This module has been generated using Parse::Eyapp::Treereg
 # from file $filename. Don't modify it.
 # Change $filename instead.
-#
-# Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+# Copyright © 2006, 2007, 2008, 2009, 2010, 2011, 2012 Casiano Rodriguez-Leon.
 # Copyright © 2017 William N. Braswell, Jr.
 # All Rights Reserved.
 #
 # Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
 # Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
 # All Rights Reserved.
-#
 # You may use it and distribute it under the terms of either
 # the GNU General Public License or the Artistic License,
 # as specified in the Perl README file.

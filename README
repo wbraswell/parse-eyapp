@@ -1,9 +1,19 @@
 COPYRIGHT
 
-(c) 1998-2001 Francois Desarmenien owns the copyright for Parse::Yapp
-(c) 2006-2008 Parse::Eyapp by Casiano Rodriguez-Leon
-Parse::Eyapp uses and modifies all the files in the Parse::Yapp 1.05
+Copyright © 2006, 2007, 2008, 2009, 2010, 2011, 2012 Casiano Rodriguez-Leon.
+Copyright © 2017 William N. Braswell, Jr.
+All Rights Reserved.
+
+Parse::Yapp is Copyright © 1998, 1999, 2000, 2001, Francois Desarmenien.
+Parse::Yapp is Copyright © 2017 William N. Braswell, Jr.
+All Rights Reserved.
+
+Parse::Eyapp uses and modifies all the files in the Parse::Yapp 1.06
 distribution.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.6 or,
+at your option, any later version of Perl 5 you may have available.
 
 IMPORTANT NOTES
 
@@ -22,7 +32,7 @@ Any help on improving those documentations is very welcome.
 DESCRIPTION
 
 Parse::Eyapp (Extended yapp) is a collection of modules
-that extends Francois Desarmenien Parse::Yapp 1.05.
+that extends Francois Desarmenien Parse::Yapp.
 Eyapp extends yacc/yapp syntax with
 functionalities like named attributes,
 EBNF-like expressions, modifiable default action,
@@ -34,7 +44,7 @@ directed acyclic graphs and a few more.
 
 REQUIREMENTS
 
-Requires perl5.6 or higher
+Requires Perl v5.6 or higher
 
 You need the following modules:
 
@@ -83,11 +93,6 @@ FEEDBACK
 
 Send feedback, comments and bugs to:
 
-Casiano Rodriguez-Leon <casiano@ull.es>
+William N. Braswell, Jr. <wbraswell_cpan@NOSPAM.nym.hush.com>
+(Remove "NOSPAM".)
 
-COPYRIGHT 
-(C) 2006-2008 by Casiano Rodriguez-Leon
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.6 or,
-at your option, any later version of Perl 5 you may have available.

@@ -20,10 +20,11 @@ WriteMakefile(
     'List::Util'   => "1.0", 
     'Data::Dumper' => "1.0",
     'Pod::Usage'   => "1.0", 
+    'Parse::Yapp'  => "1.06", 
     },
     'EXE_FILES'    => \@exe_files,
 #    ABSTRACT_FROM  => 'lib/Parse/Eyapp.pod', 
-    AUTHOR         => 'Will Braswell <wbraswell@cpan.org>',
+    AUTHOR         => 'Will Braswell <wbraswell_cpan@NOSPAM.nym.hush.com> (Remove "NOSPAM".)',
 );
 
 sub MY::postamble {

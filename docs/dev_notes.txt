@@ -11,5 +11,21 @@ make test
 CPAN Release
 ============
 cpanm Parse::Yapp  # for `yapp`
+
+vi Changes  # version, date, notes
+vi lib/Parse/Eyapp.pm  # version
+vi lib/Parse/Eyapp/Driver.pm  # version
+
+perl Makefile.PL; make distclean
+perl Makefile.PL; make realclean
+
 make -f makepods release  # chicken-and-egg, requires `eyapp`
 
+perl Makefile.PL; make manifest
+make dist
+mv *.gz backup/
+
+git add -A; git commit -a
+    CPAN Release, vX.Y00000
+
+cpan-upload -v -u WBRASWELL backup/Parse-Eyapp-FOO.tar.gz

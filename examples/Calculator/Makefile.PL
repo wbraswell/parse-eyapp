@@ -16,7 +16,7 @@ WriteMakefile(
                          }, 
     EXE_FILES         => [ 'scripts/calc.pl' ],
     ABSTRACT_FROM     => 'lib/Math/Calc.pod', 
-    AUTHOR            => 'Casiano Rodriguez-Leon <casiano@ull.es>',
+    AUTHOR            => 'William N. Braswell, Jr. <wbraswell_cpan@NOSPAM.nym.hush.com> (Remove "NOSPAM".)',
 );
 
 sub MY::postamble {

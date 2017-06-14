@@ -67,47 +67,35 @@ State 0:
 
 	$default	reduce using rule 2 (STAR-1)
 
-	treeregexplist	go to state 2
-	STAR-1	go to state 1
+	treeregexplist	go to state 1
+	STAR-1	go to state 2
 
 State 1:
+
+	$start -> treeregexplist . $end	(Rule 0)
+
+	$end	shift, and go to state 3
+
+State 2:
 
 	STAR-1 -> STAR-1 . treeregexp	(Rule 1)
 	treeregexplist -> STAR-1 .	(Rule 3)
 
-	CODE	shift, and go to state 3
-	IDENT	shift, and go to state 6
-	REGEXP	shift, and go to state 5
+	CODE	shift, and go to state 5
+	IDENT	shift, and go to state 4
+	REGEXP	shift, and go to state 6
 
 	$end	reduce using rule 3 (treeregexplist)
 
-	treeregexp	go to state 4
-
-State 2:
-
-	$start -> treeregexplist . $end	(Rule 0)
-
-	$end	shift, and go to state 7
+	treeregexp	go to state 7
 
 State 3:
 
-	treeregexp -> CODE .	(Rule 10)
+	$start -> treeregexplist $end .	(Rule 0)
 
-	$default	reduce using rule 10 (treeregexp)
+	$default	accept
 
 State 4:
-
-	STAR-1 -> STAR-1 treeregexp .	(Rule 1)
-
-	$default	reduce using rule 1 (STAR-1)
-
-State 5:
-
-	treeregexp -> REGEXP .	(Rule 12)
-
-	$default	reduce using rule 12 (treeregexp)
-
-State 6:
 
 	treeregexp -> IDENT . ':' treereg OPTIONAL-3	(Rule 9)
 	treeregexp -> IDENT . '=' PLUS-4 ';'	(Rule 11)
@@ -115,11 +103,23 @@ State 6:
 	':'	shift, and go to state 9
 	'='	shift, and go to state 8
 
+State 5:
+
+	treeregexp -> CODE .	(Rule 10)
+
+	$default	reduce using rule 10 (treeregexp)
+
+State 6:
+
+	treeregexp -> REGEXP .	(Rule 12)
+
+	$default	reduce using rule 12 (treeregexp)
+
 State 7:
 
-	$start -> treeregexplist $end .	(Rule 0)
+	STAR-1 -> STAR-1 treeregexp .	(Rule 1)
 
-	$default	accept
+	$default	reduce using rule 1 (STAR-1)
 
 State 8:
 
@@ -134,21 +134,21 @@ State 9:
 	treeregexp -> IDENT ':' . treereg OPTIONAL-3	(Rule 9)
 
 	'*'	shift, and go to state 17
-	'.'	shift, and go to state 13
-	ARRAY	shift, and go to state 18
-	IDENT	shift, and go to state 16
+	'.'	shift, and go to state 16
+	ARRAY	shift, and go to state 12
+	IDENT	shift, and go to state 14
 	REGEXP	shift, and go to state 15
-	SCALAR	shift, and go to state 12
+	SCALAR	shift, and go to state 13
 
-	treereg	go to state 14
+	treereg	go to state 18
 
 State 10:
 
 	PLUS-4 -> PLUS-4 . IDENT	(Rule 7)
 	treeregexp -> IDENT '=' PLUS-4 . ';'	(Rule 11)
 
-	';'	shift, and go to state 19
-	IDENT	shift, and go to state 20
+	';'	shift, and go to state 20
+	IDENT	shift, and go to state 19
 
 State 11:
 
@@ -157,6 +157,12 @@ State 11:
 	$default	reduce using rule 8 (PLUS-4)
 
 State 12:
+
+	treereg -> ARRAY .	(Rule 51)
+
+	$default	reduce using rule 51 (treereg)
+
+State 13:
 
 	treereg -> SCALAR . '(' childlist ')' OPTIONAL-12	(Rule 45)
 	treereg -> SCALAR . OPTIONAL-22	(Rule 49)
@@ -175,45 +181,31 @@ State 12:
 	PAREN-21	go to state 21
 	OPTIONAL-22	go to state 22
 
-State 13:
-
-	treereg -> '.' . '(' childlist ')' OPTIONAL-14	(Rule 46)
-	treereg -> '.' . OPTIONAL-24	(Rule 50)
-
-	'('	shift, and go to state 25
-	'and'	shift, and go to state 26
-
-	$end	reduce using rule 42 (OPTIONAL-24)
-	')'	reduce using rule 42 (OPTIONAL-24)
-	','	reduce using rule 42 (OPTIONAL-24)
-	'=>'	reduce using rule 42 (OPTIONAL-24)
-	CODE	reduce using rule 42 (OPTIONAL-24)
-	IDENT	reduce using rule 42 (OPTIONAL-24)
-	REGEXP	reduce using rule 42 (OPTIONAL-24)
-
-	OPTIONAL-24	go to state 27
-	PAREN-23	go to state 28
-
 State 14:
 
-	treeregexp -> IDENT ':' treereg . OPTIONAL-3	(Rule 9)
+	treereg -> IDENT . '(' childlist ')' OPTIONAL-6	(Rule 43)
+	treereg -> IDENT . OPTIONAL-16	(Rule 47)
 
-	'=>'	shift, and go to state 30
+	'('	shift, and go to state 27
+	'and'	shift, and go to state 28
 
-	$end	reduce using rule 6 (OPTIONAL-3)
-	CODE	reduce using rule 6 (OPTIONAL-3)
-	IDENT	reduce using rule 6 (OPTIONAL-3)
-	REGEXP	reduce using rule 6 (OPTIONAL-3)
+	$end	reduce using rule 30 (OPTIONAL-16)
+	')'	reduce using rule 30 (OPTIONAL-16)
+	','	reduce using rule 30 (OPTIONAL-16)
+	'=>'	reduce using rule 30 (OPTIONAL-16)
+	CODE	reduce using rule 30 (OPTIONAL-16)
+	IDENT	reduce using rule 30 (OPTIONAL-16)
+	REGEXP	reduce using rule 30 (OPTIONAL-16)
 
-	PAREN-2	go to state 31
-	OPTIONAL-3	go to state 29
+	OPTIONAL-16	go to state 25
+	PAREN-15	go to state 26
 
 State 15:
 
 	treereg -> REGEXP . OPTIONAL-8 '(' childlist ')' OPTIONAL-10	(Rule 44)
 	treereg -> REGEXP . OPTIONAL-18 OPTIONAL-20	(Rule 48)
 
-	':'	shift, and go to state 35
+	':'	shift, and go to state 29
 
 	$end	reduce using rule 33 (OPTIONAL-18)
 	'('	reduce using rule 18 (OPTIONAL-8)
@@ -225,29 +217,29 @@ State 15:
 	IDENT	reduce using rule 33 (OPTIONAL-18)
 	REGEXP	reduce using rule 33 (OPTIONAL-18)
 
-	OPTIONAL-18	go to state 33
-	PAREN-17	go to state 32
-	OPTIONAL-8	go to state 36
-	PAREN-7	go to state 34
+	OPTIONAL-8	go to state 31
+	OPTIONAL-18	go to state 30
+	PAREN-17	go to state 33
+	PAREN-7	go to state 32
 
 State 16:
 
-	treereg -> IDENT . '(' childlist ')' OPTIONAL-6	(Rule 43)
-	treereg -> IDENT . OPTIONAL-16	(Rule 47)
+	treereg -> '.' . '(' childlist ')' OPTIONAL-14	(Rule 46)
+	treereg -> '.' . OPTIONAL-24	(Rule 50)
 
-	'('	shift, and go to state 39
-	'and'	shift, and go to state 40
+	'('	shift, and go to state 36
+	'and'	shift, and go to state 35
 
-	$end	reduce using rule 30 (OPTIONAL-16)
-	')'	reduce using rule 30 (OPTIONAL-16)
-	','	reduce using rule 30 (OPTIONAL-16)
-	'=>'	reduce using rule 30 (OPTIONAL-16)
-	CODE	reduce using rule 30 (OPTIONAL-16)
-	IDENT	reduce using rule 30 (OPTIONAL-16)
-	REGEXP	reduce using rule 30 (OPTIONAL-16)
+	$end	reduce using rule 42 (OPTIONAL-24)
+	')'	reduce using rule 42 (OPTIONAL-24)
+	','	reduce using rule 42 (OPTIONAL-24)
+	'=>'	reduce using rule 42 (OPTIONAL-24)
+	CODE	reduce using rule 42 (OPTIONAL-24)
+	IDENT	reduce using rule 42 (OPTIONAL-24)
+	REGEXP	reduce using rule 42 (OPTIONAL-24)
 
-	PAREN-15	go to state 38
-	OPTIONAL-16	go to state 37
+	PAREN-23	go to state 37
+	OPTIONAL-24	go to state 34
 
 State 17:
 
@@ -257,21 +249,29 @@ State 17:
 
 State 18:
 
-	treereg -> ARRAY .	(Rule 51)
+	treeregexp -> IDENT ':' treereg . OPTIONAL-3	(Rule 9)
 
-	$default	reduce using rule 51 (treereg)
+	'=>'	shift, and go to state 38
+
+	$end	reduce using rule 6 (OPTIONAL-3)
+	CODE	reduce using rule 6 (OPTIONAL-3)
+	IDENT	reduce using rule 6 (OPTIONAL-3)
+	REGEXP	reduce using rule 6 (OPTIONAL-3)
+
+	OPTIONAL-3	go to state 40
+	PAREN-2	go to state 39
 
 State 19:
-
-	treeregexp -> IDENT '=' PLUS-4 ';' .	(Rule 11)
-
-	$default	reduce using rule 11 (treeregexp)
-
-State 20:
 
 	PLUS-4 -> PLUS-4 IDENT .	(Rule 7)
 
 	$default	reduce using rule 7 (PLUS-4)
+
+State 20:
+
+	treeregexp -> IDENT '=' PLUS-4 ';' .	(Rule 11)
+
+	$default	reduce using rule 11 (treeregexp)
 
 State 21:
 
@@ -296,84 +296,67 @@ State 24:
 	treereg -> SCALAR '(' . childlist ')' OPTIONAL-12	(Rule 45)
 
 	'*'	shift, and go to state 17
-	'.'	shift, and go to state 13
-	ARRAY	shift, and go to state 18
-	IDENT	shift, and go to state 16
+	'.'	shift, and go to state 16
+	ARRAY	shift, and go to state 12
+	IDENT	shift, and go to state 14
 	REGEXP	shift, and go to state 15
-	SCALAR	shift, and go to state 12
+	SCALAR	shift, and go to state 13
 
 	')'	reduce using rule 56 (STAR-26)
 
-	STAR-26	go to state 44
+	STAR-26	go to state 45
+	STAR-25	go to state 44
+	childlist	go to state 43
 	treereg	go to state 42
-	childlist	go to state 45
-	STAR-25	go to state 43
 
 State 25:
 
-	treereg -> '.' '(' . childlist ')' OPTIONAL-14	(Rule 46)
+	treereg -> IDENT OPTIONAL-16 .	(Rule 47)
 
-	'*'	shift, and go to state 17
-	'.'	shift, and go to state 13
-	ARRAY	shift, and go to state 18
-	IDENT	shift, and go to state 16
-	REGEXP	shift, and go to state 15
-	SCALAR	shift, and go to state 12
-
-	')'	reduce using rule 56 (STAR-26)
-
-	STAR-25	go to state 43
-	childlist	go to state 46
-	treereg	go to state 42
-	STAR-26	go to state 44
+	$default	reduce using rule 47 (treereg)
 
 State 26:
 
-	PAREN-23 -> 'and' . CODE	(Rule 40)
+	OPTIONAL-16 -> PAREN-15 .	(Rule 29)
 
-	CODE	shift, and go to state 47
+	$default	reduce using rule 29 (OPTIONAL-16)
 
 State 27:
 
-	treereg -> '.' OPTIONAL-24 .	(Rule 50)
+	treereg -> IDENT '(' . childlist ')' OPTIONAL-6	(Rule 43)
 
-	$default	reduce using rule 50 (treereg)
+	'*'	shift, and go to state 17
+	'.'	shift, and go to state 16
+	ARRAY	shift, and go to state 12
+	IDENT	shift, and go to state 14
+	REGEXP	shift, and go to state 15
+	SCALAR	shift, and go to state 13
+
+	')'	reduce using rule 56 (STAR-26)
+
+	childlist	go to state 46
+	treereg	go to state 42
+	STAR-26	go to state 45
+	STAR-25	go to state 44
 
 State 28:
 
-	OPTIONAL-24 -> PAREN-23 .	(Rule 41)
+	PAREN-15 -> 'and' . CODE	(Rule 28)
 
-	$default	reduce using rule 41 (OPTIONAL-24)
+	CODE	shift, and go to state 47
 
 State 29:
 
-	treeregexp -> IDENT ':' treereg OPTIONAL-3 .	(Rule 9)
+	PAREN-7 -> ':' . IDENT	(Rule 16)
+	PAREN-17 -> ':' . IDENT	(Rule 31)
 
-	$default	reduce using rule 9 (treeregexp)
+	IDENT	shift, and go to state 48
 
 State 30:
 
-	PAREN-2 -> '=>' . CODE	(Rule 4)
-
-	CODE	shift, and go to state 48
-
-State 31:
-
-	OPTIONAL-3 -> PAREN-2 .	(Rule 5)
-
-	$default	reduce using rule 5 (OPTIONAL-3)
-
-State 32:
-
-	OPTIONAL-18 -> PAREN-17 .	(Rule 32)
-
-	$default	reduce using rule 32 (OPTIONAL-18)
-
-State 33:
-
 	treereg -> REGEXP OPTIONAL-18 . OPTIONAL-20	(Rule 48)
 
-	'and'	shift, and go to state 50
+	'and'	shift, and go to state 51
 
 	$end	reduce using rule 36 (OPTIONAL-20)
 	')'	reduce using rule 36 (OPTIONAL-20)
@@ -383,63 +366,80 @@ State 33:
 	IDENT	reduce using rule 36 (OPTIONAL-20)
 	REGEXP	reduce using rule 36 (OPTIONAL-20)
 
-	PAREN-19	go to state 49
-	OPTIONAL-20	go to state 51
+	PAREN-19	go to state 50
+	OPTIONAL-20	go to state 49
 
-State 34:
+State 31:
+
+	treereg -> REGEXP OPTIONAL-8 . '(' childlist ')' OPTIONAL-10	(Rule 44)
+
+	'('	shift, and go to state 52
+
+State 32:
 
 	OPTIONAL-8 -> PAREN-7 .	(Rule 17)
 
 	$default	reduce using rule 17 (OPTIONAL-8)
 
+State 33:
+
+	OPTIONAL-18 -> PAREN-17 .	(Rule 32)
+
+	$default	reduce using rule 32 (OPTIONAL-18)
+
+State 34:
+
+	treereg -> '.' OPTIONAL-24 .	(Rule 50)
+
+	$default	reduce using rule 50 (treereg)
+
 State 35:
 
-	PAREN-7 -> ':' . IDENT	(Rule 16)
-	PAREN-17 -> ':' . IDENT	(Rule 31)
+	PAREN-23 -> 'and' . CODE	(Rule 40)
 
-	IDENT	shift, and go to state 52
+	CODE	shift, and go to state 53
 
 State 36:
 
-	treereg -> REGEXP OPTIONAL-8 . '(' childlist ')' OPTIONAL-10	(Rule 44)
-
-	'('	shift, and go to state 53
-
-State 37:
-
-	treereg -> IDENT OPTIONAL-16 .	(Rule 47)
-
-	$default	reduce using rule 47 (treereg)
-
-State 38:
-
-	OPTIONAL-16 -> PAREN-15 .	(Rule 29)
-
-	$default	reduce using rule 29 (OPTIONAL-16)
-
-State 39:
-
-	treereg -> IDENT '(' . childlist ')' OPTIONAL-6	(Rule 43)
+	treereg -> '.' '(' . childlist ')' OPTIONAL-14	(Rule 46)
 
 	'*'	shift, and go to state 17
-	'.'	shift, and go to state 13
-	ARRAY	shift, and go to state 18
-	IDENT	shift, and go to state 16
+	'.'	shift, and go to state 16
+	ARRAY	shift, and go to state 12
+	IDENT	shift, and go to state 14
 	REGEXP	shift, and go to state 15
-	SCALAR	shift, and go to state 12
+	SCALAR	shift, and go to state 13
 
 	')'	reduce using rule 56 (STAR-26)
 
+	STAR-26	go to state 45
+	STAR-25	go to state 44
 	childlist	go to state 54
 	treereg	go to state 42
-	STAR-26	go to state 44
-	STAR-25	go to state 43
+
+State 37:
+
+	OPTIONAL-24 -> PAREN-23 .	(Rule 41)
+
+	$default	reduce using rule 41 (OPTIONAL-24)
+
+State 38:
+
+	PAREN-2 -> '=>' . CODE	(Rule 4)
+
+	CODE	shift, and go to state 55
+
+State 39:
+
+	OPTIONAL-3 -> PAREN-2 .	(Rule 5)
+
+	$default	reduce using rule 5 (OPTIONAL-3)
 
 State 40:
 
-	PAREN-15 -> 'and' . CODE	(Rule 28)
+	treeregexp -> IDENT ':' treereg OPTIONAL-3 .	(Rule 9)
 
-	CODE	shift, and go to state 55
+	$default	reduce using rule 9 (treeregexp)
 
 State 41:
 
@@ -455,62 +455,38 @@ State 42:
 
 State 43:
 
+	treereg -> SCALAR '(' childlist . ')' OPTIONAL-12	(Rule 45)
+
+	')'	shift, and go to state 56
+
+State 44:
+
 	STAR-25 -> STAR-25 . ',' treereg	(Rule 53)
 	STAR-26 -> STAR-25 .	(Rule 55)
 
-	','	shift, and go to state 56
+	','	shift, and go to state 57
 
 	')'	reduce using rule 55 (STAR-26)
 
-State 44:
+State 45:
 
 	childlist -> STAR-26 .	(Rule 57)
 
 	$default	reduce using rule 57 (childlist)
 
-State 45:
-
-	treereg -> SCALAR '(' childlist . ')' OPTIONAL-12	(Rule 45)
-
-	')'	shift, and go to state 57
-
 State 46:
 
-	treereg -> '.' '(' childlist . ')' OPTIONAL-14	(Rule 46)
+	treereg -> IDENT '(' childlist . ')' OPTIONAL-6	(Rule 43)
 
 	')'	shift, and go to state 58
 
 State 47:
 
-	PAREN-23 -> 'and' CODE .	(Rule 40)
+	PAREN-15 -> 'and' CODE .	(Rule 28)
 
-	$default	reduce using rule 40 (PAREN-23)
+	$default	reduce using rule 28 (PAREN-15)
 
 State 48:
-
-	PAREN-2 -> '=>' CODE .	(Rule 4)
-
-	$default	reduce using rule 4 (PAREN-2)
-
-State 49:
-
-	OPTIONAL-20 -> PAREN-19 .	(Rule 35)
-
-	$default	reduce using rule 35 (OPTIONAL-20)
-
-State 50:
-
-	PAREN-19 -> 'and' . CODE	(Rule 34)
-
-	CODE	shift, and go to state 59
-
-State 51:
-
-	treereg -> REGEXP OPTIONAL-18 OPTIONAL-20 .	(Rule 48)
-
-	$default	reduce using rule 48 (treereg)
-
-State 52:
 
 	PAREN-7 -> ':' IDENT .	(Rule 16)
 	PAREN-17 -> ':' IDENT .	(Rule 31)
@@ -525,54 +501,65 @@ State 52:
 	IDENT	reduce using rule 31 (PAREN-17)
 	REGEXP	reduce using rule 31 (PAREN-17)
 
-State 53:
+State 49:
+
+	treereg -> REGEXP OPTIONAL-18 OPTIONAL-20 .	(Rule 48)
+
+	$default	reduce using rule 48 (treereg)
+
+State 50:
+
+	OPTIONAL-20 -> PAREN-19 .	(Rule 35)
+
+	$default	reduce using rule 35 (OPTIONAL-20)
+
+State 51:
+
+	PAREN-19 -> 'and' . CODE	(Rule 34)
+
+	CODE	shift, and go to state 59
+
+State 52:
 
 	treereg -> REGEXP OPTIONAL-8 '(' . childlist ')' OPTIONAL-10	(Rule 44)
 
 	'*'	shift, and go to state 17
-	'.'	shift, and go to state 13
-	ARRAY	shift, and go to state 18
-	IDENT	shift, and go to state 16
+	'.'	shift, and go to state 16
+	ARRAY	shift, and go to state 12
+	IDENT	shift, and go to state 14
 	REGEXP	shift, and go to state 15
-	SCALAR	shift, and go to state 12
+	SCALAR	shift, and go to state 13
 
 	')'	reduce using rule 56 (STAR-26)
 
-	treereg	go to state 42
-	STAR-26	go to state 44
 	childlist	go to state 60
-	STAR-25	go to state 43
+	treereg	go to state 42
+	STAR-26	go to state 45
+	STAR-25	go to state 44
+
+State 53:
+
+	PAREN-23 -> 'and' CODE .	(Rule 40)
+
+	$default	reduce using rule 40 (PAREN-23)
 
 State 54:
 
-	treereg -> IDENT '(' childlist . ')' OPTIONAL-6	(Rule 43)
+	treereg -> '.' '(' childlist . ')' OPTIONAL-14	(Rule 46)
 
 	')'	shift, and go to state 61
 
 State 55:
 
-	PAREN-15 -> 'and' CODE .	(Rule 28)
+	PAREN-2 -> '=>' CODE .	(Rule 4)
 
-	$default	reduce using rule 28 (PAREN-15)
+	$default	reduce using rule 4 (PAREN-2)
 
 State 56:
 
-	STAR-25 -> STAR-25 ',' . treereg	(Rule 53)
-
-	'*'	shift, and go to state 17
-	'.'	shift, and go to state 13
-	ARRAY	shift, and go to state 18
-	IDENT	shift, and go to state 16
-	REGEXP	shift, and go to state 15
-	SCALAR	shift, and go to state 12
-
-	treereg	go to state 62
-
-State 57:
-
 	treereg -> SCALAR '(' childlist ')' . OPTIONAL-12	(Rule 45)
 
-	'and'	shift, and go to state 65
+	'and'	shift, and go to state 63
 
 	$end	reduce using rule 24 (OPTIONAL-12)
 	')'	reduce using rule 24 (OPTIONAL-12)
@@ -582,25 +569,38 @@ State 57:
 	IDENT	reduce using rule 24 (OPTIONAL-12)
 	REGEXP	reduce using rule 24 (OPTIONAL-12)
 
+	PAREN-11	go to state 62
 	OPTIONAL-12	go to state 64
-	PAREN-11	go to state 63
+
+State 57:
+
+	STAR-25 -> STAR-25 ',' . treereg	(Rule 53)
+
+	'*'	shift, and go to state 17
+	'.'	shift, and go to state 16
+	ARRAY	shift, and go to state 12
+	IDENT	shift, and go to state 14
+	REGEXP	shift, and go to state 15
+	SCALAR	shift, and go to state 13
+
+	treereg	go to state 65
 
 State 58:
 
-	treereg -> '.' '(' childlist ')' . OPTIONAL-14	(Rule 46)
+	treereg -> IDENT '(' childlist ')' . OPTIONAL-6	(Rule 43)
 
-	'and'	shift, and go to state 67
+	'and'	shift, and go to state 68
 
-	$end	reduce using rule 27 (OPTIONAL-14)
-	')'	reduce using rule 27 (OPTIONAL-14)
-	','	reduce using rule 27 (OPTIONAL-14)
-	'=>'	reduce using rule 27 (OPTIONAL-14)
-	CODE	reduce using rule 27 (OPTIONAL-14)
-	IDENT	reduce using rule 27 (OPTIONAL-14)
-	REGEXP	reduce using rule 27 (OPTIONAL-14)
+	$end	reduce using rule 15 (OPTIONAL-6)
+	')'	reduce using rule 15 (OPTIONAL-6)
+	','	reduce using rule 15 (OPTIONAL-6)
+	'=>'	reduce using rule 15 (OPTIONAL-6)
+	CODE	reduce using rule 15 (OPTIONAL-6)
+	IDENT	reduce using rule 15 (OPTIONAL-6)
+	REGEXP	reduce using rule 15 (OPTIONAL-6)
 
-	OPTIONAL-14	go to state 68
-	PAREN-13	go to state 66
+	OPTIONAL-6	go to state 67
+	PAREN-5	go to state 66
 
 State 59:
 
@@ -616,32 +616,32 @@ State 60:
 
 State 61:
 
-	treereg -> IDENT '(' childlist ')' . OPTIONAL-6	(Rule 43)
+	treereg -> '.' '(' childlist ')' . OPTIONAL-14	(Rule 46)
 
 	'and'	shift, and go to state 71
 
-	$end	reduce using rule 15 (OPTIONAL-6)
-	')'	reduce using rule 15 (OPTIONAL-6)
-	','	reduce using rule 15 (OPTIONAL-6)
-	'=>'	reduce using rule 15 (OPTIONAL-6)
-	CODE	reduce using rule 15 (OPTIONAL-6)
-	IDENT	reduce using rule 15 (OPTIONAL-6)
-	REGEXP	reduce using rule 15 (OPTIONAL-6)
+	$end	reduce using rule 27 (OPTIONAL-14)
+	')'	reduce using rule 27 (OPTIONAL-14)
+	','	reduce using rule 27 (OPTIONAL-14)
+	'=>'	reduce using rule 27 (OPTIONAL-14)
+	CODE	reduce using rule 27 (OPTIONAL-14)
+	IDENT	reduce using rule 27 (OPTIONAL-14)
+	REGEXP	reduce using rule 27 (OPTIONAL-14)
 
-	PAREN-5	go to state 70
-	OPTIONAL-6	go to state 72
+	PAREN-13	go to state 72
+	OPTIONAL-14	go to state 70
 
 State 62:
-
-	STAR-25 -> STAR-25 ',' treereg .	(Rule 53)
-
-	$default	reduce using rule 53 (STAR-25)
-
-State 63:
 
 	OPTIONAL-12 -> PAREN-11 .	(Rule 23)
 
 	$default	reduce using rule 23 (OPTIONAL-12)
+
+State 63:
+
+	PAREN-11 -> 'and' . CODE	(Rule 22)
+
+	CODE	shift, and go to state 73
 
 State 64:
 
@@ -651,33 +651,33 @@ State 64:
 
 State 65:
 
-	PAREN-11 -> 'and' . CODE	(Rule 22)
+	STAR-25 -> STAR-25 ',' treereg .	(Rule 53)
 
-	CODE	shift, and go to state 73
+	$default	reduce using rule 53 (STAR-25)
 
 State 66:
 
-	OPTIONAL-14 -> PAREN-13 .	(Rule 26)
+	OPTIONAL-6 -> PAREN-5 .	(Rule 14)
 
-	$default	reduce using rule 26 (OPTIONAL-14)
+	$default	reduce using rule 14 (OPTIONAL-6)
 
 State 67:
 
-	PAREN-13 -> 'and' . CODE	(Rule 25)
+	treereg -> IDENT '(' childlist ')' OPTIONAL-6 .	(Rule 43)
 
-	CODE	shift, and go to state 74
+	$default	reduce using rule 43 (treereg)
 
 State 68:
 
-	treereg -> '.' '(' childlist ')' OPTIONAL-14 .	(Rule 46)
+	PAREN-5 -> 'and' . CODE	(Rule 13)
 
-	$default	reduce using rule 46 (treereg)
+	CODE	shift, and go to state 74
 
 State 69:
 
 	treereg -> REGEXP OPTIONAL-8 '(' childlist ')' . OPTIONAL-10	(Rule 44)
 
-	'and'	shift, and go to state 76
+	'and'	shift, and go to state 77
 
 	$end	reduce using rule 21 (OPTIONAL-10)
 	')'	reduce using rule 21 (OPTIONAL-10)
@@ -687,26 +687,26 @@ State 69:
 	IDENT	reduce using rule 21 (OPTIONAL-10)
 	REGEXP	reduce using rule 21 (OPTIONAL-10)
 
-	OPTIONAL-10	go to state 75
-	PAREN-9	go to state 77
+	OPTIONAL-10	go to state 76
+	PAREN-9	go to state 75
 
 State 70:
 
-	OPTIONAL-6 -> PAREN-5 .	(Rule 14)
+	treereg -> '.' '(' childlist ')' OPTIONAL-14 .	(Rule 46)
 
-	$default	reduce using rule 14 (OPTIONAL-6)
+	$default	reduce using rule 46 (treereg)
 
 State 71:
 
-	PAREN-5 -> 'and' . CODE	(Rule 13)
+	PAREN-13 -> 'and' . CODE	(Rule 25)
 
 	CODE	shift, and go to state 78
 
 State 72:
 
-	treereg -> IDENT '(' childlist ')' OPTIONAL-6 .	(Rule 43)
+	OPTIONAL-14 -> PAREN-13 .	(Rule 26)
 
-	$default	reduce using rule 43 (treereg)
+	$default	reduce using rule 26 (OPTIONAL-14)
 
 State 73:
 
@@ -716,33 +716,33 @@ State 73:
 
 State 74:
 
-	PAREN-13 -> 'and' CODE .	(Rule 25)
+	PAREN-5 -> 'and' CODE .	(Rule 13)
 
-	$default	reduce using rule 25 (PAREN-13)
+	$default	reduce using rule 13 (PAREN-5)
 
 State 75:
-
-	treereg -> REGEXP OPTIONAL-8 '(' childlist ')' OPTIONAL-10 .	(Rule 44)
-
-	$default	reduce using rule 44 (treereg)
-
-State 76:
-
-	PAREN-9 -> 'and' . CODE	(Rule 19)
-
-	CODE	shift, and go to state 79
-
-State 77:
 
 	OPTIONAL-10 -> PAREN-9 .	(Rule 20)
 
 	$default	reduce using rule 20 (OPTIONAL-10)
 
+State 76:
+
+	treereg -> REGEXP OPTIONAL-8 '(' childlist ')' OPTIONAL-10 .	(Rule 44)
+
+	$default	reduce using rule 44 (treereg)
+
+State 77:
+
+	PAREN-9 -> 'and' . CODE	(Rule 19)
+
+	CODE	shift, and go to state 79
+
 State 78:
 
-	PAREN-5 -> 'and' CODE .	(Rule 13)
+	PAREN-13 -> 'and' CODE .	(Rule 25)
 
-	$default	reduce using rule 13 (PAREN-5)
+	$default	reduce using rule 25 (PAREN-13)
 
 State 79:
 

@@ -50,11 +50,12 @@ calc.pl - Calculator example in Parse::Eyapp
 
 =head1 AUTHOR
 
-Casiano Rodriguez Leon E<lt>casiano@ull.esE<gt>
+William N. Braswell, Jr. E<lt>wbraswell_cpan@NOSPAM.nym.hush.comE<gt>
+(Remove "NOSPAM".)
 
 =head1 LICENSE AND COPYRIGHT
  
-Copyright © 2006, 2007, 2008 Casiano Rodriguez-Leon.
+Copyright © 2006, 2007, 2008, 2009, 2010, 2011, 2012 Casiano Rodriguez-Leon.
 Copyright © 2017 William N. Braswell, Jr.
 All Rights Reserved.
 
