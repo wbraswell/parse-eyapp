@@ -27,5 +27,6 @@ mv *.gz backup/
 
 git add -A; git commit -a
     CPAN Release, vX.Y00000
+git push origin master
 
 cpan-upload -v -u WBRASWELL backup/Parse-Eyapp-FOO.tar.gz
