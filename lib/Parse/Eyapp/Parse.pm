@@ -1,6 +1,6 @@
 ########################################################################################
 #
-#    This file was generated using Parse::Eyapp version 1.2.
+#    This file was generated using Parse::Eyapp version 1.21.
 #
 # Copyright © 2006, 2007, 2008, 2009, 2010, 2011, 2012 Casiano Rodriguez-Leon.
 # Copyright © 2017 William N. Braswell, Jr.
@@ -368,7 +368,7 @@ our $LEX = sub {
 
       m{\G(\s+)}gc and $self->tokenline($1 =~ tr{\n}{});
 
-      m{\G(INCREMENTAL|VIEWPOINT|EXPLORER|EXPECTRR|REGEXP|WHITES|DUMMY|DPREC|LEXER|\n|\:\:|\%\%|\(|\?|\||\=|\<|\%|\!|\>|\:|\)|\$|\;|\.)}gc and return ($1, $1);
+      m{\G(INCREMENTAL|VIEWPOINT|EXPECTRR|EXPLORER|REGEXP|WHITES|LEXER|DPREC|DUMMY|\%\%|\:\:|\n|\||\=|\$|\>|\?|\<|\;|\)|\.|\:|\(|\%|\!)}gc and return ($1, $1);
 
       /\G(ASSOC)/gc and return ($1, $1);
       /\G(BEGINCODE)/gc and return ($1, $1);
@@ -427,7 +427,7 @@ sub new {
 
   warn $warnmessage unless __PACKAGE__->isa('Parse::Eyapp::Driver'); 
   my($self)=$class->SUPER::new( 
-    yyversion => '1.2',
+    yyversion => '1.21',
     yyGRAMMAR  =>
 [#[productionNameAndLabel => lhs, [ rhs], bypass]]
   [ '_SUPERSTART' => '$start', [ 'eyapp', '$end' ], 0 ],
@@ -714,1023 +714,1023 @@ sub new {
 [
 	{#State 0
 		ACTIONS => {
-			'SYNTACTIC' => 6,
-			'INCREMENTAL' => 5,
-			'error' => 3,
-			"%%" => -11,
-			'ASSOC' => 1,
-			'HEADCODE' => 2,
-			'TREE' => 15,
-			'DEFAULTACTION' => 13,
-			'EXPECTRR' => 14,
-			'WHITES' => 16,
-			'STRICT' => 17,
-			'SEMANTIC' => 12,
-			'TOKEN' => 10,
-			'METATREE' => 11,
-			'NAMINGSCHEME' => 8,
-			'LEXER' => 7,
+			'SEMANTIC' => 20,
+			'LEXER' => 19,
+			'WHITES' => 23,
+			'error' => 21,
+			'NAMINGSCHEME' => 16,
+			'INCREMENTAL' => 15,
+			'DEFAULTACTION' => 18,
+			'CONFLICT' => 17,
+			'SYNTACTIC' => 30,
+			'TREE' => 29,
+			'METATREE' => 24,
+			'HEADCODE' => 28,
+			'PREFIX' => 27,
+			'EXPECTRR' => 25,
 			'NOCOMPACT' => 26,
-			'PREFIX' => 24,
-			'DUMMY' => 22,
-			'CONFLICT' => 18,
-			'START' => 19,
-			'EXPLORER' => 20,
-			'EXPECT' => 30,
-			'TYPE' => 29,
-			'UNION' => 28,
-			"\n" => 27
+			"%%" => -11,
+			'START' => 6,
+			'DUMMY' => 2,
+			'TOKEN' => 1,
+			'UNION' => 10,
+			'ASSOC' => 8,
+			'EXPLORER' => 9,
+			'EXPECT' => 13,
+			"\n" => 12,
+			'STRICT' => 14,
+			'TYPE' => 7
 		},
 		GOTOS => {
+			'decl' => 5,
+			'eyapp' => 3,
 			'decls' => 4,
-			'head' => 23,
-			'decl' => 25,
-			'headsec' => 21,
-			'eyapp' => 9
+			'head' => 11,
+			'headsec' => 22
 		}
 	},
 	{#State 1
 		ACTIONS => {
-			"<" => 31
+			"<" => 32
 		},
 		DEFAULT => -52,
 		GOTOS => {
-			'typedecl' => 32
+			'typedecl' => 31
 		}
 	},
 	{#State 2
 		ACTIONS => {
-			"\n" => 33
+			"<" => 32
+		},
+		DEFAULT => -52,
+		GOTOS => {
+			'typedecl' => 33
 		}
 	},
 	{#State 3
 		ACTIONS => {
-			"\n" => 34
+			'' => 34
 		}
 	},
 	{#State 4
 		ACTIONS => {
-			'METATREE' => 11,
-			'TOKEN' => 10,
-			'SEMANTIC' => 12,
-			'EXPECTRR' => 14,
-			'DEFAULTACTION' => 13,
-			'TREE' => 15,
-			'STRICT' => 17,
-			'WHITES' => 16,
-			'LEXER' => 7,
-			'NAMINGSCHEME' => 8,
-			'error' => 3,
-			'INCREMENTAL' => 5,
-			'SYNTACTIC' => 6,
-			'HEADCODE' => 2,
+			'TYPE' => 7,
+			"\n" => 12,
+			'EXPECT' => 13,
+			'STRICT' => 14,
+			'EXPLORER' => 9,
+			'ASSOC' => 8,
+			'UNION' => 10,
+			'TOKEN' => 1,
+			'DUMMY' => 2,
+			'START' => 6,
 			"%%" => -12,
-			'ASSOC' => 1,
-			'TYPE' => 29,
-			'EXPECT' => 30,
-			"\n" => 27,
-			'UNION' => 28,
-			'PREFIX' => 24,
 			'NOCOMPACT' => 26,
-			'CONFLICT' => 18,
-			'START' => 19,
-			'EXPLORER' => 20,
-			'DUMMY' => 22
+			'EXPECTRR' => 25,
+			'PREFIX' => 27,
+			'HEADCODE' => 28,
+			'METATREE' => 24,
+			'TREE' => 29,
+			'SYNTACTIC' => 30,
+			'DEFAULTACTION' => 18,
+			'CONFLICT' => 17,
+			'NAMINGSCHEME' => 16,
+			'INCREMENTAL' => 15,
+			'error' => 21,
+			'WHITES' => 23,
+			'SEMANTIC' => 20,
+			'LEXER' => 19
 		},
 		GOTOS => {
 			'decl' => 35
 		}
 	},
 	{#State 5
-		ACTIONS => {
-			'LITERAL' => 37,
-			"\n" => 36
-		}
+		DEFAULT => -14
 	},
 	{#State 6
 		ACTIONS => {
-			"<" => 31
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'ident' => 36
+		}
+	},
+	{#State 7
+		ACTIONS => {
+			"<" => 32
 		},
 		DEFAULT => -52,
 		GOTOS => {
 			'typedecl' => 38
 		}
 	},
-	{#State 7
-		ACTIONS => {
-			'CODE' => 39
-		}
-	},
 	{#State 8
 		ACTIONS => {
-			'CODE' => 40
+			"<" => 32
+		},
+		DEFAULT => -52,
+		GOTOS => {
+			'typedecl' => 39
 		}
 	},
 	{#State 9
 		ACTIONS => {
-			'' => 41
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'ident' => 40
 		}
 	},
 	{#State 10
 		ACTIONS => {
-			"<" => 31
-		},
-		DEFAULT => -52,
-		GOTOS => {
-			'typedecl' => 42
+			'CODE' => 41
 		}
 	},
 	{#State 11
 		ACTIONS => {
-			"\n" => 43
+			'IDENT' => 45,
+			'error' => 46,
+			"%%" => 42
+		},
+		GOTOS => {
+			'rulesec' => 47,
+			'startrules' => 43,
+			'body' => 44
 		}
 	},
 	{#State 12
-		ACTIONS => {
-			"<" => 31
-		},
-		DEFAULT => -52,
-		GOTOS => {
-			'typedecl' => 44
-		}
+		DEFAULT => -15
 	},
 	{#State 13
 		ACTIONS => {
-			'CODE' => 45
+			'NUMBER' => 48
 		}
 	},
 	{#State 14
 		ACTIONS => {
-			'NUMBER' => 46
+			"\n" => 49
 		}
 	},
 	{#State 15
 		ACTIONS => {
-			"\n" => 47
+			"\n" => 50,
+			'LITERAL' => 51
 		}
 	},
 	{#State 16
 		ACTIONS => {
-			'CODE' => 50,
-			"=" => 48,
-			'REGEXP' => 49
+			'CODE' => 52
 		}
 	},
 	{#State 17
 		ACTIONS => {
-			"\n" => 51
-		}
-	},
-	{#State 18
-		ACTIONS => {
-			'IDENT' => 52
+			'IDENT' => 37
 		},
 		GOTOS => {
 			'ident' => 53
 		}
 	},
+	{#State 18
+		ACTIONS => {
+			'CODE' => 54
+		}
+	},
 	{#State 19
 		ACTIONS => {
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'ident' => 54
+			'CODE' => 55
 		}
 	},
 	{#State 20
 		ACTIONS => {
-			'IDENT' => 52
+			"<" => 32
 		},
+		DEFAULT => -52,
 		GOTOS => {
-			'ident' => 55
+			'typedecl' => 56
 		}
 	},
 	{#State 21
 		ACTIONS => {
-			"%%" => 56
+			"\n" => 57
 		}
 	},
 	{#State 22
 		ACTIONS => {
-			"<" => 31
-		},
-		DEFAULT => -52,
-		GOTOS => {
-			'typedecl' => 57
+			"%%" => 58
 		}
 	},
 	{#State 23
 		ACTIONS => {
-			'IDENT' => 59,
-			"%%" => 61,
-			'error' => 62
-		},
-		GOTOS => {
-			'rulesec' => 60,
-			'body' => 58,
-			'startrules' => 63
+			'REGEXP' => 61,
+			"=" => 60,
+			'CODE' => 59
 		}
 	},
 	{#State 24
 		ACTIONS => {
-			"\n" => 64
+			"\n" => 62
 		}
 	},
 	{#State 25
-		DEFAULT => -14
+		ACTIONS => {
+			'NUMBER' => 63
+		}
 	},
 	{#State 26
+		ACTIONS => {
+			"\n" => 64
+		}
+	},
+	{#State 27
 		ACTIONS => {
 			"\n" => 65
 		}
 	},
-	{#State 27
-		DEFAULT => -15
-	},
 	{#State 28
 		ACTIONS => {
-			'CODE' => 66
+			"\n" => 66
 		}
 	},
 	{#State 29
 		ACTIONS => {
-			"<" => 31
-		},
-		DEFAULT => -52,
-		GOTOS => {
-			'typedecl' => 67
+			"\n" => 67
 		}
 	},
 	{#State 30
 		ACTIONS => {
-			'NUMBER' => 68
+			"<" => 32
+		},
+		DEFAULT => -52,
+		GOTOS => {
+			'typedecl' => 68
 		}
 	},
 	{#State 31
 		ACTIONS => {
-			'IDENT' => 69
+			'LITERAL' => 70,
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'symbol' => 72,
+			'tokendef' => 69,
+			'toklist' => 71,
+			'ident' => 73
 		}
 	},
 	{#State 32
 		ACTIONS => {
-			'LITERAL' => 70,
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'symlist' => 73,
-			'ident' => 71,
-			'symbol' => 72
+			'IDENT' => 74
 		}
 	},
 	{#State 33
-		DEFAULT => -28
+		ACTIONS => {
+			'LITERAL' => 70,
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'toklist' => 75,
+			'ident' => 73,
+			'tokendef' => 69,
+			'symbol' => 72
+		}
 	},
 	{#State 34
-		DEFAULT => -49
+		DEFAULT => 0
 	},
 	{#State 35
 		DEFAULT => -13
 	},
 	{#State 36
-		DEFAULT => -31
+		ACTIONS => {
+			"\n" => 76
+		}
 	},
 	{#State 37
-		ACTIONS => {
-			"\n" => 74
-		}
+		DEFAULT => -4
 	},
 	{#State 38
 		ACTIONS => {
-			'IDENT' => 52,
-			'LITERAL' => 70
+			'IDENT' => 37
 		},
 		GOTOS => {
-			'tokendef' => 77,
-			'ident' => 75,
-			'toklist' => 78,
-			'symbol' => 76
+			'identlist' => 77,
+			'ident' => 78
 		}
 	},
 	{#State 39
 		ACTIONS => {
-			"\n" => 79
+			'LITERAL' => 70,
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'symlist' => 80,
+			'symbol' => 81,
+			'ident' => 79
 		}
 	},
 	{#State 40
 		ACTIONS => {
-			"\n" => 80
+			'CODE' => 83,
+			'IDENT' => 85,
+			'LITERAL' => 82
+		},
+		GOTOS => {
+			'perlident' => 84
 		}
 	},
 	{#State 41
-		DEFAULT => 0
-	},
-	{#State 42
 		ACTIONS => {
-			'LITERAL' => 70,
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'symbol' => 76,
-			'tokendef' => 77,
-			'ident' => 75,
-			'toklist' => 81
+			"\n" => 86
 		}
 	},
+	{#State 42
+		DEFAULT => -67
+	},
 	{#State 43
-		DEFAULT => -35
+		DEFAULT => -69
 	},
 	{#State 44
 		ACTIONS => {
-			'LITERAL' => 70,
-			'IDENT' => 52
+			'TAILCODE' => 88
 		},
+		DEFAULT => -106,
 		GOTOS => {
-			'symbol' => 76,
-			'toklist' => 82,
-			'ident' => 75,
-			'tokendef' => 77
+			'tail' => 87
 		}
 	},
 	{#State 45
 		ACTIONS => {
-			"\n" => 83
+			":" => 89
 		}
 	},
 	{#State 46
 		ACTIONS => {
-			"\n" => 84
+			";" => 90
 		}
 	},
 	{#State 47
-		DEFAULT => -34
+		ACTIONS => {
+			'IDENT' => 93,
+			'error' => 92,
+			"%%" => 91
+		},
+		GOTOS => {
+			'rules' => 94
+		}
 	},
 	{#State 48
 		ACTIONS => {
-			'REGEXP' => 86,
-			'CODE' => 85
+			"\n" => 95,
+			'NUMBER' => 96
 		}
 	},
 	{#State 49
-		ACTIONS => {
-			"\n" => 87
-		}
-	},
-	{#State 50
-		ACTIONS => {
-			"\n" => 88
-		}
-	},
-	{#State 51
 		DEFAULT => -36
 	},
+	{#State 50
+		DEFAULT => -31
+	},
+	{#State 51
+		ACTIONS => {
+			"\n" => 97
+		}
+	},
 	{#State 52
-		DEFAULT => -4
+		ACTIONS => {
+			"\n" => 98
+		}
 	},
 	{#State 53
 		ACTIONS => {
-			"!" => 91,
-			'CODE' => 92,
-			'IDENT' => 89
+			"!" => 100,
+			'IDENT' => 85,
+			'CODE' => 99
 		},
 		DEFAULT => -50,
 		GOTOS => {
-			'neg' => 93,
-			'perlident' => 90
+			'neg' => 102,
+			'perlident' => 101
 		}
 	},
 	{#State 54
 		ACTIONS => {
-			"\n" => 94
+			"\n" => 103
 		}
 	},
 	{#State 55
 		ACTIONS => {
-			'LITERAL' => 97,
-			'IDENT' => 89,
-			'CODE' => 95
-		},
-		GOTOS => {
-			'perlident' => 96
+			"\n" => 104
 		}
 	},
 	{#State 56
-		DEFAULT => -8
+		ACTIONS => {
+			'LITERAL' => 70,
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'ident' => 73,
+			'toklist' => 105,
+			'tokendef' => 69,
+			'symbol' => 72
+		}
 	},
 	{#State 57
-		ACTIONS => {
-			'IDENT' => 52,
-			'LITERAL' => 70
-		},
-		GOTOS => {
-			'symbol' => 76,
-			'toklist' => 98,
-			'tokendef' => 77,
-			'ident' => 75
-		}
+		DEFAULT => -49
 	},
 	{#State 58
-		ACTIONS => {
-			'TAILCODE' => 100
-		},
-		DEFAULT => -106,
-		GOTOS => {
-			'tail' => 99
-		}
+		DEFAULT => -8
 	},
 	{#State 59
 		ACTIONS => {
-			":" => 101
+			"\n" => 106
 		}
 	},
 	{#State 60
 		ACTIONS => {
-			"%%" => 103,
-			'IDENT' => 104,
-			'error' => 102
-		},
-		GOTOS => {
-			'rules' => 105
+			'REGEXP' => 107,
+			'CODE' => 108
 		}
 	},
 	{#State 61
-		DEFAULT => -67
+		ACTIONS => {
+			"\n" => 109
+		}
 	},
 	{#State 62
-		ACTIONS => {
-			";" => 106
-		}
+		DEFAULT => -35
 	},
 	{#State 63
-		DEFAULT => -69
+		ACTIONS => {
+			"\n" => 110
+		}
 	},
 	{#State 64
-		DEFAULT => -22
-	},
-	{#State 65
 		DEFAULT => -37
 	},
+	{#State 65
+		DEFAULT => -22
+	},
 	{#State 66
-		ACTIONS => {
-			"\n" => 107
-		}
+		DEFAULT => -28
 	},
 	{#State 67
-		ACTIONS => {
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'ident' => 108,
-			'identlist' => 109
-		}
+		DEFAULT => -34
 	},
 	{#State 68
 		ACTIONS => {
-			'NUMBER' => 110,
-			"\n" => 111
+			'IDENT' => 37,
+			'LITERAL' => 70
+		},
+		GOTOS => {
+			'ident' => 73,
+			'toklist' => 111,
+			'tokendef' => 69,
+			'symbol' => 72
 		}
 	},
 	{#State 69
-		ACTIONS => {
-			">" => 112
-		}
+		DEFAULT => -57
 	},
 	{#State 70
 		DEFAULT => -2
 	},
 	{#State 71
-		DEFAULT => -3
-	},
-	{#State 72
-		DEFAULT => -55
-	},
-	{#State 73
 		ACTIONS => {
 			'LITERAL' => 70,
-			'IDENT' => 52,
+			'IDENT' => 37,
 			"\n" => 113
 		},
 		GOTOS => {
-			'ident' => 71,
-			'symbol' => 114
+			'tokendef' => 112,
+			'symbol' => 72,
+			'ident' => 73
 		}
 	},
-	{#State 74
-		DEFAULT => -32
+	{#State 72
+		DEFAULT => -63
 	},
-	{#State 75
+	{#State 73
 		ACTIONS => {
-			"=" => 115
+			"=" => 114
 		},
 		DEFAULT => -3
 	},
+	{#State 74
+		ACTIONS => {
+			">" => 115
+		}
+	},
+	{#State 75
+		ACTIONS => {
+			'LITERAL' => 70,
+			'IDENT' => 37,
+			"\n" => 116
+		},
+		GOTOS => {
+			'ident' => 73,
+			'tokendef' => 112,
+			'symbol' => 72
+		}
+	},
 	{#State 76
-		DEFAULT => -63
+		DEFAULT => -21
 	},
 	{#State 77
-		DEFAULT => -57
+		ACTIONS => {
+			'IDENT' => 37,
+			"\n" => 117
+		},
+		GOTOS => {
+			'ident' => 118
+		}
 	},
 	{#State 78
-		ACTIONS => {
-			'LITERAL' => 70,
-			"\n" => 117,
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'symbol' => 76,
-			'ident' => 75,
-			'tokendef' => 116
-		}
+		DEFAULT => -65
 	},
 	{#State 79
-		DEFAULT => -33
+		DEFAULT => -3
 	},
 	{#State 80
-		DEFAULT => -27
-	},
-	{#State 81
 		ACTIONS => {
 			'LITERAL' => 70,
-			'IDENT' => 52,
-			"\n" => 118
-		},
-		GOTOS => {
-			'symbol' => 76,
-			'tokendef' => 116,
-			'ident' => 75
-		}
-	},
-	{#State 82
-		ACTIONS => {
-			'LITERAL' => 70,
-			'IDENT' => 52,
+			'IDENT' => 37,
 			"\n" => 119
 		},
 		GOTOS => {
-			'symbol' => 76,
-			'ident' => 75,
-			'tokendef' => 116
+			'ident' => 79,
+			'symbol' => 120
 		}
 	},
-	{#State 83
-		DEFAULT => -30
+	{#State 81
+		DEFAULT => -55
 	},
-	{#State 84
-		DEFAULT => -48
-	},
-	{#State 85
-		ACTIONS => {
-			"\n" => 120
-		}
-	},
-	{#State 86
+	{#State 82
 		ACTIONS => {
 			"\n" => 121
 		}
 	},
-	{#State 87
-		DEFAULT => -24
-	},
-	{#State 88
-		DEFAULT => -23
-	},
-	{#State 89
-		DEFAULT => -9
-	},
-	{#State 90
+	{#State 83
 		ACTIONS => {
-			"::" => 123,
-			"?" => 122
+			"\n" => 122
 		}
 	},
+	{#State 84
+		ACTIONS => {
+			"\n" => 124,
+			'LITERAL' => 125,
+			"::" => 123
+		}
+	},
+	{#State 85
+		DEFAULT => -9
+	},
+	{#State 86
+		DEFAULT => -29
+	},
+	{#State 87
+		DEFAULT => -1
+	},
+	{#State 88
+		DEFAULT => -107
+	},
+	{#State 89
+		DEFAULT => -71,
+		GOTOS => {
+			'@70-2' => 126
+		}
+	},
+	{#State 90
+		DEFAULT => -72
+	},
 	{#State 91
-		DEFAULT => -51
+		DEFAULT => -66
 	},
 	{#State 92
 		ACTIONS => {
-			"\n" => 124
+			";" => 127
 		}
 	},
 	{#State 93
 		ACTIONS => {
-			'REGEXP' => 125
+			":" => 128
 		}
 	},
 	{#State 94
-		DEFAULT => -21
+		DEFAULT => -68
 	},
 	{#State 95
-		ACTIONS => {
-			"\n" => 126
-		}
+		DEFAULT => -46
 	},
 	{#State 96
-		ACTIONS => {
-			"\n" => 128,
-			"::" => 123,
-			'LITERAL' => 127
-		}
-	},
-	{#State 97
 		ACTIONS => {
 			"\n" => 129
 		}
 	},
+	{#State 97
+		DEFAULT => -32
+	},
 	{#State 98
-		ACTIONS => {
-			'LITERAL' => 70,
-			'IDENT' => 52,
-			"\n" => 130
-		},
-		GOTOS => {
-			'symbol' => 76,
-			'ident' => 75,
-			'tokendef' => 116
-		}
+		DEFAULT => -27
 	},
 	{#State 99
-		DEFAULT => -1
+		ACTIONS => {
+			"\n" => 130
+		}
 	},
 	{#State 100
-		DEFAULT => -107
+		DEFAULT => -51
 	},
 	{#State 101
-		DEFAULT => -71,
-		GOTOS => {
-			'@70-2' => 131
+		ACTIONS => {
+			"?" => 131,
+			"::" => 123
 		}
 	},
 	{#State 102
 		ACTIONS => {
-			";" => 132
+			'REGEXP' => 132
 		}
 	},
 	{#State 103
-		DEFAULT => -66
+		DEFAULT => -30
 	},
 	{#State 104
-		ACTIONS => {
-			":" => 133
-		}
+		DEFAULT => -33
 	},
 	{#State 105
-		DEFAULT => -68
+		ACTIONS => {
+			"\n" => 133,
+			'IDENT' => 37,
+			'LITERAL' => 70
+		},
+		GOTOS => {
+			'ident' => 73,
+			'tokendef' => 112,
+			'symbol' => 72
+		}
 	},
 	{#State 106
-		DEFAULT => -72
+		DEFAULT => -23
 	},
 	{#State 107
-		DEFAULT => -29
+		ACTIONS => {
+			"\n" => 134
+		}
 	},
 	{#State 108
-		DEFAULT => -65
+		ACTIONS => {
+			"\n" => 135
+		}
 	},
 	{#State 109
-		ACTIONS => {
-			"\n" => 134,
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'ident' => 135
-		}
+		DEFAULT => -24
 	},
 	{#State 110
-		ACTIONS => {
-			"\n" => 136
-		}
+		DEFAULT => -48
 	},
 	{#State 111
-		DEFAULT => -46
-	},
-	{#State 112
-		DEFAULT => -53
-	},
-	{#State 113
-		DEFAULT => -20
-	},
-	{#State 114
-		DEFAULT => -54
-	},
-	{#State 115
 		ACTIONS => {
-			'CODE' => 138,
-			'REGEXP' => 137,
-			"%" => 139
-		}
-	},
-	{#State 116
-		DEFAULT => -56
-	},
-	{#State 117
-		DEFAULT => -17
-	},
-	{#State 118
-		DEFAULT => -19
-	},
-	{#State 119
-		DEFAULT => -16
-	},
-	{#State 120
-		DEFAULT => -25
-	},
-	{#State 121
-		DEFAULT => -26
-	},
-	{#State 122
-		ACTIONS => {
-			'IDENT' => 140,
-			'LABEL' => 141
+			"\n" => 136,
+			'IDENT' => 37,
+			'LITERAL' => 70
 		},
 		GOTOS => {
-			'prodname' => 142
+			'symbol' => 72,
+			'tokendef' => 112,
+			'ident' => 73
 		}
+	},
+	{#State 112
+		DEFAULT => -56
+	},
+	{#State 113
+		DEFAULT => -19
+	},
+	{#State 114
+		ACTIONS => {
+			'CODE' => 139,
+			"%" => 137,
+			'REGEXP' => 138
+		}
+	},
+	{#State 115
+		DEFAULT => -53
+	},
+	{#State 116
+		DEFAULT => -18
+	},
+	{#State 117
+		DEFAULT => -38
+	},
+	{#State 118
+		DEFAULT => -64
+	},
+	{#State 119
+		DEFAULT => -20
+	},
+	{#State 120
+		DEFAULT => -54
+	},
+	{#State 121
+		DEFAULT => -43
+	},
+	{#State 122
+		DEFAULT => -42
 	},
 	{#State 123
 		ACTIONS => {
-			'IDENT' => 143
+			'IDENT' => 140
 		}
 	},
 	{#State 124
-		DEFAULT => -39
+		DEFAULT => -44
 	},
 	{#State 125
 		ACTIONS => {
-			"?" => 144
+			"\n" => 141
 		}
 	},
 	{#State 126
-		DEFAULT => -42
-	},
-	{#State 127
 		ACTIONS => {
-			"\n" => 145
+			'NAME' => 143
+		},
+		DEFAULT => -97,
+		GOTOS => {
+			'rule' => 145,
+			'optname' => 142,
+			'rhss' => 144
 		}
 	},
+	{#State 127
+		DEFAULT => -74
+	},
 	{#State 128
-		DEFAULT => -44
+		ACTIONS => {
+			'NAME' => 143
+		},
+		DEFAULT => -97,
+		GOTOS => {
+			'rule' => 145,
+			'optname' => 142,
+			'rhss' => 146
+		}
 	},
 	{#State 129
-		DEFAULT => -43
+		DEFAULT => -47
 	},
 	{#State 130
-		DEFAULT => -18
+		DEFAULT => -39
 	},
 	{#State 131
 		ACTIONS => {
-			'NAME' => 147
+			'IDENT' => 148,
+			'LABEL' => 147
 		},
-		DEFAULT => -97,
 		GOTOS => {
-			'rule' => 148,
-			'rhss' => 149,
-			'optname' => 146
+			'prodname' => 149
 		}
 	},
 	{#State 132
-		DEFAULT => -74
-	},
-	{#State 133
 		ACTIONS => {
-			'NAME' => 147
-		},
-		DEFAULT => -97,
-		GOTOS => {
-			'rule' => 148,
-			'rhss' => 150,
-			'optname' => 146
+			"?" => 150
 		}
 	},
+	{#State 133
+		DEFAULT => -16
+	},
 	{#State 134
-		DEFAULT => -38
+		DEFAULT => -26
 	},
 	{#State 135
-		DEFAULT => -64
+		DEFAULT => -25
 	},
 	{#State 136
-		DEFAULT => -47
+		DEFAULT => -17
 	},
 	{#State 137
-		DEFAULT => -58
-	},
-	{#State 138
-		DEFAULT => -62
-	},
-	{#State 139
 		ACTIONS => {
 			'REGEXP' => 151
 		}
 	},
+	{#State 138
+		DEFAULT => -58
+	},
+	{#State 139
+		DEFAULT => -62
+	},
 	{#State 140
-		ACTIONS => {
-			'LABEL' => 152
-		},
-		DEFAULT => -5
+		DEFAULT => -10
 	},
 	{#State 141
-		DEFAULT => -6
+		DEFAULT => -45
 	},
 	{#State 142
 		ACTIONS => {
-			":" => 153
-		}
-	},
-	{#State 143
-		DEFAULT => -10
-	},
-	{#State 144
-		ACTIONS => {
-			'IDENT' => 140,
-			'LABEL' => 141
-		},
-		GOTOS => {
-			'prodname' => 154
-		}
-	},
-	{#State 145
-		DEFAULT => -45
-	},
-	{#State 146
-		ACTIONS => {
-			'BEGINCODE' => 157,
-			"(" => 162,
+			"(" => 154,
 			'LITERAL' => 70,
-			"\$" => 155,
-			'VIEWPOINT' => 161,
-			'CODE' => 164,
-			'IDENT' => 52,
-			'DPREC' => 158
+			'VIEWPOINT' => 152,
+			'BEGINCODE' => 153,
+			'DPREC' => 159,
+			'CODE' => 161,
+			"\$" => 162,
+			'IDENT' => 37
 		},
 		DEFAULT => -79,
 		GOTOS => {
-			'rhseltwithid' => 163,
-			'ident' => 71,
-			'rhselts' => 166,
-			'rhselt' => 165,
-			'rhs' => 160,
-			'symbol' => 159,
-			'code' => 156
+			'rhselt' => 156,
+			'symbol' => 157,
+			'rhs' => 155,
+			'rhselts' => 158,
+			'code' => 163,
+			'rhseltwithid' => 160,
+			'ident' => 79
+		}
+	},
+	{#State 143
+		ACTIONS => {
+			'IDENT' => 165,
+			'LABEL' => 164
+		}
+	},
+	{#State 144
+		ACTIONS => {
+			";" => 166,
+			"|" => 167
+		}
+	},
+	{#State 145
+		DEFAULT => -76
+	},
+	{#State 146
+		ACTIONS => {
+			"|" => 167,
+			";" => 168
 		}
 	},
 	{#State 147
-		ACTIONS => {
-			'IDENT' => 167,
-			'LABEL' => 168
-		}
+		DEFAULT => -6
 	},
 	{#State 148
-		DEFAULT => -76
+		ACTIONS => {
+			'LABEL' => 169
+		},
+		DEFAULT => -5
 	},
 	{#State 149
 		ACTIONS => {
-			"|" => 170,
-			";" => 169
+			":" => 170
 		}
 	},
 	{#State 150
 		ACTIONS => {
-			";" => 171,
-			"|" => 170
+			'IDENT' => 148,
+			'LABEL' => 147
+		},
+		GOTOS => {
+			'prodname' => 171
 		}
 	},
 	{#State 151
 		ACTIONS => {
-			"=" => 173,
-			"!" => 172
+			"!" => 173,
+			"=" => 172
 		},
 		DEFAULT => -59
 	},
 	{#State 152
-		DEFAULT => -7
+		DEFAULT => -90
 	},
 	{#State 153
-		ACTIONS => {
-			'IDENT' => 140,
-			'LABEL' => 141
-		},
-		GOTOS => {
-			'prodname' => 174
-		}
+		DEFAULT => -105
 	},
 	{#State 154
 		ACTIONS => {
-			":" => 175
+			'NAME' => 143
+		},
+		DEFAULT => -97,
+		GOTOS => {
+			'optname' => 174
 		}
 	},
 	{#State 155
 		ACTIONS => {
-			'LITERAL' => 70,
-			'BEGINCODE' => 157,
-			"(" => 162,
-			'VIEWPOINT' => 161,
-			'error' => 177,
-			'IDENT' => 52,
-			'DPREC' => 158,
-			'CODE' => 164
-		},
-		GOTOS => {
-			'rhselt' => 176,
-			'ident' => 71,
-			'code' => 156,
-			'symbol' => 159
-		}
-	},
-	{#State 156
-		DEFAULT => -88
-	},
-	{#State 157
-		DEFAULT => -105
-	},
-	{#State 158
-		ACTIONS => {
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'ident' => 178
-		}
-	},
-	{#State 159
-		DEFAULT => -87
-	},
-	{#State 160
-		ACTIONS => {
-			'PREC' => 180
+			'PREC' => 175
 		},
 		DEFAULT => -78,
 		GOTOS => {
-			'prec' => 179
+			'prec' => 176
 		}
 	},
-	{#State 161
-		DEFAULT => -90
-	},
-	{#State 162
+	{#State 156
 		ACTIONS => {
-			'NAME' => 147
-		},
-		DEFAULT => -97,
-		GOTOS => {
-			'optname' => 181
-		}
-	},
-	{#State 163
-		DEFAULT => -82
-	},
-	{#State 164
-		DEFAULT => -104
-	},
-	{#State 165
-		ACTIONS => {
-			'OPTION' => 183,
-			'STAR' => 182,
-			"." => 185,
-			"<" => 184,
-			'PLUS' => 186
+			'PLUS' => 177,
+			'OPTION' => 178,
+			'STAR' => 179,
+			"<" => 180,
+			"." => 181
 		},
 		DEFAULT => -86
 	},
-	{#State 166
+	{#State 157
+		DEFAULT => -87
+	},
+	{#State 158
 		ACTIONS => {
-			'VIEWPOINT' => 161,
-			'IDENT' => 52,
-			'DPREC' => 158,
-			'CODE' => 164,
+			"(" => 154,
 			'LITERAL' => 70,
-			'BEGINCODE' => 157,
-			"(" => 162,
-			"\$" => 155
+			'BEGINCODE' => 153,
+			'VIEWPOINT' => 152,
+			"\$" => 162,
+			'CODE' => 161,
+			'IDENT' => 37,
+			'DPREC' => 159
 		},
 		DEFAULT => -80,
 		GOTOS => {
-			'code' => 156,
-			'symbol' => 159,
-			'ident' => 71,
-			'rhseltwithid' => 187,
-			'rhselt' => 165
+			'ident' => 79,
+			'code' => 163,
+			'rhseltwithid' => 182,
+			'symbol' => 157,
+			'rhselt' => 156
 		}
 	},
-	{#State 167
+	{#State 159
 		ACTIONS => {
-			'LABEL' => 188
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'ident' => 183
+		}
+	},
+	{#State 160
+		DEFAULT => -82
+	},
+	{#State 161
+		DEFAULT => -104
+	},
+	{#State 162
+		ACTIONS => {
+			'LITERAL' => 70,
+			"(" => 154,
+			'IDENT' => 37,
+			'CODE' => 161,
+			'DPREC' => 159,
+			'BEGINCODE' => 153,
+			'error' => 185,
+			'VIEWPOINT' => 152
+		},
+		GOTOS => {
+			'ident' => 79,
+			'code' => 163,
+			'rhselt' => 184,
+			'symbol' => 157
+		}
+	},
+	{#State 163
+		DEFAULT => -88
+	},
+	{#State 164
+		DEFAULT => -100
+	},
+	{#State 165
+		ACTIONS => {
+			'LABEL' => 186
 		},
 		DEFAULT => -98
 	},
-	{#State 168
-		DEFAULT => -100
-	},
-	{#State 169
+	{#State 166
 		DEFAULT => -70
 	},
-	{#State 170
+	{#State 167
 		ACTIONS => {
-			'NAME' => 147
+			'NAME' => 143
 		},
 		DEFAULT => -97,
 		GOTOS => {
-			'optname' => 146,
-			'rule' => 189
+			'rule' => 187,
+			'optname' => 142
+		}
+	},
+	{#State 168
+		DEFAULT => -73
+	},
+	{#State 169
+		DEFAULT => -7
+	},
+	{#State 170
+		ACTIONS => {
+			'LABEL' => 147,
+			'IDENT' => 148
+		},
+		GOTOS => {
+			'prodname' => 188
 		}
 	},
 	{#State 171
-		DEFAULT => -73
+		ACTIONS => {
+			":" => 189
+		}
 	},
 	{#State 172
 		ACTIONS => {
@@ -1744,37 +1744,40 @@ sub new {
 	},
 	{#State 174
 		ACTIONS => {
-			"\n" => 192
+			'CODE' => 161,
+			"\$" => 162,
+			'IDENT' => 37,
+			'DPREC' => 159,
+			'BEGINCODE' => 153,
+			'VIEWPOINT' => 152,
+			'LITERAL' => 70,
+			"(" => 154
+		},
+		DEFAULT => -79,
+		GOTOS => {
+			'rhs' => 192,
+			'rhselts' => 158,
+			'symbol' => 157,
+			'rhselt' => 156,
+			'ident' => 79,
+			'code' => 163,
+			'rhseltwithid' => 160
 		}
 	},
 	{#State 175
 		ACTIONS => {
-			'IDENT' => 140,
-			'LABEL' => 141
+			'IDENT' => 37,
+			'LITERAL' => 70
 		},
 		GOTOS => {
-			'prodname' => 193
+			'ident' => 79,
+			'symbol' => 193
 		}
 	},
 	{#State 176
 		ACTIONS => {
-			"<" => 184,
-			'PLUS' => 186,
-			'STAR' => 182,
-			'OPTION' => 183
-		},
-		DEFAULT => -84
-	},
-	{#State 177
-		DEFAULT => -85
-	},
-	{#State 178
-		DEFAULT => -89
-	},
-	{#State 179
-		ACTIONS => {
-			'CODE' => 164,
-			'BEGINCODE' => 157
+			'CODE' => 161,
+			'BEGINCODE' => 153
 		},
 		DEFAULT => -102,
 		GOTOS => {
@@ -1782,80 +1785,77 @@ sub new {
 			'epscode' => 195
 		}
 	},
+	{#State 177
+		DEFAULT => -96
+	},
+	{#State 178
+		DEFAULT => -94
+	},
+	{#State 179
+		DEFAULT => -92
+	},
 	{#State 180
 		ACTIONS => {
-			'IDENT' => 52,
-			'LITERAL' => 70
-		},
-		GOTOS => {
-			'symbol' => 196,
-			'ident' => 71
+			'STAR' => 196,
+			'PLUS' => 197
 		}
 	},
 	{#State 181
 		ACTIONS => {
-			'VIEWPOINT' => 161,
-			'CODE' => 164,
-			'IDENT' => 52,
-			'DPREC' => 158,
-			'BEGINCODE' => 157,
-			"(" => 162,
-			'LITERAL' => 70,
-			"\$" => 155
-		},
-		DEFAULT => -79,
-		GOTOS => {
-			'symbol' => 159,
-			'code' => 156,
-			'rhs' => 197,
-			'rhselts' => 166,
-			'rhselt' => 165,
-			'rhseltwithid' => 163,
-			'ident' => 71
+			'IDENT' => 198
 		}
 	},
 	{#State 182
-		DEFAULT => -92
+		DEFAULT => -81
 	},
 	{#State 183
-		DEFAULT => -94
+		DEFAULT => -89
 	},
 	{#State 184
 		ACTIONS => {
-			'STAR' => 198,
-			'PLUS' => 199
-		}
+			'OPTION' => 178,
+			'STAR' => 179,
+			'PLUS' => 177,
+			"<" => 180
+		},
+		DEFAULT => -84
 	},
 	{#State 185
-		ACTIONS => {
-			'IDENT' => 200
-		}
+		DEFAULT => -85
 	},
 	{#State 186
-		DEFAULT => -96
-	},
-	{#State 187
-		DEFAULT => -81
-	},
-	{#State 188
 		DEFAULT => -99
 	},
-	{#State 189
+	{#State 187
 		DEFAULT => -75
 	},
-	{#State 190
-		DEFAULT => -61
+	{#State 188
+		ACTIONS => {
+			"\n" => 199
+		}
 	},
-	{#State 191
+	{#State 189
+		ACTIONS => {
+			'IDENT' => 148,
+			'LABEL' => 147
+		},
+		GOTOS => {
+			'prodname' => 200
+		}
+	},
+	{#State 190
 		DEFAULT => -60
 	},
+	{#State 191
+		DEFAULT => -61
+	},
 	{#State 192
-		DEFAULT => -40
+		ACTIONS => {
+			")" => 201
+		}
 	},
 	{#State 193
-		ACTIONS => {
-			"\n" => 201
-		}
+		DEFAULT => -101
 	},
 	{#State 194
 		DEFAULT => -103
@@ -1864,51 +1864,51 @@ sub new {
 		DEFAULT => -77
 	},
 	{#State 196
-		DEFAULT => -101
+		ACTIONS => {
+			'LITERAL' => 70,
+			'IDENT' => 37
+		},
+		GOTOS => {
+			'ident' => 79,
+			'symbol' => 202
+		}
 	},
 	{#State 197
 		ACTIONS => {
-			")" => 202
+			'IDENT' => 37,
+			'LITERAL' => 70
+		},
+		GOTOS => {
+			'ident' => 79,
+			'symbol' => 203
 		}
 	},
 	{#State 198
-		ACTIONS => {
-			'LITERAL' => 70,
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'symbol' => 203,
-			'ident' => 71
-		}
-	},
-	{#State 199
-		ACTIONS => {
-			'LITERAL' => 70,
-			'IDENT' => 52
-		},
-		GOTOS => {
-			'symbol' => 204,
-			'ident' => 71
-		}
-	},
-	{#State 200
 		DEFAULT => -83
 	},
-	{#State 201
-		DEFAULT => -41
+	{#State 199
+		DEFAULT => -40
 	},
-	{#State 202
+	{#State 200
+		ACTIONS => {
+			"\n" => 204
+		}
+	},
+	{#State 201
 		DEFAULT => -91
 	},
-	{#State 203
+	{#State 202
 		ACTIONS => {
 			">" => 205
 		}
 	},
-	{#State 204
+	{#State 203
 		ACTIONS => {
 			">" => 206
 		}
+	},
+	{#State 204
+		DEFAULT => -41
 	},
 	{#State 205
 		DEFAULT => -93

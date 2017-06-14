@@ -20,7 +20,7 @@ WriteMakefile(
     'List::Util'   => "1.0", 
     'Data::Dumper' => "1.0",
     'Pod::Usage'   => "1.0", 
-    'Parse::Yapp'  => "1.06", 
+    'Parse::Yapp'  => "1.2", 
     },
     'EXE_FILES'    => \@exe_files,
 #    ABSTRACT_FROM  => 'lib/Parse/Eyapp.pod', 

@@ -1,5 +1,8 @@
 Revision history for Perl extension Eyapp.
 
+1.21 Wed Jun 14 2017
+  * Bug Fix, Require Parse::Yapp v1.2, CPAN Version Dependencies
+
 1.2 Wed Jun 14 2017
   * First Release In Over 5 Years, 
     How's That For Medium-Term Stability?!?  :-)
