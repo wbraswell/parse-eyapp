@@ -25,6 +25,11 @@ WriteMakefile(
     'EXE_FILES'    => \@exe_files,
 #    ABSTRACT_FROM  => 'lib/Parse/Eyapp.pod', 
     AUTHOR         => 'Will Braswell <wbraswell_cpan@NOSPAM.nym.hush.com> (Remove "NOSPAM".)',
+	'META_MERGE'    => {
+        'resources' => {
+            'repository' => 'https://github.com/wbraswell/parse-yapp',
+        },
+    },
 );
 
 sub MY::postamble {
