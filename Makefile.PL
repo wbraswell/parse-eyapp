@@ -225,6 +225,7 @@ EOSQT
 
 __END__
 
+=encoding utf8
 =head1 NAME 
 
 Makefile.PL - Makefile generator for Parse::Eyapp. Developer notes
