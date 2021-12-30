@@ -25,6 +25,11 @@ WriteMakefile(
     'EXE_FILES'    => \@exe_files,
 #    ABSTRACT_FROM  => 'lib/Parse/Eyapp.pod', 
     AUTHOR         => 'Will Braswell <wbraswell_cpan@NOSPAM.nym.hush.com> (Remove "NOSPAM".)',
+	'META_MERGE'    => {
+        'resources' => {
+            'repository' => 'https://github.com/wbraswell/parse-yapp',
+        },
+    },
 );
 
 sub MY::postamble {
@@ -225,6 +230,7 @@ EOSQT
 
 __END__
 
+=encoding utf8
 =head1 NAME 
 
 Makefile.PL - Makefile generator for Parse::Eyapp. Developer notes
